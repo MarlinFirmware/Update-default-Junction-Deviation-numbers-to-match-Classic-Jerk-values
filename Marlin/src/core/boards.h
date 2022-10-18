@@ -473,6 +473,10 @@
 #define BOARD_BLACKBEEZMINI_V1        5251  // BlackBeezMini V1 (STM32F401CCU6)
 #define BOARD_XTLW_CLIMBER_8TH        5252  // XTLW Climber-8th (STM32F407VGT6)
 #define BOARD_FLY_RRF_E3_V1           5253  // Fly RRF E3 V1.0 (STM32F407VG)
+#define BOARD_ZNP_ROBIN_NANO_V1_3     5254  // Elegoo Neptune 2 v1.3 board
+#define BOARD_MKS_NEPTUNE_X           5255  // Elegoo Neptune X
+#define BOARD_ZNP_ROBIN_NANO          5256  // Elegoo Neptune 2 v1.2 board
+#define BOARD_MKS_NEPTUNE_3           5257  // Elegoo Neptune 3
 
 //
 // Other ARM Cortex-M4
