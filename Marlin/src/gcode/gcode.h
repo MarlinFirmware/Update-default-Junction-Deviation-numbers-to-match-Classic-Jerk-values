@@ -114,11 +114,13 @@
  * M43  - Display pin status, watch pins for changes, watch endstops & toggle LED, Z servo probe test, toggle pins (Requires PINS_DEBUGGING)
  * M48  - Measure Z Probe repeatability: M48 P<points> X<pos> Y<pos> V<level> E<engage> L<legs> S<chizoid>. (Requires Z_MIN_PROBE_REPEATABILITY_TEST)
  *
+ * M72  - Cloud print filename;
  * M73  - Set the progress percentage. (Requires SET_PROGRESS_MANUALLY)
  * M75  - Start the print job timer.
  * M76  - Pause the print job timer.
  * M77  - Stop the print job timer.
  * M78  - Show statistical information about the print jobs. (Requires PRINTCOUNTER)
+ * M79  - Cloud print statistics.S0:cloud connect; S1:cloud print start; S2:cloud print pause; S3:cloud print resume; S4:cloud print stop; S5:cloud print complete
  *
  * M80  - Turn on Power Supply. (Requires PSU_CONTROL)
  * M81  - Turn off Power Supply. (Requires PSU_CONTROL)
@@ -204,6 +206,8 @@
  * M220 - Set Feedrate Percentage: "M220 S<percent>" (i.e., "FR" on the LCD)
  *        Use "M220 B" to back up the Feedrate Percentage and "M220 R" to restore it. (Requires an MMU_MODEL version 2 or 2S)
  * M221 - Set Flow Percentage: "M221 S<percent>" (Requires an extruder)
+ * M224 - LED On
+ * M225 - LED Off
  * M226 - Wait until a pin is in a given state: "M226 P<pin> S<state>" (Requires DIRECT_PIN_CONTROL)
  * M240 - Trigger a camera to take a photograph. (Requires PHOTO_GCODE)
  * M250 - Set LCD contrast: "M250 C<contrast>" (0-63). (Requires LCD support)
@@ -318,6 +322,7 @@
  * M913 - Set HYBRID_THRESHOLD speed. (Requires HYBRID_THRESHOLD)
  * M914 - Set StallGuard sensitivity. (Requires SENSORLESS_HOMING or SENSORLESS_PROBING)
  * M919 - Get or Set motor Chopper Times (time_off, hysteresis_end, hysteresis_start) using axis codes XYZE, etc. If no parameters are given, report. (Requires at least one _DRIVER_TYPE defined as TMC2130/2160/5130/5160/2208/2209/2660)
+ * M930 - Wi-Fi ON/OFF status.
  * M936 - OTA update firmware. (Requires OTA_FIRMWARE_UPDATE)
  * M951 - Set Magnetic Parking Extruder parameters. (Requires MAGNETIC_PARKING_EXTRUDER)
  * M3426 - Read MCP3426 ADC over I2C. (Requires HAS_MCP3426_ADC)
@@ -712,6 +717,13 @@ private:
     static void M48();
   #endif
 
+  #if ENABLED(CREALITY_RTS)
+    #if ENABLED(SDSUPPORT)
+      static void M72();
+    #endif
+    static void M79();
+  #endif
+
   #if ENABLED(SET_PROGRESS_MANUALLY)
     static void M73();
   #endif
@@ -929,6 +941,11 @@ private:
 
   #if HAS_EXTRUDERS
     static void M221();
+  #endif
+
+  #if ENABLED(CREALITY_RTS)
+    static void M224();
+    static void M225();
   #endif
 
   #if ENABLED(DIRECT_PIN_CONTROL)
@@ -1273,6 +1290,11 @@ private:
     static void M928();
   #endif
 
+  #if ENABLED(CREALITY_WIFI)
+    static void M930();
+    static void M194();
+  #endif
+
   #if ENABLED(OTA_FIRMWARE_UPDATE)
     static void M936();
   #endif
@@ -1321,6 +1343,10 @@ private:
 
   #if ENABLED(UBL_MESH_WIZARD)
     static void M1004();
+  #endif
+
+  #if ENABLED(CREALITY_RTS)
+    static void M2900();
   #endif
 
   #if ENABLED(HAS_MCP3426_ADC)
