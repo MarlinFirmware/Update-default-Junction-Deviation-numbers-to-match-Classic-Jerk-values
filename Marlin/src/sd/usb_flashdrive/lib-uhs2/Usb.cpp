@@ -59,7 +59,7 @@ EpInfo* USB::getEpInfoEntry(uint8_t addr, uint8_t ep) {
 
   EpInfo *pep = p->epinfo;
 
-  for (uint8_t i = 0; i < p->epcount; i++) {
+  for (uint_fast8_t i = 0; i < p->epcount; i++) {
     if ((pep)->epAddr == ep)
       return pep;
 
@@ -455,14 +455,14 @@ void USB::Task() { // USB state machine
       break;
   }
 
-  for (uint8_t i = 0; i < USB_NUMDEVICES; i++)
+  for (uint_fast8_t i = 0; i < USB_NUMDEVICES; i++)
     if (devConfig[i]) rcode = devConfig[i]->Poll();
 
   switch (usb_task_state) {
     case USB_DETACHED_SUBSTATE_INITIALIZE:
       init();
 
-      for (uint8_t i = 0; i < USB_NUMDEVICES; i++)
+      for (uint_fast8_t i = 0; i < USB_NUMDEVICES; i++)
         if (devConfig[i])
           rcode = devConfig[i]->Release();
 
@@ -733,7 +733,7 @@ uint8_t USB::Configuring(uint8_t parent, uint8_t port, bool lowspeed) {
 
 uint8_t USB::ReleaseDevice(uint8_t addr) {
   if (addr) {
-    for (uint8_t i = 0; i < USB_NUMDEVICES; i++) {
+    for (uint_fast8_t i = 0; i < USB_NUMDEVICES; i++) {
       if (!devConfig[i]) continue;
       if (devConfig[i]->GetAddress() == addr)
         return devConfig[i]->Release();

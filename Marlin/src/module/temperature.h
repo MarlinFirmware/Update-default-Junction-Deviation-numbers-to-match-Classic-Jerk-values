@@ -270,7 +270,7 @@ typedef struct { float p, i, d, c, f; } raw_pidcf_t;
         base::reset();
         prev_e_pos = 0;
         lpq_ptr = 0;
-        for (uint8_t i = 0; i < LPQ_ARR_SZ; ++i) lpq[i] = 0;
+        for (uint_fast8_t i = 0; i < LPQ_ARR_SZ; ++i) lpq[i] = 0;
       }
 
       float get_extrusion_scale_output(const bool is_active, const int32_t e_position, const float e_mm_per_step, const int16_t lpq_len) {
@@ -320,7 +320,7 @@ typedef struct { float p, i, d, c, f; } raw_pidcf_t;
       void set(const raw_pid_t &raw) { set(raw.p, raw.i, raw.d); }
       void set(const raw_pidcf_t &raw) { set(raw.p, raw.i, raw.d, raw.c, raw.f); }
 
-      float get_fan_scale_output(const uint8_t fan_speed) {
+      float get_fan_scale_output(const uint_fast8_t fan_speed) {
         work_f = 0;
         if (fan_speed > SCALE_MIN_SPEED)
           work_f = Kf + (SCALE_LIN_FACTOR) * fan_speed;
@@ -356,7 +356,7 @@ typedef struct { float p, i, d, c, f; } raw_pidcf_t;
 
       void reset() { cPID::reset(); }
 
-      float get_fan_scale_output(const uint8_t fan_speed) {
+      float get_fan_scale_output(const uint_fast8_t fan_speed) {
         work_f = fan_speed > (SCALE_MIN_SPEED) ? Kf + (SCALE_LIN_FACTOR) * fan_speed : 0;
         return work_f;
       }
@@ -606,7 +606,7 @@ class Temperature {
     #if HAS_HOTEND
       static hotend_info_t temp_hotend[HOTENDS];
       static constexpr celsius_t hotend_maxtemp[HOTENDS] = ARRAY_BY_HOTENDS(HEATER_0_MAXTEMP, HEATER_1_MAXTEMP, HEATER_2_MAXTEMP, HEATER_3_MAXTEMP, HEATER_4_MAXTEMP, HEATER_5_MAXTEMP, HEATER_6_MAXTEMP, HEATER_7_MAXTEMP);
-      static constexpr celsius_t hotend_max_target(const uint8_t e) { return hotend_maxtemp[e] - (HOTEND_OVERSHOOT); }
+      static constexpr celsius_t hotend_max_target(const uint_fast8_t e) { return hotend_maxtemp[e] - (HOTEND_OVERSHOOT); }
     #endif
 
     #if HAS_HEATED_BED
@@ -632,22 +632,22 @@ class Temperature {
     #endif
 
     #if ANY(AUTO_POWER_E_FANS, HAS_FANCHECK)
-      static uint8_t autofan_speed[HOTENDS];
+      static uint_fast8_t autofan_speed[HOTENDS];
     #endif
     #if ENABLED(AUTO_POWER_CHAMBER_FAN)
-      static uint8_t chamberfan_speed;
+      static uint_fast8_t chamberfan_speed;
     #endif
     #if ENABLED(AUTO_POWER_COOLER_FAN)
-      static uint8_t coolerfan_speed;
+      static uint_fast8_t coolerfan_speed;
     #endif
 
     #if ENABLED(FAN_SOFT_PWM)
-      static uint8_t soft_pwm_amount_fan[FAN_COUNT],
-                     soft_pwm_count_fan[FAN_COUNT];
+      static uint_fast8_t soft_pwm_amount_fan[FAN_COUNT],
+                          soft_pwm_count_fan[FAN_COUNT];
     #endif
 
     #if ALL(FAN_SOFT_PWM, USE_CONTROLLER_FAN)
-      static uint8_t soft_pwm_controller_speed;
+      static uint_fast8_t soft_pwm_controller_speed;
     #endif
 
     #if ALL(HAS_MARLINUI_MENU, PREVENT_COLD_EXTRUSION) && E_MANUAL > 0
@@ -662,24 +662,24 @@ class Temperature {
       static bool allow_cold_extrude;
       static celsius_t extrude_min_temp;
       static bool tooCold(const celsius_t temp) { return !allow_cold_extrude && !allow_cold_extrude_override && temp < extrude_min_temp - (TEMP_WINDOW); }
-      static bool tooColdToExtrude(const uint8_t E_NAME)       { return tooCold(wholeDegHotend(HOTEND_INDEX)); }
-      static bool targetTooColdToExtrude(const uint8_t E_NAME) { return tooCold(degTargetHotend(HOTEND_INDEX)); }
+      static bool tooColdToExtrude(const uint_fast8_t E_NAME)       { return tooCold(wholeDegHotend(HOTEND_INDEX)); }
+      static bool targetTooColdToExtrude(const uint_fast8_t E_NAME) { return tooCold(degTargetHotend(HOTEND_INDEX)); }
     #else
       static constexpr bool allow_cold_extrude = true;
       static constexpr celsius_t extrude_min_temp = 0;
-      static bool tooColdToExtrude(const uint8_t) { return false; }
-      static bool targetTooColdToExtrude(const uint8_t) { return false; }
+      static bool tooColdToExtrude(const uint_fast8_t) { return false; }
+      static bool targetTooColdToExtrude(const uint_fast8_t) { return false; }
     #endif
 
-    static bool hotEnoughToExtrude(const uint8_t e) { return !tooColdToExtrude(e); }
-    static bool targetHotEnoughToExtrude(const uint8_t e) { return !targetTooColdToExtrude(e); }
+    static bool hotEnoughToExtrude(const uint_fast8_t e) { return !tooColdToExtrude(e); }
+    static bool targetHotEnoughToExtrude(const uint_fast8_t e) { return !targetTooColdToExtrude(e); }
 
     #if ANY(SINGLENOZZLE_STANDBY_TEMP, SINGLENOZZLE_STANDBY_FAN)
       #if ENABLED(SINGLENOZZLE_STANDBY_TEMP)
         static celsius_t singlenozzle_temp[EXTRUDERS];
       #endif
       #if ENABLED(SINGLENOZZLE_STANDBY_FAN)
-        static uint8_t singlenozzle_fan_speed[EXTRUDERS];
+        static uint_fast8_t singlenozzle_fan_speed[EXTRUDERS];
       #endif
       static void singlenozzle_change(const uint8_t old_tool, const uint8_t new_tool);
     #endif
@@ -824,28 +824,28 @@ class Temperature {
 
     #if HAS_USER_THERMISTORS
       static user_thermistor_t user_thermistor[USER_THERMISTORS];
-      static void M305_report(const uint8_t t_index, const bool forReplay=true);
+      static void M305_report(const uint_fast8_t t_index, const bool forReplay=true);
       static void reset_user_thermistors();
-      static celsius_float_t user_thermistor_to_deg_c(const uint8_t t_index, const raw_adc_t raw);
-      static bool set_pull_up_res(int8_t t_index, float value) {
+      static celsius_float_t user_thermistor_to_deg_c(const uint_fast8_t t_index, const raw_adc_t raw);
+      static bool set_pull_up_res(int_fast8_t t_index, float value) {
         //if (!WITHIN(t_index, 0, USER_THERMISTORS - 1)) return false;
         if (!WITHIN(value, 1, 1000000)) return false;
         user_thermistor[t_index].series_res = value;
         return true;
       }
-      static bool set_res25(int8_t t_index, float value) {
+      static bool set_res25(int_fast8_t t_index, float value) {
         if (!WITHIN(value, 1, 10000000)) return false;
         user_thermistor[t_index].res_25 = value;
         user_thermistor[t_index].pre_calc = true;
         return true;
       }
-      static bool set_beta(int8_t t_index, float value) {
+      static bool set_beta(int_fast8_t t_index, float value) {
         if (!WITHIN(value, 1, 1000000)) return false;
         user_thermistor[t_index].beta = value;
         user_thermistor[t_index].pre_calc = true;
         return true;
       }
-      static bool set_sh_coeff(int8_t t_index, float value) {
+      static bool set_sh_coeff(int_fast8_t t_index, float value) {
         if (!WITHIN(value, -0.01f, 0.01f)) return false;
         user_thermistor[t_index].sh_c_coeff = value;
         user_thermistor[t_index].pre_calc = true;
@@ -854,7 +854,7 @@ class Temperature {
     #endif
 
     #if HAS_HOTEND
-      static celsius_float_t analog_to_celsius_hotend(const raw_adc_t raw, const uint8_t e);
+      static celsius_float_t analog_to_celsius_hotend(const raw_adc_t raw, const uint_fast8_t e);
     #endif
     #if HAS_HEATED_BED
       static celsius_float_t analog_to_celsius_bed(const raw_adc_t raw);
@@ -880,41 +880,41 @@ class Temperature {
 
     #if HAS_FAN
 
-      static uint8_t fan_speed[FAN_COUNT];
-      #define FANS_LOOP(I) for (uint8_t I = 0; I < FAN_COUNT; ++I)
+      static uint_fast8_t fan_speed[FAN_COUNT];
+      #define FANS_LOOP(I) for (uint_fast8_t I = 0; I < FAN_COUNT; ++I)
 
-      static void set_fan_speed(const uint8_t fan, const uint16_t speed);
+      static void set_fan_speed(const uint_fast8_t fan, const uint_fast16_t speed);
 
       #if ENABLED(REPORT_FAN_CHANGE)
-        static void report_fan_speed(const uint8_t fan);
+        static void report_fan_speed(const uint_fast8_t fan);
       #endif
 
       #if ANY(PROBING_FANS_OFF, ADVANCED_PAUSE_FANS_PAUSE)
         static bool fans_paused;
-        static uint8_t saved_fan_speed[FAN_COUNT];
+        static uint_fast8_t saved_fan_speed[FAN_COUNT];
       #endif
 
       #if ENABLED(ADAPTIVE_FAN_SLOWING)
-        static uint8_t fan_speed_scaler[FAN_COUNT];
+        static uint_fast8_t fan_speed_scaler[FAN_COUNT];
       #endif
 
-      static uint8_t scaledFanSpeed(const uint8_t fan, const uint8_t fs) {
+      static uint_fast8_t scaledFanSpeed(const uint_fast8_t fan, const uint_fast8_t fs) {
         UNUSED(fan); // Potentially unused!
         return (fs * uint16_t(TERN(ADAPTIVE_FAN_SLOWING, fan_speed_scaler[fan], 128))) >> 7;
       }
 
-      static uint8_t scaledFanSpeed(const uint8_t fan) {
+      static uint_fast8_t scaledFanSpeed(const uint_fast8_t fan) {
         return scaledFanSpeed(fan, fan_speed[fan]);
       }
 
-      static constexpr inline uint8_t pwmToPercent(const uint8_t speed) { return ui8_to_percent(speed); }
-      static uint8_t fanSpeedPercent(const uint8_t fan)          { return ui8_to_percent(fan_speed[fan]); }
-      static uint8_t scaledFanSpeedPercent(const uint8_t fan)    { return ui8_to_percent(scaledFanSpeed(fan)); }
+      static constexpr uint_fast8_t pwmToPercent(const uint_fast8_t speed) { return ui8_to_percent(speed); }
+      static uint_fast8_t fanSpeedPercent(const uint_fast8_t fan)          { return ui8_to_percent(fan_speed[fan]); }
+      static uint_fast8_t scaledFanSpeedPercent(const uint_fast8_t fan)    { return ui8_to_percent(scaledFanSpeed(fan)); }
 
       #if ENABLED(EXTRA_FAN_SPEED)
-        typedef struct { uint8_t saved, speed; } extra_fan_t;
+        typedef struct { uint_fast8_t saved, speed; } extra_fan_t;
         static extra_fan_t extra_fan_speed[FAN_COUNT];
-        static void set_temp_fan_speed(const uint8_t fan, const uint16_t command_or_speed);
+        static void set_temp_fan_speed(const uint_fast8_t fan, const uint_fast16_t command_or_speed);
       #endif
 
       #if ANY(PROBING_FANS_OFF, ADVANCED_PAUSE_FANS_PAUSE)
@@ -945,17 +945,17 @@ class Temperature {
      */
     #if PREHEAT_TIME_HOTEND_MS > 0
       static millis_t preheat_end_ms_hotend[HOTENDS];
-      static bool is_hotend_preheating(const uint8_t E_NAME) {
+      static bool is_hotend_preheating(const uint_fast8_t E_NAME) {
         return preheat_end_ms_hotend[HOTEND_INDEX] && PENDING(millis(), preheat_end_ms_hotend[HOTEND_INDEX]);
       }
-      static void start_hotend_preheat_time(const uint8_t E_NAME) {
+      static void start_hotend_preheat_time(const uint_fast8_t E_NAME) {
         preheat_end_ms_hotend[HOTEND_INDEX] = millis() + PREHEAT_TIME_HOTEND_MS;
       }
-      static void reset_hotend_preheat_time(const uint8_t E_NAME) {
+      static void reset_hotend_preheat_time(const uint_fast8_t E_NAME) {
         preheat_end_ms_hotend[HOTEND_INDEX] = 0;
       }
     #else
-      static bool is_hotend_preheating(const uint8_t) { return false; }
+      static bool is_hotend_preheating(const uint_fast8_t) { return false; }
     #endif
 
     #if HAS_HEATED_BED
@@ -979,28 +979,28 @@ class Temperature {
     //inline so that there is no performance decrease.
     //deg=degreeCelsius
 
-    static celsius_float_t degHotend(const uint8_t E_NAME) {
+    static celsius_float_t degHotend(const uint_fast8_t E_NAME) {
       return TERN0(HAS_HOTEND, temp_hotend[HOTEND_INDEX].celsius);
     }
 
-    static celsius_t wholeDegHotend(const uint8_t E_NAME) {
+    static celsius_t wholeDegHotend(const uint_fast8_t E_NAME) {
       return TERN0(HAS_HOTEND, static_cast<celsius_t>(temp_hotend[HOTEND_INDEX].celsius + 0.5f));
     }
 
     #if ENABLED(SHOW_TEMP_ADC_VALUES)
-      static raw_adc_t rawHotendTemp(const uint8_t E_NAME) {
+      static raw_adc_t rawHotendTemp(const uint_fast8_t E_NAME) {
         return TERN0(HAS_HOTEND, temp_hotend[HOTEND_INDEX].getraw());
       }
     #endif
 
-    static celsius_t degTargetHotend(const uint8_t E_NAME) {
+    static celsius_t degTargetHotend(const uint_fast8_t E_NAME) {
       return TERN0(HAS_HOTEND, temp_hotend[HOTEND_INDEX].target);
     }
 
     #if HAS_HOTEND
 
-      static void setTargetHotend(const celsius_t celsius, const uint8_t E_NAME) {
-        const uint8_t ee = HOTEND_INDEX;
+      static void setTargetHotend(const celsius_t celsius, const uint_fast8_t E_NAME) {
+        const uint_fast8_t ee = HOTEND_INDEX;
         #if PREHEAT_TIME_HOTEND_MS > 0
           if (celsius == 0)
             reset_hotend_preheat_time(ee);
@@ -1012,34 +1012,34 @@ class Temperature {
         start_watching_hotend(ee);
       }
 
-      static bool isHeatingHotend(const uint8_t E_NAME) {
+      static bool isHeatingHotend(const uint_fast8_t E_NAME) {
         return temp_hotend[HOTEND_INDEX].target > temp_hotend[HOTEND_INDEX].celsius;
       }
 
-      static bool isCoolingHotend(const uint8_t E_NAME) {
+      static bool isCoolingHotend(const uint_fast8_t E_NAME) {
         return temp_hotend[HOTEND_INDEX].target < temp_hotend[HOTEND_INDEX].celsius;
       }
 
       #if HAS_TEMP_HOTEND
-        static bool wait_for_hotend(const uint8_t target_extruder, const bool no_wait_for_cooling=true
+        static bool wait_for_hotend(const uint_fast8_t target_extruder, const bool no_wait_for_cooling=true
           OPTARG(G26_CLICK_CAN_CANCEL, const bool click_to_cancel=false)
         );
 
         #if ENABLED(WAIT_FOR_HOTEND)
-          static void wait_for_hotend_heating(const uint8_t target_extruder);
+          static void wait_for_hotend_heating(const uint_fast8_t target_extruder);
         #endif
       #endif
 
-      static bool degHotendNear(const uint8_t e, const celsius_t temp) {
+      static bool degHotendNear(const uint_fast8_t e, const celsius_t temp) {
         return ABS(wholeDegHotend(e) - temp) < (TEMP_HYSTERESIS);
       }
 
-      static bool still_heating(const uint8_t e) {
+      static bool still_heating(const uint_fast8_t e) {
         return degTargetHotend(e) > TEMP_HYSTERESIS && !degHotendNear(e, degTargetHotend(e));
       }
 
       // Start watching a Hotend to make sure it's really heating up
-      static void start_watching_hotend(const uint8_t E_NAME) {
+      static void start_watching_hotend(const uint_fast8_t E_NAME) {
         UNUSED(HOTEND_INDEX);
         #if WATCH_HOTENDS
           watch_hotend[HOTEND_INDEX].restart(degHotend(HOTEND_INDEX), degTargetHotend(HOTEND_INDEX));
@@ -1294,7 +1294,7 @@ class Temperature {
       };
 
       enum MPCTuningType { AUTO, FORCE_ASYMPTOTIC, FORCE_DIFFERENTIAL };
-      static void MPC_autotune(const uint8_t e, MPCTuningType tuning_type);
+      static void MPC_autotune(const uint_fast8_t e, MPCTuningType tuning_type);
 
     #endif // MPC_AUTOTUNE
 
@@ -1304,7 +1304,7 @@ class Temperature {
 
     #if HEATER_IDLE_HANDLER
 
-      static void reset_hotend_idle_timer(const uint8_t E_NAME) {
+      static void reset_hotend_idle_timer(const uint_fast8_t E_NAME) {
         heater_idle[HOTEND_INDEX].reset();
         start_watching_hotend(HOTEND_INDEX);
       }
@@ -1319,7 +1319,7 @@ class Temperature {
     #endif // HEATER_IDLE_HANDLER
 
     #if HAS_TEMP_SENSOR
-      static void print_heater_states(const int8_t target_extruder
+      static void print_heater_states(const int_fast8_t target_extruder
         OPTARG(HAS_TEMP_REDUNDANT, const bool include_r=false)
       );
       #if ENABLED(AUTO_REPORT_TEMPERATURES)
@@ -1329,9 +1329,9 @@ class Temperature {
     #endif
 
     #if HAS_HOTEND && HAS_STATUS_MESSAGE
-      static void set_heating_message(const uint8_t e, const bool isM104=false);
+      static void set_heating_message(const uint_fast8_t e, const bool isM104=false);
     #else
-      static void set_heating_message(const uint8_t, const bool=false) {}
+      static void set_heating_message(const uint_fast8_t, const bool=false) {}
     #endif
 
     #if HAS_MARLINUI_MENU && HAS_TEMPERATURE && HAS_PREHEAT
@@ -1372,7 +1372,7 @@ class Temperature {
     #endif
 
     #if HAS_HOTEND
-      static float get_pid_output_hotend(const uint8_t e);
+      static float get_pid_output_hotend(const uint_fast8_t e);
     #endif
     #if ENABLED(PIDTEMPBED)
       static float get_pid_output_bed();

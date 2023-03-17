@@ -39,7 +39,7 @@ constexpr static StressTestScreenData &mydata = screen_data.StressTestScreen;
 
 void StressTestScreen::drawDots(uint16_t x, uint16_t y, uint16_t w, uint16_t h) {
   CommandProcessor cmd;
-  for (uint8_t i = 0; i < 100; i++) {
+  for (uint_fast8_t i = 0; i < 100; i++) {
     cmd.cmd(BEGIN(POINTS))
        .cmd(POINT_SIZE(20*16))
        .cmd(COLOR_RGB(random(0xFFFFFF)))

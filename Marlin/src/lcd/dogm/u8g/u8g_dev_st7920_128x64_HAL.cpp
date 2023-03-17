@@ -87,11 +87,11 @@ void clear_graphics_DRAM(u8g_t *u8g, u8g_dev_t *dev) {
   u8g_SetAddress(u8g, dev, 0);                    // Cmd mode
   u8g_WriteByte(u8g, dev, 0x08);                  // Display off, cursor+blink off
   u8g_WriteByte(u8g, dev, 0x3E);                  // Extended mode + GDRAM active
-  for (uint8_t y = 0; y < (LCD_PIXEL_HEIGHT) / 2; ++y) {  // Clear GDRAM
+  for (uint_fast8_t y = 0; y < (LCD_PIXEL_HEIGHT) / 2; ++y) {  // Clear GDRAM
     u8g_WriteByte(u8g, dev, 0x80 | y);            // Set y
     u8g_WriteByte(u8g, dev, 0x80);                // Set x = 0
     u8g_SetAddress(u8g, dev, 1);                  // Data mode
-    for (uint8_t i = 0; i < 2 * (LCD_PIXEL_WIDTH) / 8; ++i) // 2x width clears both segments
+    for (uint_fast8_t i = 0; i < 2 * (LCD_PIXEL_WIDTH) / 8; ++i) // 2x width clears both segments
       u8g_WriteByte(u8g, dev, 0);
     u8g_SetAddress(u8g, dev, 0);                  // Cmd mode
   }

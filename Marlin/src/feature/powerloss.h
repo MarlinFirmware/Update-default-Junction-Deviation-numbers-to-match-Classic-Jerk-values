@@ -85,7 +85,7 @@ typedef struct {
     xyz_pos_t workspace_offset;
   #endif
   #if HAS_MULTI_EXTRUDER
-    uint8_t active_extruder;
+    uint_fast8_t active_extruder;
   #endif
 
   #if DISABLED(NO_VOLUMETRICS)
@@ -102,7 +102,7 @@ typedef struct {
     celsius_t target_temperature_chamber;
   #endif
   #if HAS_FAN
-    uint8_t fan_speed[FAN_COUNT];
+    uint_fast8_t fan_speed[FAN_COUNT];
   #endif
 
   #if HAS_LEVELING

@@ -1922,7 +1922,7 @@ void redrawSDList() {
 
   if (card.isMounted()) {
     // As many files as will fit
-    for (uint8_t i = 0; i < _MIN(nr_sd_menu_items(), MROWS); ++i)
+    for (uint_fast8_t i = 0; i < _MIN(nr_sd_menu_items(), MROWS); ++i)
       drawSDItem(i, i + 1);
 
     TERN_(SCROLL_LONG_FILENAMES, initSDItemShift());
@@ -2069,7 +2069,7 @@ void drawInfoMenu() {
   dwinDrawString(false, font8x16, COLOR_WHITE, COLOR_BG_BLACK, (DWIN_WIDTH - strlen(CORP_WEBSITE) * MENU_CHR_W) / 2, 268, F(CORP_WEBSITE));
 
   drawBackFirst();
-  for (uint8_t i = 0; i < 3; ++i) {
+  for (uint_fast8_t i = 0; i < 3; ++i) {
     dwinIconShow(ICON, ICON_PrintSize + i, 26, 99 + i * 73);
     dwinDrawLine(COLOR_LINE, 16, MBASE(2) + i * 73, 256, 156 + i * 73);
   }
@@ -2259,7 +2259,7 @@ void hmiSelectFile() {
       #if HAS_FAN
         // All fans on for Ender-3 v2 ?
         // The slicer should manage this for us.
-        //for (uint8_t i = 0; i < FAN_COUNT; i++)
+        //for (uint_fast8_t i = 0; i < FAN_COUNT; i++)
         //  thermalManager.fan_speed[i] = 255;
       #endif
 
@@ -2421,7 +2421,7 @@ void drawMoveMenu() {
   if (select_axis.now != CASE_BACK) drawMenuCursor(select_axis.now);
 
   // Draw separators and icons
-  for (uint8_t i = 0; i < 3 + ENABLED(HAS_HOTEND); ++i) drawMenuLine(i + 1, ICON_MoveX + i);
+  for (uint_fast8_t i = 0; i < 3 + ENABLED(HAS_HOTEND); ++i) drawMenuLine(i + 1, ICON_MoveX + i);
 }
 
 void itemAdvHomeOffsets(const uint8_t row) {
@@ -3302,7 +3302,7 @@ void drawMaxSpeedMenu() {
   }
 
   drawBackFirst();
-  for (uint8_t i = 0; i < 3 + ENABLED(HAS_HOTEND); ++i) drawMenuLine(i + 1, ICON_MaxSpeedX + i);
+  for (uint_fast8_t i = 0; i < 3 + ENABLED(HAS_HOTEND); ++i) drawMenuLine(i + 1, ICON_MaxSpeedX + i);
   drawEditInteger4(1, planner.settings.max_feedrate_mm_s[X_AXIS]);
   drawEditInteger4(2, planner.settings.max_feedrate_mm_s[Y_AXIS]);
   drawEditInteger4(3, planner.settings.max_feedrate_mm_s[Z_AXIS]);
@@ -3356,7 +3356,7 @@ void drawMaxAccelMenu() {
   }
 
   drawBackFirst();
-  for (uint8_t i = 0; i < 3 + ENABLED(HAS_HOTEND); ++i) drawMenuLine(i + 1, ICON_MaxAccX + i);
+  for (uint_fast8_t i = 0; i < 3 + ENABLED(HAS_HOTEND); ++i) drawMenuLine(i + 1, ICON_MaxAccX + i);
   drawEditInteger4(1, planner.settings.max_acceleration_mm_per_s2[X_AXIS]);
   drawEditInteger4(2, planner.settings.max_acceleration_mm_per_s2[Y_AXIS]);
   drawEditInteger4(3, planner.settings.max_acceleration_mm_per_s2[Z_AXIS]);
@@ -3415,7 +3415,7 @@ void drawMaxAccelMenu() {
     }
 
     drawBackFirst();
-    for (uint8_t i = 0; i < 3 + ENABLED(HAS_HOTEND); ++i) drawMenuLine(i + 1, ICON_MaxSpeedJerkX + i);
+    for (uint_fast8_t i = 0; i < 3 + ENABLED(HAS_HOTEND); ++i) drawMenuLine(i + 1, ICON_MaxSpeedJerkX + i);
     drawEditFloat3(1, planner.max_jerk.x * MINUNITMULT);
     drawEditFloat3(2, planner.max_jerk.y * MINUNITMULT);
     drawEditFloat3(3, planner.max_jerk.z * MINUNITMULT);
@@ -3466,7 +3466,7 @@ void drawStepsMenu() {
   }
 
   drawBackFirst();
-  for (uint8_t i = 0; i < 3 + ENABLED(HAS_HOTEND); ++i) drawMenuLine(i + 1, ICON_StepX + i);
+  for (uint_fast8_t i = 0; i < 3 + ENABLED(HAS_HOTEND); ++i) drawMenuLine(i + 1, ICON_StepX + i);
   drawEditFloat3(1, planner.settings.axis_steps_per_mm[X_AXIS] * MINUNITMULT);
   drawEditFloat3(2, planner.settings.axis_steps_per_mm[Y_AXIS] * MINUNITMULT);
   drawEditFloat3(3, planner.settings.axis_steps_per_mm[Z_AXIS] * MINUNITMULT);

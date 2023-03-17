@@ -85,7 +85,7 @@
 void GcodeSuite::M600() {
 
   #if ENABLED(MIXING_EXTRUDER)
-    const int8_t eindex = get_target_e_stepper_from_command();
+    const int_fast8_t eindex = get_target_e_stepper_from_command();
     if (eindex < 0) return;
 
     const uint8_t old_mixing_tool = mixer.get_current_vtool();
@@ -94,9 +94,9 @@ void GcodeSuite::M600() {
     MIXER_STEPPER_LOOP(i) mixer.set_collector(i, i == uint8_t(eindex) ? 1.0 : 0.0);
     mixer.normalize();
 
-    const int8_t target_extruder = active_extruder;
+    const int_fast8_t target_extruder = active_extruder;
   #else
-    const int8_t target_extruder = get_target_extruder_from_command();
+    const int_fast8_t target_extruder = get_target_extruder_from_command();
     if (target_extruder < 0) return;
   #endif
 
@@ -126,7 +126,7 @@ void GcodeSuite::M600() {
 
   #if HAS_MULTI_EXTRUDER
     // Change toolhead if specified
-    const uint8_t active_extruder_before_filament_change = active_extruder;
+    const uint_fast8_t active_extruder_before_filament_change = active_extruder;
     if (active_extruder != target_extruder && TERN1(DUAL_X_CARRIAGE, !idex_is_duplicating()))
       tool_change(target_extruder);
   #endif

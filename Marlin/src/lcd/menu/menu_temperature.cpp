@@ -175,7 +175,7 @@ void menu_temperature() {
   #endif
 
   #if ENABLED(SINGLENOZZLE_STANDBY_TEMP)
-    for (uint8_t e = 1; e < EXTRUDERS; ++e)
+    for (uint_fast8_t e = 1; e < EXTRUDERS; ++e)
       EDIT_ITEM_FAST_N(int3, e, MSG_NOZZLE_STANDBY, &thermalManager.singlenozzle_temp[e], 0, thermalManager.hotend_max_target(0));
   #endif
 
@@ -262,7 +262,7 @@ void menu_temperature() {
     //
     // Preheat for all Materials
     //
-    for (uint8_t m = 0; m < PREHEAT_COUNT; ++m) {
+    for (uint_fast8_t m = 0; m < PREHEAT_COUNT; ++m) {
       editable.int8 = m;
       #if HAS_MULTI_HOTEND || HAS_HEATED_BED
         SUBMENU_f(ui.get_preheat_label(m), MSG_PREHEAT_M, menu_preheat_m);
@@ -289,7 +289,7 @@ void menu_temperature() {
     START_MENU();
     BACK_ITEM(MSG_MAIN_MENU);
 
-    for (uint8_t m = 0; m < PREHEAT_COUNT; ++m) {
+    for (uint_fast8_t m = 0; m < PREHEAT_COUNT; ++m) {
       editable.int8 = m;
       #if HAS_MULTI_HOTEND || HAS_HEATED_BED
         SUBMENU_f(ui.get_preheat_label(m), MSG_PREHEAT_M, menu_preheat_m);

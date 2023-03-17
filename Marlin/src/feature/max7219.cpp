@@ -174,7 +174,7 @@ void Max7219::error(FSTR_P const func, const int32_t v1, const int32_t v2/*=-1*/
  */
 inline uint32_t flipped(const uint32_t bits, const uint8_t n_bytes) {
   uint32_t mask = 1, outbits = 0;
-  for (uint8_t b = 0; b < n_bytes * 8; ++b) {
+  for (uint_fast8_t b = 0; b < n_bytes * 8; ++b) {
     outbits <<= 1;
     if (bits & mask) outbits |= 1;
     mask <<= 1;
@@ -186,7 +186,7 @@ void Max7219::noop() {
   CRITICAL_SECTION_START();
   SIG_DELAY();
   WRITE(MAX7219_DIN_PIN, LOW);
-  for (uint8_t i = 16; i--;) {
+  for (uint_fast8_t i = 16; i--;) {
     SIG_DELAY();
     WRITE(MAX7219_CLK_PIN, LOW);
     SIG_DELAY();
@@ -199,7 +199,7 @@ void Max7219::noop() {
 
 void Max7219::putbyte(uint8_t data) {
   CRITICAL_SECTION_START();
-  for (uint8_t i = 8; i--;) {
+  for (uint_fast8_t i = 8; i--;) {
     SIG_DELAY();
     WRITE(MAX7219_CLK_PIN, LOW);       // tick
     SIG_DELAY();
@@ -236,7 +236,7 @@ void Max7219::refresh_unit_line(const uint8_t line) {
   #if MAX7219_NUMBER_UNITS == 1
     send(LINE_REG(line), led_line[line]);
   #else
-    for (uint8_t u = MAX7219_NUMBER_UNITS; u--;)
+    for (uint_fast8_t u = MAX7219_NUMBER_UNITS; u--;)
       if (u == (line >> 3)) send(LINE_REG(line), led_line[line]); else noop();
   #endif
   pulse_load();
@@ -248,7 +248,7 @@ void Max7219::refresh_line(const uint8_t line) {
   #if MAX7219_NUMBER_UNITS == 1
     refresh_unit_line(line);
   #else
-    for (uint8_t u = MAX7219_NUMBER_UNITS; u--;)
+    for (uint_fast8_t u = MAX7219_NUMBER_UNITS; u--;)
       send(LINE_REG(line), led_line[(u << 3) | (line & 0x7)]);
   #endif
   pulse_load();
@@ -357,13 +357,13 @@ void Max7219::fill() {
 
 void Max7219::clear_row(const uint8_t row) {
   if (row >= MAX7219_Y_LEDS) return error(F("clear_row"), row);
-  for (uint8_t x = 0; x < MAX7219_X_LEDS; ++x) CLR_7219(x, row);
+  for (uint_fast8_t x = 0; x < MAX7219_X_LEDS; ++x) CLR_7219(x, row);
   send_row(row);
 }
 
 void Max7219::clear_column(const uint8_t col) {
   if (col >= MAX7219_X_LEDS) return error(F("set_column"), col);
-  for (uint8_t y = 0; y < MAX7219_Y_LEDS; ++y) CLR_7219(col, y);
+  for (uint_fast8_t y = 0; y < MAX7219_Y_LEDS; ++y) CLR_7219(col, y);
   send_column(col);
 }
 
@@ -375,7 +375,7 @@ void Max7219::clear_column(const uint8_t col) {
 void Max7219::set_row(const uint8_t row, const uint32_t val) {
   if (row >= MAX7219_Y_LEDS) return error(F("set_row"), row);
   uint32_t mask = _BV32(MAX7219_X_LEDS - 1);
-  for (uint8_t x = 0; x < MAX7219_X_LEDS; ++x) {
+  for (uint_fast8_t x = 0; x < MAX7219_X_LEDS; ++x) {
     if (val & mask) SET_7219(x, row); else CLR_7219(x, row);
     mask >>= 1;
   }
@@ -390,7 +390,7 @@ void Max7219::set_row(const uint8_t row, const uint32_t val) {
 void Max7219::set_column(const uint8_t col, const uint32_t val) {
   if (col >= MAX7219_X_LEDS) return error(F("set_column"), col);
   uint32_t mask = _BV32(MAX7219_Y_LEDS - 1);
-  for (uint8_t y = 0; y < MAX7219_Y_LEDS; ++y) {
+  for (uint_fast8_t y = 0; y < MAX7219_Y_LEDS; ++y) {
     if (val & mask) SET_7219(col, y); else CLR_7219(col, y);
     mask >>= 1;
   }
@@ -455,23 +455,23 @@ void Max7219::set_columns_32bits(const uint8_t x, uint32_t val) {
 
 // Initialize the Max7219
 void Max7219::register_setup() {
-  for (uint8_t i = 0; i < MAX7219_NUMBER_UNITS; ++i)
+  for (uint_fast8_t i = 0; i < MAX7219_NUMBER_UNITS; ++i)
     send(max7219_reg_scanLimit, 0x07);
   pulse_load();                               // Tell the chips to load the clocked out data
 
-  for (uint8_t i = 0; i < MAX7219_NUMBER_UNITS; ++i)
+  for (uint_fast8_t i = 0; i < MAX7219_NUMBER_UNITS; ++i)
     send(max7219_reg_decodeMode, 0x00);       // Using an led matrix (not digits)
   pulse_load();                               // Tell the chips to load the clocked out data
 
-  for (uint8_t i = 0; i < MAX7219_NUMBER_UNITS; ++i)
+  for (uint_fast8_t i = 0; i < MAX7219_NUMBER_UNITS; ++i)
     send(max7219_reg_shutdown, 0x01);         // Not in shutdown mode
   pulse_load();                               // Tell the chips to load the clocked out data
 
-  for (uint8_t i = 0; i < MAX7219_NUMBER_UNITS; ++i)
+  for (uint_fast8_t i = 0; i < MAX7219_NUMBER_UNITS; ++i)
     send(max7219_reg_displayTest, 0x00);      // No display test
   pulse_load();                               // Tell the chips to load the clocked out data
 
-  for (uint8_t i = 0; i < MAX7219_NUMBER_UNITS; ++i)
+  for (uint_fast8_t i = 0; i < MAX7219_NUMBER_UNITS; ++i)
     send(max7219_reg_intensity, 0x01 & 0x0F); // The first 0x0F is the value you can set
                                               // Range: 0x00 to 0x0F
   pulse_load();                               // Tell the chips to load the clocked out data
@@ -619,26 +619,26 @@ void Max7219::mark16(const uint8_t pos, const uint8_t v1, const uint8_t v2, uint
 void Max7219::range16(const uint8_t y, const uint8_t ot, const uint8_t nt, const uint8_t oh,
   const uint8_t nh, uint8_t * const rcm/*=nullptr*/) {
   #if MAX7219_X_LEDS > 8    // At least 16 LEDs on the X-Axis. Use single line.
-    if (ot != nt) for (uint8_t n = ot & 0xF; n != (nt & 0xF) && n != (nh & 0xF); n = (n + 1) & 0xF)
+    if (ot != nt) for (uint_fast8_t n = ot & 0xF; n != (nt & 0xF) && n != (nh & 0xF); n = (n + 1) & 0xF)
       led_off(n & 0xF, y, rcm);
-    if (oh != nh) for (uint8_t n = (oh + 1) & 0xF; n != ((nh + 1) & 0xF); n = (n + 1) & 0xF)
+    if (oh != nh) for (uint_fast8_t n = (oh + 1) & 0xF; n != ((nh + 1) & 0xF); n = (n + 1) & 0xF)
        led_on(n & 0xF, y, rcm);
   #elif MAX7219_Y_LEDS > 8  // At least 16 LEDs on the Y-Axis. Use a single column.
-    if (ot != nt) for (uint8_t n = ot & 0xF; n != (nt & 0xF) && n != (nh & 0xF); n = (n + 1) & 0xF)
+    if (ot != nt) for (uint_fast8_t n = ot & 0xF; n != (nt & 0xF) && n != (nh & 0xF); n = (n + 1) & 0xF)
       led_off(y, n & 0xF, rcm);
-    if (oh != nh) for (uint8_t n = (oh + 1) & 0xF; n != ((nh + 1) & 0xF); n = (n + 1) & 0xF)
+    if (oh != nh) for (uint_fast8_t n = (oh + 1) & 0xF; n != ((nh + 1) & 0xF); n = (n + 1) & 0xF)
        led_on(y, n & 0xF, rcm);
   #else                     // Single 8x8 LED matrix. Use two lines to get 16 LEDs.
-    if (ot != nt) for (uint8_t n = ot & 0xF; n != (nt & 0xF) && n != (nh & 0xF); n = (n + 1) & 0xF)
+    if (ot != nt) for (uint_fast8_t n = ot & 0xF; n != (nt & 0xF) && n != (nh & 0xF); n = (n + 1) & 0xF)
       led_off(n & 0x7, y + (n >= 8), rcm);
-    if (oh != nh) for (uint8_t n = (oh + 1) & 0xF; n != ((nh + 1) & 0xF); n = (n + 1) & 0xF)
+    if (oh != nh) for (uint_fast8_t n = (oh + 1) & 0xF; n != ((nh + 1) & 0xF); n = (n + 1) & 0xF)
        led_on(n & 0x7, y + (n >= 8), rcm);
   #endif
 }
 
 // Apply changes to update a quantity
 void Max7219::quantity(const uint8_t pos, const uint8_t ov, const uint8_t nv, uint8_t * const rcm/*=nullptr*/) {
-  for (uint8_t i = _MIN(nv, ov); i < _MAX(nv, ov); i++)
+  for (uint_fast8_t i = _MIN(nv, ov); i < _MAX(nv, ov); i++)
     led_set(
       #if MAX7219_X_LEDS >= MAX7219_Y_LEDS
         i, pos  // Single matrix or multiple matrices in Landscape
@@ -651,7 +651,7 @@ void Max7219::quantity(const uint8_t pos, const uint8_t ov, const uint8_t nv, ui
 }
 
 void Max7219::quantity16(const uint8_t pos, const uint8_t ov, const uint8_t nv, uint8_t * const rcm/*=nullptr*/) {
-  for (uint8_t i = _MIN(nv, ov); i < _MAX(nv, ov); i++)
+  for (uint_fast8_t i = _MIN(nv, ov); i < _MAX(nv, ov); i++)
     led_set(
       #if MAX7219_X_LEDS > 8    // At least 16 LEDs on the X-Axis. Use single line.
         i, pos
@@ -765,7 +765,7 @@ void Max7219::idle_tasks() {
     if (multistepping != last_multistepping) {
       static uint8_t log2_old = 0;
       uint8_t log2_new = 0;
-      for (uint8_t val = multistepping; val > 1; val >>= 1) log2_new++;
+      for (uint_fast8_t val = multistepping; val > 1; val >>= 1) log2_new++;
       mark16(MAX7219_DEBUG_MULTISTEPPING, log2_old, log2_new, &row_change_mask);
       last_multistepping = multistepping;
       log2_old = log2_new;
@@ -784,7 +784,7 @@ void Max7219::idle_tasks() {
   // batch line updates
   suspended--;
   if (!suspended)
-    for (uint8_t i = 0; i < 8; ++i) if (row_change_mask & _BV(i))
+    for (uint_fast8_t i = 0; i < 8; ++i) if (row_change_mask & _BV(i))
       refresh_line(i);
 
   // After resume() automatically do a refresh()

@@ -194,7 +194,7 @@ CardReader::CardReader() {
 //
 char *createFilename(char * const buffer, const dir_t &p) {
   char *pos = buffer;
-  for (uint8_t i = 0; i < 11; ++i) {
+  for (uint_fast8_t i = 0; i < 11; ++i) {
     if (p.name[i] == ' ') continue;
     if (i == 8) *pos++ = '.';
     *pos++ = p.name[i];
@@ -267,7 +267,7 @@ void CardReader::selectByIndex(MediaFile dir, const int16_t index) {
 //
 void CardReader::selectByName(MediaFile dir, const char * const match) {
   dir_t p;
-  for (uint8_t cnt = 0; dir.readDir(&p, longFilename) > 0; cnt++) {
+  for (uint_fast8_t cnt = 0; dir.readDir(&p, longFilename) > 0; cnt++) {
     if (is_visible_entity(p)) {
       createFilename(filename, p);
       if (strcasecmp(match, filename) == 0) return;
@@ -657,7 +657,7 @@ void CardReader::getAbsFilenameInCWD(char *dst) {
     if (cnt < MAXPATHNAMELENGTH) { *dst = '/'; dst++; cnt++; }
   };
 
-  for (uint8_t i = 0; i < workDirDepth; ++i)                // Loop down to current work dir
+  for (uint_fast8_t i = 0; i < workDirDepth; ++i)                // Loop down to current work dir
     appendAtom(workDirParents[i]);
 
   if (cnt < MAXPATHNAMELENGTH - (FILENAME_LENGTH) - 1) {    // Leave room for filename and nul
@@ -1392,7 +1392,7 @@ void CardReader::cdroot() {
       #if ENABLED(SDSORT_DYNAMIC_RAM)
         delete [] sort_order;
         #if ENABLED(SDSORT_CACHE_NAMES)
-          for (uint8_t i = 0; i < sort_count; ++i) {
+          for (uint_fast8_t i = 0; i < sort_count; ++i) {
             free(sortshort[i]); // strdup
             free(sortnames[i]); // strdup
           }

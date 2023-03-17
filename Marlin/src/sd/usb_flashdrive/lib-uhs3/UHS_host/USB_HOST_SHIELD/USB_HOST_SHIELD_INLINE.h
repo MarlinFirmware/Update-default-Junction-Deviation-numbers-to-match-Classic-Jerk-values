@@ -882,7 +882,7 @@ void UHS_NI MAX3421E_HOST::ISRbottom() {
     #ifdef USB_HOST_MANUAL_POLL
       if (usb_task_state == UHS_USB_HOST_STATE_RUNNING) {
         noInterrupts();
-        for (uint8_t x = 0; x < UHS_HOST_MAX_INTERFACE_DRIVERS; x++)
+        for (uint_fast8_t x = 0; x < UHS_HOST_MAX_INTERFACE_DRIVERS; x++)
           if (devConfig[x] && devConfig[x]->bPollEnable)
             devConfig[x]->Poll();
         interrupts();

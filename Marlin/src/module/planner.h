@@ -227,9 +227,9 @@ typedef struct PlannerBlock {
   uint32_t step_event_count;                // The number of step events required to complete this block
 
   #if HAS_MULTI_EXTRUDER
-    uint8_t extruder;                       // The extruder to move (if E move)
+    uint_fast8_t extruder;                  // The extruder to move (if E move)
   #else
-    static constexpr uint8_t extruder = 0;
+    static constexpr uint_fast8_t extruder = 0;
   #endif
 
   #if ENABLED(MIXING_EXTRUDER)
@@ -254,9 +254,9 @@ typedef struct PlannerBlock {
 
   // Advance extrusion
   #if ENABLED(LIN_ADVANCE)
-    uint32_t la_advance_rate;               // The rate at which steps are added whilst accelerating
-    uint8_t  la_scaling;                    // Scale ISR frequency down and step frequency up by 2 ^ la_scaling
-    uint16_t max_adv_steps,                 // Max advance steps to get cruising speed pressure
+    uint_fast32_t la_advance_rate;          // The rate at which steps are added whilst accelerating
+    uint_fast8_t la_scaling;                // Scale ISR frequency down and step frequency up by 2 ^ la_scaling
+    uint_fast16_t max_adv_steps,            // Max advance steps to get cruising speed pressure
              final_adv_steps;               // Advance steps for exit speed pressure
   #endif
 
@@ -274,7 +274,7 @@ typedef struct PlannerBlock {
   #endif
 
   #if HAS_FAN
-    uint8_t fan_speed[FAN_COUNT];
+    uint_fast8_t fan_speed[FAN_COUNT];
   #endif
 
   #if ENABLED(BARICUDA)
@@ -302,11 +302,11 @@ typedef struct PlannerBlock {
   #define HAS_POSITION_FLOAT 1
 #endif
 
-constexpr uint8_t block_dec_mod(const uint8_t v1, const uint8_t v2) {
+constexpr uint_fast8_t block_dec_mod(const uint_fast8_t v1, const uint_fast8_t v2) {
   return v1 >= v2 ? v1 - v2 : v1 - v2 + BLOCK_BUFFER_SIZE;
 }
 
-constexpr uint8_t block_inc_mod(const uint8_t v1, const uint8_t v2) {
+constexpr uint_fast8_t block_inc_mod(const uint_fast8_t v1, const uint_fast8_t v2) {
   return v1 + v2 < BLOCK_BUFFER_SIZE ? v1 + v2 : v1 + v2 - BLOCK_BUFFER_SIZE;
 }
 
@@ -439,14 +439,14 @@ class Planner {
      *  Reader of tail is Stepper::isr(). Always consider tail busy / read-only
      */
     static block_t block_buffer[BLOCK_BUFFER_SIZE];
-    static volatile uint8_t block_buffer_head,      // Index of the next block to be pushed
-                            block_buffer_nonbusy,   // Index of the first non busy block
-                            block_buffer_tail;      // Index of the busy block, if any
-    static uint16_t cleaning_buffer_counter;        // A counter to disable queuing of blocks
-    static uint8_t delay_before_delivering;         // This counter delays delivery of blocks when queue becomes empty to allow the opportunity of merging blocks
+    static volatile uint_fast8_t block_buffer_head,     // Index of the next block to be pushed
+                                 block_buffer_nonbusy,  // Index of the first non busy block
+                                 block_buffer_tail;     // Index of the busy block, if any
+    static uint_fast16_t cleaning_buffer_counter;       // A counter to disable queuing of blocks
+    static uint_fast8_t delay_before_delivering;        // This counter delays delivery of blocks when queue becomes empty to allow the opportunity of merging blocks
 
     #if ENABLED(DISTINCT_E_FACTORS)
-      static uint8_t last_extruder;                 // Respond to extruder change
+      static uint_fast8_t last_extruder;                // Respond to extruder change
     #endif
 
     #if ENABLED(DIRECT_STEPPING)
@@ -640,11 +640,11 @@ class Planner {
 
     // Apply fan speeds
     #if HAS_FAN
-      static void sync_fan_speeds(uint8_t (&fan_speed)[FAN_COUNT]);
+      static void sync_fan_speeds(uint_fast8_t (&fan_speed)[FAN_COUNT]);
       #if FAN_KICKSTART_TIME
-        static void kickstart_fan(uint8_t (&fan_speed)[FAN_COUNT], const millis_t &ms, const uint8_t f);
+        static void kickstart_fan(uint_fast8_t (&fan_speed)[FAN_COUNT], const millis_t &ms, const uint_fast8_t f);
       #else
-        FORCE_INLINE static void kickstart_fan(uint8_t (&)[FAN_COUNT], const millis_t &, const uint8_t) {}
+        static void kickstart_fan(uint_fast8_t (&)[FAN_COUNT], const millis_t &, const uint_fast8_t) {}
       #endif
     #endif
 
@@ -670,22 +670,22 @@ class Planner {
 
       #if ENABLED(VOLUMETRIC_EXTRUDER_LIMIT)
         // Update pre calculated extruder feedrate limits based on volumetric values
-        static void calculate_volumetric_extruder_limit(const uint8_t e);
+        static void calculate_volumetric_extruder_limit(const uint_fast8_t e);
         static void calculate_volumetric_extruder_limits();
       #endif
 
-      FORCE_INLINE static void set_filament_size(const uint8_t e, const_float_t v) {
+      FORCE_INLINE static void set_filament_size(const uint_fast8_t e, const_float_t v) {
         filament_size[e] = v;
         if (v > 0) volumetric_area_nominal = CIRCLE_AREA(v * 0.5); //TODO: should it be per extruder
         // make sure all extruders have some sane value for the filament size
-        for (uint8_t i = 0; i < COUNT(filament_size); ++i)
+        for (uint_fast8_t i = 0; i < COUNT(filament_size); ++i)
           if (!filament_size[i]) filament_size[i] = DEFAULT_NOMINAL_FILAMENT_DIA;
       }
 
     #endif
 
     #if ENABLED(VOLUMETRIC_EXTRUDER_LIMIT)
-      FORCE_INLINE static void set_volumetric_extruder_limit(const uint8_t e, const_float_t v) {
+      FORCE_INLINE static void set_volumetric_extruder_limit(const uint_fast8_t e, const_float_t v) {
         volumetric_extruder_limit[e] = v;
         calculate_volumetric_extruder_limit(e);
       }
@@ -796,10 +796,10 @@ class Planner {
     #endif // HAS_POSITION_MODIFIERS
 
     // Number of moves currently in the planner including the busy block, if any
-    FORCE_INLINE static uint8_t movesplanned() { return block_dec_mod(block_buffer_head, block_buffer_tail); }
+    FORCE_INLINE static uint_fast8_t movesplanned() { return block_dec_mod(block_buffer_head, block_buffer_tail); }
 
     // Number of nonbusy moves currently in the planner
-    FORCE_INLINE static uint8_t nonbusy_movesplanned() { return block_dec_mod(block_buffer_head, block_buffer_nonbusy); }
+    FORCE_INLINE static uint_fast8_t nonbusy_movesplanned() { return block_dec_mod(block_buffer_head, block_buffer_nonbusy); }
 
     // Remove all blocks from the buffer
     FORCE_INLINE static void clear_block_buffer() { block_buffer_nonbusy = block_buffer_head = block_buffer_tail = 0; }
@@ -808,7 +808,7 @@ class Planner {
     FORCE_INLINE static bool is_full() { return block_buffer_tail == next_block_index(block_buffer_head); }
 
     // Get count of movement slots free
-    FORCE_INLINE static uint8_t moves_free() { return (BLOCK_BUFFER_SIZE) - 1 - movesplanned(); }
+    FORCE_INLINE static uint_fast8_t moves_free() { return (BLOCK_BUFFER_SIZE) - 1 - movesplanned(); }
 
     /**
      * @fn Planner::get_next_free_block
@@ -818,7 +818,7 @@ class Planner {
      *
      * @return  The first head block
      */
-    FORCE_INLINE static block_t* get_next_free_block(uint8_t &next_buffer_head, const uint8_t count=1) {
+    FORCE_INLINE static block_t* get_next_free_block(uint_fast8_t &next_buffer_head, const uint_fast8_t count=1) {
 
       // Wait until there are enough slots free
       while (moves_free() < count) { idle(); }
@@ -845,7 +845,7 @@ class Planner {
     static bool _buffer_steps(const xyze_long_t &target
       OPTARG(HAS_POSITION_FLOAT, const xyze_pos_t &target_float)
       OPTARG(HAS_DIST_MM_ARG, const xyze_float_t &cart_dist_mm)
-      , feedRate_t fr_mm_s, const uint8_t extruder, const PlannerHints &hints
+      , feedRate_t fr_mm_s, const uint_fast8_t extruder, const PlannerHints &hints
     );
 
     /**
@@ -869,7 +869,7 @@ class Planner {
     static bool _populate_block(block_t * const block, const xyze_long_t &target
       OPTARG(HAS_POSITION_FLOAT, const xyze_pos_t &target_float)
       OPTARG(HAS_DIST_MM_ARG, const xyze_float_t &cart_dist_mm)
-      , feedRate_t fr_mm_s, const uint8_t extruder, const PlannerHints &hints
+      , feedRate_t fr_mm_s, const uint_fast8_t extruder, const PlannerHints &hints
       , float &minimum_planner_speed_sqr
     );
 
@@ -903,7 +903,7 @@ class Planner {
     static bool buffer_segment(const abce_pos_t &abce
       OPTARG(HAS_DIST_MM_ARG, const xyze_float_t &cart_dist_mm)
       , const_feedRate_t fr_mm_s
-      , const uint8_t extruder=active_extruder
+      , const uint_fast8_t extruder=active_extruder
       , const PlannerHints &hints=PlannerHints()
     );
 
@@ -922,7 +922,7 @@ class Planner {
      * @return  false if no segment was queued due to cleaning, cold extrusion, full queue, etc...
      */
     static bool buffer_line(const xyze_pos_t &cart, const_feedRate_t fr_mm_s
-      , const uint8_t extruder=active_extruder
+      , const uint_fast8_t extruder=active_extruder
       , const PlannerHints &hints=PlannerHints()
     );
 
@@ -1033,7 +1033,7 @@ class Planner {
     }
 
     #if HAS_WIRED_LCD
-      static uint16_t block_buffer_runtime();
+      static uint_fast16_t block_buffer_runtime();
       static void clear_block_buffer_runtime();
     #endif
 
@@ -1065,8 +1065,8 @@ class Planner {
     /**
      * Get the index of the next / previous block in the ring buffer
      */
-    static constexpr uint8_t next_block_index(const uint8_t block_index) { return block_inc_mod(block_index, 1); }
-    static constexpr uint8_t prev_block_index(const uint8_t block_index) { return block_dec_mod(block_index, 1); }
+    static constexpr uint_fast8_t next_block_index(const uint_fast8_t block_index) { return block_inc_mod(block_index, 1); }
+    static constexpr uint_fast8_t prev_block_index(const uint_fast8_t block_index) { return block_dec_mod(block_index, 1); }
 
     /**
      * Calculate the maximum allowable speed squared at this point, in order

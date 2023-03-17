@@ -28,7 +28,7 @@
 GPIO_TypeDef* FastIOPortMap[LastPort + 1] = { 0 };
 
 void FastIO_init() {
-  for (uint8_t i = 0; i < NUM_DIGITAL_PINS; ++i)
+  for (uint_fast8_t i = 0; i < NUM_DIGITAL_PINS; ++i)
     FastIOPortMap[STM_PORT(digitalPin[i])] = get_GPIO_Port(STM_PORT(digitalPin[i]));
 }
 

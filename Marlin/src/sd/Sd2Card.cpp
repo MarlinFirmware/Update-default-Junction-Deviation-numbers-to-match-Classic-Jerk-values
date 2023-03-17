@@ -105,7 +105,7 @@
   #else
     static uint8_t CRC7(const uint8_t *data, uint8_t n) {
       uint8_t crc = 0;
-      for (uint8_t i = 0; i < n; ++i) {
+      for (uint_fast8_t i = 0; i < n; ++i) {
         uint8_t d = data[i];
         d ^= crc << 1;
         if (d & 0x80) d ^= 9;
@@ -143,7 +143,7 @@ uint8_t DiskIODriver_SPI_SD::cardCommand(const uint8_t cmd, const uint32_t arg) 
     d[5] = CRC7(d, 5);
 
     // Send message
-    for (uint8_t k = 0; k < 6; ++k) spiSend(d[k]);
+    for (uint_fast8_t k = 0; k < 6; ++k) spiSend(d[k]);
 
   #else
     // Send command
@@ -160,7 +160,7 @@ uint8_t DiskIODriver_SPI_SD::cardCommand(const uint8_t cmd, const uint32_t arg) 
   if (cmd == CMD12) spiRec();
 
   // Wait for response
-  for (uint8_t i = 0; ((status_ = spiRec()) & 0x80) && i != 0xFF; i++) { /* Intentionally left empty */ }
+  for (uint_fast8_t i = 0; ((status_ = spiRec()) & 0x80) && i != 0xFF; i++) { /* Intentionally left empty */ }
   return status_;
 }
 
@@ -316,7 +316,7 @@ bool DiskIODriver_SPI_SD::init(const uint8_t sckRateID, const pin_t chipSelectPi
   spiInit(spiRate_);
 
   // Must supply min of 74 clock cycles with CS high.
-  for (uint8_t i = 0; i < 10; ++i) spiSend(0xFF);
+  for (uint_fast8_t i = 0; i < 10; ++i) spiSend(0xFF);
 
   hal.watchdog_refresh(); // In case init takes too long
 
@@ -342,7 +342,7 @@ bool DiskIODriver_SPI_SD::init(const uint8_t sckRateID, const pin_t chipSelectPi
     }
 
     // Get the last byte of r7 response
-    for (uint8_t i = 0; i < 4; ++i) status_ = spiRec();
+    for (uint_fast8_t i = 0; i < 4; ++i) status_ = spiRec();
     if (status_ == 0xAA) {
       type(SD_CARD_TYPE_SD2);
       break;
@@ -374,7 +374,7 @@ bool DiskIODriver_SPI_SD::init(const uint8_t sckRateID, const pin_t chipSelectPi
     }
     if ((spiRec() & 0xC0) == 0xC0) type(SD_CARD_TYPE_SDHC);
     // Discard rest of ocr - contains allowed voltage range
-    for (uint8_t i = 0; i < 3; ++i) spiRec();
+    for (uint_fast8_t i = 0; i < 3; ++i) spiRec();
   }
 
   chipDeselect();

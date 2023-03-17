@@ -159,7 +159,7 @@ EncoderState encoderReceiveAnalyze() {
   //  RGB_Scale: RGB color ratio
   //  luminance: brightness (0~0xFF)
   void LED_Control(const uint8_t RGB_Scale, const uint8_t luminance) {
-    for (uint8_t i = 0; i < LED_NUM; i++) {
+    for (uint_fast8_t i = 0; i < LED_NUM; i++) {
       LED_DataArray[i] = 0;
       switch (RGB_Scale) {
         case RGB_SCALE_R10_G7_B5: LED_DataArray[i] = (luminance * 10/10) << 8 | (luminance * 7/10) << 16 | luminance * 5/10; break;
@@ -176,7 +176,7 @@ EncoderState encoderReceiveAnalyze() {
   //  change_Time: gradient time (ms)
   void LED_GraduallyControl(const uint8_t RGB_Scale, const uint8_t luminance, const uint16_t change_Interval) {
     struct { uint8_t g, r, b; } led_data[LED_NUM];
-    for (uint8_t i = 0; i < LED_NUM; i++) {
+    for (uint_fast8_t i = 0; i < LED_NUM; i++) {
       switch (RGB_Scale) {
         case RGB_SCALE_R10_G7_B5:
           led_data[i] = { luminance * 7/10, luminance * 10/10, luminance * 5/10 };
@@ -191,7 +191,7 @@ EncoderState encoderReceiveAnalyze() {
     }
 
     struct { bool g, r, b; } led_flag = { false, false, false };
-    for (uint8_t i = 0; i < LED_NUM; i++) {
+    for (uint_fast8_t i = 0; i < LED_NUM; i++) {
       while (1) {
         const uint8_t g = uint8_t(LED_DataArray[i] >> 16),
                       r = uint8_t(LED_DataArray[i] >> 8),

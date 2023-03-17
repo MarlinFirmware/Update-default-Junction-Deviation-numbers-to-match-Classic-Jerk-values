@@ -79,7 +79,7 @@ void write_to_lcd(FSTR_P const fmsg) {
   char encoded_message[MAX_CURLY_COMMAND];
   uint8_t message_length = _MIN(strlen_P(pmsg), sizeof(encoded_message));
 
-  for (uint8_t i = 0; i < message_length; ++i)
+  for (uint_fast8_t i = 0; i < message_length; ++i)
     encoded_message[i] = pgm_read_byte(&pmsg[i]) | 0x80;
 
   LCD_SERIAL.Print::write(encoded_message, message_length);
@@ -89,7 +89,7 @@ void write_to_lcd(const char * const cmsg) {
   char encoded_message[MAX_CURLY_COMMAND];
   const uint8_t message_length = _MIN(strlen(cmsg), sizeof(encoded_message));
 
-  for (uint8_t i = 0; i < message_length; ++i)
+  for (uint_fast8_t i = 0; i < message_length; ++i)
     encoded_message[i] = cmsg[i] | 0x80;
 
   LCD_SERIAL.Print::write(encoded_message, message_length);

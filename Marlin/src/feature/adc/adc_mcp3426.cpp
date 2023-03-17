@@ -81,7 +81,7 @@ int16_t MCP3426::ReadValue(uint8_t channel, uint8_t gain, uint8_t address) {
       return 0;
     }
 
-    for (uint8_t i = 0; i < len; ++i)
+    for (uint_fast8_t i = 0; i < len; ++i)
       buffer[i] = Wire.read();
 
     // Is conversion ready, if not loop around again

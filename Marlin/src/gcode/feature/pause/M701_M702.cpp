@@ -62,7 +62,7 @@ void GcodeSuite::M701() {
   if (TERN0(NO_MOTION_BEFORE_HOMING, axes_should_home())) park_point.z = 0;
 
   #if ENABLED(MIXING_EXTRUDER)
-    const int8_t eindex = get_target_e_stepper_from_command();
+    const int_fast8_t eindex = get_target_e_stepper_from_command();
     if (eindex < 0) return;
 
     const uint8_t old_mixing_tool = mixer.get_current_vtool();
@@ -71,9 +71,9 @@ void GcodeSuite::M701() {
     MIXER_STEPPER_LOOP(i) mixer.set_collector(i, i == uint8_t(eindex) ? 1.0 : 0.0);
     mixer.normalize();
 
-    const int8_t target_extruder = active_extruder;
+    const int_fast8_t target_extruder = active_extruder;
   #else
-    const int8_t target_extruder = get_target_extruder_from_command();
+    const int_fast8_t target_extruder = get_target_extruder_from_command();
     if (target_extruder < 0) return;
   #endif
 
@@ -85,7 +85,7 @@ void GcodeSuite::M701() {
 
   #if HAS_MULTI_EXTRUDER && (HAS_PRUSA_MMU1 || !HAS_MMU)
     // Change toolhead if specified
-    uint8_t active_extruder_before_filament_change = active_extruder;
+    uint_fast8_t active_extruder_before_filament_change = active_extruder;
     if (active_extruder != target_extruder)
       tool_change(target_extruder);
   #endif
@@ -169,16 +169,16 @@ void GcodeSuite::M702() {
     #endif
 
     if (seenT) {
-      const int8_t eindex = get_target_e_stepper_from_command();
+      const int_fast8_t eindex = get_target_e_stepper_from_command();
       if (eindex < 0) return;
       mixer.T(MIXER_DIRECT_SET_TOOL);
       MIXER_STEPPER_LOOP(i) mixer.set_collector(i, i == uint8_t(eindex) ? 1.0 : 0.0);
       mixer.normalize();
     }
 
-    const int8_t target_extruder = active_extruder;
+    const int_fast8_t target_extruder = active_extruder;
   #else
-    const int8_t target_extruder = get_target_extruder_from_command();
+    const int_fast8_t target_extruder = get_target_extruder_from_command();
     if (target_extruder < 0) return;
   #endif
 
@@ -190,7 +190,7 @@ void GcodeSuite::M702() {
 
   #if HAS_MULTI_EXTRUDER && (HAS_PRUSA_MMU1 || !HAS_MMU)
     // Change toolhead if specified
-    uint8_t active_extruder_before_filament_change = active_extruder;
+    uint_fast8_t active_extruder_before_filament_change = active_extruder;
     if (active_extruder != target_extruder)
       tool_change(target_extruder);
   #endif

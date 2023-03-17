@@ -130,7 +130,7 @@
 
 static void createChar_P(const char c, const byte * const ptr) {
   byte temp[8];
-  for (uint8_t i = 0; i < 8; ++i)
+  for (uint_fast8_t i = 0; i < 8; ++i)
     temp[i] = pgm_read_byte(&ptr[i]);
   lcd.createChar(c, temp);
 }
@@ -336,13 +336,13 @@ void MarlinUI::set_custom_characters(const HD44780CharSet screen_charset/*=CHARS
     #if ENABLED(SHOW_BOOTSCREEN)
       case CHARSET_BOOT: {
         // Set boot screen corner characters
-        for (uint8_t i = 4; i--;) createChar_P(i, corner[i]);
+        for (uint_fast8_t i = 4; i--;) createChar_P(i, corner[i]);
       } break;
     #endif
 
     #if ENABLED(SHOW_CUSTOM_BOOTSCREEN)
       case CHARSET_BOOT_CUSTOM: {
-        for (uint8_t i = COUNT(customBootChars); i--;)
+        for (uint_fast8_t i = COUNT(customBootChars); i--;)
           createChar_P(i, customBootChars[i]);
       } break;
     #endif
@@ -473,7 +473,7 @@ void MarlinUI::clear_for_drawing() { clear_lcd(); }
 
   void lcd_erase_line(const lcd_uint_t line) {
     lcd_moveto(0, line);
-    for (uint8_t i = LCD_WIDTH + 1; --i;)
+    for (uint_fast8_t i = LCD_WIDTH + 1; --i;)
       lcd_put_u8str(F(" "));
   }
 
@@ -488,13 +488,13 @@ void MarlinUI::clear_for_drawing() { clear_lcd(); }
     else {
       PGM_P p = FTOP(ftxt);
       int dly = time / _MAX(slen, 1);
-      for (uint8_t i = 0; i <= slen; ++i) {
+      for (uint_fast8_t i = 0; i <= slen; ++i) {
 
         // Print the text at the correct place
         lcd_put_u8str_max_P(col, line, p, len);
 
         // Fill with spaces
-        for (uint8_t ix = slen - i; ix < len; ++ix) lcd_put_u8str(F(" "));
+        for (uint_fast8_t ix = slen - i; ix < len; ++ix) lcd_put_u8str(F(" "));
 
         // Delay
         safe_delay(dly);

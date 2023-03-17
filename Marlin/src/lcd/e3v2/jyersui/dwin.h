@@ -250,10 +250,13 @@ public:
   static void setupValue(const_float_t value, const_float_t min, const_float_t max, const_float_t unit, const uint8_t type);
   static void modifyValue(float &value, const_float_t min, const_float_t max, const_float_t unit, void (*f)()=nullptr);
   static void modifyValue(uint8_t &value, const_float_t min, const_float_t max, const_float_t unit, void (*f)()=nullptr);
+  static void modifyValue(int8_t &value, const_float_t min, const_float_t max, const_float_t unit, void (*f)()=nullptr);
   static void modifyValue(uint16_t &value, const_float_t min, const_float_t max, const_float_t unit, void (*f)()=nullptr);
   static void modifyValue(int16_t &value, const_float_t min, const_float_t max, const_float_t unit, void (*f)()=nullptr);
   static void modifyValue(uint32_t &value, const_float_t min, const_float_t max, const_float_t unit, void (*f)()=nullptr);
-  static void modifyValue(int8_t &value, const_float_t min, const_float_t max, const_float_t unit, void (*f)()=nullptr);
+  static void modifyValue(int32_t &value, const_float_t min, const_float_t max, const_float_t unit, void (*f)()=nullptr);
+  static void modifyValue(uint_fast8_t &value, const_float_t min, const_float_t max, const_float_t unit, void (*f)()=nullptr);
+  static void modifyValue(int_fast8_t &value, const_float_t min, const_float_t max, const_float_t unit, void (*f)()=nullptr);
   static void modifyOption(const uint8_t value, const char * const * options, const uint8_t max);
 
   static void updateStatus(const char * const text);

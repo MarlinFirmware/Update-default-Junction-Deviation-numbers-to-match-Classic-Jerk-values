@@ -117,7 +117,7 @@ class AddressPoolImpl : public AddressPool {
   // Return thePool index for a given address
 
   uint8_t FindAddressIndex(uint8_t address = 0) {
-    for (uint8_t i = 1; i < MAX_DEVICES_ALLOWED; i++)
+    for (uint_fast8_t i = 1; i < MAX_DEVICES_ALLOWED; i++)
       if (thePool[i].address.devAddress == address)
         return i;
 
@@ -127,7 +127,7 @@ class AddressPoolImpl : public AddressPool {
   // Return thePool child index for a given parent
 
   uint8_t FindChildIndex(UsbDeviceAddress addr, uint8_t start = 1) {
-    for (uint8_t i = (start < 1 || start >= MAX_DEVICES_ALLOWED) ? 1 : start; i < MAX_DEVICES_ALLOWED; i++) {
+    for (uint_fast8_t i = (start < 1 || start >= MAX_DEVICES_ALLOWED) ? 1 : start; i < MAX_DEVICES_ALLOWED; i++) {
       if (thePool[i].address.bmParent == addr.bmAddress)
         return i;
     }
@@ -143,7 +143,7 @@ class AddressPoolImpl : public AddressPool {
     UsbDeviceAddress uda = thePool[index].address;
     // If a hub was switched off all port addresses should be freed
     if (uda.bmHub == 1) {
-      for (uint8_t i = 1; (i = FindChildIndex(uda, i));)
+      for (uint_fast8_t i = 1; (i = FindChildIndex(uda, i));)
         FreeAddressByIndex(i);
 
       // If the hub had the last allocated address, hubCounter should be decremented
@@ -155,7 +155,7 @@ class AddressPoolImpl : public AddressPool {
   // Initialize the whole address pool at once
 
   void InitAllAddresses() {
-    for (uint8_t i = 1; i < MAX_DEVICES_ALLOWED; i++)
+    for (uint_fast8_t i = 1; i < MAX_DEVICES_ALLOWED; i++)
       InitEntry(i);
 
     hubCounter = 0;
@@ -190,7 +190,7 @@ public:
 
   void ForEachUsbDevice(UsbDeviceHandleFunc pfunc) {
     if (pfunc) {
-      for (uint8_t i = 1; i < MAX_DEVICES_ALLOWED; i++)
+      for (uint_fast8_t i = 1; i < MAX_DEVICES_ALLOWED; i++)
         if (thePool[i].address.devAddress)
           pfunc(thePool + i);
     }
@@ -264,7 +264,7 @@ public:
   //uint8_t GetNumHubs() { return hubCounter; }
   //uint8_t GetNumDevices() {
   //  uint8_t counter = 0;
-  //  for (uint8_t i = 1; i < MAX_DEVICES_ALLOWED; i++)
+  //  for (uint_fast8_t i = 1; i < MAX_DEVICES_ALLOWED; i++)
   //    if (thePool[i].address != 0); counter++;
   //  return counter;
   //}

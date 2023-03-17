@@ -43,12 +43,12 @@ void XATC::reset() {
 
 void XATC::print_points() {
   SERIAL_ECHOLNPGM(" X-Twist Correction:");
-  for (uint8_t x = 0; x < XATC_MAX_POINTS; ++x) {
+  for (uint_fast8_t x = 0; x < XATC_MAX_POINTS; ++x) {
     SERIAL_CHAR(' ');
     if (!isnan(z_offset[x]))
       serial_offset(z_offset[x]);
     else
-      for (uint8_t i = 0; i < 6; ++i) SERIAL_CHAR(i ? '=' : ' ');
+      for (uint_fast8_t i = 0; i < 6; ++i) SERIAL_CHAR(i ? '=' : ' ');
   }
   SERIAL_EOL();
 }

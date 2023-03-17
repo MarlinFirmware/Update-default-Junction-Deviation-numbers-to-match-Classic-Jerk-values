@@ -94,7 +94,7 @@ void DigipotI2C::init() {
       DIGIPOT_I2C_MOTOR_CURRENTS
     #endif
   ;
-  for (uint8_t i = 0; i < COUNT(digipot_motor_current); ++i)
+  for (uint_fast8_t i = 0; i < COUNT(digipot_motor_current); ++i)
     set_current(i, pgm_read_float(&digipot_motor_current[i]));
 }
 

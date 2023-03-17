@@ -146,7 +146,7 @@ void GcodeSuite::M48() {
 
     float sample_sum = 0.0;
 
-    for (uint8_t n = 0; n < n_samples; ++n) {
+    for (int_fast8_t n = 0; n < n_samples; ++n) {
       #if HAS_STATUS_MESSAGE
         // Display M48 progress in the status bar
         ui.status_printf(0, F(S_FMT ": %d/%d"), GET_TEXT_F(MSG_M48_POINT), int(n + 1), int(n_samples));
@@ -173,7 +173,7 @@ void GcodeSuite::M48() {
         }
 
         // Move from leg to leg in rapid succession
-        for (uint8_t l = 0; l < n_legs - 1; ++l) {
+        for (int_fast8_t l = 0; l < n_legs - 1; ++l) {
 
           // Move some distance around the perimeter
           float delta_angle;
@@ -241,7 +241,7 @@ void GcodeSuite::M48() {
       // Calculate the standard deviation so far.
       // The value after the last sample will be the final output.
       float dev_sum = 0.0;
-      for (uint8_t j = 0; j <= n; ++j) dev_sum += sq(sample_set[j] - mean);
+      for (int_fast8_t j = 0; j <= n; ++j) dev_sum += sq(sample_set[j] - mean);
       sigma = SQRT(dev_sum / (n + 1));
 
       if (verbose_level > 1) {

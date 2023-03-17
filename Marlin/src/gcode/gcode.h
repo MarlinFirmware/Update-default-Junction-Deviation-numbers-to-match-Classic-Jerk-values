@@ -451,8 +451,8 @@ public:
   }
   static void say_units();
 
-  static int8_t get_target_extruder_from_command();
-  static int8_t get_target_e_stepper_from_command(const int8_t dval=-1);
+  static int_fast8_t get_target_extruder_from_command();
+  static int_fast8_t get_target_e_stepper_from_command(const int_fast8_t dval=-1);
   static void get_destination_from_command();
 
   static void process_parsed_command(const bool no_ok=false);
@@ -1336,7 +1336,7 @@ private:
     static void M710_report(const bool forReplay=true);
   #endif
 
-  static void T(const int8_t tool_index) IF_DISABLED(HAS_TOOLCHANGE, { UNUSED(tool_index); });
+  static void T(const int_fast8_t tool_index) IF_DISABLED(HAS_TOOLCHANGE, { UNUSED(tool_index); });
 
 };
 

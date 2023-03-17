@@ -66,7 +66,7 @@ void Repeat::loop() {
   }
 }
 
-void Repeat::cancel() { for (uint8_t i = 0; i < index; ++i) marker[i].counter = 0; }
+void Repeat::cancel() { for (uint_fast8_t i = 0; i < index; ++i) marker[i].counter = 0; }
 
 void Repeat::early_parse_M808(char * const cmd) {
   if (is_command_M808(cmd)) {

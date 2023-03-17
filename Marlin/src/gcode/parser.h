@@ -217,7 +217,7 @@ public:
 
     // At least one of a list of code letters was seen
     static bool seen(const char * const str) {
-      for (uint8_t i = 0; const char c = str[i]; i++)
+      for (uint_fast8_t i = 0; const char c = str[i]; i++)
         if (seen_test(c)) return true;
       return false;
     }
@@ -273,17 +273,17 @@ public:
   }
 
   // Code value as a long or ulong
-  static int32_t value_long() { return value_ptr ? strtol(value_ptr, nullptr, 10) : 0L; }
-  static uint32_t value_ulong() { return value_ptr ? strtoul(value_ptr, nullptr, 10) : 0UL; }
+  static int_fast32_t value_long()   { return value_ptr ? strtol(value_ptr, nullptr, 10) : 0L; }
+  static uint_fast32_t value_ulong() { return value_ptr ? strtoul(value_ptr, nullptr, 10) : 0UL; }
 
   // Code value for use as time
   static millis_t value_millis() { return value_ulong(); }
   static millis_t value_millis_from_seconds() { return (millis_t)SEC_TO_MS(value_float()); }
 
   // Reduce to fewer bits
-  static int16_t value_int() { return (int16_t)value_long(); }
-  static uint16_t value_ushort() { return (uint16_t)value_long(); }
-  static uint8_t value_byte() { return (uint8_t)constrain(value_long(), 0, 255); }
+  static int_fast16_t value_int()     { return int_fast16_t(value_long()); }
+  static uint_fast16_t value_ushort() { return uint_fast16_t(value_long()); }
+  static uint_fast8_t value_byte()    { return uint_fast8_t(constrain(value_long(), 0, 255)); }
 
   // Bool is true with no value or non-zero
   static bool value_bool() { return !has_value() || !!value_byte(); }
@@ -421,19 +421,19 @@ public:
   void unknown_command_warning();
 
   // Provide simple value accessors with default option
-  static char*     stringval(const char c, char * const dval=nullptr) { return seenval(c) ? value_string()   : dval; }
-  static float     floatval(const char c, const float dval=0.0)   { return seenval(c) ? value_float()        : dval; }
-  static bool      boolval(const char c, const bool dval=false)   { return seenval(c) ? value_bool()         : (seen(c) ? true : dval); }
-  static uint8_t   byteval(const char c, const uint8_t dval=0)    { return seenval(c) ? value_byte()         : dval; }
-  static int16_t   intval(const char c, const int16_t dval=0)     { return seenval(c) ? value_int()          : dval; }
-  static uint16_t  ushortval(const char c, const uint16_t dval=0) { return seenval(c) ? value_ushort()       : dval; }
-  static int32_t   longval(const char c, const int32_t dval=0)    { return seenval(c) ? value_long()         : dval; }
-  static uint32_t  ulongval(const char c, const uint32_t dval=0)  { return seenval(c) ? value_ulong()        : dval; }
-  static float     linearval(const char c, const float dval=0)    { return seenval(c) ? value_linear_units() : dval; }
-  static float     axisunitsval(const char c, const AxisEnum a, const float dval=0)
-                                                                         { return seenval(c) ? value_axis_units(a)  : dval; }
-  static celsius_t celsiusval(const char c, const celsius_t dval=0)    { return seenval(c) ? value_celsius() : dval; }
-  static feedRate_t feedrateval(const char c, const feedRate_t dval=0) { return seenval(c) ? value_feedrate() : dval; }
+  static char*         stringval(const char c, char * const dval=nullptr)  { return seenval(c) ? value_string()       : dval; }
+  static float         floatval(const char c, const float dval=0.0)        { return seenval(c) ? value_float()        : dval; }
+  static bool          boolval(const char c, const bool dval=false)        { return seenval(c) ? value_bool()         : (seen(c) ? true : dval); }
+  static uint_fast8_t  byteval(const char c, const uint_fast8_t dval=0)    { return seenval(c) ? value_byte()         : dval; }
+  static int_fast16_t  intval(const char c, const int_fast16_t dval=0)     { return seenval(c) ? value_int()          : dval; }
+  static uint_fast16_t ushortval(const char c, const uint_fast16_t dval=0) { return seenval(c) ? value_ushort()       : dval; }
+  static int_fast32_t  longval(const char c, const int_fast32_t dval=0)    { return seenval(c) ? value_long()         : dval; }
+  static uint_fast32_t ulongval(const char c, const uint_fast32_t dval=0)  { return seenval(c) ? value_ulong()        : dval; }
+  static float         linearval(const char c, const float dval=0)         { return seenval(c) ? value_linear_units() : dval; }
+  static float         axisunitsval(const char c, const AxisEnum a, const float dval=0)
+                                                                           { return seenval(c) ? value_axis_units(a)  : dval; }
+  static celsius_t celsiusval(const char c, const celsius_t dval=0)        { return seenval(c) ? value_celsius()      : dval; }
+  static feedRate_t feedrateval(const char c, const feedRate_t dval=0)     { return seenval(c) ? value_feedrate()     : dval; }
 
   #if ENABLED(MARLIN_DEV_MODE)
 
