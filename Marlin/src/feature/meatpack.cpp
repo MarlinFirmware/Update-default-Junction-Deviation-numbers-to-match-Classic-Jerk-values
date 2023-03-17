@@ -209,7 +209,7 @@ uint8_t MeatPack::get_result_char(char * const __restrict out) {
   if (char_out_count) {
     res = char_out_count;
     char_out_count = 0;
-    for (uint8_t i = 0; i < res; ++i)
+    for (uint_fast8_t i = 0; i < res; ++i)
       out[i] = (char)char_out_buf[i];
   }
   return res;

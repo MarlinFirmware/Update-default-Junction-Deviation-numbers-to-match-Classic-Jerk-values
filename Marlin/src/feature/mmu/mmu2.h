@@ -49,7 +49,7 @@ public:
   static void reset();
   static bool enabled() { return _enabled; }
   static void mmu_loop();
-  static void tool_change(const uint8_t index);
+  static void tool_change(const uint_fast8_t index);
   static void tool_change(const char *special);
   static int8_t get_current_tool();
   static void set_filament_type(const uint8_t index, const uint8_t type);

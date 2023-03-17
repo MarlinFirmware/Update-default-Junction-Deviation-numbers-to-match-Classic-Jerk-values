@@ -329,9 +329,9 @@ class Stepper {
 
     // Last-moved extruder, as set when the last movement was fetched from planner
     #if HAS_MULTI_EXTRUDER
-      static uint8_t last_moved_extruder;
+      static uint_fast8_t last_moved_extruder;
     #else
-      static constexpr uint8_t last_moved_extruder = 0;
+      static constexpr uint_fast8_t last_moved_extruder = 0;
     #endif
 
     #if ENABLED(FREEZE_FEATURE)
@@ -377,9 +377,9 @@ class Stepper {
     static uint32_t acceleration_time, deceleration_time; // time measured in Stepper Timer ticks
 
     #if MULTISTEPPING_LIMIT == 1
-      static constexpr uint8_t steps_per_isr = 1; // Count of steps to perform per Stepper ISR call
+      static constexpr uint_fast8_t steps_per_isr = 1; // Count of steps to perform per Stepper ISR call
     #else
-      static uint8_t steps_per_isr;
+      static uint_fast8_t steps_per_isr;
     #endif
 
     #if DISABLED(OLD_ADAPTIVE_MULTISTEPPING)
@@ -387,9 +387,9 @@ class Stepper {
     #endif
 
     #if ENABLED(ADAPTIVE_STEP_SMOOTHING)
-      static uint8_t oversampling_factor; // Oversampling factor (log2(multiplier)) to increase temporal resolution of axis
+      static uint_fast8_t oversampling_factor; // Oversampling factor (log2(multiplier)) to increase temporal resolution of axis
     #else
-      static constexpr uint8_t oversampling_factor = 0; // Without smoothing apply no shift
+      static constexpr uint_fast8_t oversampling_factor = 0; // Without smoothing apply no shift
     #endif
 
     // Delta error variables for the Bresenham line tracer
@@ -402,9 +402,9 @@ class Stepper {
                     step_event_count;       // The total event count for the current block
 
     #if ANY(HAS_MULTI_EXTRUDER, MIXING_EXTRUDER)
-      static uint8_t stepper_extruder;
+      static uint_fast8_t stepper_extruder;
     #else
-      static constexpr uint8_t stepper_extruder = 0;
+      static constexpr uint_fast8_t stepper_extruder = 0;
     #endif
 
     #if ENABLED(S_CURVE_ACCELERATION)
@@ -655,8 +655,8 @@ class Stepper {
     static bool disable_axis(const AxisEnum axis);
 
     #if HAS_EXTRUDERS
-      static void enable_extruder(E_TERN_(const uint8_t eindex=0));
-      static bool disable_extruder(E_TERN_(const uint8_t eindex=0));
+      static void enable_extruder(E_TERN_(const uint_fast8_t eindex=0));
+      static bool disable_extruder(E_TERN_(const uint_fast8_t eindex=0));
       static void enable_e_steppers();
       static void disable_e_steppers();
     #else

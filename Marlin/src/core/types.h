@@ -299,7 +299,7 @@ typedef struct {
 //  - A_AXIS, B_AXIS, and C_AXIS should be used for Steppers, corresponding to XYZ on Cartesians
 //  - X_HEAD, Y_HEAD, and Z_HEAD should be used for axes on Core kinematics
 //
-enum AxisEnum : uint8_t {
+enum AxisEnum : uint_fast8_t {
 
   // Linear axes may be controlled directly or indirectly
   NUM_AXIS_LIST_(X_AXIS, Y_AXIS, Z_AXIS, I_AXIS, J_AXIS, K_AXIS, U_AXIS, V_AXIS, W_AXIS)
@@ -339,11 +339,11 @@ enum AxisEnum : uint8_t {
 //
 // Loop over axes
 //
-#define LOOP_ABC(VAR) for (uint8_t VAR = A_AXIS; VAR <= C_AXIS; ++VAR)
-#define LOOP_NUM_AXES(VAR) for (uint8_t VAR = 0; VAR < NUM_AXES; ++VAR)
-#define LOOP_LOGICAL_AXES(VAR) for (uint8_t VAR = 0; VAR < LOGICAL_AXES; ++VAR)
-#define LOOP_DISTINCT_AXES(VAR) for (uint8_t VAR = 0; VAR < DISTINCT_AXES; ++VAR)
-#define LOOP_DISTINCT_E(VAR) for (uint8_t VAR = 0; VAR < DISTINCT_E; ++VAR)
+#define LOOP_ABC(VAR) for (uint_fast8_t VAR = A_AXIS; VAR <= C_AXIS; ++VAR)
+#define LOOP_NUM_AXES(VAR) for (uint_fast8_t VAR = 0; VAR < NUM_AXES; ++VAR)
+#define LOOP_LOGICAL_AXES(VAR) for (uint_fast8_t VAR = 0; VAR < LOGICAL_AXES; ++VAR)
+#define LOOP_DISTINCT_AXES(VAR) for (uint_fast8_t VAR = 0; VAR < DISTINCT_AXES; ++VAR)
+#define LOOP_DISTINCT_E(VAR) for (uint_fast8_t VAR = 0; VAR < DISTINCT_E; ++VAR)
 
 //
 // feedRate_t is just a humble float that can represent mm/s or mm/min

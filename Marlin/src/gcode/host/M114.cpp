@@ -29,7 +29,7 @@
 #if ENABLED(M114_DETAIL)
 
   void report_all_axis_pos(const xyze_pos_t &pos, const uint8_t n=LOGICAL_AXES, const uint8_t precision=3) {
-    for (uint8_t a = 0; a < n; ++a) {
+    for (uint_fast8_t a = 0; a < n; ++a) {
       SERIAL_ECHOPGM_P((PGM_P)pgm_read_ptr(&SP_AXIS_LBL[a]));
       if (pos[a] >= 0) SERIAL_CHAR(' ');
       SERIAL_ECHO(p_float_t(pos[a], precision));

@@ -97,7 +97,7 @@ uint8_t MAX3421e::gpioRd() {
 bool MAX3421e::reset() {
   regWr(rUSBCTL, bmCHIPRES);
   regWr(rUSBCTL, 0x00);
-  for (uint8_t i = 100; i--;) {
+  for (uint_fast8_t i = 100; i--;) {
     if (regRd(rUSBIRQ) & bmOSCOKIRQ) return true;
     delay(10);
   }

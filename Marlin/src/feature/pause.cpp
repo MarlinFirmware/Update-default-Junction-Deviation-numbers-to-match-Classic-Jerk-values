@@ -236,7 +236,7 @@ bool load_filament(const_float_t slow_load_length/*=0*/, const_float_t fast_load
   if (show_lcd) ui.pause_show_message(PAUSE_MESSAGE_LOAD, mode);
 
   #if ENABLED(DUAL_X_CARRIAGE)
-    const int8_t saved_ext        = active_extruder;
+    const int_fast8_t saved_ext   = active_extruder;
     const bool saved_ext_dup_mode = extruder_duplication_enabled;
     set_duplication_enabled(false, DXC_ext);
   #endif
@@ -486,7 +486,7 @@ bool pause_print(const_float_t retract, const xyz_pos_t &park_point, const bool 
   if (!do_park) LCD_MESSAGE(MSG_PARK_FAILED);
 
   #if ENABLED(DUAL_X_CARRIAGE)
-    const int8_t saved_ext        = active_extruder;
+    const int_fast8_t saved_ext   = active_extruder;
     const bool saved_ext_dup_mode = extruder_duplication_enabled;
     set_duplication_enabled(false, DXC_ext);
   #endif
@@ -546,7 +546,7 @@ void wait_for_confirmation(const bool is_reload/*=false*/, const int8_t max_beep
   HOTEND_LOOP() thermalManager.heater_idle[e].start(nozzle_timeout);
 
   #if ENABLED(DUAL_X_CARRIAGE)
-    const int8_t saved_ext        = active_extruder;
+    const int_fast8_t saved_ext   = active_extruder;
     const bool saved_ext_dup_mode = extruder_duplication_enabled;
     set_duplication_enabled(false, DXC_ext);
   #endif

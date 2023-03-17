@@ -70,7 +70,7 @@ static pin_t SCK_pin_ST7920_HAL, MOSI_pin_ST7920_HAL_HAL;
 static uint8_t SPI_speed = 0;
 
 static uint8_t swSpiTransfer(uint8_t b, const uint8_t spi_speed, const pin_t sck_pin, const pin_t miso_pin, const pin_t mosi_pin) {
-  for (uint8_t i = 0; i < 8; i++) {
+  for (uint_fast8_t i = 0; i < 8; i++) {
     WRITE_PIN(mosi_pin, !!(b & 0x80));
     DELAY_CYCLES(SPI_SPEED);
     WRITE_PIN(sck_pin, HIGH);

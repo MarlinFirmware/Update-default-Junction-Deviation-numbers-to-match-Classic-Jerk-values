@@ -176,29 +176,29 @@ inline void update_invader_data() {
   uint8_t inv_mask = 0;
   // Get a list of all active invaders
   uint8_t sc = 0;
-  for (uint8_t y = 0; y < INVADER_ROWS; ++y) {
+  for (uint_fast8_t y = 0; y < INVADER_ROWS; ++y) {
     uint8_t m = idat.bugs[y];
     if (m) idat.botmost = y + 1;
     inv_mask |= m;
-    for (uint8_t x = 0; x < INVADER_COLS; ++x)
+    for (uint_fast8_t x = 0; x < INVADER_COLS; ++x)
       if (TEST(m, x)) idat.shooters[sc++] = (y << 4) | x;
   }
   idat.leftmost = 0;
-  for (uint8_t i = 0; i < INVADER_COLS; ++i) { if (TEST(inv_mask, i)) break; idat.leftmost -= INVADER_COL_W; }
+  for (uint_fast8_t i = 0; i < INVADER_COLS; ++i) { if (TEST(inv_mask, i)) break; idat.leftmost -= INVADER_COL_W; }
   idat.rightmost = GAME_WIDTH - (INVADERS_WIDE);
-  for (uint8_t i = INVADER_COLS; i--;) { if (TEST(inv_mask, i)) break; idat.rightmost += INVADER_COL_W; }
+  for (uint_fast8_t i = INVADER_COLS; i--;) { if (TEST(inv_mask, i)) break; idat.rightmost += INVADER_COL_W; }
   if (idat.count == 2) idat.dir = idat.dir > 0 ? INVADER_VEL + 1 : -(INVADER_VEL + 1);
 }
 
 inline void reset_bullets() {
-  for (uint8_t i = 0; i < COUNT(idat.bullet); ++i) idat.bullet[i].v = 0;
+  for (uint_fast8_t i = 0; i < COUNT(idat.bullet); ++i) idat.bullet[i].v = 0;
 }
 
 inline void reset_invaders() {
   idat.pos.x = 0; idat.pos.y = INVADER_TOP;
   idat.dir = INVADER_VEL;
   idat.count = (INVADER_COLS) * (INVADER_ROWS);
-  for (uint8_t i = 0; i < INVADER_ROWS; ++i) idat.bugs[i] = _BV(INVADER_COLS) - 1;
+  for (uint_fast8_t i = 0; i < INVADER_ROWS; ++i) idat.bugs[i] = _BV(INVADER_COLS) - 1;
   update_invader_data();
   reset_bullets();
 }
@@ -283,7 +283,7 @@ void InvadersGame::game_screen() {
 
           // Find a free bullet
           laser_t *b = nullptr;
-          for (uint8_t i = 0; i < COUNT(idat.bullet); ++i) if (!idat.bullet[i].v) { b = &idat.bullet[i]; break; }
+          for (uint_fast8_t i = 0; i < COUNT(idat.bullet); ++i) if (!idat.bullet[i].v) { b = &idat.bullet[i]; break; }
           if (b) {
             // Pick a random shooter and update the bullet
             //SERIAL_ECHOLNPGM("free bullet found");
@@ -331,7 +331,7 @@ void InvadersGame::game_screen() {
       } // laser in invader zone
 
       // Handle alien bullets
-      for (uint8_t s = 0; s < COUNT(idat.bullet); ++s) {
+      for (uint_fast8_t s = 0; s < COUNT(idat.bullet); ++s) {
         laser_t *b = &idat.bullet[s];
         if (b->v) {
           // Update alien bullet position
@@ -380,11 +380,11 @@ void InvadersGame::game_screen() {
   // Draw invaders
   if (PAGE_CONTAINS(idat.pos.y, idat.pos.y + idat.botmost * (INVADER_ROW_H) - 2 - 1)) {
     int8_t yy = idat.pos.y;
-    for (uint8_t y = 0; y < INVADER_ROWS; ++y) {
+    for (uint_fast8_t y = 0; y < INVADER_ROWS; ++y) {
       const uint8_t type = inv_type[y];
       if (PAGE_CONTAINS(yy, yy + INVADER_H - 1)) {
         int8_t xx = idat.pos.x;
-        for (uint8_t x = 0; x < INVADER_COLS; ++x) {
+        for (uint_fast8_t x = 0; x < INVADER_COLS; ++x) {
           if (TEST(idat.bugs[y], x)) {
             #if IS_DWIN_MARLINUI
               constexpr color invader_color[] = INVADER_COLOR;
@@ -418,7 +418,7 @@ void InvadersGame::game_screen() {
   }
 
   // Draw invader bullets
-  for (uint8_t i = 0; i < COUNT(idat.bullet); ++i) {
+  for (uint_fast8_t i = 0; i < COUNT(idat.bullet); ++i) {
     if (idat.bullet[i].v && PAGE_CONTAINS(idat.bullet[i].y - (SHOT_H - 1), idat.bullet[i].y)) {
       TERN_(IS_DWIN_MARLINUI, set_color(BULLET_COLOR));
       draw_vline(idat.bullet[i].x, idat.bullet[i].y - (SHOT_H - 1), SHOT_H);
@@ -441,7 +441,7 @@ void InvadersGame::game_screen() {
   if (PAGE_UNDER(GAME_FONT_ASCENT - 1)) {
     // Draw lives
     if (idat.cannons_left)
-      for (uint8_t i = 1; i <= idat.cannons_left; ++i) {
+      for (uint_fast8_t i = 1; i <= idat.cannons_left; ++i) {
         TERN_(IS_DWIN_MARLINUI, set_color(LIFE_COLOR));
         draw_bitmap(GAME_WIDTH - i * (LIFE_W), 6 - (LIFE_H), 1, LIFE_H, life);
       }

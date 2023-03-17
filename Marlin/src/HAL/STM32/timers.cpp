@@ -316,8 +316,8 @@ static constexpr struct { TimerPurpose p; int t; } timers_in_use[] = {
 };
 
 static constexpr bool verify_no_timer_conflicts() {
-  for (uint8_t i = 0; i < COUNT(timers_in_use); ++i)
-    for (uint8_t j = i + 1; j < COUNT(timers_in_use); ++j)
+  for (uint_fast8_t i = 0; i < COUNT(timers_in_use); ++i)
+    for (uint_fast8_t j = i + 1; j < COUNT(timers_in_use); ++j)
       if (timers_in_use[i].t == timers_in_use[j].t) return false;
   return true;
 }

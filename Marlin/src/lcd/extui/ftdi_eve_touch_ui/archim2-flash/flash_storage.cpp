@@ -187,7 +187,7 @@ bool UIFlashStorage::is_present = false;
   }
 
   void UIFlashStorage::initialize() {
-    for (uint8_t i = 0; i < 10; i++) {
+    for (uint_fast8_t i = 0; i < 10; i++) {
       if (check_known_device()) {
         is_present = true;
         break;
@@ -393,7 +393,7 @@ bool UIFlashStorage::is_present = false;
   uint32_t UIFlashStorage::get_media_file_start(uint8_t slot) {
     uint32_t addr = media_storage_addr + sizeof(uint32_t) * media_storage_slots;
     spi_read_begin(media_storage_addr);
-    for (uint8_t i = 0; i < slot; i++)
+    for (uint_fast8_t i = 0; i < slot; i++)
       addr += spi_read_32();
     spi_read_end();
     return addr;

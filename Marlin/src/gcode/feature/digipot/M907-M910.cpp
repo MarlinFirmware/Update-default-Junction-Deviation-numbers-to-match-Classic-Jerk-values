@@ -51,7 +51,7 @@ void GcodeSuite::M907() {
     if (!parser.seen("BS" STR_AXES_LOGICAL))
       return M907_report();
 
-    if (parser.seenval('S')) for (uint8_t i = 0; i < MOTOR_CURRENT_COUNT; ++i) stepper.set_digipot_current(i, parser.value_int());
+    if (parser.seenval('S')) for (uint_fast8_t i = 0; i < MOTOR_CURRENT_COUNT; ++i) stepper.set_digipot_current(i, parser.value_int());
     LOOP_LOGICAL_AXES(i) if (parser.seenval(IAXIS_CHAR(i))) stepper.set_digipot_current(i, parser.value_int());    // X Y Z (I J K U V W) E (map to drivers according to DIGIPOT_CHANNELS. Default with NUM_AXES 3: map X Y Z E to X Y Z E0)
     // Additional extruders use B,C.
     // TODO: Change these parameters because 'E' is used and D should be reserved for debugging. B<index>?
@@ -82,7 +82,7 @@ void GcodeSuite::M907() {
         #endif
       )) return M907_report();
 
-      if (parser.seenval('S')) for (uint8_t a = 0; a < MOTOR_CURRENT_COUNT; ++a) stepper.set_digipot_current(a, parser.value_int());
+      if (parser.seenval('S')) for (uint_fast8_t a = 0; a < MOTOR_CURRENT_COUNT; ++a) stepper.set_digipot_current(a, parser.value_int());
 
       #if HAS_X_Y_XY_I_J_K_U_V_W
         if (NUM_AXIS_GANG(
@@ -104,12 +104,12 @@ void GcodeSuite::M907() {
 
   #if HAS_MOTOR_CURRENT_I2C
     // this one uses actual amps in floating point
-    if (parser.seenval('S')) for (uint8_t q = 0; q < DIGIPOT_I2C_NUM_CHANNELS; ++q) digipot_i2c.set_current(q, parser.value_float());
+    if (parser.seenval('S')) for (uint_fast8_t q = 0; q < DIGIPOT_I2C_NUM_CHANNELS; ++q) digipot_i2c.set_current(q, parser.value_float());
       LOOP_LOGICAL_AXES(i) if (parser.seenval(IAXIS_CHAR(i))) digipot_i2c.set_current(i, parser.value_float());      // X Y Z (I J K U V W) E (map to drivers according to pots adresses. Default with NUM_AXES 3 X Y Z E: map to X Y Z E0)
     // Additional extruders use B,C,D.
     // TODO: Change these parameters because 'E' is used and because 'D' should be reserved for debugging. B<index>?
     #if E_STEPPERS >= 2
-      for (uint8_t i = E_AXIS + 1; i < _MAX(DIGIPOT_I2C_NUM_CHANNELS, (NUM_AXES + 3)); i++)
+      for (uint_fast8_t i = E_AXIS + 1; i < _MAX(DIGIPOT_I2C_NUM_CHANNELS, (NUM_AXES + 3)); i++)
         if (parser.seenval('B' + i - (E_AXIS + 1))) digipot_i2c.set_current(i, parser.value_float());
     #endif
   #endif

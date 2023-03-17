@@ -713,26 +713,26 @@ namespace Anycubic {
 
   void DgusTFT::sendValueToTFT(const uint16_t value, const uint16_t address) {
     uint8_t data[] = { 0x5A, 0xA5, 0x05, 0x82, uint8_t(address >> 8), uint8_t(address & 0xFF), uint8_t(value >> 8), uint8_t(value & 0xFF) };
-    for (uint8_t i = 0; i < COUNT(data); ++i) TFTSer.write(data[i]);
+    for (uint_fast8_t i = 0; i < COUNT(data); ++i) TFTSer.write(data[i]);
   }
 
   void DgusTFT::requestValueFromTFT(const uint16_t address) {
     uint8_t data[] = { 0x5A, 0xA5, 0x04, 0x83, uint8_t(address >> 8), uint8_t(address & 0xFF), 0x01 };
-    for (uint8_t i = 0; i < COUNT(data); ++i) TFTSer.write(data[i]);
+    for (uint_fast8_t i = 0; i < COUNT(data); ++i) TFTSer.write(data[i]);
   }
 
   void DgusTFT::sendTxtToTFT(const char *pdata, const uint16_t address) {
     uint8_t data_len = strlen(pdata);
     uint8_t data[] = { 0x5A, 0xA5, uint8_t(data_len + 5), 0x82, uint8_t(address >> 8), uint8_t(address & 0xFF) };
-    for (uint8_t i = 0; i < COUNT(data); ++i) TFTSer.write(data[i]);
-    for (uint8_t i = 0; i < data_len; ++i) TFTSer.write(pdata[i]);
+    for (uint_fast8_t i = 0; i < COUNT(data); ++i) TFTSer.write(data[i]);
+    for (uint_fast8_t i = 0; i < data_len; ++i) TFTSer.write(pdata[i]);
     TFTSer.write(0xFF); TFTSer.write(0xFF);
   }
 
   void DgusTFT::sendColorToTFT(const uint16_t color, const uint16_t address) {
     uint16_t color_address = address + 3;
     uint8_t data[] = { 0x5A, 0xA5, 0x05, 0x82, uint8_t(color_address >> 8), uint8_t(color_address & 0xFF), uint8_t(color >> 8), uint8_t(color & 0xFF) };
-    for (uint8_t i = 0; i < COUNT(data); ++i) TFTSer.write(data[i]);
+    for (uint_fast8_t i = 0; i < COUNT(data); ++i) TFTSer.write(data[i]);
   }
 
   void DgusTFT::sendTimeToTFT(const uint32_t minutes, const uint16_t address) {
@@ -741,7 +741,7 @@ namespace Anycubic {
 
   void DgusTFT::sendReadNumOfTxtToTFT(const uint8_t number, const uint16_t address) {
     uint8_t data[] = { 0x5A, 0xA5, 0x04, 0x83, uint8_t(address >> 8), uint8_t(address & 0xFF), number };
-    for (uint8_t i = 0; i < COUNT(data); ++i) TFTSer.write(data[i]);
+    for (uint_fast8_t i = 0; i < COUNT(data); ++i) TFTSer.write(data[i]);
   }
 
   void DgusTFT::changePageOfTFT(const uint16_t page_index, const bool no_send/*=false*/) {
@@ -771,7 +771,7 @@ namespace Anycubic {
 
     if (!no_send) {
       uint8_t data[] = { 0x5A, 0xA5, 0x07, 0x82, 0x00, 0x84, 0x5A, 0x01, uint8_t(data_temp >> 8), uint8_t(data_temp & 0xFF) };
-      for (uint8_t i = 0; i < COUNT(data); ++i) TFTSer.write(data[i]);
+      for (uint_fast8_t i = 0; i < COUNT(data); ++i) TFTSer.write(data[i]);
     }
 
     page_index_last_2 = page_index_last;
@@ -814,7 +814,7 @@ namespace Anycubic {
     // On:  5A A5 07 82 00 80 5A 00 00 1A
     // Off: 5A A5 07 82 00 80 5A 00 00 12
     uint8_t data[] = { 0x5A, 0xA5, 0x07, 0x82, 0x00, 0x80, 0x5A, 0x00, 0x00, uint8_t(audio_on ? 0x1A : 0x12) };
-    for (uint8_t i = 0; i < 10; ++i) TFTSer.write(data[i]);
+    for (uint_fast8_t i = 0; i < 10; ++i) TFTSer.write(data[i]);
   }
 
   bool DgusTFT::readTFTCommand() {

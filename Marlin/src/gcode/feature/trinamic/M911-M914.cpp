@@ -335,7 +335,7 @@
 
         #if E0_HAS_STEALTHCHOP || E1_HAS_STEALTHCHOP || E2_HAS_STEALTHCHOP || E3_HAS_STEALTHCHOP || E4_HAS_STEALTHCHOP || E5_HAS_STEALTHCHOP || E6_HAS_STEALTHCHOP || E7_HAS_STEALTHCHOP
           case E_AXIS: {
-            const int8_t eindex = get_target_e_stepper_from_command(-2);
+            const int_fast8_t eindex = get_target_e_stepper_from_command(-2);
             TERN_(E0_HAS_STEALTHCHOP, if (eindex < 0 || eindex == 0) TMC_SET_PWMTHRS_E(0));
             TERN_(E1_HAS_STEALTHCHOP, if (eindex < 0 || eindex == 1) TMC_SET_PWMTHRS_E(1));
             TERN_(E2_HAS_STEALTHCHOP, if (eindex < 0 || eindex == 2) TMC_SET_PWMTHRS_E(2));
@@ -345,7 +345,7 @@
             TERN_(E6_HAS_STEALTHCHOP, if (eindex < 0 || eindex == 6) TMC_SET_PWMTHRS_E(6));
             TERN_(E7_HAS_STEALTHCHOP, if (eindex < 0 || eindex == 7) TMC_SET_PWMTHRS_E(7));
           } break;
-        #endif // E_STEPPERS
+        #endif // E*_HAS_STEALTHCHOP
       }
     }
 

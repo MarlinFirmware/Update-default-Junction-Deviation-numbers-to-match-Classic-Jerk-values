@@ -148,7 +148,7 @@ public:
   static void send(const uint8_t reg, const uint8_t data);
 
   // Refresh all units
-  static void refresh() { for (uint8_t i = 0; i < 8; i++) refresh_line(i); }
+  static void refresh() { for (uint_fast8_t i = 0; i < 8; i++) refresh_line(i); }
 
   // Suspend / resume updates to the LED unit
   // Use these methods to speed up multiple changes

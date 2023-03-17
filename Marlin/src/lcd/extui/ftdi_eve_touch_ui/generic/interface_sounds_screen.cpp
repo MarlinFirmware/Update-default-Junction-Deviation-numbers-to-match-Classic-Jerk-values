@@ -42,7 +42,7 @@ void InterfaceSoundsScreen::toggleSoundSelection(event_t event) {
 }
 
 void InterfaceSoundsScreen::setSoundSelection(event_t event, const SoundPlayer::sound_t* sound) {
-  for (uint8_t i = 0; i < SoundList::n; i++)
+  for (uint_fast8_t i = 0; i < SoundList::n; i++)
     if (SoundList::data(i) == sound)
       event_sounds[event] = i;
 }

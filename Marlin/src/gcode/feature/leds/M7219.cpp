@@ -79,12 +79,12 @@ void GcodeSuite::M7219() {
   }
 
   if (parser.seen('P')) {
-    for (uint8_t r = 0; r < MAX7219_LINES; ++r) {
+    for (uint_fast8_t r = 0; r < MAX7219_LINES; ++r) {
       SERIAL_ECHOPGM("led_line[");
       if (r < 10) SERIAL_CHAR(' ');
       SERIAL_ECHO(r);
       SERIAL_ECHOPGM("]=");
-      for (uint8_t b = 8; b--;) SERIAL_CHAR('0' + TEST(max7219.led_line[r], b));
+      for (uint_fast8_t b = 8; b--;) SERIAL_CHAR('0' + TEST(max7219.led_line[r], b));
       SERIAL_EOL();
     }
   }

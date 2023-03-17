@@ -52,7 +52,7 @@ enum CalEnum : char {                        // the 7 main calibration points - 
   _CA      = __C + _7P_STEP,
 };
 
-#define LOOP_CAL_PT(VAR, S, N) for (uint8_t VAR=S; VAR<=NPP; VAR+=N)
+#define LOOP_CAL_PT(VAR, S, N) for (uint_fast8_t VAR=S; VAR<=NPP; VAR+=N)
 #define F_LOOP_CAL_PT(VAR, S, N) for (float VAR=S; VAR<NPP+0.9999; VAR+=N)
 #define I_LOOP_CAL_PT(VAR, S, N) for (float VAR=S; VAR>CEN+0.9999; VAR-=N)
 #define LOOP_CAL_ALL(VAR) LOOP_CAL_PT(VAR, CEN, 1)

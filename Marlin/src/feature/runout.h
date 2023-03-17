@@ -155,13 +155,13 @@ class TFilamentMonitor : public FilamentMonitorBase {
           #endif
         #else
           const bool ran_out = bool(runout_flags);
-          uint8_t extruder = active_extruder;
+          uint_fast8_t extruder = active_extruder;
         #endif
 
         if (ran_out) {
           #if ENABLED(FILAMENT_RUNOUT_SENSOR_DEBUG)
             SERIAL_ECHOPGM("Runout Sensors: ");
-            for (uint8_t i = 0; i < 8; ++i) SERIAL_CHAR('0' + char(runout_flags[i]));
+            for (uint_fast8_t i = 0; i < 8; ++i) SERIAL_CHAR('0' + char(runout_flags[i]));
             SERIAL_ECHOLNPGM(" -> ", extruder, " RUN OUT");
           #endif
 
@@ -257,7 +257,7 @@ class FilamentSensorBase {
         #if ENABLED(FILAMENT_RUNOUT_SENSOR_DEBUG)
           if (change) {
             SERIAL_ECHOPGM("Motion detected:");
-            for (uint8_t e = 0; e < TERN(FILAMENT_SWITCH_AND_MOTION, NUM_MOTION_SENSORS, NUM_RUNOUT_SENSORS); ++e)
+            for (uint_fast8_t e = 0; e < TERN(FILAMENT_SWITCH_AND_MOTION, NUM_MOTION_SENSORS, NUM_RUNOUT_SENSORS); ++e)
               if (TEST(change, e)) SERIAL_CHAR(' ', '0' + e);
             SERIAL_EOL();
           }
@@ -306,7 +306,7 @@ class FilamentSensorBase {
       static void block_completed(const block_t * const) {}
 
       static void run() {
-        for (uint8_t s = 0; s < NUM_RUNOUT_SENSORS; ++s) {
+        for (uint_fast8_t s = 0; s < NUM_RUNOUT_SENSORS; ++s) {
           const bool out = poll_runout_state(s);
           if (!out) filament_present(s);
           #if ENABLED(FILAMENT_RUNOUT_SENSOR_DEBUG)
@@ -367,9 +367,9 @@ class FilamentSensorBase {
       static float runout_distance_mm;
 
       static void reset() {
-        for (uint8_t i = 0; i < NUM_RUNOUT_SENSORS; ++i) filament_present(i);
+        for (uint_fast8_t i = 0; i < NUM_RUNOUT_SENSORS; ++i) filament_present(i);
         #if ENABLED(FILAMENT_SWITCH_AND_MOTION)
-          for (uint8_t i = 0; i < NUM_MOTION_SENSORS; ++i) filament_motion_present(i);
+          for (uint_fast8_t i = 0; i < NUM_MOTION_SENSORS; ++i) filament_motion_present(i);
         #endif
       }
 
@@ -379,10 +379,10 @@ class FilamentSensorBase {
           const millis_t ms = millis();
           if (ELAPSED(ms, t)) {
             t = millis() + 1000UL;
-            for (uint8_t i = 0; i < NUM_RUNOUT_SENSORS; ++i)
+            for (uint_fast8_t i = 0; i < NUM_RUNOUT_SENSORS; ++i)
               SERIAL_ECHO(i ? F(", ") : F("Runout remaining mm: "), mm_countdown.runout[i]);
             #if ENABLED(FILAMENT_SWITCH_AND_MOTION)
-              for (uint8_t i = 0; i < NUM_MOTION_SENSORS; ++i)
+              for (uint_fast8_t i = 0; i < NUM_MOTION_SENSORS; ++i)
                 SERIAL_ECHO(i ? F(", ") : F("Motion remaining mm: "), mm_countdown.motion[i]);
             #endif
             SERIAL_EOL();
@@ -392,9 +392,9 @@ class FilamentSensorBase {
 
       static runout_flags_t has_run_out() {
         runout_flags_t runout_flags{0};
-        for (uint8_t i = 0; i < NUM_RUNOUT_SENSORS; ++i) if (mm_countdown.runout[i] < 0) runout_flags.set(i);
+        for (uint_fast8_t i = 0; i < NUM_RUNOUT_SENSORS; ++i) if (mm_countdown.runout[i] < 0) runout_flags.set(i);
         #if ENABLED(FILAMENT_SWITCH_AND_MOTION)
-          for (uint8_t i = 0; i < NUM_MOTION_SENSORS; ++i) if (mm_countdown.motion[i] < 0) runout_flags.set(i);
+          for (uint_fast8_t i = 0; i < NUM_MOTION_SENSORS; ++i) if (mm_countdown.motion[i] < 0) runout_flags.set(i);
         #endif
         return runout_flags;
       }
@@ -465,16 +465,16 @@ class FilamentSensorBase {
 
     public:
       static void reset() {
-        for (uint8_t i = 0; i < NUM_RUNOUT_SENSORS; ++i) filament_present(i);
+        for (uint_fast8_t i = 0; i < NUM_RUNOUT_SENSORS; ++i) filament_present(i);
       }
 
       static void run() {
-        for (uint8_t i = 0; i < NUM_RUNOUT_SENSORS; ++i) if (runout_count[i] >= 0) runout_count[i]--;
+        for (uint_fast8_t i = 0; i < NUM_RUNOUT_SENSORS; ++i) if (runout_count[i] >= 0) runout_count[i]--;
       }
 
       static runout_flags_t has_run_out() {
         runout_flags_t runout_flags{0};
-        for (uint8_t i = 0; i < NUM_RUNOUT_SENSORS; ++i) if (runout_count[i] < 0) runout_flags.set(i);
+        for (uint_fast8_t i = 0; i < NUM_RUNOUT_SENSORS; ++i) if (runout_count[i] < 0) runout_flags.set(i);
         return runout_flags;
       }
 

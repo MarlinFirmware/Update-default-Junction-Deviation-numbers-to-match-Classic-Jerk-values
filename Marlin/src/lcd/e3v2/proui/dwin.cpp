@@ -598,7 +598,7 @@ void dwinPrintHeader(const char * const cstr/*=nullptr*/) {
   static char headertxt[31] = "";  // Print header text
   if (cstr) {
     const int8_t size = _MIN(30U, strlen(cstr));
-    for (uint8_t i = 0; i < size; ++i) headertxt[i] = cstr[i];
+    for (int_fast8_t i = 0; i < size; ++i) headertxt[i] = cstr[i];
     headertxt[size] = '\0';
   }
   if (checkkey == ID_PrintProcess || checkkey == ID_PrintDone) {
@@ -1016,7 +1016,7 @@ void drawPrintFileMenu() {
   if (card.isMounted()) {
     if (SET_MENU(fileMenu, MSG_MEDIA_MENU, nr_sd_menu_items() + 1)) {
       BACK_ITEM(gotoMainMenu);
-      for (uint8_t i = 0; i < nr_sd_menu_items(); ++i)
+      for (uint_fast8_t i = 0; i < nr_sd_menu_items(); ++i)
         menuItemAdd(onDrawFileName, onClickSDItem);
     }
     updateMenu(fileMenu);
@@ -1116,7 +1116,7 @@ void drawInfoMenu() {
   DWINUI::drawCenteredString(122, F(MACHINE_SIZE));
   DWINUI::drawCenteredString(195, F(SHORT_BUILD_VERSION));
 
-  for (uint8_t i = 0; i < 3; ++i) {
+  for (uint_fast8_t i = 0; i < 3; ++i) {
     DWINUI::drawIcon(ICON_PrintSize + i, ICOX, 99 + i * 73);
     dwinDrawHLine(hmiData.colorSplitLine, 16, MBASE(2) + i * 73, 240);
   }
@@ -2508,9 +2508,9 @@ void setFlow() { setPIntOnClick(FLOW_EDIT_MIN, FLOW_EDIT_MAX, []{ planner.refres
       DWINUI::drawCenteredString(160, F("and relative heights"));
       safe_delay(1000);
       float avg = 0.0f;
-      for (uint8_t x = 0; x < 2; ++x) for (uint8_t y = 0; y < 2; ++y) avg += zval[x][y];
+      for (uint_fast8_t x = 0; x < 2; ++x) for (uint_fast8_t y = 0; y < 2; ++y) avg += zval[x][y];
       avg /= 4.0f;
-      for (uint8_t x = 0; x < 2; ++x) for (uint8_t y = 0; y < 2; ++y) zval[x][y] -= avg;
+      for (uint_fast8_t x = 0; x < 2; ++x) for (uint_fast8_t y = 0; y < 2; ++y) zval[x][y] -= avg;
       meshViewer.drawMesh(zval, 2, 2);
       ui.reset_status();
 
@@ -2527,7 +2527,7 @@ void setFlow() { setPIntOnClick(FLOW_EDIT_MIN, FLOW_EDIT_MAX, []{ planner.refres
         float max = 0.0f;
         FSTR_P plabel;
         bool s = true;
-        for (uint8_t x = 0; x < 2; ++x) for (uint8_t y = 0; y < 2; ++y) {
+        for (uint_fast8_t x = 0; x < 2; ++x) for (uint_fast8_t y = 0; y < 2; ++y) {
           const float d = ABS(zval[x][y]);
           if (max < d) {
             s = (zval[x][y] >= 0);
@@ -4191,7 +4191,7 @@ void drawMaxAccelMenu() {
   }
 
   void ublSmartFillMesh() {
-    for (uint8_t x = 0; x < GRID_MAX_POINTS_Y; ++x) bedlevel.smart_fill_mesh();
+    for (uint_fast8_t x = 0; x < GRID_MAX_POINTS_Y; ++x) bedlevel.smart_fill_mesh();
     LCD_MESSAGE(MSG_UBL_MESH_FILLED);
   }
 

@@ -287,7 +287,7 @@ void GcodeSuite::G28() {
     // Always home with tool 0 active
     #if HAS_MULTI_HOTEND
       #if DISABLED(DELTA) || ENABLED(DELTA_HOME_TO_SAFE_ZONE)
-        const uint8_t old_tool_index = active_extruder;
+        const uint_fast8_t old_tool_index = active_extruder;
       #endif
       // PARKING_EXTRUDER homing requires different handling of movement / solenoid activation, depending on the side of homing
       #if ENABLED(PARKING_EXTRUDER)

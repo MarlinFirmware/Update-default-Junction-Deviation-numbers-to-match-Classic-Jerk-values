@@ -297,7 +297,7 @@ void DGUSDisplay::processRx() {
             unsigned char buffer[vp.size];
             memset(buffer, 0, vp.size);
 
-            for (uint8_t i = 0; i < dlen; i++) {
+            for (uint_fast8_t i = 0; i < dlen; i++) {
               if (i >= vp.size) break;
 
               if (i + 1 < dlen && tmp[i + 3] == 0xFF && tmp[i + 4] == 0xFF)
@@ -360,7 +360,7 @@ void DGUSDisplay::writeHeader(uint16_t addr, uint8_t command, uint8_t len) {
     uint8_t u8[2];
   } data = { Endianness::toBE(addr) };
 
-  for (uint8_t i = 0; i < sizeof(data.u8); ++i) LCD_SERIAL.write(data.u8[i]);
+  for (uint_fast8_t i = 0; i < sizeof(data.u8); ++i) LCD_SERIAL.write(data.u8[i]);
 }
 
 bool DGUS_PopulateVP(const DGUS_Addr addr, DGUS_VP * const buffer) {
