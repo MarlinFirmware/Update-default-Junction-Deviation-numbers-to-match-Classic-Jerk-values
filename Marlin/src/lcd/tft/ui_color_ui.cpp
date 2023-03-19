@@ -190,7 +190,7 @@ void draw_fan_status(uint16_t x, uint16_t y, const bool blink) {
   tft.canvas(x, y, TEMP_FAN_CONTROL_W, TEMP_FAN_CONTROL_H);
   tft.set_background(COLOR_BACKGROUND);
 
-  uint8_t fanSpeed = thermalManager.fan_speed[0];
+  uint8_t fanSpeed = fans[0].speed;
   MarlinImage image;
 
   if (fanSpeed >= 127)
@@ -202,7 +202,7 @@ void draw_fan_status(uint16_t x, uint16_t y, const bool blink) {
 
   tft.add_image(FAN_ICON_X, FAN_ICON_Y, image, COLOR_FAN);
 
-  tft_string.set(ui8tostr4pctrj(thermalManager.fan_speed[0]));
+  tft_string.set(ui8tostr4pctrj(fans[0].speed));
   tft_string.trim();
   tft.add_text(FAN_TEXT_X, FAN_TEXT_Y, COLOR_FAN, tft_string);
 }

@@ -149,10 +149,10 @@ void _draw_axis_value(const AxisEnum axis, const char *value, const bool blink, 
   //
   FORCE_INLINE void _draw_fan_status(const uint16_t x, const uint16_t y) {
     const uint16_t fanx = (4 * STATUS_CHR_WIDTH - STATUS_FAN_WIDTH) / 2;
-    const bool fan_on = !!thermalManager.scaledFanSpeed(0);
+    const bool fan_on = !!fans[0].scaled_speed();
     if (fan_on) {
       dwinIconAnimation(0, fan_on, ICON, ICON_Fan0, ICON_Fan3, x + fanx, y, 25);
-      dwin_string.set(i8tostr3rj(thermalManager.scaledFanSpeedPercent(0)));
+      dwin_string.set(i8tostr3rj(fans[0].speed_pct_scaled()));
       dwin_string.add('%');
       dwinDrawString(true, font14x28, COLOR_WHITE, COLOR_BG_BLACK, x, y + STATUS_FAN_HEIGHT, S(dwin_string.string()));
     }

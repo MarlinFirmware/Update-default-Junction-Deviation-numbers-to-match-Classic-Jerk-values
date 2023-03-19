@@ -987,7 +987,7 @@ void drawTuneMenu() {
   #endif
   #if HAS_FAN
     drawMenuLine(TUNE_CASE_FAN, ICON_FanSpeed);
-    drawEditInteger3(TUNE_CASE_FAN, thermalManager.fan_speed[0]);
+    drawEditInteger3(TUNE_CASE_FAN, fans[0].speed);
   #endif
   #if HAS_ZOFFSET_ITEM
     drawMenuLine(TUNE_CASE_ZOFF, ICON_Zoffset);
@@ -1695,8 +1695,8 @@ void updateVariable() {
   #endif
   #if HAS_FAN
     static uint8_t _fanspeed = 0;
-    const bool _new_fanspeed = _fanspeed != thermalManager.fan_speed[0];
-    if (_new_fanspeed) _fanspeed = thermalManager.fan_speed[0];
+    const bool _new_fanspeed = _fanspeed != fans[0].speed;
+    if (_new_fanspeed) _fanspeed = fans[0].speed;
   #endif
 
   if (checkkey == ID_Tune) {
@@ -1757,7 +1757,7 @@ void updateVariable() {
 
   #if HAS_FAN
     if (_new_fanspeed) {
-      _fanspeed = thermalManager.fan_speed[0];
+      _fanspeed = fans[0].speed;
       drawStatInt(195 + 2 * STAT_CHR_W, 384, _fanspeed);
     }
   #endif
@@ -2008,7 +2008,7 @@ void drawStatusArea(const bool with_update) {
 
   #if HAS_FAN
     dwinIconShow(ICON, ICON_FanSpeed, 187, 383);
-    drawStatInt(195 + 2 * STAT_CHR_W, 384, thermalManager.fan_speed[0]);
+    drawStatInt(195 + 2 * STAT_CHR_W, 384, fans[0].speed);
   #endif
 
   #if HAS_ZOFFSET_ITEM
@@ -2260,7 +2260,7 @@ void hmiSelectFile() {
         // All fans on for Ender-3 v2 ?
         // The slicer should manage this for us.
         //for (uint8_t i = 0; i < FAN_COUNT; i++)
-        //  thermalManager.fan_speed[i] = 255;
+        //  fans[i].speed = 255;
       #endif
 
       _card_percent = 0;
@@ -2855,7 +2855,7 @@ void drawTemperatureMenu() {
   #endif
   #if HAS_FAN
     _TMENU_ICON(TEMP_CASE_FAN);
-    drawEditInteger3(i, thermalManager.fan_speed[0]);
+    drawEditInteger3(i, fans[0].speed);
   #endif
   #if HAS_PREHEAT
     // PLA/ABS items have submenus
@@ -3084,7 +3084,7 @@ void hmiTemperature() {
       #if HAS_FAN
         case TEMP_CASE_FAN:
           checkkey = ID_FanSpeed;
-          hmiValues.fanSpeed = thermalManager.fan_speed[0];
+          hmiValues.fanSpeed = fans[0].speed;
           drawEditInteger3(3, hmiValues.fanSpeed, true);
           encoderRate.enabled = true;
           break;
@@ -3811,7 +3811,7 @@ void hmiTune() {
       #if HAS_FAN
         case TUNE_CASE_FAN: // Fan speed
           checkkey = ID_FanSpeed;
-          hmiValues.fanSpeed = thermalManager.fan_speed[0];
+          hmiValues.fanSpeed = fans[0].speed;
           drawEditInteger3(TUNE_CASE_FAN + MROWS - index_tune, hmiValues.fanSpeed, true);
           encoderRate.enabled = true;
           break;
