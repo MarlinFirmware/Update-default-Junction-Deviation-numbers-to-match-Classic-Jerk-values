@@ -808,6 +808,15 @@ bool CardReader::fileExists(const char * const path) {
   return success;
 }
 
+#if ENABLED(MACHINE_COMMAND_MACROS)
+
+  void CardReader::runMacro(const char * const path) {
+    openFileRead(path, 2);
+    startFileprint();
+  }
+
+#endif
+
 //
 // Delete a file by name in the working directory
 //
