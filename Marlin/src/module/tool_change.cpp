@@ -912,9 +912,9 @@ void fast_line_to_current(const AxisEnum fr_axis) { _line_to_current(fr_axis, 0.
   // Cool down with fan
   inline void filament_swap_cooling() {
     #if HAS_FAN && TOOLCHANGE_FS_FAN >= 0
-      thermalManager.fan_speed[TOOLCHANGE_FS_FAN] = toolchange_settings.fan_speed;
+      fans[TOOLCHANGE_FS_FAN].speed = toolchange_settings.fan_speed;
       gcode.dwell(SEC_TO_MS(toolchange_settings.fan_time));
-      thermalManager.fan_speed[TOOLCHANGE_FS_FAN] = FAN_OFF_PWM;
+      fans[TOOLCHANGE_FS_FAN].speed = FAN_OFF_PWM;
     #endif
   }
 
@@ -1036,7 +1036,7 @@ void fast_line_to_current(const AxisEnum fr_axis) { _line_to_current(fr_axis, 0.
 
       #if HAS_FAN && TOOLCHANGE_FS_FAN >= 0
         // Store and stop fan. Restored on any exit.
-        REMEMBER(fan, thermalManager.fan_speed[TOOLCHANGE_FS_FAN], 0);
+        REMEMBER(fan, fans[TOOLCHANGE_FS_FAN].speed, 0);
       #endif
 
       // Z raise
@@ -1194,7 +1194,7 @@ void tool_change(const uint8_t new_tool, bool no_move/*=false*/) {
 
       #if ALL(TOOLCHANGE_FILAMENT_SWAP, HAS_FAN) && TOOLCHANGE_FS_FAN >= 0
         // Store and stop fan. Restored on any exit.
-        REMEMBER(fan, thermalManager.fan_speed[TOOLCHANGE_FS_FAN], 0);
+        REMEMBER(fan, fans[TOOLCHANGE_FS_FAN].speed, 0);
       #endif
 
       // Z raise before retraction

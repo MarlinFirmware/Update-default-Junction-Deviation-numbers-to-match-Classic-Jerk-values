@@ -643,7 +643,7 @@ bool ST7920_Lite_Status_Screen::indicators_changed() {
   // them only during blinks we gain a bit of stability.
   const bool blink = ui.get_blink();
   const uint16_t feedrate_perc = feedrate_percentage;
-  const uint16_t fs = thermalManager.scaledFanSpeed(0);
+  const uint16_t fs = fans[0].scaled_speed();
   const celsius_t extruder_1_target = thermalManager.degTargetHotend(0);
   #if HAS_MULTI_HOTEND
     const celsius_t extruder_2_target = thermalManager.degTargetHotend(1);
@@ -825,12 +825,12 @@ void ST7920_Lite_Status_Screen::update_indicators(const bool forceUpdate) {
     TERN_(HAS_HEATED_BED, draw_bed_temp(bed_temp, bed_target, forceUpdate));
 
     // Update the fan and bed animations
-    uint8_t spd = thermalManager.fan_speed[0];
+    uint8_t spd = fans[0].speed;
     #if ENABLED(ADAPTIVE_FAN_SLOWING)
-      if (!blink && thermalManager.fan_speed_scaler[0] < 128)
-        spd = thermalManager.scaledFanSpeed(0, spd);
+      if (!blink && fans[0].speed_scaler < 128)
+        spd = fans[0].scaled_speed(spd);
     #endif
-    draw_fan_speed(thermalManager.pwmToPercent(spd));
+    draw_fan_speed(Fan::pwmToPercent(spd));
     if (spd) draw_fan_icon(blink);
     TERN_(HAS_HEATED_BED, draw_heat_icon(bed_target > 0 && blink, bed_target > 0));
 

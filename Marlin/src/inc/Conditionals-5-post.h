@@ -2890,6 +2890,9 @@
 
 #if FAN_COUNT > 0
   #define HAS_FAN 1
+#else
+  #undef FAN_SOFT_PWM
+  #undef FAN_SOFT_PWM_REQUIRED
 #endif
 
 #if PIN_EXISTS(FANMUX0)
