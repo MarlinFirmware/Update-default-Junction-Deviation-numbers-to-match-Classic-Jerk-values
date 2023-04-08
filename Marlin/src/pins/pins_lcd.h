@@ -43,6 +43,8 @@
     #include "lcd/MINIPANEL.h"
   #elif ANY(ANET_FULL_GRAPHICS_LCD, CTC_A10S_A13)
     #include "lcd/ANET_FULL_GRAPHICS_LCD.h"
+  #elif IS_RRD_FG_SC
+    #include "lcd/RRD_FG_SC.h"
   #else
 
     // More displays to come

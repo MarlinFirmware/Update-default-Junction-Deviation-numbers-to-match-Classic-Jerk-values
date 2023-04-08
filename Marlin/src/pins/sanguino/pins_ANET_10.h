@@ -338,24 +338,6 @@
 
 /**
  * ====================================================================
- * =============== Alternative RepRapDiscount Wiring ==================
- * ====================================================================
- *
- * An alternative wiring scheme for the RepRapDiscount Full Graphics Display is
- * published by oderwat on Thingiverse at https://www.thingiverse.com/thing:2103748.
- *
- * Using that adapter requires changing the pin definition as follows:
- *   #define SERVO0_PIN   27   // free for BLTouch/3D-Touch
- *   #define BEEPER_PIN   28
- *   #define LCD_PINS_RS  30
- *   #define LCD_PINS_EN  29
- *   #define LCD_PINS_D4  17
- *
- * The BLTouch pin becomes LCD:3
- */
-
-/**
- * ====================================================================
  * ===================== LCD PINOUTS ==================================
  * ====================================================================
  *
