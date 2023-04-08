@@ -277,6 +277,16 @@
 
   // Migrated to pins/lcd
 
+#elif ENABLED(ANET_FULL_GRAPHICS_LCD)
+
+  // Migrated to pins/lcd
+
+#elif ENABLED(CTC_A10S_A13)
+
+  CONTROLLER_WARNING("BTT_SKR_V1_4", "CTC_A10S_A13")
+
+  // Migrated to pins/lcd
+
 #elif HAS_DWIN_E3V2 || IS_DWIN_MARLINUI
 
   // RET6 DWIN ENCODER LCD
@@ -290,74 +300,7 @@
 
 #elif HAS_WIRED_LCD
 
-  #if ENABLED(CTC_A10S_A13)
-    CONTROLLER_WARNING("BTT_SKR_V1_4", "CTC_A10S_A13")
-
-    /**
-     * 1. Cut the tab off the LCD connector so it can be plugged into the "EXP1" connector the other way.
-     * 2. Swap the LCD's +5V (Pin2) and GND (Pin1) wires. (This is the critical part!)
-     *
-     * !!! If you are unsure, ask for help! Your motherboard may be damaged in some circumstances !!!
-     *
-     * The CTC_A10S_A13 connector plug:
-     *
-     *                BEFORE                     AFTER
-     *                ------                     ------
-     *      (BEEPER) | 1  2 | (CLK)    (BEEPER) |10  9 | (CLK)
-     *     (BTN_ENC) | 3  4 | --      (BTN_ENC) | 8  7 | --
-     *     (BTN_EN1)   5  6 | (SID)   (BTN_EN1)   6  5 | (SID)
-     *     (BTN_EN2) | 7  8 | (CS)    (BTN_EN2) | 4  3 | (CS)
-     *            5V | 9 10 | GND           GND | 2  1 | 5V
-     *                ------                     ------
-     *                 LCD                        LCD
-     */
-
-    #define LCD_PINS_RS              EXP1_04_PIN
-
-    #define BTN_EN1                  EXP1_06_PIN
-    #define BTN_EN2                  EXP1_07_PIN
-    #define BTN_ENC                  EXP1_01_PIN
-
-    #define LCD_PINS_EN              EXP1_03_PIN
-    #define LCD_PINS_D4              EXP1_05_PIN
-    #define BEEPER_PIN               EXP1_08_PIN
-
-  #elif ENABLED(ANET_FULL_GRAPHICS_LCD)
-    CONTROLLER_WARNING("BTT_SKR_V1_4", "ANET_FULL_GRAPHICS_LCD")
-
-   /**
-    * 1. Cut the tab off the LCD connector so it can be plugged into the "EXP1" connector the other way.
-    * 2. Swap the LCD's +5V (Pin2) and GND (Pin1) wires. (This is the critical part!)
-    * 3. Rewire the CLK Signal (LCD Pin9) to LCD Pin7. (LCD Pin9 remains open because it is open drain.)
-    * 4. A wire is needed to connect the Reset switch at J3 (LCD Pin7) to EXP2 (Pin3) on the board.
-    *
-    * !!! If you are unsure, ask for help! Your motherboard may be damaged in some circumstances !!!
-    *
-    * The ANET_FULL_GRAPHICS_LCD connector plug:
-    *
-    *            BEFORE                     AFTER
-    *            ------                     ------
-    *  (BEEPER) | 1  2 | (CLK)    (BEEPER) |10  9 | --
-    * (BTN_ENC) | 3  4 | --      (BTN_ENC) | 8  7 | (CLK)
-    * (BTN_EN1)   5  6 | (SID)   (BTN_EN1)   6  5 | (SID)
-    * (BTN_EN2) | 7  8 | (CS)    (BTN_EN2) | 4  3 | (CS)
-    *        5V | 9 10 | GND           GND | 2  1 | 5V
-    *            ------                     ------
-    *             LCD                        LCD
-    */
-
-    #define LCD_PINS_RS              EXP1_08_PIN
-
-    #define BTN_EN1                  EXP1_05_PIN
-    #define BTN_EN2                  EXP1_07_PIN
-    #define BTN_ENC                  EXP1_03_PIN
-
-    #define LCD_PINS_EN              EXP1_06_PIN
-    #define LCD_PINS_D4              EXP1_04_PIN
-
-    #define BEEPER_PIN               EXP1_01_PIN
-
-  #elif ENABLED(ENDER2_STOCKDISPLAY)
+  #if ENABLED(ENDER2_STOCKDISPLAY)
 
     /** Creality Ender-2 display pinout
      *                   ------
