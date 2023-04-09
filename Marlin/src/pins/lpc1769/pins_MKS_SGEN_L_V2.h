@@ -308,6 +308,10 @@
 
   // Migrated to pins/lcd
 
+#elif ENABLED(MKS_MINI_12864)
+
+  // Migrated to pins/lcd
+
 #elif HAS_WIRED_LCD
 
   #define BEEPER_PIN                 EXP1_01_PIN
@@ -357,7 +361,7 @@
       #define TFT_QUEUE_SIZE                6144
     #endif
 
-  #else // !MKS_12864OLED_SSD1306
+  #else // !HAS_SPI_TFT
 
     #define LCD_PINS_RS              EXP1_04_PIN
 
@@ -394,25 +398,18 @@
 
     #else // !FYSETC_MINI_12864
 
-      #if ENABLED(MKS_MINI_12864)
-        #define DOGLCD_CS            EXP1_06_PIN
-        #define DOGLCD_A0            EXP1_07_PIN
-      #endif
-
       #if IS_ULTIPANEL
         #define LCD_PINS_D5          EXP1_06_PIN
         #define LCD_PINS_D6          EXP1_07_PIN
         #define LCD_PINS_D7          EXP1_08_PIN
-
         #if ENABLED(REPRAP_DISCOUNT_FULL_GRAPHIC_SMART_CONTROLLER)
           #define BTN_ENC_EN         LCD_PINS_D7  // Detect the presence of the encoder
         #endif
-
       #endif
 
     #endif // !FYSETC_MINI_12864
 
-  #endif // !MKS_12864OLED_SSD1306
+  #endif // !HAS_SPI_TFT
 
 #endif // HAS_WIRED_LCD
 

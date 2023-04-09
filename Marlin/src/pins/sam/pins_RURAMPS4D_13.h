@@ -206,8 +206,11 @@
 //
 // LCD / Controller
 //
+#if ENABLED(MKS_MINI_12864)
 
-#if HAS_WIRED_LCD
+  // Migrated to pins/lcd
+
+#elif HAS_WIRED_LCD
 
   #if ANY(RADDS_DISPLAY, IS_RRD_SC, IS_RRD_FG_SC)
     #define BEEPER_PIN               EXP1_01_PIN
@@ -258,12 +261,6 @@
     #elif ENABLED(FYSETC_MINI_12864_2_1)
       #define NEOPIXEL_PIN           EXP1_06_PIN  // D5
     #endif
-
-  #elif ENABLED(MKS_MINI_12864)
-    #define DOGLCD_A0                EXP1_07_PIN
-    #define DOGLCD_CS                EXP1_06_PIN
-
-    #define SD_DETECT_PIN            EXP2_07_PIN
 
   #endif
 

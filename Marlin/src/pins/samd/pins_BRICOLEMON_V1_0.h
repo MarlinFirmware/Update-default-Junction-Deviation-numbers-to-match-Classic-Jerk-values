@@ -255,6 +255,10 @@
 
   // Migrated to pins/lcd
 
+#elif ENABLED(MKS_MINI_12864)
+
+  // Migrated to pins/lcd
+
 #elif HAS_WIRED_LCD
 
   //
@@ -435,7 +439,7 @@
       //#define SD_DETECT_PIN        EXP2_10_PIN
       //#define KILL_PIN             EXP1_01_PIN
 
-    #elif ANY(MKS_MINI_12864, FYSETC_MINI_12864)
+    #elif ENABLED(FYSETC_MINI_12864)
 
       // TO TEST
       //#define BEEPER_PIN           EXP1_06_PIN
@@ -446,58 +450,36 @@
       //  #define KILL_PIN           EXP1_01_PIN
       //#endif
 
-      #if ENABLED(MKS_MINI_12864)
+      // From https://wiki.fysetc.com/Mini12864_Panel/
 
-        // TO TEST
-        //#define DOGLCD_A0                   27
-        //#define DOGLCD_CS                   25
+      // TO TEST
+      //#define DOGLCD_A0                     16
+      //#define DOGLCD_CS                     17
 
-        // GLCD features
-        // Uncomment screen orientation
-        //#define LCD_SCREEN_ROT_90
-        //#define LCD_SCREEN_ROT_180
-        //#define LCD_SCREEN_ROT_270
+      //#define BTN_EN1                       33
+      //#define BTN_EN2                       31
 
-        // not connected to a pin
-        //#define LCD_BACKLIGHT_PIN           57  // backlight LED on A11/D? (Mega/Due:65 - AGCM4:57)
-
-        //#define BTN_EN1                     31
-        //#define BTN_EN2                     33
-
-      #elif ENABLED(FYSETC_MINI_12864)
-
-        // From https://wiki.fysetc.com/Mini12864_Panel/
-
-        // TO TEST
-        //#define DOGLCD_A0                   16
-        //#define DOGLCD_CS                   17
-
-        //#define BTN_EN1                     33
-        //#define BTN_EN2                     31
-
-        //#define FORCE_SOFT_SPI                  // Use this if default of hardware SPI causes display problems
+      //#define FORCE_SOFT_SPI                    // Use this if default of hardware SPI causes display problems
                                                   //   results in LCD soft SPI mode 3, SD soft SPI mode 0
 
-        //#define LCD_RESET_PIN               23  // Must be high or open for LCD to operate normally.
+      //#define LCD_RESET_PIN                 23  // Must be high or open for LCD to operate normally.
 
-        #if ANY(FYSETC_MINI_12864_1_2, FYSETC_MINI_12864_2_0)
-          #ifndef RGB_LED_R_PIN
-            // TO TEST
-            //#define RGB_LED_R_PIN           25
-          #endif
-          #ifndef RGB_LED_G_PIN
-            // TO TEST
-            //#define RGB_LED_G_PIN           27
-          #endif
-          #ifndef RGB_LED_B_PIN
-            // TO TEST
-            //#define RGB_LED_B_PIN           29
-          #endif
-        #elif ENABLED(FYSETC_MINI_12864_2_1)
+      #if ANY(FYSETC_MINI_12864_1_2, FYSETC_MINI_12864_2_0)
+        #ifndef RGB_LED_R_PIN
           // TO TEST
-          //#define NEOPIXEL_PIN              25
+          //#define RGB_LED_R_PIN             25
         #endif
-
+        #ifndef RGB_LED_G_PIN
+          // TO TEST
+          //#define RGB_LED_G_PIN             27
+        #endif
+        #ifndef RGB_LED_B_PIN
+          // TO TEST
+          //#define RGB_LED_B_PIN             29
+        #endif
+      #elif ENABLED(FYSETC_MINI_12864_2_1)
+        // TO TEST
+        //#define NEOPIXEL_PIN                25
       #endif
 
     #elif ENABLED(MINIPANEL)

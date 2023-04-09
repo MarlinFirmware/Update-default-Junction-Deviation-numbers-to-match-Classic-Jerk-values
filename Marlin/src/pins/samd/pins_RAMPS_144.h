@@ -405,6 +405,10 @@
 
   // Migrated to pins/lcd
 
+#elif ENABLED(MKS_MINI_12864)
+
+  // Migrated to pins/lcd
+
 #elif HAS_WIRED_LCD
 
   //#define LCD_SCREEN_ROTATE                180  // 0, 90, 180, 270
@@ -579,7 +583,7 @@
       #endif
       #define KILL_PIN               EXP2_08_PIN
 
-    #elif ANY(MKS_MINI_12864, FYSETC_MINI_12864)
+    #elif ENABLED(FYSETC_MINI_12864)
 
       #define BEEPER_PIN             EXP1_01_PIN
       #define BTN_ENC                EXP1_02_PIN
@@ -591,46 +595,31 @@
         #define KILL_PIN             EXP2_08_PIN
       #endif
 
-      #if ENABLED(MKS_MINI_12864)
+      // From https://wiki.fysetc.com/Mini12864_Panel/
 
-        #define DOGLCD_A0            EXP1_07_PIN
-        #define DOGLCD_CS            EXP1_06_PIN
+      #define DOGLCD_A0              EXP1_04_PIN
+      #define DOGLCD_CS              EXP1_03_PIN
 
-        // not connected to a pin
-        #define LCD_BACKLIGHT_PIN             -1  // 65 (MKS mini12864 can't adjust backlight by software!)
+      #define BTN_EN1                EXP2_05_PIN
+      #define BTN_EN2                EXP2_03_PIN
 
-        #define BTN_EN1              EXP2_03_PIN
-        #define BTN_EN2              EXP2_05_PIN
+      //#define FORCE_SOFT_SPI                  // Use this if default of hardware SPI causes display problems
+                                                //   results in LCD soft SPI mode 3, SD soft SPI mode 0
 
-      #elif ENABLED(FYSETC_MINI_12864)
+      #define LCD_RESET_PIN          EXP1_05_PIN  // Must be high or open for LCD to operate normally.
 
-        // From https://wiki.fysetc.com/Mini12864_Panel/
-
-        #define DOGLCD_A0            EXP1_04_PIN
-        #define DOGLCD_CS            EXP1_03_PIN
-
-        #define BTN_EN1              EXP2_05_PIN
-        #define BTN_EN2              EXP2_03_PIN
-
-        //#define FORCE_SOFT_SPI                  // Use this if default of hardware SPI causes display problems
-                                                  //   results in LCD soft SPI mode 3, SD soft SPI mode 0
-
-        #define LCD_RESET_PIN        EXP1_05_PIN  // Must be high or open for LCD to operate normally.
-
-        #if ANY(FYSETC_MINI_12864_1_2, FYSETC_MINI_12864_2_0)
-          #ifndef RGB_LED_R_PIN
-            #define RGB_LED_R_PIN    EXP1_06_PIN
-          #endif
-          #ifndef RGB_LED_G_PIN
-            #define RGB_LED_G_PIN    EXP1_07_PIN
-          #endif
-          #ifndef RGB_LED_B_PIN
-            #define RGB_LED_B_PIN    EXP1_08_PIN
-          #endif
-        #elif ENABLED(FYSETC_MINI_12864_2_1)
-          #define NEOPIXEL_PIN       EXP1_06_PIN
+      #if ANY(FYSETC_MINI_12864_1_2, FYSETC_MINI_12864_2_0)
+        #ifndef RGB_LED_R_PIN
+          #define RGB_LED_R_PIN      EXP1_06_PIN
         #endif
-
+        #ifndef RGB_LED_G_PIN
+          #define RGB_LED_G_PIN      EXP1_07_PIN
+        #endif
+        #ifndef RGB_LED_B_PIN
+          #define RGB_LED_B_PIN      EXP1_08_PIN
+        #endif
+      #elif ENABLED(FYSETC_MINI_12864_2_1)
+        #define NEOPIXEL_PIN         EXP1_06_PIN
       #endif
 
     #elif ENABLED(MINIPANEL)
