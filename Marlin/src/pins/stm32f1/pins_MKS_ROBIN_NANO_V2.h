@@ -291,6 +291,8 @@
 #define EXP2_07_PIN                         PE12
 #define EXP2_08_PIN                         -1    // RESET
 
+#define EXP_REVERSE_KEYED
+
 //
 // LCD / Controller
 //

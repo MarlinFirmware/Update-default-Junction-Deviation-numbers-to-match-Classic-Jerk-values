@@ -13,6 +13,9 @@ on:
     #- 2.1.x
     paths:
     - 'Marlin/src/pins/*/**'
+    paths-ignore:
+    - 'Marlin/src/pins/lcd/**'
+
   push:
     branches:
     - bugfix-2.1.x

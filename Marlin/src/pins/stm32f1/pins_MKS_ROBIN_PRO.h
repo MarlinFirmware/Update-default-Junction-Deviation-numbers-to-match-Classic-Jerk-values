@@ -262,6 +262,8 @@
 #define EXP2_07_PIN                         PG3
 #define EXP2_08_PIN                         -1    // RESET
 
+#define EXP_REVERSE_KEYED
+
 /**                -------
  *                |     0 | DGND-|
  *           3V3  |  1  2 | DGND-|
