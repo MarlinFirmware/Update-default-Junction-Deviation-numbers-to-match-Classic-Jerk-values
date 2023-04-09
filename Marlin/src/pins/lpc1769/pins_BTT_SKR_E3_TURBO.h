@@ -212,6 +212,11 @@
 
   // Migrated to pins/lcd
 
+#elif ENABLED(ENDER2_STOCKDISPLAY)
+
+  // Migrated to pins/lcd
+  #define ADAPTER_BTT_DUAL
+
 #elif HAS_DWIN_E3V2 || IS_DWIN_MARLINUI
 
   CONTROLLER_WARNING("BTT_SKR_E3_TURBO", "Ender-3 V2 display", " Requires a custom cable with TX = P0_15, RX = P0_16.")
@@ -246,18 +251,11 @@
     #define LCD_PINS_D7              EXP1_01_PIN
     #define ADC_KEYPAD_PIN                 P1_23  // Repurpose servo pin for ADC - CONNECTING TO 5V WILL DAMAGE THE BOARD!
 
-  #elif ANY(MKS_MINI_12864, ENDER2_STOCKDISPLAY)
+  #elif ENABLED(MKS_MINI_12864)
 
-    #define BTN_EN1                  EXP1_03_PIN
-    #define BTN_EN2                  EXP1_05_PIN
-    #define BTN_ENC                  EXP1_02_PIN
-
-    #define DOGLCD_CS                EXP1_07_PIN
-    #define DOGLCD_A0                EXP1_06_PIN
-    #define DOGLCD_SCK               EXP1_01_PIN
-    #define DOGLCD_MOSI              EXP1_08_PIN
+    // Migrated to pins/lcd
     #define FORCE_SOFT_SPI
-    #define LCD_BACKLIGHT_PIN              -1
+    #define ADAPTER_BTT_DUAL
 
   #else
 

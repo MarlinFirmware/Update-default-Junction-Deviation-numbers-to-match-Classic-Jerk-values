@@ -64,16 +64,16 @@
   #define LCD_SDSS                            31  // Controller's SD card
   #define LCD_PINS_DEFINED
 
-#elif ANY(MKS_MINI_12864, ENDER2_STOCKDISPLAY)
-  #if ENABLED(ENDER2_STOCKDISPLAY)
-    #define LCD_PINS_RS              EXP1_07_PIN  // ST9720 CS
-    #define LCD_PINS_EN              EXP1_08_PIN  // ST9720 DAT
-    #define LCD_PINS_D4              EXP1_06_PIN  // ST9720 CLK
-  #endif
-  #if ANY(MKS_MINI_12864, ENDER2_STOCKDISPLAY)
-    #define DOGLCD_CS                EXP1_07_PIN
-    #define DOGLCD_A0                EXP1_06_PIN
-  #endif
+#elif ENABLED(ENDER2_STOCKDISPLAY)
+
+  // Migrated to pins/lcd
+  #define ADAPTER_MELZI_CREALITY
+  #define LCD_SDSS                            31  // Controller's SD card
+  #define LCD_PINS_DEFINED
+
+#elif ENABLED(MKS_MINI_12864)
+  #define DOGLCD_CS                  EXP1_07_PIN
+  #define DOGLCD_A0                  EXP1_06_PIN
 
   #define LCD_SDSS                            31  // Controller's SD card
 

@@ -277,6 +277,11 @@
 
   // Migrated to pins/lcd
 
+#elif ENABLED(ENDER2_STOCKDISPLAY)
+
+  // Migrated to pins/lcd
+  #define FORCE_SOFT_SPI
+
 #elif ENABLED(ANET_FULL_GRAPHICS_LCD)
 
   // Migrated to pins/lcd
@@ -300,31 +305,7 @@
 
 #elif HAS_WIRED_LCD
 
-  #if ENABLED(ENDER2_STOCKDISPLAY)
-
-    /** Creality Ender-2 display pinout
-     *                   ------
-     *   (SCK)     1.30 | 1  2 | 0.28 (BTN_ENC)
-     *   (BTN_EN1) 1.18 | 3  4 | 1.19 (RESET)
-     *   (BTN_EN2) 1.20   5  6 | 1.21 (LCD_A0)
-     *   (LCD_RS)  1.22 | 7  8 | 1.23 (MOSI)
-     *              GND | 9 10 | 5V
-     *                   ------
-     *                    EXP1
-     */
-
-    #define BTN_EN1                  EXP1_03_PIN
-    #define BTN_EN2                  EXP1_05_PIN
-    #define BTN_ENC                  EXP1_02_PIN
-
-    #define DOGLCD_CS                EXP1_07_PIN
-    #define DOGLCD_A0                EXP1_06_PIN
-    #define DOGLCD_SCK               EXP1_01_PIN
-    #define DOGLCD_MOSI              EXP1_08_PIN
-    #define FORCE_SOFT_SPI
-    #define LCD_BACKLIGHT_PIN              -1
-
-  #elif HAS_SPI_TFT                               // Config for Classic UI (emulated DOGM) and Color UI
+  #if HAS_SPI_TFT                                 // Config for Classic UI (emulated DOGM) and Color UI
 
     #define SDCARD_CONNECTION            ONBOARD
 
@@ -334,6 +315,8 @@
     #define BTN_EN1                  EXP2_03_PIN
     #define BTN_EN2                  EXP2_05_PIN
 
+    #define TFT_CS_PIN               EXP1_07_PIN
+    #define TFT_DC_PIN               EXP1_08_PIN
     #define TFT_A0_PIN                TFT_DC_PIN
 
     #ifndef TFT_WIDTH
