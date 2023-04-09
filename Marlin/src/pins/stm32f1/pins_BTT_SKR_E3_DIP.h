@@ -193,6 +193,11 @@
 
   // Migrated to pins/lcd
 
+#elif ENABLED(ENDER2_STOCKDISPLAY)
+
+  // Migrated to pins/lcd
+  #define FORCE_SOFT_SPI
+
 #elif HAS_WIRED_LCD
 
   #if ENABLED(ZONESTAR_LCD)                       // ANET A8 LCD Controller - Must convert to 3.3V - CONNECTING TO 5V WILL DAMAGE THE BOARD!
@@ -207,7 +212,7 @@
     #define LCD_PINS_D7              EXP1_01_PIN
     #define ADC_KEYPAD_PIN                  PA1   // Repurpose servo pin for ADC - CONNECTING TO 5V WILL DAMAGE THE BOARD!
 
-  #elif ANY(MKS_MINI_12864, ENDER2_STOCKDISPLAY)
+  #elif ENABLED(MKS_MINI_12864)
 
     /** Creality Ender-2 display pinout
      *                   ------

@@ -481,38 +481,18 @@
 
       #elif ENABLED(ENDER2_STOCKDISPLAY)
 
-        /**
-         * Creality Ender-2 display pinout
-         *                   ------
-         *      (SCK) P1_30 | 1  2 | P0_28 (BTN_ENC)
-         *  (BTN_EN1) P1_18 | 3  4 | P1_19 (RESET)
-         *  (BTN_EN2) P1_20   5  6 | P1_21 (LCD_A0)
-         *   (LCD_CS) P1_22 | 7  8 | P1_23 (MOSI)
-         *              GND | 9 10 | 5V
-         *                   ------
-         *                    EXP1
-         */
-
-        #define BTN_EN1              EXP1_03_PIN
-        #define BTN_EN2              EXP1_05_PIN
-        #define BTN_ENC              EXP1_02_PIN
-        #define DOGLCD_CS            EXP1_07_PIN
-        #define DOGLCD_A0            EXP1_06_PIN
-        #define DOGLCD_SCK           EXP1_01_PIN
-        #define DOGLCD_MOSI          EXP1_08_PIN
+        // Migrated to pins/lcd
         #define FORCE_SOFT_SPI
-        #define LCD_BACKLIGHT_PIN          -1
+
       #endif
 
       #if IS_ULTIPANEL
         #define LCD_PINS_D5          EXP1_06_PIN
         #define LCD_PINS_D6          EXP1_07_PIN
         #define LCD_PINS_D7          EXP1_08_PIN
-
         #if ENABLED(REPRAP_DISCOUNT_FULL_GRAPHIC_SMART_CONTROLLER)
           #define BTN_ENC_EN         LCD_PINS_D7  // Detect the presence of the encoder
         #endif
-
       #endif
 
     #endif // !FYSETC_MINI_12864
