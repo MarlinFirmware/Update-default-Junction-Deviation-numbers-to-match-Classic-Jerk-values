@@ -152,6 +152,8 @@
 #define EXP2_07_PIN                           34
 #define EXP2_08_PIN                           -1  // RESET
 
+#define EXP_REVERSE_KEYED
+
 //
 // MicroSD card
 //
