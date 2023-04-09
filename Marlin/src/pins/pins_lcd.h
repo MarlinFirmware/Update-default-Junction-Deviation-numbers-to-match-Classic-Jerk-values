@@ -45,6 +45,8 @@
     #include "lcd/ANET_FULL_GRAPHICS_LCD.h"
   #elif IS_RRD_FG_SC
     #include "lcd/RRD_FG_SC.h"
+  #elif IS_RRD_SC
+    #include "lcd/RRD_SC.h"
   #else
 
     // More displays to come

@@ -214,18 +214,19 @@
 
   // Migrated to pins/lcd
 
+#elif IS_RRD_SC
+
+  // Migrated to pins/lcd
+
 #elif HAS_WIRED_LCD
 
-  #if ANY(RADDS_DISPLAY, IS_RRD_SC)
+  #if ENABLED(RADDS_DISPLAY)
     #define BEEPER_PIN               EXP1_01_PIN
     #define LCD_PINS_D4              EXP1_05_PIN
     #define LCD_PINS_D5              EXP1_06_PIN
     #define LCD_PINS_D6              EXP1_07_PIN
     #define LCD_PINS_D7              EXP1_08_PIN
     #define SD_DETECT_PIN            EXP2_07_PIN
-  #endif
-
-  #if ANY(RADDS_DISPLAY, IS_RRD_SC)
 
     #define LCD_PINS_RS              EXP1_04_PIN
     #define LCD_PINS_EN              EXP1_03_PIN

@@ -263,6 +263,10 @@
 
   // Migrated to pins/lcd
 
+#elif IS_RRD_SC
+
+  // Migrated to pins/lcd
+
 #elif HAS_WIRED_LCD
 
   //
@@ -359,28 +363,7 @@
   //
   #if IS_NEWPANEL
 
-    #if IS_RRD_SC
-
-      #define BEEPER_PIN             EXP1_01_PIN
-
-      // Definitions for any standard Display
-      #define BTN_EN1                EXP2_05_PIN
-      #define BTN_EN2                EXP2_03_PIN
-      #if ENABLED(REPRAP_DISCOUNT_FULL_GRAPHIC_SMART_CONTROLLER)
-        #define BTN_ENC_EN           LCD_PINS_D7  // Detect the presence of the encoder
-      #endif
-
-      #define BTN_ENC                EXP1_02_PIN
-      #ifndef SD_DETECT_PIN
-        #define SD_DETECT_PIN        EXP2_07_PIN
-      #endif
-      #define KILL_PIN               EXP2_10_PIN
-
-      #if ENABLED(BQ_LCD_SMART_CONTROLLER)
-        //#define LCD_BACKLIGHT_PIN  EXP1_08_PIN  // TO TEST
-      #endif
-
-    #elif ENABLED(REPRAPWORLD_GRAPHICAL_LCD)
+    #if ENABLED(REPRAPWORLD_GRAPHICAL_LCD)
 
       // TO TEST
       //#define BTN_EN1                       56  // Mega/Due:64 - AGCM4:56
