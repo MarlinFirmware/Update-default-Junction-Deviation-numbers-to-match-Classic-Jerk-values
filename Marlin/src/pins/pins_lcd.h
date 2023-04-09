@@ -37,6 +37,8 @@
     #include "lcd/CR10_STOCKDISPLAY.h"
   #elif ENABLED(ENDER2_STOCKDISPLAY)
     #include "lcd/ENDER2_STOCKDISPLAY.h"
+  #elif ENABLED(MKS_MINI_12864)
+    #include "lcd/MKS_MINI_12864.h"
   #elif ANY(ANET_FULL_GRAPHICS_LCD, CTC_A10S_A13)
     #include "lcd/ANET_FULL_GRAPHICS_LCD.h"
   #else

@@ -166,21 +166,22 @@
 #define SD_DETECT_PIN                EXP2_07_PIN  // IO34 default is SD_DET signal (Jump to SDDET)
 #define USES_SHARED_SPI                           // SPI is shared by SD card with TMC SPI drivers
 
-#if HAS_WIRED_LCD
+#if ENABLED(MKS_MINI_12864)
+
+  // MKS MINI12864 / LCD12864B. For MKS LCD12864A remove the RPK2 resistor!
+
+  // Migrated to pins/lcd
+  #define LCD_RESET_PIN                     -1
+
+#elif HAS_WIRED_LCD
   #define BEEPER_PIN                 EXP1_01_PIN
   #define LCD_PINS_EN                EXP1_03_PIN
   #define LCD_PINS_RS                EXP1_04_PIN
   #define BTN_ENC                    EXP1_02_PIN
   #define BTN_EN1                    EXP2_03_PIN
   #define BTN_EN2                    EXP2_05_PIN
-  #define LCD_BACKLIGHT_PIN                   -1
 
-  #if ENABLED(MKS_MINI_12864)
-    // MKS MINI12864 and MKS LCD12864B; If using MKS LCD12864A (Need to remove RPK2 resistor)
-    #define DOGLCD_CS                EXP1_06_PIN
-    #define DOGLCD_A0                EXP1_07_PIN
-    #define LCD_RESET_PIN                     -1
-  #elif ENABLED(FYSETC_MINI_12864_2_1)
+  #if ENABLED(FYSETC_MINI_12864_2_1)
     // MKS_MINI_12864_V3, BTT_MINI_12864, FYSETC_MINI_12864_2_1, BEEZ_MINI_12864
     #define DOGLCD_CS                EXP1_03_PIN
     #define DOGLCD_A0                EXP1_04_PIN

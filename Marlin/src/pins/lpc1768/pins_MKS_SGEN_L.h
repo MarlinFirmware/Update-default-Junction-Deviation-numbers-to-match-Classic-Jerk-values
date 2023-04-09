@@ -289,6 +289,10 @@
 
   // Migrated to pins/lcd
 
+#elif ENABLED(MKS_MINI_12864)
+
+  // Migrated to pins/lcd
+
 #elif HAS_WIRED_LCD
 
   #define BEEPER_PIN                 EXP1_01_PIN
@@ -387,11 +391,6 @@
         #endif
 
       #else // !FYSETC_MINI_12864
-
-        #if ENABLED(MKS_MINI_12864)
-          #define DOGLCD_CS          EXP1_06_PIN
-          #define DOGLCD_A0          EXP1_07_PIN
-        #endif
 
         #if IS_ULTIPANEL
           #define LCD_PINS_D5        EXP1_06_PIN

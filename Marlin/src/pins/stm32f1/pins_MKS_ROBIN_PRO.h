@@ -365,9 +365,10 @@
     #define TFTGLCD_CS                      PG5
   #endif
 
-#elif ENABLED(ENDER2_STOCKDISPLAY)
+#elif ANY(ENDER2_STOCKDISPLAY, MKS_MINI_12864)
 
   // Migrated to pins/lcd
+  // MKS MINI12864 and MKS LCD12864B. If using MKS LCD12864A (Need to remove RPK2 resistor)
 
 #elif HAS_WIRED_LCD
 
@@ -380,30 +381,14 @@
   #define LCD_PINS_EN                EXP1_03_PIN
   #define LCD_PINS_RS                EXP1_04_PIN
 
-  // MKS MINI12864 and MKS LCD12864B. If using MKS LCD12864A (Need to remove RPK2 resistor)
-  #if ENABLED(MKS_MINI_12864)
-
-    #define LCD_BACKLIGHT_PIN               -1
-    #define LCD_RESET_PIN                   -1
-    #define DOGLCD_A0                EXP1_07_PIN
-    #define DOGLCD_CS                EXP1_06_PIN
-    #define DOGLCD_SCK               EXP2_02_PIN
-    #define DOGLCD_MOSI              EXP2_06_PIN
-
-  #else // !ENDER2_STOCKDISPLAY && !MKS_MINI_12864
-
-    #define LCD_PINS_D4              EXP1_05_PIN
-    #if IS_ULTIPANEL
-      #define LCD_PINS_D5            EXP1_06_PIN
-      #define LCD_PINS_D6            EXP1_07_PIN
-      #define LCD_PINS_D7            EXP1_08_PIN
-
-      #if ENABLED(REPRAP_DISCOUNT_FULL_GRAPHIC_SMART_CONTROLLER)
-        #define BTN_ENC_EN           LCD_PINS_D7  // Detect the presence of the encoder
-      #endif
-
+  #define LCD_PINS_D4                EXP1_05_PIN
+  #if IS_ULTIPANEL
+    #define LCD_PINS_D5              EXP1_06_PIN
+    #define LCD_PINS_D6              EXP1_07_PIN
+    #define LCD_PINS_D7              EXP1_08_PIN
+    #if ENABLED(REPRAP_DISCOUNT_FULL_GRAPHIC_SMART_CONTROLLER)
+      #define BTN_ENC_EN             LCD_PINS_D7  // Detect the presence of the encoder
     #endif
-
   #endif
 
 #endif // HAS_WIRED_LCD

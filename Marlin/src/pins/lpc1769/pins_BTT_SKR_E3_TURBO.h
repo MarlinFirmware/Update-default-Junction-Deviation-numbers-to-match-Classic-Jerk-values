@@ -212,7 +212,7 @@
 
   // Migrated to pins/lcd
 
-#elif ENABLED(ENDER2_STOCKDISPLAY)
+#elif ANY(ENDER2_STOCKDISPLAY, MKS_MINI_12864)
 
   // Migrated to pins/lcd
   #define ADAPTER_BTT_DUAL
@@ -237,33 +237,21 @@
   #define BTN_EN2                    EXP1_07_PIN
   #define BTN_ENC                    EXP1_05_PIN
 
-#elif HAS_WIRED_LCD
+#elif ENABLED(ZONESTAR_LCD)                     // ANET A8 LCD Controller - Must convert to 3.3V - CONNECTING TO 5V WILL DAMAGE THE BOARD!
 
-  #elif ENABLED(ZONESTAR_LCD)                     // ANET A8 LCD Controller - Must convert to 3.3V - CONNECTING TO 5V WILL DAMAGE THE BOARD!
+  CONTROLLER_WARNING("BTT_SKR_E3_TURBO", "ZONESTAR_LCD")
 
-    CONTROLLER_WARNING("BTT_SKR_E3_TURBO", "ZONESTAR_LCD")
+  #define LCD_PINS_RS                EXP1_06_PIN
+  #define LCD_PINS_EN                EXP1_02_PIN
+  #define LCD_PINS_D4                EXP1_07_PIN
+  #define LCD_PINS_D5                EXP1_05_PIN
+  #define LCD_PINS_D6                EXP1_03_PIN
+  #define LCD_PINS_D7                EXP1_01_PIN
+  #define ADC_KEYPAD_PIN                   P1_23  // Repurpose servo pin for ADC - CONNECTING TO 5V WILL DAMAGE THE BOARD!
 
-    #define LCD_PINS_RS              EXP1_06_PIN
-    #define LCD_PINS_EN              EXP1_02_PIN
-    #define LCD_PINS_D4              EXP1_07_PIN
-    #define LCD_PINS_D5              EXP1_05_PIN
-    #define LCD_PINS_D6              EXP1_03_PIN
-    #define LCD_PINS_D7              EXP1_01_PIN
-    #define ADC_KEYPAD_PIN                 P1_23  // Repurpose servo pin for ADC - CONNECTING TO 5V WILL DAMAGE THE BOARD!
+  #error "Only ZONESTAR_LCD, MKS_MINI_12864, ENDER2_STOCKDISPLAY, and CR10_STOCKDISPLAY are currently supported on the BTT_SKR_E3_TURBO."
 
-  #elif ENABLED(MKS_MINI_12864)
-
-    // Migrated to pins/lcd
-    #define FORCE_SOFT_SPI
-    #define ADAPTER_BTT_DUAL
-
-  #else
-
-    #error "Only ZONESTAR_LCD, MKS_MINI_12864, ENDER2_STOCKDISPLAY, and CR10_STOCKDISPLAY are currently supported on the BTT_SKR_E3_TURBO."
-
-  #endif
-
-#endif // HAS_WIRED_LCD
+#endif
 
 //
 // SD Support
