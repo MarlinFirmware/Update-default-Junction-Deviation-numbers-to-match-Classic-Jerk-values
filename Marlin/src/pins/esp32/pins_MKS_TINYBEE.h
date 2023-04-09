@@ -194,12 +194,7 @@
       #define PAUSE_LCD_FOR_BUSY_SD
     #endif
   #else
-   #define LCD_PINS_D4               EXP1_05_PIN
-    #if ENABLED(REPRAP_DISCOUNT_SMART_CONTROLLER)
-      #define LCD_PINS_D5            EXP1_06_PIN
-      #define LCD_PINS_D6            EXP1_07_PIN
-      #define LCD_PINS_D7            EXP1_08_PIN
-    #endif
+    #define LCD_PINS_D4              EXP1_05_PIN
     #define BOARD_ST7920_DELAY_1              96
     #define BOARD_ST7920_DELAY_2              48
     #define BOARD_ST7920_DELAY_3             600
