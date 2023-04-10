@@ -25,6 +25,16 @@
  * pins_lcd.h - Define LCD pins based on the EXP connector / adapter
  */
 
+#if defined(LCD_PINS_EN) || defined(DOGLCD_A0)
+
+  // LCD pins were already defined in the board pins file
+
+#else
+
+  #include "lcd/adapters.h"
+
+#endif
+
 /**
  * Certain displays use LCD_PINS_RS as LCD_RESET_PIN
  */
