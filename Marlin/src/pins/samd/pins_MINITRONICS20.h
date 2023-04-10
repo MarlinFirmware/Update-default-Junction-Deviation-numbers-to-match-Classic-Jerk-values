@@ -163,17 +163,6 @@
 // LCD / Controller
 //
 
-#if ENABLED(CR10_STOCKDISPLAY)
-  #define EXP3_01_PIN                EXP1_01_PIN
-  #define EXP3_02_PIN                EXP1_02_PIN
-  #define EXP3_03_PIN                EXP1_03_PIN
-  #define EXP3_04_PIN                EXP1_04_PIN
-  #define EXP3_05_PIN                EXP1_05_PIN
-  #define EXP3_06_PIN                EXP1_06_PIN
-  #define EXP3_07_PIN                EXP1_07_PIN
-  #define EXP3_08_PIN                EXP1_08_PIN
-#endif
-
 /**
  * This section is based on pins_RAMPS_144.h. To use a new display, you
  * could use normal duponts and connect with the scheme shown before.
@@ -185,7 +174,11 @@
  *   - Any Reprap character display like
  */
 
-#if HAS_WIRED_LCD
+#if ENABLED(CR10_STOCKDISPLAY)
+
+  // Migrated to pins/lcd
+
+#elif HAS_WIRED_LCD
 
   //
   // LCD Display output pins
@@ -213,19 +206,7 @@
 
   #else
 
-    #if ENABLED(CR10_STOCKDISPLAY)
-
-      // TO TEST
-      //#define LCD_PINS_RS          EXP3_04_PIN
-      //#define LCD_PINS_EN          EXP3_03_PIN
-      //#define LCD_PINS_D4          EXP3_05_PIN
-
-      #if !IS_NEWPANEL
-        // TO TEST
-        //#define BEEPER_PIN         EXP3_05_PIN
-      #endif
-
-    #elif ENABLED(ZONESTAR_LCD)
+    #if ENABLED(ZONESTAR_LCD)
 
       // TO TEST
       //#define LCD_PINS_RS                   56  // Mega/Due:64 - AGCM4:56
@@ -284,17 +265,11 @@
 
       //#define BEEPER_PIN           EXP1_01_PIN
 
-      #if ENABLED(CR10_STOCKDISPLAY)
-        // TO TEST
-        #define BTN_EN1              EXP1_03_PIN
-        #define BTN_EN2              EXP1_05_PIN
-      #else
-        // Definitions fpr any standard Display
-        #define BTN_EN1              EXP2_05_PIN
-        #define BTN_EN2              EXP2_03_PIN
-        #if ENABLED(REPRAP_DISCOUNT_FULL_GRAPHIC_SMART_CONTROLLER)
-          #define BTN_ENC_EN         LCD_PINS_D7  // Detect the presence of the encoder
-        #endif
+      // Definitions for any standard Display
+      #define BTN_EN1                EXP2_05_PIN
+      #define BTN_EN2                EXP2_03_PIN
+      #if ENABLED(REPRAP_DISCOUNT_FULL_GRAPHIC_SMART_CONTROLLER)
+        #define BTN_ENC_EN           LCD_PINS_D7  // Detect the presence of the encoder
       #endif
 
       #define BTN_ENC                EXP1_02_PIN

@@ -33,6 +33,17 @@
 
   #include "lcd/adapters.h"
 
+  #if ENABLED(CR10_STOCKDISPLAY)
+    #include "lcd/CR10_STOCKDISPLAY.h"
+  #else
+
+    // More displays to come
+    #if HAS_LCD_SELECTED && !LCD_IS_SERIAL_HOST
+      #define LCD_MIGRATION_WARNING
+    #endif
+
+  #endif
+
 #endif
 
 /**

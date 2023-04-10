@@ -191,13 +191,8 @@
 
 #if ENABLED(CR10_STOCKDISPLAY)
 
-  #define BEEPER_PIN                 EXP3_01_PIN
-  #define BTN_ENC                    EXP3_02_PIN
-  #define BTN_EN1                    EXP3_03_PIN
-  #define BTN_EN2                    EXP3_05_PIN
-  #define LCD_PINS_D4                EXP3_06_PIN
-  #define LCD_PINS_RS                EXP3_07_PIN
-  #define LCD_PINS_EN                EXP3_08_PIN
+  // Migrated to pins/lcd
+  #define LCD_ON_EXP3
 
 #elif HAS_WIRED_LCD
 

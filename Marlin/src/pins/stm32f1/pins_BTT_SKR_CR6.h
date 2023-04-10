@@ -118,22 +118,6 @@
 
 #define CONTROLLER_FAN_PIN                  PC7
 
-//
-// LCD / Controller
-//
-
-#if ENABLED(CR10_STOCKDISPLAY)
-  #define BTN_ENC                           PA15
-  #define BTN_EN1                           PA9
-  #define BTN_EN2                           PA10
-
-  #define LCD_PINS_RS                       PB8
-  #define LCD_PINS_EN                       PB15
-  #define LCD_PINS_D4                       PB9
-
-  #define BEEPER_PIN                        PB5
-#endif
-
 #if HAS_TMC_UART
   /**
    * TMC2208/TMC2209 stepper drivers
@@ -189,4 +173,21 @@
 #define SUICIDE_PIN                         PC13
 #ifndef SUICIDE_PIN_STATE
   #define SUICIDE_PIN_STATE                  LOW
+#endif
+
+//
+// LCD / Controller
+//
+#define EXP3_01_PIN                         PB5
+#define EXP3_02_PIN                         PA15
+#define EXP3_03_PIN                         PA9
+#define EXP3_04_PIN                         -1
+#define EXP3_05_PIN                         PA10
+#define EXP3_06_PIN                         PB9
+#define EXP3_07_PIN                         PB8
+#define EXP3_08_PIN                         PB15
+
+#if ENABLED(CR10_STOCKDISPLAY)
+  // Migrated to pins/lcd
+  #define LCD_ON_EXP3
 #endif

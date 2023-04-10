@@ -256,8 +256,14 @@
 #define EXP2_07_PIN                        P1_31
 #define EXP2_08_PIN                        -1
 
-#if HAS_WIRED_LCD
+#if ENABLED(CR10_STOCKDISPLAY)
+
+  // Migrated to pins/lcd
+
+#elif HAS_WIRED_LCD
+
   #if ENABLED(CTC_A10S_A13)
+
     #error "CTC_A10S_A13 only applies to the ANET 1.0 board."
 
   #elif ENABLED(ANET_FULL_GRAPHICS_LCD)
@@ -326,17 +332,6 @@
     #define DOGLCD_SCK               EXP1_04_PIN
     #define DOGLCD_MOSI              EXP1_01_PIN
     #define LCD_BACKLIGHT_PIN              -1
-
-  #elif ENABLED(CR10_STOCKDISPLAY)
-
-    #define LCD_PINS_RS              EXP1_07_PIN
-
-    #define BTN_EN1                  EXP1_03_PIN
-    #define BTN_EN2                  EXP1_05_PIN
-    #define BTN_ENC                  EXP1_02_PIN  // (58) open-drain
-
-    #define LCD_PINS_EN              EXP1_08_PIN
-    #define LCD_PINS_D4              EXP1_06_PIN
 
   #elif HAS_ADC_BUTTONS
 

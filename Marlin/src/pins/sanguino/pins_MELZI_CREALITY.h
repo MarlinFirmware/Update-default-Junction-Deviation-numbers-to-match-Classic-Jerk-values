@@ -58,9 +58,14 @@
 //
 // LCD / Controller
 //
+#if ENABLED(CR10_STOCKDISPLAY)
 
-#if ANY(MKS_MINI_12864, CR10_STOCKDISPLAY, ENDER2_STOCKDISPLAY)
-  #if ANY(CR10_STOCKDISPLAY, ENDER2_STOCKDISPLAY)
+  // Migrated to pins/lcd
+  #define LCD_SDSS                            31  // Controller's SD card
+  #define LCD_PINS_DEFINED
+
+#elif ANY(MKS_MINI_12864, ENDER2_STOCKDISPLAY)
+  #if ENABLED(ENDER2_STOCKDISPLAY)
     #define LCD_PINS_RS              EXP1_07_PIN  // ST9720 CS
     #define LCD_PINS_EN              EXP1_08_PIN  // ST9720 DAT
     #define LCD_PINS_D4              EXP1_06_PIN  // ST9720 CLK
