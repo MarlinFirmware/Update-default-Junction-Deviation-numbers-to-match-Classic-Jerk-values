@@ -932,3 +932,10 @@
 #if LCD_USES_EXP12 && ENABLED(EXP_REVERSE_KEYED) != ENABLED(LCD_REVERSE_KEYED)
   #warning "CAUTION! The MOTHERBOARD and LCD have oppositely-keyed EXP plugs."
 #endif
+
+/**
+ * LCD Controller using old pin definition method
+ */
+#ifdef LCD_MIGRATION_WARNING
+  #warning "The selected LCD is not yet migrated to the new system."
+#endif

@@ -249,19 +249,16 @@
 
 #if ENABLED(CR10_STOCKDISPLAY)
 
-  #define LCD_PINS_RS                EXP3_07_PIN
-  #define LCD_PINS_EN                EXP3_08_PIN
-  #define LCD_PINS_D4                EXP3_06_PIN
+  // Migrated to pins/lcd
+  #define LCD_ON_EXP3
 
-  #define BTN_ENC                    EXP3_02_PIN
-  #define BTN_EN1                    EXP3_03_PIN
-  #define BTN_EN2                    EXP3_05_PIN
-
-  #ifndef HAS_PIN_27_BOARD
-    #define BEEPER_PIN               EXP3_01_PIN
+  #ifdef HAS_PIN_27_BOARD
+    #define BEEPER_PIN                      -1
   #endif
 
 #elif ANY(HAS_DWIN_E3V2, IS_DWIN_MARLINUI, DWIN_VET6_CREALITY_LCD)
+
+  // Serial controller with click encoder
 
   #define BTN_ENC                    EXP3_05_PIN
   #define BTN_EN1                    EXP3_08_PIN

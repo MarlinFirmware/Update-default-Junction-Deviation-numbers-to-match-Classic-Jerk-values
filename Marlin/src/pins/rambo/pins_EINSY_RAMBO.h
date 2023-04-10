@@ -212,28 +212,23 @@
 
   #define KILL_PIN                            32
 
-  #if IS_ULTIPANEL || TOUCH_UI_ULTIPANEL
+  #if ENABLED(CR10_STOCKDISPLAY)
 
-    #if ENABLED(CR10_STOCKDISPLAY)
-      #define LCD_PINS_RS            EXP1_07_PIN
-      #define LCD_PINS_EN            EXP1_08_PIN
-      #define LCD_PINS_D4            EXP1_06_PIN
-      #define BTN_EN1                EXP1_03_PIN
-      #define BTN_EN2                EXP1_05_PIN
-    #else
-      #define LCD_PINS_RS            EXP1_04_PIN
-      #define LCD_PINS_EN            EXP1_03_PIN
-      #define LCD_PINS_D4            EXP1_05_PIN
-      #define LCD_PINS_D5            EXP1_06_PIN
-      #define LCD_PINS_D6            EXP1_07_PIN
-      #define LCD_PINS_D7            EXP1_08_PIN
-      #define BTN_EN1                EXP2_05_PIN
-      #define BTN_EN2                EXP2_03_PIN
+    // Migrated to pins/lcd
 
-      #if ENABLED(REPRAP_DISCOUNT_FULL_GRAPHIC_SMART_CONTROLLER)
-        #define BTN_ENC_EN           LCD_PINS_D7  // Detect the presence of the encoder
-      #endif
+  #elif IS_ULTIPANEL || TOUCH_UI_ULTIPANEL
 
+    #define LCD_PINS_RS              EXP1_04_PIN
+    #define LCD_PINS_EN              EXP1_03_PIN
+    #define LCD_PINS_D4              EXP1_05_PIN
+    #define LCD_PINS_D5              EXP1_06_PIN
+    #define LCD_PINS_D6              EXP1_07_PIN
+    #define LCD_PINS_D7              EXP1_08_PIN
+    #define BTN_EN1                  EXP2_05_PIN
+    #define BTN_EN2                  EXP2_03_PIN
+
+    #if ENABLED(REPRAP_DISCOUNT_FULL_GRAPHIC_SMART_CONTROLLER)
+      #define BTN_ENC_EN             LCD_PINS_D7  // Detect the presence of the encoder
     #endif
 
     #define BTN_ENC                  EXP1_02_PIN  // P1

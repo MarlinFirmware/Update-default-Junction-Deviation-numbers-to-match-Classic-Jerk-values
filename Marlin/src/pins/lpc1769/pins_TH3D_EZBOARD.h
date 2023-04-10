@@ -178,19 +178,8 @@
 #define EXP1_08_PIN                        P0_18
 
 #if ENABLED(CR10_STOCKDISPLAY)
-  /**          ------
-   *   BEEPER | 1  2 | ENC
-   *      EN1 | 3  4 | KILL
-   *      EN2   5  6 | LCD_D4
-   *   LCD_RS | 7  8 | LCD_EN
-   *      GND | 9 10 | 5V
-   *           ------
-   */
-  #define BEEPER_PIN                 EXP1_01_PIN
-  #define LCD_PINS_RS                EXP1_07_PIN
-  #define LCD_PINS_EN                EXP1_08_PIN
-  #define LCD_PINS_D4                EXP1_06_PIN
-  #define KILL_PIN                   EXP1_04_PIN
+
+  // Migrated to pins/lcd
 
 #elif ENABLED(MKS_MINI_12864)
   /**          ------
@@ -217,7 +206,7 @@
 
 #endif
 
-#if ANY(CR10_STOCKDISPLAY, MKS_MINI_12864)
+#if ENABLED(MKS_MINI_12864)
   #define BTN_EN1                    EXP1_03_PIN
   #define BTN_EN2                    EXP1_05_PIN
   #define BTN_ENC                    EXP1_02_PIN

@@ -283,15 +283,15 @@
   // Re-Arm J3 pins 1 (P1.31) & 2 (P3.26) are not used. Stock cable will need to have one
   // 10-pin IDC connector trimmed or replaced with a 12-pin IDC connector to fit J3.
 
-  #define BEEPER_PIN                       P2_11  // J3-3 & AUX-4
-
-  #define BTN_EN1                          P1_23  // J3-5 & AUX-4
-  #define BTN_EN2                          P0_16  // J3-7 & AUX-4
-  #define BTN_ENC                          P3_25  // J3-4 & AUX-4
-
-  #define LCD_PINS_RS                      P0_15  // J3-9 & AUX-4 (CS)
-  #define LCD_PINS_EN                      P0_18  // J3-10 & AUX-3 (SID, MOSI)
-  #define LCD_PINS_D4                      P2_06  // J3-8 & AUX-3 (SCK, CLK)
+  // Migrated to pins/lcd
+  #define EXP1_01_PIN                      P2_11  // J3-3 & AUX-4
+  #define EXP1_02_PIN                      P3_25  // J3-4 & AUX-4
+  #define EXP1_03_PIN                      P1_23  // J3-5 & AUX-4
+  #define EXP1_04_PIN                      -1     // J3-5 & AUX-4
+  #define EXP1_05_PIN                      P0_16  // J3-7 & AUX-4
+  #define EXP1_06_PIN                      P2_06  // J3-8 & AUX-3 (SCK, CLK)
+  #define EXP1_07_PIN                      P0_15  // J3-9 & AUX-4 (CS)
+  #define EXP1_08_PIN                      P0_18  // J3-10 & AUX-3 (SID, MOSI)
 
 #elif ENABLED(ZONESTAR_LCD)
 
