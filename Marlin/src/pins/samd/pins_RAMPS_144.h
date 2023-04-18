@@ -333,65 +333,82 @@
  */
 #ifndef EXP1_08_PIN
 
-  #define EXP1_03_PIN                    AUX4_17
-  #define EXP1_04_PIN                    AUX4_18
-  #define EXP1_05_PIN                    AUX4_16
-  #define EXP1_06_PIN                    AUX4_15
-  #define EXP1_07_PIN                    AUX4_14
-  #define EXP1_08_PIN                    AUX4_13
+  #if ENABLED(MINIPANEL)
+    // Simple EXP1/2 adapter for testing...
+    #define EXP1_01_PIN                  AUX2_08
+    #define EXP1_02_PIN                  AUX2_06
+    #define EXP1_06_PIN                  AUX2_09
+    #define EXP1_07_PIN                  AUX2_07
+    #define EXP1_08_PIN                  AUX2_10
 
-  #define EXP2_01_PIN                    AUX3_03
-  #define EXP2_02_PIN                    AUX3_05
-  #define EXP2_04_PIN                    AUX3_06
-  #define EXP2_06_PIN                    AUX3_04
-  #define EXP2_07_PIN                    AUX3_02
+    #define EXP2_03_PIN                  AUX2_04
+    #define EXP2_05_PIN                  AUX2_03
+    #define EXP2_07_PIN                  AUX3_02
+    #define EXP2_08_PIN                  AUX2_05
 
-  #if ENABLED(G3D_PANEL)
-    /**                  Gadgets3D Smart Adapter
-     *              ------                        ------
-     *        4-11 | 1  2 | 4-12     (MISO) 3-03 | 1  2 | 3-05 (SCK)
-     *        4-17 | 3  4 | 4-18            4-10 | 3  4 | 3-06
-     *        4-16   5  6 | 4-15            4-09   5  6 | 3-04 (MOSI)
-     *        4-14 | 7  8 | 4-13            3-02 | 7  8 | 4-07
-     *  (GND) 4-02 | 9 10 | 4-01 (5V)         -- | 9 10 | --
-     *              ------                        ------
-     *               EXP1                          EXP2
-     */
-    #define EXP1_01_PIN                  AUX4_11
-    #define EXP1_02_PIN                  AUX4_12
+  #else // !MINIPANEL
 
-    #define EXP2_03_PIN                  AUX4_10
-    #define EXP2_05_PIN                  AUX4_09
-    #define EXP2_08_PIN                  AUX4_07
+    #define EXP1_03_PIN                  AUX4_17
+    #define EXP1_04_PIN                  AUX4_18
+    #define EXP1_05_PIN                  AUX4_16
+    #define EXP1_06_PIN                  AUX4_15
+    #define EXP1_07_PIN                  AUX4_14
+    #define EXP1_08_PIN                  AUX4_13
 
-  #else
+    #define EXP2_01_PIN                  AUX3_03
+    #define EXP2_02_PIN                  AUX3_05
+    #define EXP2_04_PIN                  AUX3_06
+    #define EXP2_06_PIN                  AUX3_04
+    #define EXP2_07_PIN                  AUX3_02
 
-    /**                     Smart Adapter (c) RRD
-     *             ------                           ------
-     *       4-09 | 1  2 | 4-10        (MISO) 3-03 | 1  2 | 3-05 (SCK)
-     *       4-17 | 3  4 | 4-18               4-12 | 3  4 | 3-06
-     *       4-16   5  6 | 4-15               4-11   5  6 | 3-04 (MOSI)
-     *       4-14 | 7  8 | 4-13               3-02 | 7  8 | 4-07
-     * (GND) 3-07 | 9 10 | 3-01 (5V)    (GND) 3-07 | 9 10 | --
-     *             ------                           ------
-     *              EXP1                             EXP2
-     */
-    #define EXP1_01_PIN                  AUX4_09
-    #define EXP1_02_PIN                  AUX4_10
+    #if ENABLED(G3D_PANEL)
+      /**                  Gadgets3D Smart Adapter
+       *              ------                        ------
+       *        4-11 | 1  2 | 4-12     (MISO) 3-03 | 1  2 | 3-05 (SCK)
+       *        4-17 | 3  4 | 4-18            4-10 | 3  4 | 3-06
+       *        4-16   5  6 | 4-15            4-09   5  6 | 3-04 (MOSI)
+       *        4-14 | 7  8 | 4-13            3-02 | 7  8 | 4-07
+       *  (GND) 4-02 | 9 10 | 4-01 (5V)         -- | 9 10 | --
+       *              ------                        ------
+       *               EXP1                          EXP2
+       */
+      #define EXP1_01_PIN                AUX4_11
+      #define EXP1_02_PIN                AUX4_12
 
-    #if ALL(TOUCH_UI_FTDI_EVE, LCD_FYSETC_TFT81050)
-      #define EXP2_03_PIN                AUX4_11
-      #define EXP2_05_PIN                AUX4_12
-      #define EXP2_08_PIN                     -1  // RESET
-    #else
-      #define EXP2_03_PIN                AUX4_12
-      #define EXP2_05_PIN                AUX4_11
+      #define EXP2_03_PIN                AUX4_10
+      #define EXP2_05_PIN                AUX4_09
       #define EXP2_08_PIN                AUX4_07
+
+    #else
+
+      /**                     Smart Adapter (c) RRD
+       *             ------                           ------
+       *       4-09 | 1  2 | 4-10        (MISO) 3-03 | 1  2 | 3-05 (SCK)
+       *       4-17 | 3  4 | 4-18               4-12 | 3  4 | 3-06
+       *       4-16   5  6 | 4-15               4-11   5  6 | 3-04 (MOSI)
+       *       4-14 | 7  8 | 4-13               3-02 | 7  8 | 4-07
+       * (GND) 3-07 | 9 10 | 3-01 (5V)    (GND) 3-07 | 9 10 | --
+       *             ------                           ------
+       *              EXP1                             EXP2
+       */
+      #define EXP1_01_PIN                AUX4_09
+      #define EXP1_02_PIN                AUX4_10
+
+      #if ALL(TOUCH_UI_FTDI_EVE, LCD_FYSETC_TFT81050)
+        #define EXP2_03_PIN              AUX4_11
+        #define EXP2_05_PIN              AUX4_12
+        #define EXP2_08_PIN                   -1  // RESET
+      #else
+        #define EXP2_03_PIN              AUX4_12
+        #define EXP2_05_PIN              AUX4_11
+        #define EXP2_08_PIN              AUX4_07
+      #endif
+
     #endif
 
-  #endif
+  #endif // !MINIPANEL
 
-#endif
+#endif // !EXP1_08_PIN
 
 //
 // LCD / Controller
@@ -406,6 +423,10 @@
   // Migrated to pins/lcd
 
 #elif ENABLED(MKS_MINI_12864)
+
+  // Migrated to pins/lcd
+
+#elif ENABLED(MINIPANEL)
 
   // Migrated to pins/lcd
 
@@ -621,23 +642,6 @@
       #elif ENABLED(FYSETC_MINI_12864_2_1)
         #define NEOPIXEL_PIN         EXP1_06_PIN
       #endif
-
-    #elif ENABLED(MINIPANEL)
-
-      #define BEEPER_PIN                 AUX2_08
-      #define LCD_BACKLIGHT_PIN          AUX2_10
-
-      #define DOGLCD_A0                  AUX2_07
-      #define DOGLCD_CS                  AUX2_09
-
-      #define BTN_EN1                    AUX2_06
-      #define BTN_EN2                    AUX2_04
-      #define BTN_ENC                    AUX2_03
-
-      #ifndef SD_DETECT_PIN
-        #define SD_DETECT_PIN            AUX3_02
-      #endif
-      #define KILL_PIN                   AUX2_05
 
     #elif ENABLED(ZONESTAR_LCD)
 
