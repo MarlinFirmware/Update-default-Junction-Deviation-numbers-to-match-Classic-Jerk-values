@@ -185,7 +185,7 @@
 
   // Migrated to pins/lcd
 
-#elif ANY(ENDER2_STOCKDISPLAY, MKS_MINI_12864)
+#elif ENABLED(MINIPANEL)
 
   // Migrated to pins/lcd
   #define ADAPTER_BTT_DUAL

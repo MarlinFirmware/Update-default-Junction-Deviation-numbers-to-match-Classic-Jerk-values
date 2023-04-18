@@ -58,9 +58,9 @@
 //
 // LCD / Controller
 //
-#if ANY(CR10_STOCKDISPLAY, ENDER2_STOCKDISPLAY, MKS_MINI_12864)
+#if ANY(CR10_STOCKDISPLAY, MINIPANEL)
   // Migrated to pins/lcd
-  #if ANY(ENDER2_STOCKDISPLAY, MKS_MINI_12864)
+  #if ENABLED(MINIPANEL)
     #define ADAPTER_MELZI_CREALITY
   #endif
   #define LCD_SDSS                            31  // Controller's SD card

@@ -259,6 +259,10 @@
 
   // Migrated to pins/lcd
 
+#elif ENABLED(MINIPANEL)
+
+  // Migrated to pins/lcd
+
 #elif HAS_WIRED_LCD
 
   //
@@ -481,29 +485,6 @@
         // TO TEST
         //#define NEOPIXEL_PIN                25
       #endif
-
-    #elif ENABLED(MINIPANEL)
-
-      // TO TEST
-      //#define BEEPER_PIN           EXP2_05_PIN
-      // not connected to a pin
-      //#define LCD_BACKLIGHT_PIN             57  // backlight LED on A11/D? (Mega/Due:65 - AGCM4:57)
-
-      //#define DOGLCD_A0            EXP2_07_PIN
-      //#define DOGLCD_CS                     58  // Mega/Due:66 - AGCM4:58
-
-      // GLCD features
-      // Uncomment screen orientation
-      //#define LCD_SCREEN_ROT_90
-      //#define LCD_SCREEN_ROT_180
-      //#define LCD_SCREEN_ROT_270
-
-      //#define BTN_EN1              EXP1_02_PIN
-      //#define BTN_EN2                       55  // Mega/Due:63 - AGCM4:55
-      //#define BTN_ENC                       72  // Mega/Due:59 - AGCM4:72
-
-      //#define SD_DETECT_PIN        EXP2_10_PIN
-      //#define KILL_PIN                      56  // Mega/Due:64 - AGCM4:56
 
     #elif ENABLED(ZONESTAR_LCD)
 

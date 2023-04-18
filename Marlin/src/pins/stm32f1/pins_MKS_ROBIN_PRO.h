@@ -365,7 +365,7 @@
     #define TFTGLCD_CS                      PG5
   #endif
 
-#elif ANY(ENDER2_STOCKDISPLAY, MKS_MINI_12864)
+#elif ENABLED(MINIPANEL)
 
   // Migrated to pins/lcd
   // MKS MINI12864 and MKS LCD12864B. If using MKS LCD12864A (Need to remove RPK2 resistor)
