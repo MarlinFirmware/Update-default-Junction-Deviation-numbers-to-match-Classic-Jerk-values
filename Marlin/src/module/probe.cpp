@@ -37,6 +37,9 @@
 
 #include "../gcode/gcode.h"
 #include "../lcd/marlinui.h"
+#if ENABLED(CREALITY_RTS)
+  #include "../lcd/rts/lcd_rts.h"
+#endif
 
 #include "../MarlinCore.h" // for stop(), disable_e_steppers(), wait_for_user_response()
 
@@ -1031,6 +1034,7 @@ float Probe::probe_at_point(
       // The user may want to quickly move the carriage or bed by hand to avoid bed damage from the (hot) nozzle.
       // This would also benefit from the contemplated "Audio Alerts" feature.
       stow();
+      TERN_(CREALITY_RTS, RTS_ProbingFailed());
       LCD_MESSAGE(MSG_LCD_PROBING_FAILED);
       #if DISABLED(G29_RETRY_AND_RECOVER)
         SERIAL_ERROR_MSG(STR_ERR_PROBING_FAILED);

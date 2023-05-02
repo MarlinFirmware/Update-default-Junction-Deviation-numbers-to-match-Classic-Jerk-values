@@ -35,7 +35,10 @@
 
 #if IS_SCARA
   #include "../libs/buzzer.h"
-  #include "../lcd/marlinui.h"
+#endif
+
+#if ENABLED(CREALITY_RTS)
+  #include "../lcd/rts/lcd_rts.h"
 #endif
 
 #if ENABLED(POLAR)
@@ -2437,6 +2440,14 @@ void prepare_line_to_destination() {
       DEBUG_ECHOLNPGM(")");
     }
 
+    #if ENABLED(PROBE_ACTIVATION_SWITCH)
+      if (axis == Z_AXIS && HIGH == READ(PROBE_ACTIVATION_SWITCH_PIN)) {
+        WRITE(PROBE_TARE_PIN, LOW);
+        delay(200);
+        WRITE(PROBE_TARE_PIN, HIGH);
+      }
+    #endif
+
     // Only do some things when moving towards an endstop
     const int8_t axis_home_dir = TERN0(DUAL_X_CARRIAGE, axis == X_AXIS)
                   ? TOOL_X_HOME_DIR(active_extruder) : home_dir(axis);
@@ -2496,12 +2507,11 @@ void prepare_line_to_destination() {
     planner.synchronize();
 
     if (is_home_dir) {
+      endstops.validate_homing_move();
 
       #if HOMING_Z_WITH_PROBE && HAS_QUIET_PROBING
         if (axis == Z_AXIS && final_approach) probe.set_probing_paused(false);
       #endif
-
-      endstops.validate_homing_move();
 
       // Re-enable stealthChop if used. Disable diag1 pin on driver.
       #if ENABLED(SENSORLESS_HOMING)
@@ -2676,6 +2686,7 @@ void prepare_line_to_destination() {
       #define _CAN_HOME(A) (axis == _AXIS(A) && (ANY(A##_SPI_SENSORLESS, HAS_##A##_STATE) || TERN0(HOMING_Z_WITH_PROBE, _AXIS(A) == Z_AXIS)))
       #define _ANDCANT(N) && !_CAN_HOME(N)
       if (true MAIN_AXIS_MAP(_ANDCANT)) return;
+      #undef _CAN_HOME
     #endif
 
     if (DEBUGGING(LEVELING)) DEBUG_ECHOLNPGM(">>> homeaxis(", C(AXIS_CHAR(axis)), ")");
@@ -2982,6 +2993,8 @@ void prepare_line_to_destination() {
 
       destination[axis] = current_position[axis];
 
+      //if (axis == Z_AXIS) current_position.z -= probe.offset.z; //rock_20220801 手动对高功能。
+
       if (DEBUGGING(LEVELING)) DEBUG_POS("> AFTER set_axis_is_at_home", current_position);
 
     #endif
@@ -3068,7 +3081,32 @@ void set_axis_is_at_home(const AxisEnum axis) {
   /**
    * Z Probe Z Homing? Account for the probe's Z offset.
    */
-  #if HAS_BED_PROBE && Z_HOME_TO_MIN
+  #if 0
+  #if HAS_BED_PROBE && Z_HOME_TO_MAX // Z_HOME_TO_MIN  Rock_20220827
+    if (axis == Z_AXIS) {
+      #if HOMING_Z_WITH_PROBE
+
+        SERIAL_ECHOLNPGM(" current_position.z_old=: ", current_position.z);
+        current_position.z -= probe.offset.z;
+        SERIAL_ECHOLNPGM(" probe.offset.z=: ", probe.offset.z);
+        SERIAL_ECHOLNPGM(" current_position.z_new=: ", current_position.z);
+
+        if (DEBUGGING(LEVELING)) DEBUG_ECHOLNPGM("*** Z HOMED WITH PROBE (Z_MIN_PROBE_USES_Z_MIN_ENDSTOP_PIN) ***\n> probe.offset.z = ", probe.offset.z);
+
+      #else
+
+        if (DEBUGGING(LEVELING)) DEBUG_ECHOLNPGM("*** Z HOMED TO ENDSTOP ***");
+
+      #endif
+    }
+  #endif
+
+  #if ENABLED(BLTOUCH_AND_Z_LIMIT) // 正方向回原点进行Z轴补偿
+     if (axis == Z_AXIS) current_position.z -= probe.offset.z;
+  #endif
+  #endif
+
+  #if HAS_BED_PROBE && Z_HOME_DIR < 0
     if (axis == Z_AXIS) {
       #if HOMING_Z_WITH_PROBE
         #if ENABLED(BD_SENSOR)
@@ -3080,6 +3118,15 @@ void set_axis_is_at_home(const AxisEnum axis) {
         if (DEBUGGING(LEVELING)) DEBUG_ECHOLNPGM("*** Z homed with PROBE" TERN_(Z_MIN_PROBE_USES_Z_MIN_ENDSTOP_PIN, " (Z_MIN_PROBE_USES_Z_MIN_ENDSTOP_PIN)") " ***\n> (M851 Z", probe.offset.z, ")");
       #else
         if (DEBUGGING(LEVELING)) DEBUG_ECHOLNPGM("*** Z homed to ENDSTOP ***");
+      #endif
+    }
+  #elif HAS_BED_PROBE && Z_HOME_DIR > 0 // Return to the origin in the positive direction for Z-axis compensation
+    if (axis == Z_AXIS) {
+      #if ALL(CREALITY_RTS, BLTOUCH, HOMING_Z_WITH_PROBE) && Z_HOME_DIR > 0
+        if (st_bedNozzleHeightCal.bedNozzleHeightCalFinishFlag)
+          current_position.z -= probe.offset.z + st_bedNozzleHeightCal.zCoordinateOffset;
+      #else
+        //current_position.z -= probe.offset.z;
       #endif
     }
   #endif
@@ -3107,3 +3154,555 @@ void set_axis_is_at_home(const AxisEnum axis) {
     home_offset[axis] = v;
   }
 #endif
+
+#if ENABLED(CREALITY_RTS)
+  #if ENABLED(BLTOUCH_AND_Z_LIMIT)
+
+    float homeaxis_bl(const AxisEnum axis, const feedRate_t fr_mm_fast, const feedRate_t fr_mm_slow) {
+      float coordinateOffset = VALUE_INVALID_8BIT;
+
+      #if ANY(MORGAN_SCARA, MP_SCARA)
+        // Only Z homing (with probe) is permitted
+        if (axis != Z_AXIS) { BUZZ(100, 880); return; }
+      #else
+        #define _CAN_HOME(A) (axis == _AXIS(A) && (ANY(A##_SPI_SENSORLESS, HAS_##A##_ENDSTOP) || TERN0(HOMING_Z_WITH_PROBE, _AXIS(A) == Z_AXIS)))
+        if (!_CAN_HOME(X) && !_CAN_HOME(Y) && !_CAN_HOME(Z)) return 0xFFFF;
+        #undef _CAN_HOME
+      #endif
+
+      if (ENABLED(USER_LEVEL_DEBUG)) {
+        SERIAL_ECHOLNPGM("\nhomeaxis_bl start current_position.z * 100 = ", current_position.z * 100);
+        DEBUG_ECHOLNPGM(">>> homeaxis(", axis_codes[axis], ")");
+      }
+
+      // const int axis_home_dir = -TERN0(DUAL_X_CARRIAGE, axis == X_AXIS)
+      //             ? x_home_dir(active_extruder) : home_dir(axis);
+      //由于此时使用了最大限位开关，Z_HOME_DIR被设置成1，不能用上面的判断，所以此处强制赋值为-1
+      const int axis_home_dir = -1;
+
+      // Homing Z towards the bed? Deploy the Z probe or endstop.
+      if (TERN0(HOMING_Z_WITH_PROBE, axis == Z_AXIS && probe.deploy()))  // 弹出bltouch
+        return VALUE_INVALID_8BIT;
+
+      // Set flags for X, Y, Z motor locking
+      #if HAS_EXTRA_ENDSTOPS
+        switch (axis) {
+          TERN_(X_DUAL_ENDSTOPS, case X_AXIS:)
+          TERN_(Y_DUAL_ENDSTOPS, case Y_AXIS:)
+          TERN_(Z_MULTI_ENDSTOPS, case Z_AXIS:)
+            stepper.set_separate_multi_axis(true);
+          default: break;
+        }
+      #endif
+
+      // Fast move towards endstop until triggered
+      if (ENABLED(USER_LEVEL_DEBUG)) DEBUG_ECHOLNPGM("Home 1 Fast:");
+
+      #if ALL(HOMING_Z_WITH_PROBE, BLTOUCH)
+        if (axis == Z_AXIS && bltouch.deploy()) return VALUE_INVALID_8BIT; // The initial DEPLOY
+      #endif
+
+      #if DISABLED(DELTA) && defined(SENSORLESS_BACKOFF_MM)
+        const xy_float_t backoff = SENSORLESS_BACKOFF_MM;
+        if (((ENABLED(X_SENSORLESS) && axis == X_AXIS) || (ENABLED(Y_SENSORLESS) && axis == Y_AXIS)) && backoff[axis])
+          do_homing_move(axis, -ABS(backoff[axis]) * axis_home_dir, homing_feedrate(axis));
+      #endif
+      if (ENABLED(USER_LEVEL_DEBUG))
+        SERIAL_ECHOLNPGM("\nhomeaxis_bl start to move z * 100 = ", axis * 100,
+                          "\nhomeaxis_bl current scalin * 100 = ", (int)(max_length(TERN(DELTA, Z_AXIS, axis)) * axis_home_dir * 100),
+                          );
+
+      abce_pos_t target1 = planner.get_axis_positions_mm(); // 获取向下移动前的坐标
+      if (ENABLED(USER_LEVEL_DEBUG))
+        SERIAL_ECHOLNPGM("\nhomeaxis_bl target1[axis] * 100 = ", target1[axis] * 100);
+
+      do_homing_move(axis, 0.90f * max_length(TERN(DELTA, Z_AXIS, axis)) * axis_home_dir, MMM_TO_MMS(fr_mm_fast));
+      // do_homing_move(axis, 1.5f * max_length(TERN(DELTA, Z_AXIS, axis)) * axis_home_dir);//Z轴向下移动，移动距离为当前 Z_MAX_POS x 1.5f,当bltouch有反馈信号时，停止运行
+      abce_pos_t target2 = planner.get_axis_positions_mm(); // 获取向下移动后的坐标
+      if (ENABLED(USER_LEVEL_DEBUG))
+        SERIAL_ECHOLNPGM("\nhomeaxis_bl target2[axis] * 100 = ", target2[axis] * 100);
+
+      // 获取z轴两坐标系的差值
+      #if ANY(DWIN_CREALITY_CR200B_PRO)
+        rts.setZCoordinateOffset(target2[axis] + target1[axis]);
+      #elif ENABLED(DWIN_CREALITY_SERMOON_V2)
+        gLcdSermoonV2UI.setZCoordinateOffset(target2[axis] + target1[axis]);
+      #endif
+      coordinateOffset = target2[axis] + target1[axis];
+
+      if (ENABLED(USER_LEVEL_DEBUG)) {
+        #if ANY(DWIN_CREALITY_SERMOON_D3, DWIN_CREALITY_CR200B_PRO)
+          SERIAL_ECHOLNPGM("\nhomeaxis_bl Home 1-1 Fast: zCoordinateOffset * 100 = ", rts.zCoordinateOffset * 100);
+        #elif ENABLED(DWIN_CREALITY_SERMOON_V2)
+          SERIAL_ECHOLNPGM("\nhomeaxis_bl Home 1-1 Fast: zCoordinateOffset * 100 = ", gLcdSermoonV2UI.zCoordinateOffset * 100);
+        #endif
+        SERIAL_EOL();
+      }
+
+      abce_pos_t target3 = planner.get_axis_positions_mm(); // 获取向下移动前的坐标
+      if (ENABLED(USER_LEVEL_DEBUG))
+        SERIAL_ECHOLNPGM("\nhomeaxis_bl target3[axis] * 100 = ", target3[axis] * 100);
+
+      //do_homing_move(axis, 0.75f * max_length(TERN(DELTA, Z_AXIS, axis)) * axis_home_dir, MMM_TO_MMS(Z_PROBE_FEEDRATE_FAST * 15));
+      do_homing_move(axis, 0.25f * max_length(TERN(DELTA, Z_AXIS, axis)) * axis_home_dir,  MMM_TO_MMS(fr_mm_slow));//Z轴向下移动，移动距离为当前 Z_MAX_POS x 1.5f,当bltouch有反馈信号时，停止运行
+      abce_pos_t target4 = planner.get_axis_positions_mm(); // 获取向下移动后的坐标
+      if (ENABLED(USER_LEVEL_DEBUG))
+        SERIAL_ECHOLNPGM("\nhomeaxis_bl target4[axis] * 100 = ", target4[axis] * 100);
+
+      // 获取z轴两坐标系的差值
+      #if ENABLED(DWIN_CREALITY_CR200B_PRO)
+        rts.setZCoordinateOffset(rts.GetzCoordinateOffset() + /*target3[axis] + */target4[axis]);
+      #elif ENABLED(DWIN_CREALITY_SERMOON_V2)
+        gLcdSermoonV2UI.setZCoordinateOffset(gLcdSermoonV2UI.GetzCoordinateOffset() + /*target3[axis] + */target4[axis]);
+      #endif
+      coordinateOffset += target4[axis];
+
+      if (ENABLED(USER_LEVEL_DEBUG)) {
+        #if ANY(DWIN_CREALITY_SERMOON_D3, DWIN_CREALITY_CR200B_PRO)
+          SERIAL_ECHOLNPGM("\nhomeaxis_bl Home 1-2 Fast: zCoordinateOffset * 100 = ", rts.zCoordinateOffset * 100, "  coordinateOffset * 100 = ", coordinateOffset * 100);
+        #elif ENABLED(DWIN_CREALITY_SERMOON_V2)
+          SERIAL_ECHOLNPGM("\nhomeaxis_bl Home 1-2 Fast: zCoordinateOffset * 100 = ", gLcdSermoonV2UI.zCoordinateOffset * 100);
+        #endif
+        SERIAL_EOL();
+      }
+
+      // 当前z位置：
+      // 这时候是bltouch刚刚碰到热床，此时的坐标其实就是 0 - probe.offset.z。
+      current_position[axis] = 0 - probe.offset.z;
+
+      if (ENABLED(USER_LEVEL_DEBUG))
+        SERIAL_ECHOLNPGM("\nhomeaxis_bl probe.offset.z * 100 = ", probe.offset.z * 100,
+                          "\nhomeaxis_bl current_position[Z] * 100 = ", current_position[axis] * 100);
+
+      #if ALL(HOMING_Z_WITH_PROBE, BLTOUCH) && DISABLED(BLTOUCH_HS_MODE)
+        if (axis == Z_AXIS) bltouch.stow(); // Intermediate STOW (in LOW SPEED MODE)
+      #endif
+
+      // When homing Z with probe respect probe clearance
+      const bool use_probe_bump = TERN0(HOMING_Z_WITH_PROBE, axis == Z_AXIS && home_bump_mm(Z_AXIS));
+      const float bump = axis_home_dir * (
+        use_probe_bump ? _MAX(TERN0(HOMING_Z_WITH_PROBE, Z_CLEARANCE_BETWEEN_PROBES), home_bump_mm(Z_AXIS)) : home_bump_mm(axis)
+      );
+
+      // If a second homing move is configured...
+      if (bump) {
+        // Move away from the endstop by the axis HOMING_BUMP_MM
+        if (ENABLED(USER_LEVEL_DEBUG)) DEBUG_ECHOLNPGM("Move Away:");
+        do_homing_move(axis, -bump
+          #if HOMING_Z_WITH_PROBE
+            , MMM_TO_MMS(axis == Z_AXIS ? Z_PROBE_FEEDRATE_FAST : 0)
+          #endif
+        );
+
+        #if ENABLED(DETECT_BROKEN_ENDSTOP)
+          // Check for a broken endstop
+          EndstopEnum es;
+          switch (axis) {
+            default:
+            case X_AXIS: es = X_ENDSTOP; break;
+            case Y_AXIS: es = Y_ENDSTOP; break;
+            case Z_AXIS: es = Z_ENDSTOP; break;
+          }
+          if (TEST(endstops.state(), es)) {
+            SERIAL_ECHO_MSG("Bad ", axis_codes[axis], " Endstop?");
+            kill(GET_TEXT(MSG_KILL_HOMING_FAILED));
+          }
+        #endif
+
+        // Slow move towards endstop until triggered
+        if (ENABLED(USER_LEVEL_DEBUG)) DEBUG_ECHOLNPGM("Home 2 Slow:");   //第二次测量
+
+        #if ALL(HOMING_Z_WITH_PROBE, BLTOUCH) && DISABLED(BLTOUCH_HS_MODE)
+          if (axis == Z_AXIS && bltouch.deploy()) return; // Intermediate DEPLOY (in LOW SPEED MODE)
+        #endif
+
+        abce_pos_t target5 = planner.get_axis_positions_mm(); // 获取向下移动前的坐标
+        if (ENABLED(USER_LEVEL_DEBUG))
+          SERIAL_ECHOLNPGM("\nhomeaxis_bl target5[axis] * 100 = ", target5[axis] * 100);
+
+        do_homing_move(axis, 2 * bump, get_homing_bump_feedrate(axis));
+
+        abce_pos_t target6 = planner.get_axis_positions_mm(); // 获取向下移动后的坐标
+        if (ENABLED(USER_LEVEL_DEBUG))
+          SERIAL_ECHOLNPGM("\nhomeaxis_bl target6[axis] * 100 = ", target6[axis] * 100);
+
+        // 当前z位置：
+        // 这时候是bltouch刚刚碰到热床，此时的坐标其实就是 0 - probe.offset.z。
+        current_position[axis] = 0 - probe.offset.z;
+
+        if (ENABLED(USER_LEVEL_DEBUG))
+          SERIAL_ECHOLNPGM("\nhomeaxis_bl probe.offset.z_2 * 100 = ", probe.offset.z * 100,
+                            "\nhomeaxis_bl current_position[Z]_2 * 100 = ", current_position[axis] * 100);
+
+        // 第二次测量值
+        #if ENABLED(DWIN_CREALITY_CR200B_PRO)
+          rts.setZCoordinateOffset(rts.GetzCoordinateOffset() - (target5[axis] + target6[axis]));
+        #elif ENABLED(DWIN_CREALITY_SERMOON_V2)
+          gLcdSermoonV2UI.setZCoordinateOffset(gLcdSermoonV2UI.GetzCoordinateOffset() - (target5[axis] + target6[axis]));
+        #endif
+        coordinateOffset -= (target5[axis] + target6[axis]);
+
+        if (ENABLED(USER_LEVEL_DEBUG)) {
+          #if ANY(DWIN_CREALITY_SERMOON_D3, DWIN_CREALITY_CR200B_PRO)
+            SERIAL_ECHOLNPGM("\nhomeaxis_bl Home 2 Slow: zCoordinateOffset * 100 = ", rts.zCoordinateOffset * 100,
+                             "\nhomeaxis_bl Home 2 Slow:  coordinateOffset * 100 = ", coordinateOffset * 100);
+          #elif ENABLED(DWIN_CREALITY_SERMOON_V2)
+            SERIAL_ECHOLNPGM("\nhomeaxis_bl Home 2 Slow: zCoordinateOffset * 100 = ", gLcdSermoonV2UI.zCoordinateOffset * 100);
+          #endif
+          SERIAL_EOL();
+        }
+
+        #if ALL(HOMING_Z_WITH_PROBE, BLTOUCH)
+          if (axis == Z_AXIS) bltouch.stow(); // The final STOW
+        #endif
+      }
+
+      #if HAS_EXTRA_ENDSTOPS
+        const bool pos_dir = axis_home_dir > 0;
+        #if ENABLED(X_DUAL_ENDSTOPS)
+          if (axis == X_AXIS) {
+            const float adj = ABS(endstops.x2_endstop_adj);
+            if (adj) {
+              if (pos_dir ? (endstops.x2_endstop_adj > 0) : (endstops.x2_endstop_adj < 0)) stepper.set_x_lock(true); else stepper.set_x2_lock(true);
+              do_homing_move(axis, pos_dir ? -adj : adj);
+              stepper.set_x_lock(false);
+              stepper.set_x2_lock(false);
+            }
+          }
+        #endif
+        #if ENABLED(Y_DUAL_ENDSTOPS)
+          if (axis == Y_AXIS) {
+            const float adj = ABS(endstops.y2_endstop_adj);
+            if (adj) {
+              if (pos_dir ? (endstops.y2_endstop_adj > 0) : (endstops.y2_endstop_adj < 0)) stepper.set_y_lock(true); else stepper.set_y2_lock(true);
+              do_homing_move(axis, pos_dir ? -adj : adj);
+              stepper.set_y_lock(false);
+              stepper.set_y2_lock(false);
+            }
+          }
+        #endif
+
+        // Reset flags for X, Y, Z motor locking
+        switch (axis) {
+          default: break;
+          TERN_(X_DUAL_ENDSTOPS, case X_AXIS:)
+          TERN_(Y_DUAL_ENDSTOPS, case Y_AXIS:)
+          TERN_(Z_MULTI_ENDSTOPS, case Z_AXIS:)
+            stepper.set_separate_multi_axis(false);
+        }
+      #endif
+
+      #ifdef TMC_HOME_PHASE
+        // move back to homing phase if configured and capable
+        backout_to_tmc_homing_phase(axis);
+      #endif
+
+      #if IS_SCARA
+
+        set_axis_is_at_home(axis);
+        sync_plan_position();
+
+      #elif ENABLED(DELTA)
+
+        // Delta has already moved all three towers up in G28
+        // so here it re-homes each tower in turn.
+        // Delta homing treats the axes as normal linear axes.
+
+        const float adjDistance = delta_endstop_adj[axis],
+                    minDistance = (MIN_STEPS_PER_SEGMENT) * planner.mm_per_step[axis];
+
+        // Retrace by the amount specified in delta_endstop_adj if more than min steps.
+        if (adjDistance * (Z_HOME_DIR) < 0 && ABS(adjDistance) > minDistance) { // away from endstop, more than min distance
+          if (DEBUGGING(LEVELING)) DEBUG_ECHOLNPGM("adjDistance:", adjDistance);
+          do_homing_move(axis, adjDistance, get_homing_bump_feedrate(axis));
+        }
+
+      #else // CARTESIAN / CORE / MARKFORGED_XY
+
+        //set_axis_is_at_home(axis);
+        sync_plan_position();
+
+        destination[axis] = current_position[axis];
+
+        if (DEBUGGING(LEVELING)) DEBUG_POS("> AFTER set_axis_is_at_home", current_position);
+
+      #endif
+
+      // Put away the Z probe
+      #if HOMING_Z_WITH_PROBE
+        if (axis == Z_AXIS && probe.stow()) return VALUE_INVALID_8BIT;
+      #endif
+
+      #if DISABLED(DELTA) && defined(HOMING_BACKOFF_POST_MM)
+        const xyz_float_t endstop_backoff = HOMING_BACKOFF_POST_MM;
+        if (endstop_backoff[axis]) {
+          current_position[axis] -= ABS(endstop_backoff[axis]) * axis_home_dir;
+          line_to_current_position(
+            #if HOMING_Z_WITH_PROBE
+              (axis == Z_AXIS) ? MMM_TO_MMS(Z_PROBE_FEEDRATE_FAST) :
+            #endif
+            homing_feedrate(axis)
+          );
+
+          #if ENABLED(SENSORLESS_HOMING)
+            planner.synchronize();
+            if (false
+              #if ANY(IS_CORE, MARKFORGED_XY)
+                || axis != NORMAL_AXIS
+              #endif
+            ) safe_delay(200);  // Short delay to allow belts to spring back
+          #endif
+        }
+      #endif
+
+      // Clear retracted status if homing the Z axis
+      TERN_(FWRETRACT, if (axis == Z_AXIS) fwretract.current_hop = 0.0);
+
+      if (DEBUGGING(LEVELING)) {
+        SERIAL_ECHOLNPGM("\nhomeaxis_bl end current_position.z * 100 = ", current_position.z * 100);
+        SERIAL_EOL();
+      }
+      return coordinateOffset;
+    }
+
+  #else // !BLTOUCH_AND_Z_LIMIT
+
+    void homeaxis_bl(const AxisEnum axis) {
+
+      #if IS_SCARA
+        // Only Z homing (with probe) is permitted
+        if (axis != Z_AXIS) { BUZZ(100, 880); return; }
+      #else
+        #define _CAN_HOME(A) (axis == _AXIS(A) && (ANY(A##_SPI_SENSORLESS, HAS_##A##_ENDSTOP) || TERN0(HOMING_Z_WITH_PROBE, _AXIS(A) == Z_AXIS)))
+        if (!_CAN_HOME(X) && !_CAN_HOME(Y) && !_CAN_HOME(Z)) return;
+      #endif
+
+      if (DEBUGGING(LEVELING)) {
+        DEBUG_ECHOLNPGM("\nhomeaxis_bl start current_position.z * 100 = ", current_position.z * 100);
+        DEBUG_ECHOLNPGM(">>> homeaxis(", axis_codes[axis], ")");
+      }
+
+      // const int axis_home_dir = -TERN0(DUAL_X_CARRIAGE, axis == X_AXIS)
+      //             ? x_home_dir(active_extruder) : home_dir(axis);
+      //由于此时使用了最大限位开关，Z_HOME_DIR被设置成1，不能用上面的判断，所以此处强制赋值为-1
+      const int axis_home_dir = -1;
+
+      // Homing Z towards the bed? Deploy the Z probe or endstop.
+      if (TERN0(HOMING_Z_WITH_PROBE, axis == Z_AXIS && probe.deploy()))  // 弹出bltouch
+        return;
+
+      // Set flags for X, Y, Z motor locking
+      #if HAS_EXTRA_ENDSTOPS
+        switch (axis) {
+          TERN_(X_DUAL_ENDSTOPS, case X_AXIS:)
+          TERN_(Y_DUAL_ENDSTOPS, case Y_AXIS:)
+          TERN_(Z_MULTI_ENDSTOPS, case Z_AXIS:)
+            stepper.set_separate_multi_axis(true);
+          default: break;
+        }
+      #endif
+
+      // Fast move towards endstop until triggered
+      if (DEBUGGING(LEVELING)) DEBUG_ECHOLNPGM("Home 1 Fast:");
+
+      #if ALL(HOMING_Z_WITH_PROBE, BLTOUCH)
+        if (axis == Z_AXIS && bltouch.deploy()) return; // The initial DEPLOY
+      #endif
+
+      #if DISABLED(DELTA) && defined(SENSORLESS_BACKOFF_MM)
+        const xy_float_t backoff = SENSORLESS_BACKOFF_MM;
+        if (((ENABLED(X_SENSORLESS) && axis == X_AXIS) || (ENABLED(Y_SENSORLESS) && axis == Y_AXIS)) && backoff[axis])
+          do_homing_move(axis, -ABS(backoff[axis]) * axis_home_dir, homing_feedrate(axis));
+      #endif
+      if (DEBUGGING(LEVELING)) {
+        SERIAL_ECHOLNPGM("\nhomeaxis_bl start to move z * 100 = ", axis * 100,
+                          "\nhomeaxis_bl current scalin * 100 = ", (int)(max_length(TERN(DELTA, Z_AXIS, axis)) * axis_home_dir * 100),
+                          );
+      }
+
+      abce_pos_t target1 = planner.get_axis_positions_mm(); // 获取向下移动前的坐标
+      if (DEBUGGING(LEVELING))
+        SERIAL_ECHOLNPGM("\nhomeaxis_bl target1[axis] * 100 = ", target1[axis] * 100);
+
+      do_homing_move(axis, 1.5f * max_length(TERN(DELTA, Z_AXIS, axis)) * axis_home_dir);//Z轴向下移动，移动距离为当前 Z_MAX_POS x 1.5f,当bltouch有反馈信号时，停止运行
+      abce_pos_t target2 = planner.get_axis_positions_mm(); // 获取向下移动后的坐标
+      if (DEBUGGING(LEVELING))
+        SERIAL_ECHOLNPGM("\nhomeaxis_bl target2[axis] * 100 = ", target2[axis] * 100);
+
+      #if ENABLED(CREALITY_RTS)
+        // 获取z轴两坐标系的差值
+        // 这里的“+probe.offset.z”，是因为执行了G28后，Z轴会走一段路程，其长度为probe.offset.z ，这也是实现下限位必须走的距离
+        // gLcdSermoonV2UI.setZCoordinateOffset(target2[axis] + target1[axis] + gLcdSermoonV2UI.GetzCoordinateOffset() + probe.offset.z);
+        // st_bedNozzleHeightCal.zCoordinateOffset=target2[axis] + target1[axis] + st_bedNozzleHeightCal.zCoordinateOffset+probe.offset.z;
+        st_bedNozzleHeightCal.zCoordinateOffset=target2[axis] + target1[axis];
+        if (DEBUGGING(LEVELING)) {
+          SERIAL_ECHOLNPGM("\nhomeaxis_bl zCoordinateOffset * 100 = ", st_bedNozzleHeightCal.zCoordinateOffset * 100);
+          SERIAL_EOL();
+        }
+
+        // 当前z位置：
+        // 这时候是bltouch刚刚碰到热床，测试的坐标其实就是 0 - probe.offset.z。
+        current_position[axis] = 0 - probe.offset.z;
+
+      #endif
+
+      #if HOMING_Z_WITH_PROBE
+        if (DEBUGGING(LEVELING)) {
+          SERIAL_ECHOLNPGM("\nhomeaxis_bl probe.offset.z * 100 = ", probe.offset.z * 100,
+                            "\nhomeaxis_bl current_position[Z] * 100 = ", current_position[axis] * 100);
+        }
+      #endif
+
+      #if ALL(HOMING_Z_WITH_PROBE, BLTOUCH) && DISABLED(BLTOUCH_HS_MODE)
+        if (axis == Z_AXIS) bltouch.stow(); // Intermediate STOW (in LOW SPEED MODE)
+      #endif
+
+      // When homing Z with probe respect probe clearance
+      const bool use_probe_bump = TERN0(HOMING_Z_WITH_PROBE, axis == Z_AXIS && home_bump_mm(Z_AXIS));
+      const float bump = axis_home_dir * (
+        use_probe_bump ? _MAX(TERN0(HOMING_Z_WITH_PROBE, Z_CLEARANCE_BETWEEN_PROBES), home_bump_mm(Z_AXIS)) : home_bump_mm(axis)
+      );
+
+      // If a second homing move is configured...
+      if (bump) {
+        // Move away from the endstop by the axis HOMING_BUMP_MM
+        if (DEBUGGING(LEVELING)) DEBUG_ECHOLNPGM("Move Away:");
+        do_homing_move(axis, -bump
+          OPTARG(HOMING_Z_WITH_PROBE, MMM_TO_MMS(axis == Z_AXIS ? Z_PROBE_FEEDRATE_FAST : 0))
+        );
+
+        #if ENABLED(DETECT_BROKEN_ENDSTOP)
+          // Check for a broken endstop
+          EndstopEnum es;
+          switch (axis) {
+            default:
+            case X_AXIS: es = X_ENDSTOP; break;
+            case Y_AXIS: es = Y_ENDSTOP; break;
+            case Z_AXIS: es = Z_ENDSTOP; break;
+          }
+          if (TEST(endstops.state(), es)) {
+            SERIAL_ECHO_MSG("Bad ", axis_codes[axis], " Endstop?");
+            kill(GET_TEXT(MSG_KILL_HOMING_FAILED));
+          }
+        #endif
+
+        // Slow move towards endstop until triggered
+        if (DEBUGGING(LEVELING)) DEBUG_ECHOLNPGM("Home 2 Slow:");   //第二次测量
+
+        #if ALL(HOMING_Z_WITH_PROBE, BLTOUCH) && DISABLED(BLTOUCH_HS_MODE)
+          if (axis == Z_AXIS && bltouch.deploy()) return; // Intermediate DEPLOY (in LOW SPEED MODE)
+        #endif
+
+        do_homing_move(axis, 2 * bump, get_homing_bump_feedrate(axis));
+
+        #if ALL(HOMING_Z_WITH_PROBE, BLTOUCH)
+          if (axis == Z_AXIS) bltouch.stow(); // The final STOW
+        #endif
+      }
+
+      #if HAS_EXTRA_ENDSTOPS
+        const bool pos_dir = axis_home_dir > 0;
+        #if ENABLED(X_DUAL_ENDSTOPS)
+          if (axis == X_AXIS) {
+            const float adj = ABS(endstops.x2_endstop_adj);
+            if (adj) {
+              if (pos_dir ? (endstops.x2_endstop_adj > 0) : (endstops.x2_endstop_adj < 0)) stepper.set_x_lock(true); else stepper.set_x2_lock(true);
+              do_homing_move(axis, pos_dir ? -adj : adj);
+              stepper.set_x_lock(false);
+              stepper.set_x2_lock(false);
+            }
+          }
+        #endif
+        #if ENABLED(Y_DUAL_ENDSTOPS)
+          if (axis == Y_AXIS) {
+            const float adj = ABS(endstops.y2_endstop_adj);
+            if (adj) {
+              if (pos_dir ? (endstops.y2_endstop_adj > 0) : (endstops.y2_endstop_adj < 0)) stepper.set_y_lock(true); else stepper.set_y2_lock(true);
+              do_homing_move(axis, pos_dir ? -adj : adj);
+              stepper.set_y_lock(false);
+              stepper.set_y2_lock(false);
+            }
+          }
+        #endif
+
+        // Reset flags for X, Y, Z motor locking
+        switch (axis) {
+          default: break;
+          TERN_(X_DUAL_ENDSTOPS, case X_AXIS:)
+          TERN_(Y_DUAL_ENDSTOPS, case Y_AXIS:)
+          TERN_(Z_MULTI_ENDSTOPS, case Z_AXIS:)
+            stepper.set_separate_multi_axis(false);
+        }
+      #endif
+
+      #ifdef TMC_HOME_PHASE
+        // move back to homing phase if configured and capable
+        backout_to_tmc_homing_phase(axis);
+      #endif
+
+      #if IS_SCARA
+
+        set_axis_is_at_home(axis);
+        sync_plan_position();
+
+      #elif ENABLED(DELTA)
+
+        // Delta has already moved all three towers up in G28
+        // so here it re-homes each tower in turn.
+        // Delta homing treats the axes as normal linear axes.
+
+        const float adjDistance = delta_endstop_adj[axis],
+                    minDistance = (MIN_STEPS_PER_SEGMENT) * planner.mm_per_step[axis];
+
+        // Retrace by the amount specified in delta_endstop_adj if more than min steps.
+        if (adjDistance * (Z_HOME_DIR) < 0 && ABS(adjDistance) > minDistance) { // away from endstop, more than min distance
+          if (DEBUGGING(LEVELING)) DEBUG_ECHOLNPGM("adjDistance:", adjDistance);
+          do_homing_move(axis, adjDistance, get_homing_bump_feedrate(axis));
+        }
+
+      #else // CARTESIAN / CORE / MARKFORGED_XY
+
+        //set_axis_is_at_home(axis);
+        sync_plan_position();
+
+        destination[axis] = current_position[axis];
+
+        if (DEBUGGING(LEVELING)) DEBUG_POS("> AFTER set_axis_is_at_home", current_position);
+
+      #endif
+
+      // Put away the Z probe
+      #if HOMING_Z_WITH_PROBE
+        if (axis == Z_AXIS && probe.stow()) return;
+      #endif
+
+      #if DISABLED(DELTA) && defined(HOMING_BACKOFF_POST_MM)
+        const xyz_float_t endstop_backoff = HOMING_BACKOFF_POST_MM;
+        if (endstop_backoff[axis]) {
+          current_position[axis] -= ABS(endstop_backoff[axis]) * axis_home_dir;
+          line_to_current_position(TERN_(HOMING_Z_WITH_PROBE, axis == Z_AXIS ? MMM_TO_MMS(Z_PROBE_FEEDRATE_FAST) :) homing_feedrate(axis));
+
+          #if ENABLED(SENSORLESS_HOMING)
+            planner.synchronize();
+            if (false
+              #if ANY(IS_CORE, MARKFORGED_XY)
+                || axis != NORMAL_AXIS
+              #endif
+            ) safe_delay(200);  // Short delay to allow belts to spring back
+          #endif
+        }
+      #endif
+
+      // Clear retracted status if homing the Z axis
+      #if ENABLED(FWRETRACT)
+        if (axis == Z_AXIS) fwretract.current_hop = 0.0;
+      #endif
+
+      if (DEBUGGING(LEVELING)) {
+        SERIAL_ECHOLNPGM("\nhomeaxis_bl end current_position.z * 100 = ", current_position.z * 100);
+        SERIAL_EOL();
+      }
+    }
+
+  #endif // !BLTOUCH_AND_Z_LIMIT
+#endif // CREALITY_RTS

@@ -53,6 +53,11 @@ uint32_t PrintJobRecovery::cmd_sdpos, // = 0
   bool PrintJobRecovery::ui_flag_resume; // = false
 #endif
 
+#if ENABLED(CREALITY_RTS)
+  bool PrintJobRecovery::recovery_flag; // = false
+  #include "../lcd/rts/lcd_rts.h"
+#endif
+
 #include "../sd/cardreader.h"
 #include "../lcd/marlinui.h"
 #include "../gcode/queue.h"
@@ -95,6 +100,20 @@ PrintJobRecovery recovery;
     if (TERN0(PLR_CAN_ABORT, card.flag.abort_sd_printing)) return; \
     gcode.process_subcommands_now(cmd); \
   }while(0)
+
+#if ENABLED(CREALITY_RTS)
+  // Feed action before pausing and resuming。rock_20220914
+  #define FEEDING_DEF_DISTANCE  5 // in material: default distance of feeding material
+  #define FEEDING_DEF_SPEED     5 // in material: default feedrate
+  static void pause_resume_feedstock(uint16_t _distance, uint16_t _feedRate) {
+    current_position.e += _distance;
+    line_to_current_position(feedRate_t(_feedRate));
+    current_position.e -= _distance;
+    gcode.process_subcommands_now(TS(F("G92.9 E"), p_float_t(current_position.e, 3)));
+    // Resume the feedrate
+    gcode.process_subcommands_now(TS(F("G1 F%s"), p_float_t(MMS_TO_MMM(feedrate_mm_s), 3)));
+  }
+#endif
 
 /**
  * Clear the recovery info
@@ -208,6 +227,11 @@ void PrintJobRecovery::save(const bool force/*=false*/, const float zraise/*=POW
     // Machine state
     // info.sdpos and info.current_position are pre-filled from the Stepper ISR
 
+    #if ENABLED(CREALITY_RTS)
+      //report_current_position();  //rock_0328
+      //info.current_position = current_position;
+    #endif
+
     info.feedrate = uint16_t(MMS_TO_MMM(feedrate_mm_s));
     info.feedrate_percentage = feedrate_percentage;
     COPY(info.flow_percentage, planner.flow_percentage);
@@ -262,7 +286,11 @@ void PrintJobRecovery::save(const bool force/*=false*/, const float zraise/*=POW
     info.flag.dryrun = !!(marlin_debug_flags & MARLIN_DEBUG_DRYRUN);
     info.flag.allow_cold_extrusion = TERN0(PREVENT_COLD_EXTRUSION, thermalManager.allow_cold_extrude);
 
+    TERN_(CREALITY_RTS, recovery_flag = PoweroffContinue);
+
     write();
+
+    DEBUG_ECHO_MSG("current_position.z:", current_position.z);
   }
 }
 
@@ -423,6 +451,8 @@ void PrintJobRecovery::resume() {
   const float z_print = resume_pos.z,
               z_raised = z_print + info.zraise;
 
+  DEBUG_ECHO_MSG(">>> z_print:", z_print, ", z_raised:", z_raised, ", info.flag.raised:", info.flag.raised);
+
   //
   // Home the axes that can safely be homed, and
   // establish the current position as best we can.
@@ -468,21 +498,27 @@ void PrintJobRecovery::resume() {
   #if HOMING_Z_DOWN
     // Move to a safe XY position and home Z while avoiding the print.
     const xy_pos_t p = xy_pos_t(POWER_LOSS_ZHOME_POS) TERN_(HOMING_Z_WITH_PROBE, - probe.offset_xy);
-    PROCESS_SUBCOMMANDS_NOW(TS(F("G1F1000X"), p_float_t(p.x, 3), 'Y', p_float_t(p.y, 3), F("\nG28HZ")));
+    PROCESS_SUBCOMMANDS_NOW(TS(F("G1F1000X"), p_float_t(p.x, 3), 'Y', p_float_t(p.y, 3), F("\nG28ZH" TERN_(CREALITY_RTS, "R0"))));
   #endif
 
   // Mark all axes as having been homed (no effect on current_position)
   set_all_homed();
 
+  DEBUG_ECHO_MSG(">>> homed current_position.z:", current_position.z);
+
   #if HAS_LEVELING
     // Restore Z fade and possibly re-enable bed leveling compensation.
     // Leveling may already be enabled due to the ENABLE_LEVELING_AFTER_G28 option.
     // TODO: Add a G28 parameter to leave leveling disabled.
-    PROCESS_SUBCOMMANDS_NOW(TS(F("M420S"), '0' + (char)info.flag.leveling, 'Z', p_float_t(info.fade, 1)));
+    #if DISABLED(CREALITY_RTS)
+      PROCESS_SUBCOMMANDS_NOW(TS(F("M420S"), '0' + (char)info.flag.leveling, 'Z', p_float_t(info.fade, 1)));
+    #endif
 
     #if !HOMING_Z_DOWN
       // The physical Z was adjusted at power-off so undo the M420S1 correction to Z with G92.9.
-      PROCESS_SUBCOMMANDS_NOW(TS(F("G92.9Z"), p_float_t(z_now, 1)));
+      #if DISABLED(CREALITY_RTS)
+        PROCESS_SUBCOMMANDS_NOW(TS(F("G92.9Z"), p_float_t(z_now, 1)));
+      #endif
     #endif
   #endif
 
@@ -558,13 +594,37 @@ void PrintJobRecovery::resume() {
     PROCESS_SUBCOMMANDS_NOW(F("G12"));
   #endif
 
+  #if ENABLED(CREALITY_RTS)
+
+    PROCESS_SUBCOMMANDS_NOW(F("M420 S0 Z0")); // rock_20220326
+
+    // Restore E position with G92.9   Rock_20220913
+    // If there is a layer-changing and retracting action in GCODE,
+    // first extrude the material and then return to the origin
+    PROCESS_SUBCOMMANDS_NOW(TS(F("G92.9E"), p_float_t(info.current_position.e, 3)));
+
+    // rock_20220914 - To solve the problem of faults in the printed small model,
+    // the purpose is to fill the hollow section of the throat.
+    pause_resume_feedstock(FEEDING_DEF_DISTANCE, FEEDING_DEF_SPEED);
+
+  #endif
+
   // Move back over to the saved XY
   PROCESS_SUBCOMMANDS_NOW(TS(
     F("G1F3000X"), p_float_t(resume_pos.x, 3), 'Y', p_float_t(resume_pos.y, 3)
   ));
 
   // Move back down to the saved Z for printing
-  PROCESS_SUBCOMMANDS_NOW(TS(F("G1F600Z"), p_float_t(z_print, 3)));
+  #if ENABLED(CREALITY_RTS)
+    MString<20> cmd(F("G1F600Z"), p_float_t(z_print, 3));
+    PROCESS_SUBCOMMANDS_NOW(cmd);
+    DEBUG_ECHOLN(&cmd);
+    DEBUG_ECHO_MSG(">>> z_print:", z_print, "current_position.z:", current_position.z);
+    PROCESS_SUBCOMMANDS_NOW(F("M114"));
+    //safe_delay(10000);
+  #else
+    PROCESS_SUBCOMMANDS_NOW(TS(F("G1F600Z"), p_float_t(z_print, 3)));
+  #endif
 
   // Restore the feedrate and percentage
   PROCESS_SUBCOMMANDS_NOW(TS(F("G1F"), info.feedrate));
@@ -573,8 +633,20 @@ void PrintJobRecovery::resume() {
   // Flowrate percentage
   EXTRUDER_LOOP() planner.set_flow(e, info.flow_percentage[e]);
 
+  #if ALL(CREALITY_RTS, HAS_LEVELING)
+    // Restore Z fade and possibly re-enable bed leveling compensation.
+    // Leveling may already be enabled due to the ENABLE_LEVELING_AFTER_G28 option.
+    // TODO: Add a G28 parameter to leave leveling disabled.
+    PROCESS_SUBCOMMANDS_NOW(TS(F("M420S"), '0' + char(info.flag.leveling), 'Z', p_float_t(info.fade, 1)));
+
+    // Restore Z position with G92.9
+    PROCESS_SUBCOMMANDS_NOW(TS(F("G92.9Z"), p_float_t(z_print, 3)));
+  #endif
+
   // Restore E position with G92.9
-  PROCESS_SUBCOMMANDS_NOW(TS(F("G92.9E"), p_float_t(resume_pos.e, 3)));
+  #if DISABLED(CREALITY_RTS)
+    PROCESS_SUBCOMMANDS_NOW(TS(F("G92.9E"), p_float_t(resume_pos.e, 3)));
+  #endif
 
   #if ENABLED(CANCEL_OBJECTS)
     cancelable.state = info.cancel_state;
@@ -724,6 +796,9 @@ void PrintJobRecovery::resume() {
         DEBUG_ECHOLNPGM("flag.allow_cold_extrusion: ", AS_DIGIT(info.flag.allow_cold_extrusion));
         #if DISABLED(NO_VOLUMETRICS)
           DEBUG_ECHOLNPGM("flag.volumetric_enabled: ", AS_DIGIT(info.flag.volumetric_enabled));
+        #endif
+        #if ENABLED(CREALITY_RTS)
+          DEBUG_ECHOLNPGM("recovery_flag: ", AS_DIGIT(recovery_flag));
         #endif
       }
       else

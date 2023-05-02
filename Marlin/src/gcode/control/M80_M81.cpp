@@ -42,6 +42,10 @@
   #include "../../MarlinCore.h"
 #endif
 
+#if ENABLED(POWER_LOSS_RECOVERY)
+  #include "../../feature/powerloss.h"
+#endif
+
 #if ENABLED(PSU_CONTROL)
 
   /**
@@ -123,4 +127,6 @@ void GcodeSuite::M81() {
   #elif HAS_SUICIDE
     suicide();
   #endif
+
+  //OUT_WRITE(SHUTDOWN_PIN, LOW); delay(2000);
 }

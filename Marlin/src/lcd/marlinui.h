@@ -216,6 +216,8 @@ public:
   #if HAS_MULTI_LANGUAGE
     static uint8_t language;
     static void set_language(const uint8_t lang);
+  #else
+    static constexpr uint8_t language = 0;
   #endif
 
   #if HAS_MARLINUI_U8GLIB

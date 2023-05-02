@@ -37,6 +37,9 @@
   #include "../../lcd/extui/ui_api.h"
 #endif
 
+#if ENABLED(CREALITY_RTS)
+  #include "../../lcd/rts/lcd_rts.h"
+#endif
 #if ENABLED(HOST_PROMPT_SUPPORT)
   #include "../../feature/host_actions.h"
 #endif
@@ -46,6 +49,9 @@
  * M1: Conditional stop   - Wait for user button press on LCD
  */
 void GcodeSuite::M0_M1() {
+
+  TERN_(CREALITY_RTS, RTS_CommandPause());
+
   millis_t ms = 0;
   if (parser.seenval('P')) ms = parser.value_millis();              // Milliseconds to wait
   if (parser.seenval('S')) ms = parser.value_millis_from_seconds(); // Seconds to wait
