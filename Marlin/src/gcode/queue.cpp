@@ -37,6 +37,10 @@ GCodeQueue queue;
 #include "../MarlinCore.h"
 #include "../core/bug_on.h"
 
+#if ENABLED(CREALITY_RTS)
+  #include "../lcd/rts/lcd_rts.h"
+#endif
+
 #if ENABLED(BINARY_FILE_TRANSFER)
   #include "../feature/binary_stream.h"
 #endif
@@ -112,7 +116,10 @@ void GCodeQueue::RingBuffer::commit_command(const bool skip_ok
 bool GCodeQueue::RingBuffer::enqueue(const char *cmd, const bool skip_ok/*=true*/
   OPTARG(HAS_MULTI_SERIAL, serial_index_t serial_ind/*=-1*/)
 ) {
-  if (*cmd == ';' || length >= BUFSIZE) return false;
+  // SERIAL_ECHOLNPGM(" length=: ",length);
+  // SERIAL_ECHOLNPGM(" index_r=: ", index_r);
+  // SERIAL_ECHOLNPGM(" index_w=: ", index_w);
+  if (*cmd == ';' || length >= BUFSIZE) return false; //这里的会导致主板一直选项idle();
   strcpy(commands[index_w].buffer, cmd);
   commit_command(skip_ok OPTARG(HAS_MULTI_SERIAL, serial_ind));
   return true;
@@ -191,7 +198,13 @@ bool GCodeQueue::process_injected_command() {
  * Enqueue and return only when commands are actually enqueued.
  * Never call this from a G-code handler!
  */
-void GCodeQueue::enqueue_one_now(const char * const cmd) { while (!enqueue_one(cmd)) idle(); }
+void GCodeQueue::enqueue_one_now(const char * const cmd) {
+  uint16_t count = 0;
+  while (!enqueue_one(cmd)) {
+    idle();
+    if (count++ > 500) { SERIAL_ECHO_MSG("_full"); break; }
+  }
+}
 void GCodeQueue::enqueue_one_now(FSTR_P const fcmd) { while (!enqueue_one(fcmd)) idle(); }
 
 /**
@@ -216,6 +229,7 @@ bool GCodeQueue::enqueue_one(FSTR_P const fcmd) {
 void GCodeQueue::enqueue_now_P(PGM_P const pgcode) {
   size_t i = 0;
   PGM_P p = pgcode;
+  if (TERN0(CREALITY_RTS, ring_buffer.full())) return; // rock——20220815
   for (;;) {
     char c;
     while ((c = pgm_read_byte(&p[i])) && c != '\n') i++;
@@ -566,18 +580,39 @@ void GCodeQueue::get_serial_commands() {
    * always receives complete command-lines, they can go directly
    * into the main command queue.
    */
+  uint16_t SD_ReadTimeout = 0;
+  bool SD_Card_status = true;
+  bool sd_printing_autopause = false;
   inline void GCodeQueue::get_sdcard_commands() {
     static uint8_t sd_input_state = PS_NORMAL;
-
     // Get commands if there are more in the file
-    if (!IS_SD_FETCHING()) return;
-
+    if (!IS_SD_FETCHING()|| !IS_SD_INSERTED()) return;
     int sd_count = 0;
-    while (!ring_buffer.full() && !card.eof()) {
+    bool card_eof = card.eof();
+    while (!ring_buffer.full() && !card.eof() && IS_SD_INSERTED()) {
       const int16_t n = card.get();
-      const bool card_eof = card.eof();
-      if (n < 0 && !card_eof) { SERIAL_ERROR_MSG(STR_SD_ERR_READ); continue; }
-
+      card_eof = card.eof();
+      if (n < 0 && !card_eof) {
+        SERIAL_ERROR_MSG(STR_SD_ERR_READ); continue;
+      }
+      // if (n < 0 && !card_eof) {
+      //   if (SD_ReadTimeout > 50) {
+      //     if (SD_Card_status) {
+      //       SERIAL_ERROR_MSG(STR_SD_ERR_READ);
+      //       // SD Read Error Auto print pause;
+      //       if (!sd_printing_autopause) {
+      //         sd_printing_autopause = true;
+      //         queue.inject_P(PSTR("M25"));
+      //       }
+      //     }
+      //     SD_Card_status = false;
+      //     SD_ReadTimeout = 0;
+      //     break;
+      //   }
+      //   SD_ReadTimeout++;
+      // }
+      // else
+      //   SD_ReadTimeout = 0;
       CommandLine &command = ring_buffer.commands[ring_buffer.index_w];
       const char sd_char = (char)n;
       const bool is_eol = ISEOL(sd_char);
@@ -604,10 +639,15 @@ void GCodeQueue::get_serial_commands() {
           TERN_(POWER_LOSS_RECOVERY, recovery.cmd_sdpos = card.getIndex());
         }
 
-        if (card.eof()) card.fileHasFinished();         // Handle end of file reached
+        if (card.eof()) {
+          // Handle end of file reached
+          card.fileHasFinished();
+          TERN_(CREALITY_RTS, RTS_FileHasFinished());
+        }
       }
-      else
+      else {
         process_stream_char(sd_char, sd_input_state, command.buffer, sd_count);
+      }
     }
   }
 
@@ -639,8 +679,7 @@ void GCodeQueue::exhaust() {
  * Get the next command in the queue, optionally log it to SD, then dispatch it
  */
 void GCodeQueue::advance() {
-
-  // Process immediate commands
+  // Process immediate commands  //有立即执行的指令
   if (process_injected_command_P() || process_injected_command()) return;
 
   // Return if the G-code buffer is empty

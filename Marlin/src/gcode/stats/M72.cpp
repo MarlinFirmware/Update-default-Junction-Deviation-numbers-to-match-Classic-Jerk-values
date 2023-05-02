@@ -22,7 +22,7 @@
 
 #include "../../inc/MarlinConfig.h"
 
-#if ALL(SDSUPPORT, CREALITY_RTS)
+#if ALL(HAS_MEDIA, CREALITY_RTS)
 
 #include "../gcode.h"
 #include "../../sd/cardreader.h"
@@ -49,4 +49,4 @@ void GcodeSuite::M72() {
   TERN_(LCD_SET_PROGRESS_MANUALLY, ui.set_progress(0));
 }
 
-#endif // SDSUPPORT && CREALITY_RTS
+#endif // HAS_MEDIA && CREALITY_RTS
