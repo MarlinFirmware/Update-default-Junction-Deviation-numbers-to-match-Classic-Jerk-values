@@ -634,13 +634,22 @@ static_assert(COUNT(arm) == LOGICAL_AXES, "AXIS_RELATIVE_MODES must contain " _L
   #endif
 #endif
 
+#if HAS_CHAMELEON
+  #if EXTRUDERS > 32
+    #undef SINGLENOZZLE
+    #error "CHAMELEON only supports up to 32 EXTRUDERS. Please update your Configuration."
+  #endif
+#endif
+
 /**
  * Options only for EXTRUDERS > 1
  */
 #if HAS_MULTI_EXTRUDER
 
   #ifndef MAX_EXTRUDERS
-    #if HAS_EXTENDABLE_MMU
+    #if HAS_CHAMELEON
+      #define MAX_EXTRUDERS 32
+    #elif HAS_EXTENDABLE_MMU
       #define MAX_EXTRUDERS 15
     #else
       #define MAX_EXTRUDERS  8
