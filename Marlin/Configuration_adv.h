@@ -4597,6 +4597,37 @@
 
 #endif // HAS_PRUSA_MMU2 || HAS_PRUSA_MMU3
 
+#if HAS_CHAMELEON
+
+  #define CHAMELEON_BUTTON1_X       X_MAX_POS   // Button 1 depressed position
+  #define CHAMELEON_BUTTON2_X       X_MIN_POS   // Button 2 depressed position (Used for EXTRUDERS > 2)
+  //#define CHAMELEON_TOOLCHANGE_Y  Y_CENTER    // A standard Y position for all tool-changes
+  //#define CHAMELEON_TOOLCHANGE_Z  Z_MAX_POS   // Enable and adjust if the switch is top-mounted
+
+  // Design the ramming sequence to first retract out of the hotend,
+  // then do blob elimination at the tip, then retract all the way
+  // back out of the feeder splitter.
+  #define CHAMELEON_RAMMING_SEQUENCE \
+    {  -10, 10000 }, /* <   fast (shape)  */ \
+    {  -40,   600 }, /* <   slow (cool)   */ \
+    {  +50, 10000 }, /*   > fast (shape)  */ \
+    {  -10, 10000 }, /* <   fast (shape)  */ \
+    {  -40,   600 }, /* <   slow (cool)   */ \
+    {  +51, 10000 }, /*   > fast (unblob) */ \
+    {  -11, 10000 }, /* <   fast (shape)  */ \
+    {  +11, 10000 }, /*   > fast (unblob) */ \
+    {  -11, 10000 }, /* <   fast (shape)  */ \
+    {  +11, 10000 }, /*   > fast (unblob) */ \
+    {  -11, 10000 }, /* <   fast (shape)  */ \
+    {  -40,   100 }, /* <   slow (cool)   */ \
+    { -110, 10000 }, /* <   fast (shape)  */ \
+    {  +40,  1000 }, /*   > fast (shape)  */ \
+    {  -40,  1000 }, /* <   fast (shape)  */ \
+    {  +40,  1000 }, /*   > fast (shape)  */ \
+    { -130,  5000 }  /* <   fast (unload) */
+
+#endif // HAS_CHAMELEON
+
 /**
  * Advanced Print Counter settings
  * @section stats
