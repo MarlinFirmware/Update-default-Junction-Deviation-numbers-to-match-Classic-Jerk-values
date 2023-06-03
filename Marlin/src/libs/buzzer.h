@@ -119,6 +119,12 @@
   // Buzz directly via the BEEPER pin tone queue
   #define BUZZ(V...) buzzer.tone(V)
 
+#elif DGUS_LCD_UI_CREALITY_TOUCH
+
+  // Let extensible UI handle it
+  namespace ExtUI { void onPlayTone(const uint16_t, const uint16_t); }
+  #define BUZZ(V...) ExtUI::onPlayTone(V)
+
 #elif USE_MARLINUI_BUZZER
 
   // Use MarlinUI for a buzzer on the LCD
@@ -132,5 +138,5 @@
 #endif
 
 #define ERR_BUZZ() BUZZ(400, 40)
-#define OKAY_BUZZ() do{ BUZZ(100, 659); BUZZ(10); BUZZ(100, 698); }while(0)
+#define OKAY_BUZZ() do{ BUZZ(100, 659); BUZZ(10, 0); BUZZ(100, 698); }while(0)
 #define DONE_BUZZ(ok) do{ if (ok) OKAY_BUZZ(); else ERR_BUZZ(); }while(0)

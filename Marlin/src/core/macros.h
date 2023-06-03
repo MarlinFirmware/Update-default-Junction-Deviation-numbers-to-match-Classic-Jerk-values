@@ -752,13 +752,14 @@
 #define HAS_E_TEMP_SENSOR (0 REPEAT(EXTRUDERS, _HAS_E_TEMP))
 #define TEMP_SENSOR_IS_MAX_TC(T) (TEMP_SENSOR(T) == -5 || TEMP_SENSOR(T) == -3 || TEMP_SENSOR(T) == -2)
 
-#define _UI_NONE          0
-#define _UI_ORIGIN      101
-#define _UI_FYSETC      102
-#define _UI_HIPRECY     103
-#define _UI_MKS         104
-#define _UI_RELOADED    105
-#define _UI_IA_CREALITY 106
-#define _UI_E3S1PRO     107
+#define _UI_NONE              0
+#define _UI_ORIGIN          101
+#define _UI_FYSETC          102
+#define _UI_HIPRECY         103
+#define _UI_MKS             104
+#define _UI_RELOADED        105
+#define _UI_IA_CREALITY     106
+#define _UI_E3S1PRO         107
+#define _UI_CREALITY_TOUCH  108
 #define _DGUS_UI_IS(N) || (CAT(_UI_, DGUS_LCD_UI) == CAT(_UI_, N))
 #define DGUS_UI_IS(V...) (0 MAP(_DGUS_UI_IS, V))

@@ -54,6 +54,8 @@
   #include "fysetc/DGUSScreenHandler.h"
 #elif DGUS_LCD_UI_HIPRECY
   #include "hiprecy/DGUSScreenHandler.h"
+#elif DGUS_LCD_UI_CREALITY_TOUCH
+  #include "creality/DGUSScreenHandler.h"
 #endif
 
 extern DGUSScreenHandlerClass screen;
