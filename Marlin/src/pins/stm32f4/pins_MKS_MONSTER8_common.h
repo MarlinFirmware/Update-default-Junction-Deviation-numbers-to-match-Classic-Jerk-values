@@ -75,6 +75,16 @@
 #endif
 
 //
+// Filament Runout Sensor
+//
+#ifndef FIL_RUNOUT_PIN
+  #define FIL_RUNOUT_PIN                    PC5   // Y+
+#endif
+#ifndef FIL_RUNOUT2_PIN
+  #define FIL_RUNOUT2_PIN                   PB12  // Z+
+#endif
+
+//
 // Steppers
 //
 #define X_ENABLE_PIN                        PC15  // Driver0
