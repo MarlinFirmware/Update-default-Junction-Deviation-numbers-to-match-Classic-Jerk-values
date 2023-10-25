@@ -520,7 +520,8 @@ void __O2 Endstops::report_states() {
   #endif
   #if MULTI_FILAMENT_SENSOR
     #define _CASE_RUNOUT(N) do{ \
-      SERIAL_ECHOPGM(STR_FILAMENT); if (N > 1) SERIAL_CHAR(' ', '0' + N); \
+      SERIAL_ECHO(F(STR_FILAMENT)); \
+      if ((N) > 1) SERIAL_CHAR(' ', '0' + char(N)); \
       print_es_state(!FILAMENT_IS_OUT(N)); \
     }while(0);
     REPEAT_1(NUM_RUNOUT_SENSORS, _CASE_RUNOUT)
