@@ -190,6 +190,18 @@
 
   // Migrated to pins/lcd
 
+#elif ENABLED(REPRAPWORLD_GRAPHICAL_LCD)
+
+  // TODO: Define an adapter
+
+  #define BTN_ENC                             23
+  #define BTN_EN1                             27
+  #define BTN_EN2                             33
+
+  #define LCD_PINS_RS                         18  // CS
+  #define LCD_PINS_EN                       MOSI  // MOSI
+  #define LCD_PINS_D4                        SCK  // SCK
+
 #elif IS_RRD_SC
 
   // Migrated to pins/lcd
@@ -200,17 +212,7 @@
   // LCD Display output pins
   //
 
-  #if ENABLED(REPRAPWORLD_GRAPHICAL_LCD)
-
-    #define LCD_PINS_RS                       18  // CS chip select /SS chip slave select
-    #define LCD_PINS_EN                     MOSI  // SID (MOSI)
-    #define LCD_PINS_D4                      SCK  // SCK (CLK) clock
-
-    #define BTN_ENC                           23
-    #define BTN_EN1                           27
-    #define BTN_EN2                           33
-
-  #elif ALL(IS_NEWPANEL, PANEL_ONE)
+  #if ALL(IS_NEWPANEL, PANEL_ONE)
 
     // TO TEST
     //#define LCD_PINS_RS            EXP1_02_PIN
