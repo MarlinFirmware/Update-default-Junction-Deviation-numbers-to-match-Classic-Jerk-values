@@ -47,6 +47,8 @@
     #include "lcd/FYSETC_MINI_12864.h"
   #elif ENABLED(ULTI_CONTROLLER)
     #include "lcd/ULTI_CONTROLLER.h"
+  #elif ENABLED(REPRAPWORLD_GRAPHICAL_LCD)
+    #include "lcd/REPRAPWORLD_GRAPHICAL_LCD.h"
   #elif IS_RRD_FG_SC
     #include "lcd/RRD_FG_SC.h"
   #elif IS_RRD_SC

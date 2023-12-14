@@ -211,6 +211,20 @@
 
   // Migrated to pins/lcd
 
+#elif ENABLED(REPRAPWORLD_GRAPHICAL_LCD)
+
+  // TODO: Define an adapter
+
+  //#define BTN_ENC                           55
+  //#define BTN_EN1                           56  // Mega/Due:64 - AGCM4:56
+  //#define BTN_EN2                           72  // Mega/Due:59 - AGCM4:72
+
+  //#define LCD_PINS_RS              EXP2_10_PIN  // CS
+  //#define LCD_PINS_EN              EXP2_06_PIN  // MOSI
+  //#define LCD_PINS_D4              EXP2_02_PIN  // SCK
+
+  //#define SD_DETECT_PIN            EXP2_05_PIN
+
 #elif IS_RRD_SC
 
   // Migrated to pins/lcd
@@ -239,13 +253,6 @@
       #define BEEPER_PIN             EXP1_01_PIN
       #define NO_SPEAKER
     #endif
-
-  #elif ENABLED(REPRAPWORLD_GRAPHICAL_LCD)
-
-    // TO TEST
-    //#define LCD_PINS_RS            EXP2_10_PIN  // CS chip select /SS chip slave select
-    //#define LCD_PINS_EN            EXP2_06_PIN  // SID (MOSI)
-    //#define LCD_PINS_D4            EXP2_02_PIN  // SCK (CLK) clock
 
   #elif ALL(IS_NEWPANEL, PANEL_ONE)
 
@@ -314,15 +321,7 @@
   //
   #if IS_NEWPANEL
 
-    #if ENABLED(REPRAPWORLD_GRAPHICAL_LCD)
-
-      // TO TEST
-      //#define BTN_EN1                       56  // Mega/Due:64 - AGCM4:56
-      //#define BTN_EN2                       72  // Mega/Due:59 - AGCM4:72
-      //#define BTN_ENC                       55
-      //#define SD_DETECT_PIN        EXP2_05_PIN
-
-    #elif ENABLED(LCD_I2C_PANELOLU2)
+    #if ENABLED(LCD_I2C_PANELOLU2)
 
       // TO TEST
       //#define BTN_EN1                       47
