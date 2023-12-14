@@ -263,6 +263,10 @@
 
   // Migrated to pins/lcd
 
+#elif ENABLED(FYSETC_MINI_12864)
+
+  // Migrated to pins/lcd
+
 #elif IS_RRD_SC
 
   // Migrated to pins/lcd
@@ -425,49 +429,6 @@
       //#define LCD_SDSS                    SDSS
       //#define SD_DETECT_PIN        EXP2_10_PIN
       //#define KILL_PIN             EXP1_01_PIN
-
-    #elif ENABLED(FYSETC_MINI_12864)
-
-      // TO TEST
-      //#define BEEPER_PIN           EXP1_06_PIN
-      //#define BTN_ENC              EXP1_03_PIN
-      //#define SD_DETECT_PIN        EXP2_10_PIN
-
-      //#ifndef KILL_PIN
-      //  #define KILL_PIN           EXP1_01_PIN
-      //#endif
-
-      // From https://wiki.fysetc.com/Mini12864_Panel/
-
-      // TO TEST
-      //#define DOGLCD_A0                     16
-      //#define DOGLCD_CS                     17
-
-      //#define BTN_EN1                       33
-      //#define BTN_EN2                       31
-
-      //#define FORCE_SOFT_SPI                    // Use this if default of hardware SPI causes display problems
-                                                  //   results in LCD soft SPI mode 3, SD soft SPI mode 0
-
-      //#define LCD_RESET_PIN                 23  // Must be high or open for LCD to operate normally.
-
-      #if ANY(FYSETC_MINI_12864_1_2, FYSETC_MINI_12864_2_0)
-        #ifndef RGB_LED_R_PIN
-          // TO TEST
-          //#define RGB_LED_R_PIN             25
-        #endif
-        #ifndef RGB_LED_G_PIN
-          // TO TEST
-          //#define RGB_LED_G_PIN             27
-        #endif
-        #ifndef RGB_LED_B_PIN
-          // TO TEST
-          //#define RGB_LED_B_PIN             29
-        #endif
-      #elif ENABLED(FYSETC_MINI_12864_2_1)
-        // TO TEST
-        //#define NEOPIXEL_PIN                25
-      #endif
 
     #elif ENABLED(ZONESTAR_LCD)
 

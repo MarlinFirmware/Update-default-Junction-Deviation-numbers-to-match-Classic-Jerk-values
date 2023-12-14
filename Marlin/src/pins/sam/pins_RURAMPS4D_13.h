@@ -218,6 +218,12 @@
 
   // Migrated to pins/lcd
 
+#elif ENABLED(FYSETC_MINI_12864)
+
+  // Migrated to pins/lcd
+
+  //#define FORCE_SOFT_SPI                        // Use this if Hardware SPI causes display problems.
+                                                  // Results in LCD Software SPI mode 3, SD Software SPI mode 0.
 #elif HAS_WIRED_LCD
 
   #if ENABLED(RADDS_DISPLAY)
@@ -236,31 +242,6 @@
     #define BEEPER_PIN               EXP1_01_PIN
     #define LCD_SDSS                 EXP2_04_PIN
     #define SD_DETECT_PIN            EXP2_07_PIN
-
-  #elif ENABLED(FYSETC_MINI_12864)
-
-    #define BEEPER_PIN               EXP1_01_PIN
-    #define DOGLCD_CS                EXP1_03_PIN
-    #define DOGLCD_A0                EXP1_04_PIN
-
-    //#define FORCE_SOFT_SPI                      // Use this if default of hardware SPI causes display problems
-                                                  //   results in LCD soft SPI mode 3, SD soft SPI mode 0
-
-    #define LCD_RESET_PIN            EXP1_05_PIN  // Must be high or open for LCD to operate normally.
-
-    #if ANY(FYSETC_MINI_12864_1_2, FYSETC_MINI_12864_2_0)
-      #ifndef RGB_LED_R_PIN
-        #define RGB_LED_R_PIN        EXP1_06_PIN  // D5
-      #endif
-      #ifndef RGB_LED_G_PIN
-        #define RGB_LED_G_PIN        EXP1_07_PIN  // D6
-      #endif
-      #ifndef RGB_LED_B_PIN
-        #define RGB_LED_B_PIN        EXP1_08_PIN  // D7
-      #endif
-    #elif ENABLED(FYSETC_MINI_12864_2_1)
-      #define NEOPIXEL_PIN           EXP1_06_PIN  // D5
-    #endif
 
   #endif
 
