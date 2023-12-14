@@ -256,6 +256,17 @@
     #define BEEPER_PIN                      -1
   #endif
 
+#elif ENABLED(FYSETC_MINI_12864_2_1)
+
+  // Migrated to pins/lcd
+  #define ADAPTER_CUSTOM_CREALITY_V4_DEBUG_HEADER
+
+  CONTROLLER_WARNING("CREALITY_V4", "FYSETC_MINI_12864_2_1 and clones")
+
+  #if SD_CONNECTION_IS(LCD)
+    #error "The LCD SD Card is not connected with this configuration."
+  #endif
+
 #elif ANY(HAS_DWIN_E3V2, IS_DWIN_MARLINUI, DWIN_VET6_CREALITY_LCD)
 
   // Serial controller with click encoder
@@ -267,55 +278,6 @@
   #ifndef BEEPER_PIN
     #define BEEPER_PIN               EXP3_06_PIN
   #endif
-
-#elif ENABLED(FYSETC_MINI_12864_2_1)
-
-  CONTROLLER_WARNING("CREALITY_V4", "FYSETC_MINI_12864_2_1 and clones")
-
-  #if SD_CONNECTION_IS(LCD)
-    #error "The LCD SD Card is not connected with this configuration."
-  #endif
-
-  /**
-   *
-   *                 Board (RET6 12864 LCD)              Display
-   *                 ------                               ------
-   *  (EN1)    PC6  | 1  2 | PB2  (BTN_ENC)           5V |10  9 | GND
-   *  (LCD_CS) PB10 | 3  4 | PB11 (LCD RESET)         -- | 8  7 | --
-   *  (LCD_A0) PB14   5  6 | PB13 (EN2)           (DIN)  | 6  5   (LCD RESET)
-   *  (LCD_SCK)PB12 | 7  8 | PB15 (MOSI)        (LCD_A0) | 4  3 | (LCD_CS)
-   *            GND | 9 10 | 5V                (BTN_ENC) | 2  1 | --
-   *                 ------                               ------
-   *                  EXP1                                 EXP1
-   *
-   *                                                      ------
-   *                -----                             -- |10  9 | --
-   *                | 1 | VCC                    (RESET) | 8  7 | --
-   *                | 2 | PA13 (DIN)             (MOSI)  | 6  5   (EN2)
-   *                | 3 | PA14                        -- | 4  3 | (EN1)
-   *                | 4 | GND                   (LCD_SCK)| 2  1 | --
-   *                -----                                 ------
-   *              Debug port                               EXP2
-   *
-   * Needs custom cable. Connect EN2-EN2, LCD_CS-LCD_CS and so on.
-   * Debug port is just above EXP1. You need to add pins.
-   *
-   */
-
-  #define BTN_ENC                    EXP3_02_PIN
-  #define BTN_EN1                    EXP3_01_PIN
-  #define BTN_EN2                    EXP3_06_PIN
-  #define BEEPER_PIN                        -1
-
-  #define DOGLCD_CS                  EXP3_03_PIN
-  #define DOGLCD_A0                  EXP3_05_PIN
-  #define DOGLCD_SCK                 EXP3_07_PIN
-  #define DOGLCD_MOSI                EXP3_08_PIN
-  #define LCD_RESET_PIN              EXP3_04_PIN
-
-  #define FORCE_SOFT_SPI
-  #define LCD_BACKLIGHT_PIN                 -1
-  #define NEOPIXEL_PIN                      PA13
 
 #endif
 

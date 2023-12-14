@@ -143,6 +143,238 @@
 
   #define FORCE_SOFT_SPI
 
+#elif ENABLED(ADAPTER_CUSTOM_E3_DIP_TFT)
+
+  /**
+   * FYSETC_MINI_12864_2_1 / MKS_MINI_12864_V3 / BTT_MINI_12864 / BEEZ_MINI_12864 display pinout
+   *
+   *                         Board
+   *        ------                           ---
+   *   NEO | 1  2 | ENC                     | 1 | RST
+   *   EN2 | 3  4 | RESET                   | 2 | RX2
+   *   EN1   5  6 | LCD_RS                  | 3 | TX2
+   *    A0 | 7  8 | CS                      | 4 | GND
+   *   GND | 9 10 | 5V                      | 5 | 5V
+   *        ------                           ---
+   *         EXP1                            TFT
+   *                        Display
+   *        ------                           ------
+   *    5V |10  9 | GND                  -- |10  9 | --
+   *    -- | 8  7 | --                RESET | 8  7 | SD_DET
+   *   NEO | 6  5   LCD_RS             MOSI | 6  5   EN2
+   *    A0 | 4  3 | CS                   -- | 4  3 | EN1
+   *   ENC | 2  1 | BEEP                SCK | 2  1 | --
+   *        ------                           ------
+   *         LCD1                             LCD2
+   *
+   * Needs custom cable:
+   *
+   *  EXP1-1  <-->  LCD1-6  NEO
+   *  EXP1-2  <-->  LCD1-2  ENC
+   *  EXP1-3  <-->  LCD2-5  EN2
+   *  EXP1-4  <-->  LCD2-8  RESET
+   *  EXP1-5  <-->  LCD2-3  EN1
+   *  EXP1-6  <-->  LCD1-8  LCD_RS
+   *  EXP1-7  <-->  LCD1-4  A0
+   *  EXP1-8  <-->  LCD1-3  CS
+   *   TFT-2  <-->  LCD2-6  MOSI
+   *   TFT-3  <-->  LCD2-2  SCK
+   */
+
+  #define LCD1_02_PIN              EXP1_02_PIN  // ENC
+  #define LCD1_03_PIN              EXP1_08_PIN  // CS
+  #define LCD1_04_PIN              EXP1_07_PIN  // A0
+  #define LCD1_05_PIN              EXP1_06_PIN  // LCD_RS
+  #define LCD1_06_PIN              EXP1_01_PIN  // NEOPIXEL
+
+  #define LCD2_02_PIN                   TFT_02  // SCK
+  #define LCD2_03_PIN              EXP1_03_PIN  // EN1
+  #define LCD2_05_PIN              EXP1_05_PIN  // EN2
+  #define LCD2_06_PIN                   TFT_03  // MOSI
+
+  #define FORCE_SOFT_SPI
+
+#elif ENABLED(ADAPTER_CUSTOM_MINI_E3_TFT)
+
+  /**
+   * FYSETC_MINI_12864_2_1 / MKS_MINI_12864_V3 / BTT_MINI_12864 / BEEZ_MINI_12864 display pinout
+   *
+   *                    Board
+   *        ------                   ---
+   *    A0 | 1  2 | ENC         RST | 1 |
+   *    CS | 3  4 | RESET      MOSI | 2 | (RX2)
+   *    -- | 5  6 | EN1         SCK | 3 | (TX2)
+   *   NEO | 7  8 | EN2         GND | 4 |
+   *   GND | 9 10 | 5V           5V | 5 |
+   *        ------                   ---
+   *         EXP1                    TFT
+   *
+   *                    Display
+   *        ------                  ------
+   *  BEEP |10  9 | ENC       MISO |10  9 | SCK
+   *    CS | 8  7 | A0         EN1 | 8  7 | SS
+   * RESET | 6  5 | RED        EN2 | 6  5 | MOSI
+   * GREEN | 4  3 | BLUE        CD | 4  3 | RST
+   *   GND | 2  1 | 5V         GND | 2  1 | KILL
+   *        ------                  ------
+   *         LCD1                    LCD2
+   *
+   * Needs custom cable:
+   *
+   *  EXP1-10 <-->  LCD1-1  5V
+   *  EXP1-9  <-->  LCD1-2  GND
+   *  EXP1-8  <-->  LCD2-6  EN2
+   *  EXP1-7  <-->  LCD1-5  RED
+   *  EXP1-6  <-->  LCD2-8  EN1
+   *  EXP1-5        n/c
+   *  EXP1-4  <-->  LCD1-6  RESET
+   *  EXP1-3  <-->  LCD1-8  CS
+   *  EXP1-2  <-->  LCD1-9  ENC
+   *  EXP1-1  <-->  LCD1-7  A0
+   *   TFT-2  <-->  LCD2-5  MOSI
+   *   TFT-3  <-->  LCD2-9  SCK
+   *
+   * For backlight configuration see steps 2 (V2.1) and 3 at https://wiki.fysetc.com/Mini12864_Panel/
+   */
+  #define LCD1_05_PIN              EXP1_07_PIN // RED
+  #define LCD1_06_PIN              EXP1_04_PIN // RESET
+  #define LCD1_07_PIN              EXP1_01_PIN // A0
+  #define LCD1_08_PIN              EXP1_03_PIN // CS
+  #define LCD1_09_PIN              EXP1_02_PIN // ENC
+
+  #define LCD2_05_PIN                   TFT_02 // MOSI
+  #define LCD2_06_PIN              EXP1_08_PIN // EN2
+  #define LCD2_08_PIN              EXP1_06_PIN // EN1
+  #define LCD2_09_PIN                   TFT_03 // SCK
+
+  #define FORCE_SOFT_SPI
+
+#elif ENABLED(ADAPTER_CUSTOM_CREALITY_V4_DEBUG_HEADER)
+  /**
+   *          Board (RET6 12864 LCD)
+   *       ------
+   *  EN1 | 1  2 | ENC             ---
+   *   CS | 3  4 | LCD_RS         | 1 | VCC
+   *   A0   5  6 | EN2            | 2 | NEO
+   *  SCK | 7  8 | MOSI           | 3 | --
+   *  GND | 9 10 | 5V             | 4 | GND
+   *       ------                  ---
+   *       "EXP3"               Debug port
+   *
+   *                  Display
+   *       ------                  ------
+   *   5V |10  9 | GND         -- |10  9 | --
+   *   -- | 8  7 | --       RESET | 8  7 | --
+   *  NEO | 6  5   LCD_RS    MOSI | 6  5   EN2
+   *   A0 | 4  3 | CS          -- | 4  3 | EN1
+   *  ENC | 2  1 | --         SCK | 2  1 | --
+   *       ------                  ------
+   *        LCD1                    LCD2
+   *
+   * Needs custom cable. Connect EN2-EN2, LCD_CS-LCD_CS and so on.
+   * Debug port is just above EXP1. You may need to add pins.
+   */
+
+  #define LCD1_02_PIN              EXP3_02_PIN  // ENC
+  #define LCD1_03_PIN              EXP3_03_PIN  // CS
+  #define LCD1_04_PIN              EXP3_05_PIN  // A0
+  #define LCD1_05_PIN              EXP3_04_PIN  // RESET
+  #define LCD1_06_PIN             DEBUG_02_PIN  // NEOPIXEL
+
+  #define LCD2_02_PIN              EXP3_07_PIN  // SCK
+  #define LCD2_03_PIN              EXP3_01_PIN  // EN1
+  #define LCD2_05_PIN              EXP3_06_PIN  // EN2
+  #define LCD2_06_PIN              EXP3_08_PIN  // MOSI
+
+  #define FORCE_SOFT_SPI
+
+#elif ENABLED(ADAPTER_SKR_MINI_SCREEN)
+
+  /**
+   * See https://github.com/VoronDesign/Voron-Hardware/tree/master/SKR-Mini_Screen_Adaptor/SRK%20Mini%20E3%20V3.0
+   *
+   *                     Board
+   *        ------                   ------
+   *   ENC | 1  2 | NEO          5V | 1  2 | GND
+   *   EN1 | 3  4 | RESET        CS | 3  4 | SCK
+   *   EN2   5  6 | LCD_RS     MOSI | 5  6 | MISO
+   *    CS | 7  8 | A0          3V3 | 7  8 | GND
+   *   GND | 9 10 | 5V               ------
+   *        ------                    SPI
+   *         EXP1
+   *
+   *           SKR Mini Screen "Adaptor"
+   *        ------                   ------
+   *    -- | 1  2 | ENC        MISO | 1  2 | SCK
+   *    CS | 3  4 | A0          EN1 | 3  4 | --
+   * RESET   5  6 | DIN         EN2   5  6 | MOSI
+   *    -- | 7  8 | --           -- | 7  8 | --
+   *   GND | 9 10 | 5V          GND | 9 10 | RESET (KILL)
+   *        ------                   ------
+   *         EXP1                     EXP2
+   */
+
+  // TODO: Ideally, adapters should provide standard display-agnostic connectors
+  #if ENABLED(FYSETC_MINI_12864_2_1)
+
+    #define LCD1_02_PIN            EXP1_01_PIN  // ENC
+    #define LCD1_03_PIN            EXP1_07_PIN  // DOGLCD_CS
+    #define LCD1_04_PIN            EXP1_08_PIN  // DOGLCD_A0
+    #define LCD1_05_PIN            EXP1_06_PIN  // LCD_RESET_PIN
+    #define LCD1_06_PIN            EXP1_02_PIN  // NEOPIXEL_PIN
+
+    #define LCD2_02_PIN            SPI1_04_PIN  // DOGLCD_SCK
+    #define LCD2_03_PIN            EXP1_03_PIN  // EN1
+    #define LCD2_05_PIN            EXP1_05_PIN  // EN2
+    #define LCD2_06_PIN            SPI1_05_PIN  // DOGLCD_MOSI
+
+    #define FORCE_SOFT_SPI
+
+  #else
+    #error "Only FYSETC_MINI_12864_2_1, MKS_MINI_12864_V3, and BTT_MINI_12864 are supported with ADAPTER_SKR_MINI_SCREEN."
+  #endif
+
+#elif ENABLED(ADAPTER_CUSTOM_E3_V3_NEO)
+
+  /**
+   *                     Board
+   *       ------
+   *  EN2 | 1  2 | ENC                ---
+   *   CS | 3  4 | RESET             | 3 |
+   *   A0   5  6 | EN1               | 2 | (DIN)
+   *  SCK | 7  8 | MOSI              | 1 |
+   *  GND | 9 10 | 5V                 ---
+   *       ------                   NeoPixel
+   *        EXP1
+   *                     Display
+   *       ------                     ------
+   *   5V |10  9 | GND            -- |10  9 | --
+   *   -- | 8  7 | --          RESET | 8  7 | --
+   *  DIN | 6  5   RESET        MOSI | 6  5   EN2
+   *   A0 | 4  3 | CS             -- | 4  3 | EN1
+   *  ENC | 2  1 | --            SCK | 2  1 | --
+   *       ------                     ------
+   *        EXP1                       EXP2
+   *
+   * Needs custom cable. Connect EN2-EN2, LCD_CS-LCD_CS and so on.
+   *
+   * Check the index/notch position twice!!!
+   * On BTT boards pins from IDC10 connector are numbered in unusual order.
+   */
+
+  #define LCD1_02_PIN              EXP1_02_PIN  // ENC
+  #define LCD1_03_PIN              EXP1_03_PIN  // CS
+  #define LCD1_04_PIN              EXP1_05_PIN  // A0
+  #define LCD1_05_PIN              EXP1_04_PIN  // LCD_RS
+  #define LCD1_06_PIN             NEOPIXEL_PIN  // NEOPIXEL
+
+  #define LCD2_02_PIN              EXP1_07_PIN  // SCK
+  #define LCD2_03_PIN              EXP1_06_PIN  // EN1
+  #define LCD2_05_PIN              EXP1_01_PIN  // EN2
+  #define LCD2_06_PIN              EXP1_08_PIN  // MOSI
+
+  #define FORCE_SOFT_SPI
+
 #endif
 
 // Provide One-to-One mapping by default

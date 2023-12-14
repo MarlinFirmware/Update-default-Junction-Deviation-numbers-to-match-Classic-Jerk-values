@@ -145,36 +145,27 @@
 
   // Migrated to pins/lcd
 
+#elif ENABLED(FYSETC_MINI_12864)
+
+  // Migrated to pins/lcd
+
+  // Disconnect EXP2-1 (MISO) and EXP2-2 (SCK), otherwise future firmware upload won't work.
+  #define LCD_CONTRAST_INIT                  220
+
 #elif HAS_WIRED_LCD
 
   #define BEEPER_PIN                 EXP1_01_PIN
 
   #if IS_NEWPANEL
 
-    #if ENABLED(FYSETC_MINI_12864)
-      // Disconnect EXP2-1 and EXP2-2, otherwise future firmware upload won't work.
-      #define DOGLCD_CS              EXP1_03_PIN
-      #define DOGLCD_A0              EXP1_04_PIN
-
-      #define NEOPIXEL_PIN           EXP1_06_PIN
-      #define BTN_EN1                EXP2_03_PIN
-      #define BTN_EN2                EXP2_05_PIN
-
-      #define LCD_RESET_PIN          EXP1_05_PIN
-
-      #define LCD_CONTRAST_INIT              220
-
-      #define LCD_BACKLIGHT_PIN               -1
-    #else
-      #define LCD_PINS_RS            EXP1_04_PIN
-      #define LCD_PINS_EN            EXP1_03_PIN
-      #define LCD_PINS_D4            EXP1_05_PIN
-      #define LCD_PINS_D5            EXP1_06_PIN
-      #define LCD_PINS_D6            EXP1_07_PIN
-      #define LCD_PINS_D7            EXP1_08_PIN
-      #define BTN_EN1                EXP2_03_PIN
-      #define BTN_EN2                EXP2_05_PIN
-    #endif
+    #define LCD_PINS_RS              EXP1_04_PIN
+    #define LCD_PINS_EN              EXP1_03_PIN
+    #define LCD_PINS_D4              EXP1_05_PIN
+    #define LCD_PINS_D5              EXP1_06_PIN
+    #define LCD_PINS_D6              EXP1_07_PIN
+    #define LCD_PINS_D7              EXP1_08_PIN
+    #define BTN_EN1                  EXP2_03_PIN
+    #define BTN_EN2                  EXP2_05_PIN
 
     #define BTN_ENC                  EXP1_02_PIN
     #define SD_DETECT_PIN            EXP2_07_PIN

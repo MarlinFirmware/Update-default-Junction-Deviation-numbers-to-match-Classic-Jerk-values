@@ -220,7 +220,7 @@
 
 #elif HAS_WIRED_LCD
 
-  #if ENABLED(SKR_MINI_SCREEN_ADAPTER)
+  #if ENABLED(ADAPTER_SKR_MINI_SCREEN)
     /** https://github.com/VoronDesign/Voron-Hardware/tree/master/SKR-Mini_Screen_Adaptor/SRK%20Mini%20E3%20V3.0
      *
      *            SKR Mini E3 V3.0                   SKR Mini Screen Adaptor
@@ -257,7 +257,7 @@
       #define LCD_BACKLIGHT_PIN             -1
       #define NEOPIXEL_PIN           EXP1_02_PIN
     #else
-      #error "Only FYSETC_MINI_12864_2_1 / MKS_MINI_12864_V3 / BTT_MINI_12864 / BEEZ_MINI_12864 are currently supported on the SKR Mini E3 with SKR_MINI_SCREEN_ADAPTER."
+      #error "Only FYSETC_MINI_12864_2_1 / MKS_MINI_12864_V3 / BTT_MINI_12864 / BEEZ_MINI_12864 are currently supported on the BIGTREE_SKR_MINI_E3 with ADAPTER_SKR_MINI_SCREEN."
     #endif
 
   #else
@@ -361,7 +361,7 @@
       #error "Only CR10_STOCKDISPLAY, ZONESTAR_LCD, ENDER2_STOCKDISPLAY, MKS_MINI_12864, FYSETC_MINI_12864_2_1, and TFTGLCD_PANEL_(SPI|I2C) are currently supported on the SKR Mini E3."
     #endif
 
-  #endif // SKR_MINI_SCREEN_ADAPTER
+  #endif // ADAPTER_SKR_MINI_SCREEN
 
 #endif // HAS_WIRED_LCD
 

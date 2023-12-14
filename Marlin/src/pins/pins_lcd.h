@@ -43,6 +43,8 @@
     #include "lcd/MINIPANEL.h"
   #elif ANY(ANET_FULL_GRAPHICS_LCD, CTC_A10S_A13)
     #include "lcd/ANET_FULL_GRAPHICS_LCD.h"
+  #elif ENABLED(FYSETC_MINI_12864)
+    #include "lcd/FYSETC_MINI_12864.h"
   #elif ENABLED(ULTI_CONTROLLER)
     #include "lcd/ULTI_CONTROLLER.h"
   #elif IS_RRD_FG_SC
