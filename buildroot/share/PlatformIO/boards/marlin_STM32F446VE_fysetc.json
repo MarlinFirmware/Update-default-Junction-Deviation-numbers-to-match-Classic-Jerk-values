@@ -3,14 +3,14 @@
     "cpu": "cortex-m4",
     "extra_flags": "-DSTM32F446xx",
     "f_cpu": "180000000L",
-    "mcu": "stm32f446ret6",
-    "variant": "MARLIN_FYSETC_S6"
+    "mcu": "stm32f446vet6",
+    "variant": "MARLIN_F446VE_FYSETC"
   },
   "connectivity": [
     "can"
   ],
   "debug": {
-    "jlink_device": "STM32F446RE",
+    "jlink_device": "STM32F446VE",
     "openocd_target": "stm32f4x",
     "svd_path": "STM32F446x.svd"
   },

@@ -113,7 +113,7 @@ jobs:
         - BTT_GTR_V1_0
         - BTT_SKR_PRO
         - FLYF407ZG
-        - FYSETC_S6
+        - STM32F446VE_fysetc
         - LERDGEK
         - LERDGEX
         - mks_robin_pro2

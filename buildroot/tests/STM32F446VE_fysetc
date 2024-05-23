@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 #
-# Build tests for FYSETC_S6
+# Build tests for STM32F446VE_fysetc
 #
 
 # exit on first failure
