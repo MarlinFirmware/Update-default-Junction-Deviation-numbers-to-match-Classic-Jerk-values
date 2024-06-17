@@ -340,29 +340,115 @@
 
     #elif HAS_SPI_TFT                             // Config for Classic UI (emulated DOGM) and Color UI
 
-      #define TFT_CS_PIN             EXP1_07_PIN
-      #define TFT_DC_PIN             EXP1_08_PIN
+      #define SDCARD_CONNECTION          ONBOARD
+
+      #define BEEPER_PIN             EXP1_01_PIN
+
+      #define BTN_ENC                EXP1_02_PIN
+      #define BTN_EN1                EXP2_03_PIN
+      #define BTN_EN2                EXP2_05_PIN
+
       #define TFT_A0_PIN              TFT_DC_PIN
-      #define TFT_MISO_PIN           EXP2_01_PIN
-      #define TFT_BACKLIGHT_PIN      EXP1_03_PIN
-      #define TFT_RESET_PIN          EXP1_04_PIN
 
-      #define LCD_USE_DMA_SPI
-
-      #define TOUCH_INT_PIN          EXP1_06_PIN
-      #define TOUCH_CS_PIN           EXP1_05_PIN
-      #define TOUCH_BUTTONS_HW_SPI
-      #define TOUCH_BUTTONS_HW_SPI_DEVICE      2
-
-      // Disable any LCD related PINs config
-      #define LCD_PINS_EN                  -1
-      #define LCD_PINS_RS                  -1
-
-      #ifndef TFT_BUFFER_WORDS
-        #define TFT_BUFFER_WORDS            1200
+      #ifndef TFT_WIDTH
+        #define TFT_WIDTH                    480
       #endif
-      #ifndef TFT_QUEUE_SIZE
-        #define TFT_QUEUE_SIZE              6144
+      #ifndef TFT_HEIGHT
+        #define TFT_HEIGHT                   320
+      #endif
+
+      #if ENABLED(BTT_TFT35_SPI_V1_0)
+
+        CONTROLLER_WARNING("BTT_MKS_SGEN_L_V2", "BTT_TFT35_SPI_V1_0", " The SGEN_L V2.0 EXP ports are rotated 180°.")
+
+        /**
+         *            ------                       ------
+         *    BEEPER | 1  2 | LCD-BTN        MISO | 1  2 | CLK
+         *    T_MOSI | 3  4 | T_CS       LCD-ENCA | 3  4 | TFTCS
+         *     T_CLK | 5  6   T_MISO     LCD-ENCB | 5  6   MOSI
+         *    PENIRQ | 7  8 | F_CS             RS | 7  8 | RESET
+         *       GND | 9 10 | VCC             GND | 9 10 | NC
+         *            ------                       ------
+         *             EXP1                         EXP2
+         *
+         * 480x320, 3.5", SPI Display with Rotary Encoder.
+         * Stock Display for the BIQU B1 SE Series.
+         * Schematic: https://github.com/bigtreetech/TFT35-SPI/blob/master/v1/Hardware/BTT%20TFT35-SPI%20V1-SCH.pdf
+         */
+        #define TFT_CS_PIN           EXP2_04_PIN
+        #define TFT_DC_PIN           EXP2_07_PIN
+
+        #define TFT_SCK_PIN          EXP2_02_PIN
+        #define TFT_MISO_PIN         EXP2_01_PIN
+        #define TFT_MOSI_PIN         EXP2_06_PIN
+
+        #define TOUCH_CS_PIN         EXP1_04_PIN
+        #define TOUCH_SCK_PIN        EXP1_05_PIN
+        #define TOUCH_MISO_PIN       EXP1_06_PIN
+        #define TOUCH_MOSI_PIN       EXP1_03_PIN
+        #define TOUCH_INT_PIN        EXP1_07_PIN
+
+      #elif ENABLED(MKS_TS35_V2_0)
+
+        /**                      ------                                   ------
+         *               BEEPER | 1  2 | BTN_ENC               SPI1_MISO | 1  2 | SPI1_SCK
+         *     TFT_BKL / LCD_EN | 3  4 | TFT_RESET / LCD_RS      BTN_EN1 | 3  4 | SPI1_CS
+         *    TOUCH_CS / LCD_D4 | 5  6   TOUCH_INT / LCD_D5      BTN_EN2 | 5  6   SPI1_MOSI
+         *     SPI1_CS / LCD_D6 | 7  8 | SPI1_RS / LCD_D7       SPI1_RS  | 7  8 | RESET
+         *                  GND | 9 10 | VCC                         GND | 9 10 | VCC
+         *                       ------                                   ------
+         *                        EXP1                                     EXP2
+         */
+        #define TFT_CS_PIN           EXP1_07_PIN
+        #define TFT_DC_PIN           EXP1_08_PIN
+
+        #define TFT_RESET_PIN        EXP1_04_PIN
+        #define TFT_BACKLIGHT_PIN    EXP1_03_PIN
+
+        //#define TFT_RST_PIN        EXP2_07_PIN
+        #define TFT_SCK_PIN          EXP2_02_PIN
+        #define TFT_MISO_PIN         EXP2_01_PIN
+        #define TFT_MOSI_PIN         EXP2_06_PIN
+
+        #define LCD_USE_DMA_SPI
+
+        #define TFT_BUFFER_WORDS            2400
+
+        #define TOUCH_CS_PIN         EXP1_05_PIN
+        #define TOUCH_INT_PIN        EXP1_06_PIN
+        #define TOUCH_BUTTONS_HW_SPI
+        #define TOUCH_BUTTONS_HW_SPI_DEVICE    2
+
+      #endif
+
+      #if ENABLED(TFT_CLASSIC_UI)
+        #ifndef TOUCH_CALIBRATION_X
+          #define TOUCH_CALIBRATION_X     -16794
+        #endif
+        #ifndef TOUCH_CALIBRATION_Y
+          #define TOUCH_CALIBRATION_Y      11000
+        #endif
+        #ifndef TOUCH_OFFSET_X
+          #define TOUCH_OFFSET_X            1024
+        #endif
+        #ifndef TOUCH_OFFSET_Y
+          #define TOUCH_OFFSET_Y            -352
+        #endif
+
+      #elif ENABLED(TFT_COLOR_UI)
+        #ifndef TOUCH_CALIBRATION_X
+          #define TOUCH_CALIBRATION_X     -16741
+        #endif
+        #ifndef TOUCH_CALIBRATION_Y
+          #define TOUCH_CALIBRATION_Y      11258
+        #endif
+        #ifndef TOUCH_OFFSET_X
+          #define TOUCH_OFFSET_X            1024
+        #endif
+        #ifndef TOUCH_OFFSET_Y
+          #define TOUCH_OFFSET_Y            -367
+        #endif
+        #define TFT_BUFFER_WORDS            2400
       #endif
 
     #else // !MKS_12864OLED_SSD1306
