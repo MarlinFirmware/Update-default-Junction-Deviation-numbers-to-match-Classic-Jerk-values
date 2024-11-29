@@ -1541,7 +1541,7 @@
    *  2) The apropriate X,Y,Z moves are executed for a deploy or stow operation
    *  3) The servo is set to the stowed position
    */
-  #define MAG_MOUNTED_PROBE_SERVO_NR 0              // Set to servo number to use
+  //#define MAG_MOUNTED_PROBE_SERVO_NR 0             // Set to servo number to use
   #ifdef MAG_MOUNTED_PROBE_SERVO_NR
     #define MAG_MOUNTED_PROBE_SERVO_ANGLES { 90, 0 } // Mag servo Deploy and Stow angles
   #endif
