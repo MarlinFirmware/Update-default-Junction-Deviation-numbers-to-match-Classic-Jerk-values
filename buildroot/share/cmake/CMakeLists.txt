@@ -87,9 +87,13 @@ file(WRITE "${CMAKE_CURRENT_LIST_DIR}/marlin-cmake/Platform/Arduino.cmake" "${NE
 
 # Fix "CMake Error... avr-gcc / avr-g++ is not a full path..."
 if(UNIX)
-  file(READ "${CMAKE_CURRENT_LIST_DIR}/marlin-cmake/toolchain/ArduinoToolchain.cmake" ORIGINAL_TOOLCHAIN_CONTENTS)
-  string(REPLACE "set(CMAKE_C_COMPILER   avr-gcc)\nset(CMAKE_CXX_COMPILER avr-g++)" "set(CMAKE_C_COMPILER   /usr/bin/gcc)\nset(CMAKE_CXX_COMPILER /usr/bin/gcc)" NEW_TOOLCHAIN_CONTENTS "${ORIGINAL_TOOLCHAIN_CONTENTS}")
-  file(WRITE "${CMAKE_CURRENT_LIST_DIR}/marlin-cmake/toolchain/ArduinoToolchain.cmake" "${NEW_TOOLCHAIN_CONTENTS}")
+  set(ORIGINAL_FILE_CONTENTS "")
+  set(NEW_FILE_CONTENTS "")
+  file(READ "${CMAKE_CURRENT_LIST_DIR}/marlin-cmake/toolchain/ArduinoToolchain.cmake" ORIGINAL_FILE_CONTENTS)
+  string(REPLACE "set(CMAKE_C_COMPILER   avr-gcc)\nset(CMAKE_CXX_COMPILER avr-g++)"
+                 "set(CMAKE_C_COMPILER   /usr/bin/gcc)\nset(CMAKE_CXX_COMPILER /usr/bin/gcc)"
+                 NEW_FILE_CONTENTS "${ORIGINAL_FILE_CONTENTS}")
+  file(WRITE "${CMAKE_CURRENT_LIST_DIR}/marlin-cmake/toolchain/ArduinoToolchain.cmake" "${NEW_FILE_CONTENTS}")
 endif(UNIX)
 
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CMAKE_CURRENT_LIST_DIR}/marlin-cmake/modules)
