@@ -85,7 +85,14 @@ file(READ "${CMAKE_CURRENT_LIST_DIR}/marlin-cmake/Platform/Arduino.cmake" ORIGIN
 string(REGEX REPLACE "cmake_minimum_required\\(VERSION[^\n]*\n" "cmake_minimum_required(VERSION 3.5)\n" NEW_FILE_CONTENTS "${ORIGINAL_FILE_CONTENTS}")
 file(WRITE "${CMAKE_CURRENT_LIST_DIR}/marlin-cmake/Platform/Arduino.cmake" "${NEW_FILE_CONTENTS}")
 
-set(CMAKE_MODULE_PATH  ${CMAKE_MODULE_PATH} ${CMAKE_CURRENT_LIST_DIR}/marlin-cmake/modules)
+# Fix "CMake Error... avr-gcc / avr-g++ is not a full path..."
+if(UNIX)
+  file(READ "${CMAKE_CURRENT_LIST_DIR}/marlin-cmake/toolchain/ArduinoToolchain.cmake" ORIGINAL_TOOLCHAIN_CONTENTS)
+  string(REPLACE "set(CMAKE_C_COMPILER   avr-gcc)\nset(CMAKE_CXX_COMPILER avr-g++)" "set(CMAKE_C_COMPILER   /usr/bin/gcc)\nset(CMAKE_CXX_COMPILER /usr/bin/gcc)" NEW_TOOLCHAIN_CONTENTS "${ORIGINAL_TOOLCHAIN_CONTENTS}")
+  file(WRITE "${CMAKE_CURRENT_LIST_DIR}/marlin-cmake/toolchain/ArduinoToolchain.cmake" "${NEW_TOOLCHAIN_CONTENTS}")
+endif(UNIX)
+
+set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CMAKE_CURRENT_LIST_DIR}/marlin-cmake/modules)
 
 #====================================================================#
 #  Custom path to Arduino SDK can be set here                        #
