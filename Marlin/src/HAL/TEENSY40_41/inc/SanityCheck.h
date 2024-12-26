@@ -44,3 +44,11 @@
 #if ENABLED(POSTMORTEM_DEBUGGING)
   #error "POSTMORTEM_DEBUGGING is not yet supported for Teensy 4.0/4.1."
 #endif
+
+#if ENABLED(SERIAL_STATS_MAX_RX_QUEUED) || ENABLED(SERIAL_STATS_DROPPED_RX) || ENABLED(SERIAL_STATS_RX_FRAMING_ERRORS) || ENABLED(SERIAL_STATS_RX_BUFFER_OVERRUNS)
+  #error "SERIAL_STATS_* features not supported on Teensy 4.0/4.1."
+#endif
+
+#if ENABLED(BAUD_RATE_GCODE) && SERIAL_PORT_2 == -2
+  #error "BAUD_RATE_GCODE cannot be enabled when using the Ethernet serial port."
+#endif
