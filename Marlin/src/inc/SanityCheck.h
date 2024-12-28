@@ -2121,6 +2121,13 @@ static_assert(NUM_SERVOS <= NUM_SERVO_PLUGS, "NUM_SERVOS (or some servo index) i
     #error "MAX31865_SENSOR_OHMS_2 and MAX31865_CALIBRATION_OHMS_2 must be set if TEMP_SENSOR_2/TEMP_SENSOR_REDUNDANT is MAX31865."
   #endif
 #endif
+#if TEMP_SENSOR_BED_IS_MAX31865
+  #if !defined(MAX31865_SENSOR_WIRES_BED) || !WITHIN(MAX31865_SENSOR_WIRES_BED, 2, 4)
+    #error "MAX31865_SENSOR_WIRES_BED must be defined as an integer between 2 and 4."
+  #elif !defined(MAX31865_SENSOR_OHMS_BED) || !defined(MAX31865_CALIBRATION_OHMS_BED)
+    #error "MAX31865_SENSOR_OHMS_BED and MAX31865_CALIBRATION_OHMS_BED must be set if TEMP_SENSOR_BED is MAX31865."
+  #endif
+#endif
 
 /**
  * Redundant temperature sensor config

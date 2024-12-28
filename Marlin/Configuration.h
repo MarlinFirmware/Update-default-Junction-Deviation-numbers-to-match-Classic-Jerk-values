@@ -599,6 +599,10 @@
   #define MAX31865_SENSOR_OHMS_2      100
   #define MAX31865_CALIBRATION_OHMS_2 430
 #endif
+#if TEMP_SENSOR_IS_MAX_TC(BED)
+  #define MAX31865_SENSOR_OHMS_BED      100
+  #define MAX31865_CALIBRATION_OHMS_BED 430
+#endif
 
 #if HAS_E_TEMP_SENSOR
   #define TEMP_RESIDENCY_TIME         10  // (seconds) Time to wait for hotend to "settle" in M109
