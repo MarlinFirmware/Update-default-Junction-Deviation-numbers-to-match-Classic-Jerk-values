@@ -174,6 +174,9 @@ void calibrate_delay_loop();
 
   // Delay in microseconds
   #define DELAY_US(x) DELAY_CYCLES((x) * ((F_CPU) / 1000000UL))
+
+  #define DELAY_CYCLES_VAR DELAY_CYCLES
+
 #else
 
   #error "Unsupported MCU architecture"
