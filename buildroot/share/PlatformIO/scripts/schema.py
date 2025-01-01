@@ -183,18 +183,28 @@ def extract_files(filekey):
                 # - The line starts with '======' so just skip it.
                 #
                 def use_comment(c, opt, sec, bufref):
-                    if c.startswith(':'):               # If the comment starts with : then it has magic JSON
-                        d = c[1:].strip()               # Strip the leading :
-                        cbr = c.rindex('}') if d.startswith('{') else c.rindex(']') if d.startswith('[') else 0
+                    '''
+                    c       - The comment line to parse
+                    opt     - Options JSON string to return (if not updated)
+                    sec     - Section to return (if not updated)
+                    bufref  - The comment buffer to add to
+                    '''
+                    sc = c.strip()                      # Strip for special patterns
+                    if sc.startswith(':'):              # If the comment starts with : then it has magic JSON
+                        d = sc[1:].strip()              # Strip the leading : and spaces
+                        # Look for a JSON container
+                        cbr = sc.rindex('}') if d.startswith('{') else sc.rindex(']') if d.startswith('[') else 0
                         if cbr:
-                            opt, cmt = c[1:cbr+1].strip(), c[cbr+1:].strip()
+                            opt, cmt = sc[1:cbr+1].strip(), sc[cbr+1:].strip()
                             if cmt != '': bufref.append(cmt)
                         else:
-                            opt = c[1:].strip()
-                    elif c.startswith('@section'):      # Start a new section
-                        sec = c[8:].strip()
-                    elif not c.startswith('========'):
-                        bufref.append(c)
+                            opt = sc[1:].strip()        # Some literal value not in a JSON container?
+                    else:
+                        m = re.match(r'@section\s*(.+)', sc) # Start a new section?
+                        if m:
+                            sec = m[1]
+                        elif not sc.startswith('========'):
+                            bufref.append(c)            # Anything else is part of the comment
                     return opt, sec
 
                 # For slash comments, capture consecutive slash comments.
@@ -225,7 +235,7 @@ def extract_files(filekey):
 
                     # Collect temperature sensors
                     if state == Parse.GET_SENSORS:
-                        sens = re.match(r'^(-?\d+)\s*:\s*(.+)$', cline)
+                        sens = re.match(r'^\s*(-?\d+)\s*:\s*(.+)$', cline)
                         if sens:
                             s2 = sens[2].replace("'", "''")
                             options_json += f"{sens[1]}:'{sens[1]} - {s2}', "
@@ -433,6 +443,17 @@ def dump_json(schema:dict, jpath:Path):
 
 def dump_yaml(schema:dict, ypath:Path):
     import yaml
+
+    # Custom representer for all multi-line strings
+    def str_literal_representer(dumper, data):
+        if '\n' in data:  # Check for multi-line strings
+            # Add a newline to trigger '|+'
+            if not data.endswith('\n'): data += '\n'
+            return dumper.represent_scalar('tag:yaml.org,2002:str', data, style='|')
+        return dumper.represent_scalar('tag:yaml.org,2002:str', data)
+
+    yaml.add_representer(str, str_literal_representer)
+
     with ypath.open('w', encoding='utf-8') as yfile:
         yaml.dump(schema, yfile, default_flow_style=False, width=120, indent=2)
 

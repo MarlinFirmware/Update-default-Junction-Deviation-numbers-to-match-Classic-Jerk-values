@@ -36,6 +36,11 @@
   #define XATC_Y_POSITION ((probe.max_y() - probe.min_y())/2)
 #endif
 
+#if ALL(TOUCH_SCREEN, HAS_GRAPHICAL_TFT)
+  #include "../tft/tft.h"
+  #include "../tft/touch.h"
+#endif
+
 void _goto_manual_move_z(const_float_t);
 
 float measured_z, z_offset;

@@ -1225,7 +1225,54 @@ static_assert(NUM_SERVOS <= NUM_SERVO_PLUGS, "NUM_SERVOS (or some servo index) i
 #if 1 < 0 \
   + (DISABLED(BLTOUCH) && HAS_Z_SERVO_PROBE) \
   + COUNT_ENABLED(PROBE_MANUALLY, BLTOUCH, BD_SENSOR, FIX_MOUNTED_PROBE, NOZZLE_AS_PROBE, TOUCH_MI_PROBE, SOLENOID_PROBE, Z_PROBE_ALLEN_KEY, Z_PROBE_SLED, RACK_AND_PINION_PROBE, SENSORLESS_PROBING, MAGLEV4, MAG_MOUNTED_PROBE, BIQU_MICROPROBE_V1, BIQU_MICROPROBE_V2)
-  #error "Please enable only one probe option: PROBE_MANUALLY, SENSORLESS_PROBING, BLTOUCH, BD_SENSOR, FIX_MOUNTED_PROBE, NOZZLE_AS_PROBE, TOUCH_MI_PROBE, SOLENOID_PROBE, Z_PROBE_ALLEN_KEY, Z_PROBE_SLED, MAGLEV4, MAG_MOUNTED_PROBE, BIQU_MICROPROBE_V1, BIQU_MICROPROBE_V2, or Z Servo."
+  #error "Please enable only one probe option. See the following errors:"
+  #if ENABLED(BLTOUCH)
+    #error "(BLTOUCH is enabled.)"
+  #elif HAS_Z_SERVO_PROBE
+    #error "(Z_SERVO_PROBE is enabled.)"
+  #endif
+  #if ENABLED(PROBE_MANUALLY)
+    #error "(PROBE_MANUALLY is enabled.)"
+  #endif
+  #if ENABLED(BD_SENSOR)
+    #error "(BD_SENSOR is enabled.)"
+  #endif
+  #if ENABLED(FIX_MOUNTED_PROBE)
+    #error "(FIX_MOUNTED_PROBE is enabled.)"
+  #endif
+  #if ENABLED(NOZZLE_AS_PROBE)
+    #error "(NOZZLE_AS_PROBE is enabled.)"
+  #endif
+  #if ENABLED(TOUCH_MI_PROBE)
+    #error "(TOUCH_MI_PROBE is enabled.)"
+  #endif
+  #if ENABLED(SOLENOID_PROBE)
+    #error "(SOLENOID_PROBE is enabled.)"
+  #endif
+  #if ENABLED(Z_PROBE_ALLEN_KEY)
+    #error "(Z_PROBE_ALLEN_KEY is enabled.)"
+  #endif
+  #if ENABLED(Z_PROBE_SLED)
+    #error "(Z_PROBE_SLED is enabled.)"
+  #endif
+  #if ENABLED(RACK_AND_PINION_PROBE)
+    #error "(RACK_AND_PINION_PROBE is enabled.)"
+  #endif
+  #if ENABLED(SENSORLESS_PROBING)
+    #error "(SENSORLESS_PROBING is enabled.)"
+  #endif
+  #if ENABLED(MAGLEV4)
+    #error "(MAGLEV4 is enabled.)"
+  #endif
+  #if ENABLED(MAG_MOUNTED_PROBE)
+    #error "(MAG_MOUNTED_PROBE is enabled.)"
+  #endif
+  #if ENABLED(BIQU_MICROPROBE_V1)
+    #error "(BIQU_MICROPROBE_V1 is enabled.)"
+  #endif
+  #if ENABLED(BIQU_MICROPROBE_V2)
+    #error "(BIQU_MICROPROBE_V2 is enabled.)"
+  #endif
 #endif
 
 #if HAS_BED_PROBE

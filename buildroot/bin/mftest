@@ -196,7 +196,7 @@ if ((AUTO_BUILD)); then
       fi
     else
       echo "Detected \"$BDESC\" | $MB ($BNUM)."
-      [[ $CHOICE > $ECOUNT ]] && { echo "Environment selection out of range." ; exit 1 ; }
+      [[ $CHOICE > $ECOUNT ]] && { echo "Environment selection out of range." ; exit 66 ; }
     fi
     TARGET="${ENVS[$CHOICE-1]}"
     if [[ $MB == 'SIMULATED' && $TARGET == 'linux_native' ]]; then

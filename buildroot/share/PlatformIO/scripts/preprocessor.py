@@ -87,7 +87,7 @@ def search_compiler(env):
         if ppath.match(env['PROJECT_PACKAGES_DIR'] + "/**/bin"):
             for gpath in ppath.glob(gcc_exe):
                 # Skip '*-elf-g++' (crosstool-NG) except for xtensa32
-                if not "xtensa32" not in str(gpath) and gpath.stem.endswith('-elf-g++'):
+                if not gpath.stem.endswith('-elf-g++') or "xtensa32" in str(gpath):
                     gccpath = str(gpath.resolve())
                     break
 
@@ -95,7 +95,7 @@ def search_compiler(env):
         for ppath in envpath:
             for gpath in ppath.glob(gcc_exe):
                 # Skip macOS Clang
-                if gpath != 'usr/bin/g++' or env['PLATFORM'] != 'darwin':
+                if not (gpath == 'usr/bin/g++' and env['PLATFORM'] == 'darwin'):
                     gccpath = str(gpath.resolve())
                     break
 

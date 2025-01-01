@@ -27,9 +27,10 @@
 #include "endstops.h"
 #include "stepper.h"
 
-#include "../sd/cardreader.h"
-#include "temperature.h"
-#include "../lcd/marlinui.h"
+#if HAS_STATUS_MESSAGE
+  #include "../lcd/marlinui.h"
+#endif
+
 #if ENABLED(SOVOL_SV06_RTS)
   #include "../lcd/sovol_rts/sovol_rts.h"
 #endif
@@ -44,6 +45,8 @@
 
 #if ENABLED(SD_ABORT_ON_ENDSTOP_HIT)
   #include "printcounter.h" // for print_job_timer
+  #include "temperature.h"
+  #include "../sd/cardreader.h"
 #endif
 
 #if ENABLED(BLTOUCH)
@@ -52,6 +55,10 @@
 
 #if ENABLED(JOYSTICK)
   #include "../feature/joystick.h"
+#endif
+
+#if HAS_FILAMENT_SENSOR
+  #include "../feature/runout.h"
 #endif
 
 #if HAS_BED_PROBE
@@ -375,13 +382,13 @@ void Endstops::event_handler() {
     #endif
     SERIAL_EOL();
 
-    TERN_(HAS_STATUS_MESSAGE,
+    #if HAS_STATUS_MESSAGE
       ui.status_printf(0,
         F(S_FMT GANG_N_1(NUM_AXES, " %c") " %c"),
         GET_TEXT_F(MSG_LCD_ENDSTOPS),
         NUM_AXIS_LIST_(chrX, chrY, chrZ, chrI, chrJ, chrK, chrU, chrV, chrW) chrP
-      )
-    );
+      );
+    #endif
 
     #if ENABLED(SD_ABORT_ON_ENDSTOP_HIT)
       if (planner.abort_on_endstop_hit) {
@@ -526,7 +533,7 @@ void __O2 Endstops::report_states() {
     }
     #undef _CASE_RUNOUT
   #elif HAS_FILAMENT_SENSOR
-    print_es_state(READ(FIL_RUNOUT1_PIN) != FIL_RUNOUT1_STATE, F(STR_FILAMENT));
+    print_es_state(!FILAMENT_IS_OUT());
   #endif
 
   TERN_(BLTOUCH, bltouch._reset_SW_mode());
