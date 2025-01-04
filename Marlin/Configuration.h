@@ -378,6 +378,9 @@
 //#define HOTEND_OFFSET_Y { 0.0, 5.00 }  // (mm) relative Y-offset for each nozzle
 //#define HOTEND_OFFSET_Z { 0.0, 0.00 }  // (mm) relative Z-offset for each nozzle
 
+// Enable and disable tool length compensation with G43 and G49, respectively. true: Enabled by default. false: Disabled by default.
+//#define DEFAULT_TOOL_LENGTH_COMPENSATION true
+
 // @section multi-material
 
 /**
