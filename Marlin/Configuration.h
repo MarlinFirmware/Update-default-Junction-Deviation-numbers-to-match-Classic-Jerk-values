@@ -218,6 +218,15 @@
 
 // @section extruder
 
+/**
+ * This defines the number of tools, including extruders, laser and spindle tools. 
+ * Tool indices, starting with 0, must be assigned in the following order: opional extruders (requires EXTRUDERS > 0), 
+ * an optional laser (requires LASER_FEATURE), and finally optional tools for a spindle (requires SPINDLE_FEATURE). 
+ * Offsets of each tool from tool 0 must be defined with HOTEND_OFFSET_X, HOTEND_OFFSET_Y and HOTEND_OFFSET_Z
+ */
+// :[0, 1, 2, ..., 127]
+//#define TOOLS 1
+
 // This defines the number of extruders
 // :[0, 1, 2, 3, 4, 5, 6, 7, 8]
 #define EXTRUDERS 1
