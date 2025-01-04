@@ -117,7 +117,7 @@ extern int16_t feedrate_percentage;
 #define MMS_SCALED(V) ((V) * 0.01f * feedrate_percentage)
 
 // The active extruder (tool). Set with T<extruder> command.
-#if HAS_MULTI_EXTRUDER
+#if HAS_MULTI_TOOLS
   extern uint8_t active_extruder;
 #else
   constexpr uint8_t active_extruder = 0;
@@ -160,10 +160,10 @@ inline float home_bump_mm(const AxisEnum axis) {
 }
 
 #if HAS_HOTEND_OFFSET
-  extern xyz_pos_t hotend_offset[HOTENDS];
+  extern xyz_pos_t hotend_offset[TOOLS];
   void reset_hotend_offsets();
 #elif HOTENDS
-  constexpr xyz_pos_t hotend_offset[HOTENDS] = { { TERN_(HAS_X_AXIS, 0) } };
+  constexpr xyz_pos_t hotend_offset[TOOLS] = { { TERN_(HAS_X_AXIS, 0) } };
 #else
   constexpr xyz_pos_t hotend_offset[1] = { { TERN_(HAS_X_AXIS, 0) } };
 #endif

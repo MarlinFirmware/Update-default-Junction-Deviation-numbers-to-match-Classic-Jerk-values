@@ -36,8 +36,8 @@
 //#define DEBUG_TOOL_CHANGE
 //#define DEBUG_TOOLCHANGE_FILAMENT_SWAP
 
-#if HAS_MULTI_EXTRUDER
-  toolchange_settings_t toolchange_settings;  // Initialized by settings.load
+#if HAS_MULTI_TOOLS
+  toolchange_settings_t toolchange_settings;  // Initialized by settings.load()
 #endif
 
 #if ENABLED(TOOLCHANGE_MIGRATION_FEATURE)
@@ -94,6 +94,10 @@
 
 #if HAS_BED_PROBE
   #include "probe.h"
+#endif
+
+#if HAS_CUTTER
+  #include "../feature/spindle_laser.h"
 #endif
 
 #if ENABLED(TOOLCHANGE_FILAMENT_SWAP)
@@ -822,7 +826,7 @@ void fast_line_to_current(const AxisEnum fr_axis) { _line_to_current(fr_axis, 0.
 
 #endif // ELECTROMAGNETIC_SWITCHING_TOOLHEAD
 
-#if HAS_EXTRUDERS
+#if HAS_MULTI_TOOLS || HAS_EXTRUDERS
   inline void invalid_extruder_error(const uint8_t e) {
     SERIAL_ECHO_START();
     SERIAL_CHAR('T'); SERIAL_ECHO(e);
@@ -1136,19 +1140,19 @@ void tool_change(const uint8_t new_tool, bool no_move/*=false*/) {
 
     mmu2.tool_change(new_tool);
 
-  #elif EXTRUDERS == 0
+  #elif !TOOLS
 
     // Nothing to do
     UNUSED(new_tool); UNUSED(no_move);
 
-  #elif EXTRUDERS < 2
+  #elif TOOLS < 2
 
     UNUSED(no_move);
 
     if (new_tool) invalid_extruder_error(new_tool);
     return;
 
-  #elif HAS_MULTI_EXTRUDER
+  #elif HAS_MULTI_TOOLS
 
     planner.synchronize();
 
@@ -1157,7 +1161,7 @@ void tool_change(const uint8_t new_tool, bool no_move/*=false*/) {
          return invalid_extruder_error(new_tool);
     #endif
 
-    if (new_tool >= EXTRUDERS)
+    if (new_tool >= TOOLS)
       return invalid_extruder_error(new_tool);
 
     if (!no_move && homing_needed()) {
@@ -1514,7 +1518,7 @@ void tool_change(const uint8_t new_tool, bool no_move/*=false*/) {
 
     SERIAL_ECHOLNPGM(STR_ACTIVE_EXTRUDER, active_extruder);
 
-  #endif // HAS_MULTI_EXTRUDER
+  #endif // HAS_MULTI_TOOLS
 }
 
 #if ENABLED(TOOLCHANGE_MIGRATION_FEATURE)
