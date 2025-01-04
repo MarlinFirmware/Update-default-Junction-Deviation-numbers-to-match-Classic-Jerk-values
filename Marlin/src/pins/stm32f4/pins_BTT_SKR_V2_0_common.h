@@ -257,9 +257,21 @@
   #ifndef SPINDLE_LASER_PWM_PIN
     #define SPINDLE_LASER_PWM_PIN           PB5
   #endif
+  #if ENABLED(LASER_FEATURE)
+    #ifndef LASER_PWM_PIN
+      #define LASER_PWM_PIN                 PB5
+    #endif
+  #endif
+
   #ifndef SPINDLE_LASER_ENA_PIN
     #define SPINDLE_LASER_ENA_PIN           PB6
   #endif
+  #if ENABLED(LASER_FEATURE)
+    #ifndef LASER_ENA_PIN
+      #define LASER_ENA_PIN                 PB6
+    #endif
+  #endif
+
 #else
   #ifndef FAN1_PIN
     #define FAN1_PIN                        PB6   // Fan1

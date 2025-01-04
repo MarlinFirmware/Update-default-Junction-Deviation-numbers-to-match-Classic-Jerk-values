@@ -179,11 +179,27 @@
 #ifndef SPINDLE_LASER_PWM_PIN
   #define SPINDLE_LASER_PWM_PIN                4  // Hardware PWM. Pin 4 interrupts OC0* and OC1* always in use?
 #endif
+#if ENABLED(LASER_FEATURE)
+  #ifndef LASER_PWM_PIN
+    #define LASER_PWM_PIN                      4  // Hardware PWM. Pin 4 interrupts OC0* and OC1* always in use?
+  #endif
+#endif
+
 #ifndef SPINDLE_LASER_ENA_PIN
   #define SPINDLE_LASER_ENA_PIN               14  // Pullup!
 #endif
+#if ENABLED(LASER_FEATURE)
+  #ifndef LASER_ENA_PIN
+    #define LASER_ENA_PIN                     14  // Pullup!
+  #endif
+#endif
 #ifndef SPINDLE_DIR_PIN
   #define SPINDLE_DIR_PIN                     15
+#endif
+#if ENABLED(LASER_FEATURE)
+  #ifndef LASER_DIR_PIN
+    #define LASER_DIR_PIN                     15
+  #endif
 #endif
 
 //
