@@ -345,6 +345,16 @@ enum AxisEnum : uint8_t {
 #define LOOP_DISTINCT_AXES(VAR) for (uint8_t VAR = 0; VAR < DISTINCT_AXES; ++VAR)
 #define LOOP_DISTINCT_E(VAR) for (uint8_t VAR = 0; VAR < DISTINCT_E; ++VAR)
 
+
+//
+// Enumerates tool types
+//
+enum ToolTypeEnum : uint8_t {
+  TYPE_EXTRUDER, 
+  TYPE_LASER,
+  TYPE_SPINDLE
+};
+
 //
 // feedRate_t is just a humble float that can represent mm/s or mm/min
 //

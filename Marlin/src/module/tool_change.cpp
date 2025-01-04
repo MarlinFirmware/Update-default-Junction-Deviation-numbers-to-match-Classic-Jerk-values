@@ -1253,6 +1253,29 @@ void tool_change(const uint8_t new_tool, bool no_move/*=false*/) {
         }
       #endif
 
+      #if HAS_CUTTER
+        // Store cutter state and stop cutter
+        bool old_cutter_state = cutter.enable_state;
+        uint8_t old_cutter_power = cutter.power;
+        uint8_t old_tool_type = cutter.active_tool_type;
+        cutter.power = 0;
+        cutter.apply_power(0);
+        #if ENABLED(LASER_FEATURE)
+          cutter.inline_power(cutter.power);
+        #endif
+        cutter.set_enabled(false);
+        TERN_(SPINDLE_FEATURE, safe_delay(1000));
+      #endif
+
+      #if ENABLED(COOLANT_MIST)
+        bool old_mist_coolant_state = TERN(COOLANT_MIST_INVERT, !READ(COOLANT_MIST_PIN), READ(COOLANT_MIST_PIN));
+        WRITE(COOLANT_MIST_PIN, COOLANT_MIST_INVERT);     // Turn off Mist coolant
+      #endif
+      #if ENABLED(COOLANT_FLOOD)
+        bool old_flood_coolant_state = TERN(COOLANT_FLOOD_INVERT, !READ(COOLANT_FLOOD_PIN), READ(COOLANT_FLOOD_PIN));
+        WRITE(COOLANT_FLOOD_PIN, COOLANT_FLOOD_INVERT);   // Turn off Flood coolant
+      #endif
+
       // Toolchange park
       #if ENABLED(TOOLCHANGE_PARK) && !HAS_SWITCHING_NOZZLE
         if (can_move_away && toolchange_settings.enable_park) {
@@ -1411,6 +1434,63 @@ void tool_change(const uint8_t new_tool, bool no_move/*=false*/) {
 
         TERN_(DUAL_X_CARRIAGE, idex_set_parked(false));
       } // should_move
+
+      #if HAS_CUTTER
+
+        #if ALL(SPINDLE_FEATURE, LASER_FEATURE)
+          if (new_tool == LASER_TOOL) {
+            cutter.active_tool_type = TYPE_LASER;
+          }
+          else if (new_tool < LASER_TOOL) {
+            cutter.active_tool_type = TYPE_EXTRUDER;
+          }
+          else {
+            cutter.active_tool_type = TYPE_SPINDLE;
+          }
+          // Restore cutter state
+          if (old_cutter_state && (old_tool == TYPE_SPINDLE) && new_tool > LASER_TOOL) {
+        #elif ENABLED(SPINDLE_FEATURE)
+          if (new_tool < EXTRUDERS) {
+            cutter.active_tool_type = TYPE_EXTRUDER;
+          }
+          else {
+            cutter.active_tool_type = TYPE_SPINDLE;
+          }
+          if (old_cutter_state && cutter.active_tool_type != TYPE_EXTRUDER) {
+        #elif ENABLED(LASER_FEATURE)
+          if (new_tool < LASER_TOOL) {
+            cutter.active_tool_type = TYPE_EXTRUDER;
+          }
+          else {
+            cutter.active_tool_type = TYPE_LASER;
+          }
+          if (old_cutter_state && cutter.active_tool_type != TYPE_EXTRUDER) { 
+        #endif
+            cutter.power = old_cutter_power;
+            cutter.apply_power(cutter.power);
+            #if ENABLED(LASER_FEATURE)
+              if ((cutter.active_tool_type == TYPE_LASER ) && (cutter.cutter_mode != CUTTER_MODE_STANDARD)) {
+                cutter.inline_power(cutter.power);
+              }
+            #endif
+            cutter.set_enabled(true);
+            if (TERN0(SPINDLE_FEATURE, cutter.active_tool_type = TYPE_SPINDLE)) {
+             safe_delay(1000);
+            }
+          }
+      #endif
+
+
+      #if ENABLED(COOLANT_MIST)
+        if old_mist_coolant_state {
+          WRITE(COOLANT_MIST_PIN, !COOLANT_MIST_INVERT);     // Turn on Mist coolant
+        }
+      #endif
+      #if ENABLED(COOLANT_FLOOD)
+        if old_flood_coolant_state {
+          WRITE(COOLANT_FLOOD_PIN, !COOLANT_FLOOD_INVERT);   // Turn on Flood coolant
+        }
+      #endif
 
       #if HAS_SWITCHING_NOZZLE
         // Move back down. (Including when the new tool is higher.)
