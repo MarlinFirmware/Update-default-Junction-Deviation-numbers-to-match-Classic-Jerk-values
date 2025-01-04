@@ -153,9 +153,17 @@ int16_t feedrate_percentage = 100;
 // Cartesian conversion result goes here:
 xyz_pos_t cartes;
 
+#if HAS_TOOL_LENGTH_COMPENSATION
+  bool simple_tool_length_compensation = DEFAULT_TOOL_LENGTH_COMPENSATION;
+#endif
+
 #if IS_KINEMATIC
 
   abce_pos_t delta;
+
+  #if HAS_TOOL_CENTERPOINT_CONTROL
+    bool tool_centerpoint_control = false;
+  #endif
 
   #if HAS_SCARA_OFFSET
     abc_pos_t scara_home_offset;

@@ -215,6 +215,11 @@
   #undef HOTEND_OFFSET_Z
 #endif
 
+#if defined(DEFAULT_TOOL_LENGTH_COMPENSATION)
+  #define HAS_TOOL_LENGTH_COMPENSATION 1
+  #define HAS_HOTEND_OFFSET 1
+#endif
+
 /**
  * Number of Linear Axes (e.g., XYZIJKUVW)
  * All the logical axes except for the tool (E) axis
