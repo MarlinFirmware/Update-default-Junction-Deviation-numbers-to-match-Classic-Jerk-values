@@ -21,6 +21,9 @@
  */
 #pragma once
 
+// Use with Creality V422 boards
+#define CONFIG_EXAMPLES_DIR "Creality/Ender-3 Pro/CrealityV422"
+
 /**
  * Configuration.h
  *
