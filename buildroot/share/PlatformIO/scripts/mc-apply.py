@@ -26,13 +26,13 @@ logging.basicConfig(level=logging.INFO)
 MARLIN_CONFIG_FILES = ('Configuration.h', 'Configuration_adv.h')
 
 # Load and return the JSON configuration from the specified file path.
-# Exit with an error message if the file is not found, JSON decoding fails, or CONFIG_EXPORT is not 1.
+# Exit with an error message if the file hasn't got CONFIGURATION_EMBEDDING or CONFIG_EXPORT 1
 def load_config(file_path: str) -> Dict:
     try:
         with open(file_path, 'r') as file:
             config = json.load(file)
-            if config.get("CONFIG_EXPORT") != "1":
-                logging.error('CONFIG_EXPORT is not set to "1" in the configuration file.')
+            if config.get("CONFIG_EXPORT") != "1" and config.get("CONFIGURATION_EMBEDDING") is None:
+                logging.error(f"{config_file_path} isn't a valid CONFIG_EXPORT 1.")
                 sys.exit(1)
             return config
     except FileNotFoundError:
