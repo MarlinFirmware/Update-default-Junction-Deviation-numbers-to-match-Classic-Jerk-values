@@ -1,50 +1,22 @@
 #!/usr/bin/env python
 """
-mc-apply.py v2.0
+  mc-apply.py
+  Create Marlin firmware configuration files from a JSON file (marlin_config.json).
 
-This script creates Marlin firmware configuration files from a JSON file (marlin_config.json).
+  usage: mc-apply.py [-h] [--opt] [--bare-output] [config_file]
 
-Functions:
-    load_config(file_path: str) -> Dict:
-        Loads and returns the JSON configuration from the specified file path.
-        Exits with an error message if the file is not found, if JSON decoding fails, or if CONFIG_EXPORT is not set to "1".
+  Process Marlin firmware configuration.
 
-    write_output_file(file_path: str, content: str) -> None:
-        Writes the given content to the specified file path.
-        Exits with an error message if writing to the file fails.
+  positional arguments:
+    config_file    Path to the configuration file.
 
-    move_file(src: str, dst: str) -> None:
-        Moves a file from the source path to the destination path.
-        Exits with an error message if the move operation fails.
-
-    move_list_files(src_list: List[str], dst_list: List[str]) -> None:
-        Moves files from the source list to the destination list.
-        Exits with an error message if the source and destination lists have different lengths.
-
-    process_configuration(conf: Dict, opt_output: bool, output_suffix: str) -> None:
-        Processes the configuration dictionary and writes the output configuration files.
-        Handles both standard and optional output formats.
-        Moves original files to backup locations if an output suffix is specified.
-
-    main() -> None:
-        Main entry point of the script.
-        Parses command line arguments to determine the configuration file path, output format, and output suffix.
-        Loads the configuration and processes it.
-
-Command Line Options:
-    --opt:
-        Enables optional output format where configuration values are set using 'opt_set' and 'opt_enable' commands.
-
-    --bare-output:
-        Disables the output suffix, resulting in '.gen' suffix for generated files.
-
-    -h, --help:
-        Show this help message and exit.
+  optional arguments:
+    -h, --help     show this help message and exit
+    --opt          Enable optional output format.
+    --bare-output  Disable output suffix.
 """
-import json
-import sys
-import shutil
-import os
+import json, sys, shutil
+import os, re
 import argparse
 import logging
 from typing import Dict, List
@@ -53,6 +25,8 @@ logging.basicConfig(level=logging.INFO)
 
 MARLIN_CONFIG_FILES = ('Configuration.h', 'Configuration_adv.h')
 
+# Load and return the JSON configuration from the specified file path.
+# Exit with an error message if the file is not found, JSON decoding fails, or CONFIG_EXPORT is not 1.
 def load_config(file_path: str) -> Dict:
     try:
         with open(file_path, 'r') as file:
@@ -68,6 +42,8 @@ def load_config(file_path: str) -> Dict:
         logging.error(f'Failed to decode JSON from {file_path}.')
         sys.exit(1)
 
+# Writes the given content to the specified file path.
+# Exits with an error message if writing to the file fails.
 def write_output_file(file_path: str, content: str) -> None:
     try:
         with open(file_path, 'w') as outfile:
@@ -76,6 +52,8 @@ def write_output_file(file_path: str, content: str) -> None:
         logging.error(f'Failed to write to {file_path}. {e}')
         sys.exit(1)
 
+# Move a file from the source to the destination path.
+# Exit with an error message if the move operation fails.
 def move_file(src: str, dst: str) -> None:
     try:
         shutil.move(src, dst)
@@ -83,13 +61,18 @@ def move_file(src: str, dst: str) -> None:
         logging.error(f'Failed to move {src} to {dst}. {e}')
         sys.exit(1)
 
+# Move files from the source list to the destination list.
+# Exit with an error message if the source and destination lists have different lengths.
 def move_list_files(src_list: List[str], dst_list: List[str]) -> None:
     if len(src_list) != len(dst_list):
-        logging.error('Source and destination lists must have the same length.')
+        logging.error('Source / destination length mismatch.')
         sys.exit(1)
     for src, dst in zip(src_list, dst_list):
         move_file(src, dst)
 
+# Process the configuration dictionary and write the output configuration files.
+# Handles both standard and optional output formats.
+# Move original files to backup locations if an output suffix is specified.
 def process_configuration(conf: Dict, opt_output: bool, output_suffix: str) -> None:
     output_file_path = os.path.join('Marlin', MARLIN_CONFIG_FILES[0] + output_suffix)
     content = ''
@@ -137,28 +120,22 @@ def process_configuration(conf: Dict, opt_output: bool, output_suffix: str) -> N
         conf.pop('__INITIAL_HASH', None)
         conf.pop('VERSION', None)
         for line in lines:
-            sline = line.strip(" \t\n\r")
-            if sline.startswith("//#define"):
-                sline = sline[2:]
+            sline = re.sub(r'//\s*(#define)', '$1', line)
             if sline.startswith("#define"):
-                leading_whitespace = line[:len(line) - len(line.lstrip())]
+                indent = line[:len(line) - len(line.lstrip())]
                 trailing_comment = ''
                 if '//' in sline:
-                    trailing_comment_end = '//' + sline.split('//', 1)[1]
-                    sline = sline.split('//', 1)[0]
-                    trailing_comment_whitespace = sline[len(sline.rstrip()):]
-                    trailing_comment = trailing_comment_whitespace + trailing_comment_end
+                    cpart = sline.split('//', 1)
+                    sline = cpart[0]
+                    trailing_comment = '//' + cpart[1]
+                    trailing_comment_ws = sline[len(sline.rstrip()):]
+                    trailing_comment = trailing_comment_ws + trailing_comment
                 kv = sline[8:].strip().split()
-                mid_whitespace = ''
-                if len(kv) > 1:
-                    mid_whitespace = sline.split(kv[0], 1)[1].rsplit(kv[1], 1)[0]
+                mid_whitespace = sline.split(kv[0], 1)[1].rsplit(kv[1], 1)[0] if len(kv) > 1 else ''
                 if kv[0] in conf:
-                    content += f'{leading_whitespace}#define {kv[0]}{mid_whitespace}{conf[kv[0]]}{trailing_comment}\n'
+                    line = f'{indent}#define {kv[0]}{mid_whitespace}{conf[kv[0]]}{trailing_comment}'
                     del conf[kv[0]]
-                else:
-                    content += line + '\n'
-            else:
-                content += line + '\n'
+            content += line + '\n'
 
         for k, v in sorted(conf.items()):
             content += f'#define {k} {v}\n'
@@ -179,6 +156,8 @@ def process_configuration(conf: Dict, opt_output: bool, output_suffix: str) -> N
 
     logging.info(f'Output configuration written to: {output_file_path}')
 
+# Parse command line arguments to get config file path, output format, and output suffix.
+# Load the configuration and process it.
 def main() -> None:
     parser = argparse.ArgumentParser(description='Process Marlin firmware configuration.')
     parser.add_argument('--opt', action='store_true', help='Enable optional output format.')
