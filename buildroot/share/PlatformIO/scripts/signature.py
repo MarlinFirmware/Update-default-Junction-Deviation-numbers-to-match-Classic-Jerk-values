@@ -452,8 +452,6 @@ f'''#
     # Skip if an identical JSON file was already present.
     #
     if not same_hash and (config_dump == 1 or is_embed):
-        if is_embed: extended_dump = True
-
         with marlin_json.open('w') as outfile:
 
             json_data = {}
@@ -463,16 +461,19 @@ f'''#
                     confs = real_config[header]
                     json_data[header] = {}
                     for name in confs:
+                        if name in ignore: continue
                         c = confs[name]
                         s = c['section']
                         if s not in json_data[header]: json_data[header][s] = {}
                         json_data[header][s][name] = c['value']
             else:
                 for header in real_config:
+                    json_data[header] = {}
                     conf = real_config[header]
                     #print(f"real_config[{header}]", conf)
                     for name in conf:
-                        json_data[name] = conf[name]['value']
+                        if name in ignore: continue
+                        json_data[header][name] = conf[name]['value']
 
             json_data['__INITIAL_HASH'] = hashes
 
