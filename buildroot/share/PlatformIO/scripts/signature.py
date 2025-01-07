@@ -161,7 +161,8 @@ def compute_build_signature(env):
     #
     # Continue to gather data for CONFIGURATION_EMBEDDING or CONFIG_EXPORT
     #
-    if not ('CONFIGURATION_EMBEDDING' in build_defines or 'CONFIG_EXPORT' in build_defines):
+    is_embed = 'CONFIGURATION_EMBEDDING' in build_defines
+    if not (is_embed or 'CONFIG_EXPORT' in build_defines):
         return
 
     # Filter out useless macros from the output
@@ -450,7 +451,9 @@ f'''#
     # Produce a JSON file for CONFIGURATION_EMBEDDING or CONFIG_EXPORT == 1 or 101
     # Skip if an identical JSON file was already present.
     #
-    if not same_hash and (config_dump == 1 or 'CONFIGURATION_EMBEDDING' in build_defines):
+    if not same_hash and (config_dump == 1 or is_embed):
+        if is_embed: extended_dump = True
+
         with marlin_json.open('w') as outfile:
 
             json_data = {}
@@ -489,7 +492,7 @@ f'''#
     #
     # The rest only applies to CONFIGURATION_EMBEDDING
     #
-    if not 'CONFIGURATION_EMBEDDING' in build_defines:
+    if not is_embed:
         (build_path / 'mc.zip').unlink(missing_ok=True)
         return
 
