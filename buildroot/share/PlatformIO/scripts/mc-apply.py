@@ -56,7 +56,7 @@ def back_up_config(name):
         while True:
             bak_path = '.'.join(parts[:-1]) + f'.bak{nr}.' + parts[-1]
             if os.path.exists(bak_path):
-                nr = nr + '1'
+                nr = 1 if nr == '' else nr + 1
                 continue
 
             with open(bak_path, 'w') as b:
