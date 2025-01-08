@@ -13,7 +13,7 @@
 #
 #  optional arguments:
 #    -h, --help   show this help message and exit
-#    --opt        Enable optional output format.
+#    --opt        Output as an option setting script.
 #
 import json, sys, os
 import config
@@ -77,7 +77,7 @@ def apply_config(conf):
 
 def main():
     parser = argparse.ArgumentParser(description='Process Marlin firmware configuration.')
-    parser.add_argument('--opt', action='store_true', help='Enable optional output format.')
+    parser.add_argument('--opt', action='store_true', help='Output as an option setting script.')
     parser.add_argument('config_file', nargs='?', default='marlin_config.json', help='Path to the configuration file.')
 
     args = parser.parse_args()
