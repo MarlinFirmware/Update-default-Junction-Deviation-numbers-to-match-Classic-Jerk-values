@@ -15,7 +15,7 @@
 #    -h, --help   show this help message and exit
 #    --opt        Enable optional output format.
 #
-import json, sys, shutil
+import json, sys, os
 import config
 import argparse
 
@@ -46,9 +46,29 @@ def write_opt_file(conf, outpath='Marlin/apply_config.sh'):
 
         print('Config script written to: ' + outpath)
 
+def back_up_config(name):
+    # Back up the existing file before modifying it
+    conf_path = 'Marlin/' + name
+    with open(conf_path, 'r') as f:
+        # Write a filename.bak#.ext retaining the original extension
+        parts = conf_path.split('.')
+        nr = ''
+        while True:
+            bak_path = '.'.join(parts[:-1]) + f'.bak{nr}.' + parts[-1]
+            if os.path.exists(bak_path):
+                nr = nr + '1'
+                continue
+
+            with open(bak_path, 'w') as b:
+                b.writelines(f.readlines())
+                break
+
 def apply_config(conf):
     for key in conf:
         if key in ('__INITIAL_HASH', 'VERSION'): continue
+
+        back_up_config(key)
+
         for k, v in conf[key].items():
             if v:
                 config.set('Marlin/' + key, k, v)
