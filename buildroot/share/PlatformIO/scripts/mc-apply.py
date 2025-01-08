@@ -82,19 +82,16 @@ def main():
 
     args = parser.parse_args()
 
-    opt_output = args.opt
-
     try:
-        infile = open('marlin_config.json', 'r')
+        infile = open(args.config_file, 'r')
     except:
-        print('No marlin_config.json found.')
+        print(f'No {args.config_file} found.')
         sys.exit(1)
 
     conf = json.load(infile)
-
     report_version(conf)
 
-    if opt_output:
+    if args.opt:
         write_opt_file(conf)
     else:
         apply_config(conf)
