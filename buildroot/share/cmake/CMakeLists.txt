@@ -2,14 +2,14 @@ cmake_minimum_required(VERSION 3.5)
 #====================================================================#
 # Usage under Linux:                                                 #
 #                                                                    #
-#    From Marlin/buildroot/share/cmake folder:                       #
+#    From buildroot/share/cmake folder:                              #
 #        mkdir -p build && cd build                                  #
 #        cmake ..                                                    #
 #        make                                                        #
 #                                                                    #
 # Usage under Windows:                                               #
 #                                                                    #
-#    From Marlin/buildroot/share/cmake folder:                       #
+#    From buildroot/share/cmake folder:                              #
 #        mkdir build && cd build                                     #
 #        cmake -G"Unix Makefiles" ..                                 #
 #        make                                                        #
