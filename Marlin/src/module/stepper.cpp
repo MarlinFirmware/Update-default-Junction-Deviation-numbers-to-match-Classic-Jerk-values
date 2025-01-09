@@ -2836,7 +2836,7 @@ hal_timer_t Stepper::block_phase_isr() {
           ne_fix.A = (1L << 24) * ne.A;
           ne_fix.B = (1L << 24) * ne.B;
           ne_fix.C = (1L << 24) * ne.C;
-          FilamentSensorEncoder::extruding = true;
+          TERN_(MOTION_STEPS_COUNTER, FilamentSensorEncoder::extruding = true);
         }
         else {
           ne_fix.A = ne_fix.B = 0;
