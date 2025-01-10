@@ -1544,6 +1544,9 @@
   //#define MAG_MOUNTED_PROBE_SERVO_NR 0             // Set to servo number to use
   #ifdef MAG_MOUNTED_PROBE_SERVO_NR
     #define MAG_MOUNTED_PROBE_SERVO_ANGLES { 90, 0 } // Mag servo Deploy and Stow angles
+
+    #define MAG_MOUNTED_PRE_DEPLOY { PROBE_DEPLOY_FEEDRATE, { 15, 160, 30 } }  // Move to safe position before servo is activated
+    #define MAG_MOUNTED_PRE_STOW { PROBE_DEPLOY_FEEDRATE, { 15, 160, 30 } }    // Move to safe position before servo is activated
   #endif
 
   #define MAG_MOUNTED_DEPLOY_1 { PROBE_DEPLOY_FEEDRATE, { 245, 114, 30 } }  // Move to side Dock & Attach probe
