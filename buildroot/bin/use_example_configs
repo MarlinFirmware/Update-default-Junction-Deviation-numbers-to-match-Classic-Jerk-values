@@ -70,11 +70,11 @@ def main():
     arg = sys.argv[1]
     if ':' in arg:
       part1, part2 = arg.split(':', 1)
-      config_path = 'examples/'+part2
+      config_path = part2
       branch = part1
     else:
-      config_path = 'examples/'+arg
-    config_path = config_path.replace(' ', '%20')
+      config_path = arg
+    config_path = 'examples/'+config_path.replace(' ', '%20')
   else:
     config_path = "default"
 
