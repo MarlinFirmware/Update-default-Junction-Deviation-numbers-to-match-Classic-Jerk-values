@@ -73,7 +73,7 @@ def main():
       config_path = 'examples/'+part2
       branch = part1
     else:
-      config_path = arg
+      config_path = 'examples/'+arg
     config_path = config_path.replace(' ', '%20')
   else:
     config_path = "default"
