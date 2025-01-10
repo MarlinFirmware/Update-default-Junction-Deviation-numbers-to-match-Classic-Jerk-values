@@ -132,7 +132,7 @@ void CAN_host_send_timestamp() { // Request receive timestamp + request response
     HAL_CAN_AddTxMessage(&hCAN1, &TxHeader, CAN_tx_buffer, &TxMailbox); // Queue CAN message
   }
   else
-    CAN_host_error_code |= CAN_ERROR_TX_MSG_DROPPED;
+    CAN_host_error_code |= CAN_ERROR_HOST_TX_MSG_DROPPED;
 
 }
 
@@ -209,7 +209,7 @@ HAL_StatusTypeDef CAN_host_send_gcode_2params(uint32_t Gcode_type, uint32_t Gcod
   if (HAL_CAN_GetTxMailboxesFreeLevel(&hCAN1))
     status = HAL_CAN_AddTxMessage(&hCAN1, &TxHeader, CAN_tx_buffer, &TxMailbox); // Queue CAN message
   else
-    CAN_host_error_code |= CAN_ERROR_TX_MSG_DROPPED;
+    CAN_host_error_code |= CAN_ERROR_HOST_TX_MSG_DROPPED;
 
   return status;
 }
@@ -527,7 +527,7 @@ HAL_StatusTypeDef CAN_host_send_gcode() { // Forward a Marlin Gcode via CAN (use
     }
 
     if (parameter_counter == 8) { // Max is 7 parameters
-      CAN_host_error_code |= CAN_ERROR_INVALID_GCODE;
+      CAN_host_error_code |= CAN_ERROR_HOST_INVALID_GCODE;
       parameter_counter--;
       SERIAL_ECHOLNPGM("\nError: TOO MANY PARAMETERS (> 7): ", parser.command_ptr);
       BUZZ(1, SOUND_ERROR);
@@ -566,7 +566,7 @@ HAL_StatusTypeDef CAN_host_send_gcode() { // Forward a Marlin Gcode via CAN (use
     if (HAL_CAN_GetTxMailboxesFreeLevel(&hCAN1))
       status = HAL_CAN_AddTxMessage(&hCAN1, &TxHeader, CAN_tx_buffer, &TxMailbox); // Queue CAN message
     else
-      CAN_host_error_code |= CAN_ERROR_TX_MSG_DROPPED;
+      CAN_host_error_code |= CAN_ERROR_HOST_TX_MSG_DROPPED;
 
     if (status != HAL_OK) return status;
     
