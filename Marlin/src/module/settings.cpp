@@ -735,6 +735,10 @@ void MarlinSettings::postprocess() {
 
   TERN_(EXTENSIBLE_UI, ExtUI::onPostprocessSettings());
 
+  #if ENABLED(CAN_HOST)
+    CAN_host_send_setup(); // Update toolhead settings
+  #endif
+
   // Refresh mm_per_step with the reciprocal of axis_steps_per_mm
   // and init stepper.count[], planner.position[] with current_position
   planner.refresh_positioning();

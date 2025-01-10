@@ -29,8 +29,8 @@
 
 #include "Servo.h"
 
-#if ENABLED(CAN_MASTER)
-  #include "../shared/CAN.h"
+#if ENABLED(CAN_HOST)
+  #include "../shared/CAN_host.h"
 #endif
 
 static uint_fast8_t servoCount = 0;
@@ -76,15 +76,15 @@ int8_t libServo::attach(const int pin, const int min, const int max) {
 
 void libServo::move(const int value) {
 
-  #if ENABLED(CAN_MASTER) // Forward direct Servo command to head
+  #if ENABLED(CAN_HOST) // Forward direct Servo command to head
     constexpr int angles[2] = Z_SERVO_ANGLES;
     // Translate M280 S10 to M401, M280 S90 to M402
     if (value == angles[0])
-      CAN_Send_Gcode_2params('M', 401, 0, 0, 0, 0); // Deploy Angle: Send "M401" instead, enables interrupt etc.
+      CAN_host_send_gcode_2params('M', 401, 0, 0, 0, 0); // Deploy Angle: Send "M401" instead, enables interrupt etc.
     else if (value == angles[1])
-      CAN_Send_Gcode_2params('M', 402, 0, 0, 0, 0); // Stow Angle: Send "M402" instead, enables interrupt etc.
+      CAN_host_send_gcode_2params('M', 402, 0, 0, 0, 0); // Stow Angle: Send "M402" instead, enables interrupt etc.
     else
-      CAN_Send_Gcode_2params('M', 280, 'S', value, 'P', 0); // M280 S[value] P0
+      CAN_host_send_gcode_2params('M', 280, 'S', value, 'P', 0); // M280 S[value] P0
   #endif
 
   if (attach(0) >= 0) {

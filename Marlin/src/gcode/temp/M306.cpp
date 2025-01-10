@@ -27,6 +27,11 @@
 #include "../gcode.h"
 #include "../../lcd/marlinui.h"
 #include "../../module/temperature.h"
+#include "../../libs/numtostr.h"
+
+#if ENABLED(CAN_TOOLHEAD)
+  #include "../../HAL/shared/CAN_host.h"
+#endif
 
 /**
  * M306: MPC settings and autotune
@@ -58,10 +63,10 @@ void GcodeSuite::M306() {
   #if ENABLED(MPC_AUTOTUNE)
     if (parser.seen_test('T')) {
 
-      #if ENABLED(CAN_MASTER) // MPC Autotune info
+      #if ENABLED(CAN_HOST) // Execute MPC autotune on toolhead
 
         SERIAL_ECHOLNPGM(
-          ">>> Forwarding M306 to head board\n"
+          ">>> Forwarding M306 to toolhead\n"
           ">>> Store MPC setup in the host Configuration.h or use M500\n"
           ">>> MPC heater power is: ", p_float_t(MPC_HEATER_POWER, 1), " Watts\n"
           ">>> Please wait for the auto tune results..."
@@ -81,7 +86,7 @@ void GcodeSuite::M306() {
         ui.reset_status();
 
         #if ENABLED(CAN_TOOLHEAD)
-          M306_report(true); // Report M306 settings to CAN host
+          M306_report(true); // Report MPC autotune results to CAN host
         #endif
       #endif
 
@@ -110,7 +115,7 @@ void GcodeSuite::M306_report(const bool forReplay/*=true*/) {
 
   report_heading(forReplay, F("Model predictive control"));
 
-  #if ENABLED(CAN_MASTER) // MPC Autotune info
+  #if ENABLED(CAN_HOST) // MPC Autotune info
     if (forReplay) SERIAL_ECHOLNPGM(">>> Host M306 MPC settings:");
   #endif
 
@@ -139,13 +144,12 @@ void GcodeSuite::M306_report(const bool forReplay/*=true*/) {
       #if ENABLED(MPC_INCLUDE_FAN)
                                    " F", p_float_t(mpc.fanCoefficient(), 4),
       #endif
-                                   " H", p_float_t(mpc.filament_heat_capacity_permm, 4),
-                                   '\n');
+                                   " H", p_float_t(mpc.filament_heat_capacity_permm, 4));
 
-      HAL_StatusTypeDef CAN_Send_String(const char * message); // Function Prototype
-      CAN_Send_String(buffer);
-    }
-  #endif // CAN_TOOLHEAD
+    CAN_toolhead_send_string(buffer);
+  }
+#endif // CAN_TOOLHEAD
+
 }
 
 #endif // MPCTEMP

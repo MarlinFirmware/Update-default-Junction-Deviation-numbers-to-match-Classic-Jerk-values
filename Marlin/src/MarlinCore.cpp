@@ -34,12 +34,8 @@
 #include "HAL/shared/esp_wifi.h"
 #include "HAL/shared/cpu_exception/exception_hook.h"
 
-#if ENABLED(CAN_MASTER)
-  #include "HAL/shared/CAN.h"
-#endif
-
-#if ENABLED(CAN_TOOLHEAD)
-  #include "HAL/shared/FDCAN.h"
+#if ANY(CAN_HOST, CAN_TOOLHEAD)
+  #include "HAL/shared/CAN_host.h"
 #endif
 
 #if ENABLED(HAS_ADXL345_ACCELEROMETER)
@@ -894,15 +890,9 @@ void idle(const bool no_stepper_sleep/*=false*/) {
   // Manage Fixed-time Motion Control
   TERN_(FT_MOTION, ftMotion.loop());
 
-#if ENABLED(CAN_MASTER)
-  void CAN_idle(); // Function Prototype
-  CAN_idle();      // Call CAN idle task
-#endif
+  TERN_(CAN_HOST, CAN_host_idle());
 
-#if ENABLED(CAN_TOOLHEAD)
-  void FDCAN_idle(); // Function prototype
-  FDCAN_idle();      // Call FDCAN idle task
-#endif // CAN_TOOLHEAD
+  TERN_(CAN_TOOLHEAD, CAN_toolhead_idle());
 
   IDLE_DONE:
   TERN_(MARLIN_DEV_MODE, idle_depth--);
@@ -1212,7 +1202,7 @@ void setup() {
       while (!MYSERIAL3.connected() && PENDING(millis(), serial_connect_timeout)) { /*nada*/ }
     #endif
   #endif
-  SERIAL_ECHOLNPGM("start\n");
+  SERIAL_ECHOLNPGM("start");
 
   // Set up these pins early to prevent suicide
   #if HAS_KILL
@@ -1258,19 +1248,20 @@ void setup() {
 
   SETUP_RUN(hal.init());
 
-  #if ENABLED(CAN_MASTER)
+  #if ENABLED(CAN_HOST)
     SERIAL_ECHOLN(
-      F(">>> CAN1 Start: "),
-      CAN1_Start() == HAL_OK ? F("OK") : F("FAILED!")
+      F(">>> CAN Start: "),
+      CAN_host_start() == HAL_OK ? F("OK") : F("FAILED!")
     );
   #endif
 
   #if ENABLED(CAN_TOOLHEAD)
-    SERIAL_ECHOLN(
-      F(">>> FDCAN2 Start: "),
-       FDCAN2_Start() == HAL_OK ?  F("OK") : F("FAILED!")
-      );
+    SERIAL_ECHOLN(millis(), 
+      F(">>> CAN Start: "),
+      CAN_toolhead_start() == HAL_OK ? F("OK") : F("FAILED!")
+    );
   #endif
+
   #if ENABLED(HAS_ADXL345_ACCELEROMETER)
     adxl345.begin();
   #endif

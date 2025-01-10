@@ -33,8 +33,8 @@
 #include "pause.h" // for did_pause_print
 #include "../MarlinCore.h" // for printingIsActive()
 
-#if ENABLED(CAN_MASTER)
-  #include "../HAL/shared/CAN.h"
+#if ENABLED(CAN_HOST)
+  #include "../HAL/shared/CAN_host.h"
 #endif
 
 #include "../inc/MarlinConfig.h"
@@ -55,9 +55,9 @@
   #define HAS_FILAMENT_SWITCH 1
 #endif
 
-#if ENABLED(CAN_MASTER)
-  #define FILAMENT_IS_OUT() (bool(CAN_io_state & CAN_FILAMENT_MASK) == FIL_RUNOUT_STATE)
-  #define RUNOUT_STATE(N) bool(CAN_io_state & CAN_FILAMENT_MASK)  // CAN Virtual Filament Runout pin
+#if ENABLED(CAN_HOST)
+  #define FILAMENT_IS_OUT() (bool(CAN_host_get_iostate() & CAN_ID_FILAMENT_MASK) == FIL_RUNOUT_STATE)
+  #define RUNOUT_STATE(N) bool(CAN_host_get_iostate() & CAN_ID_FILAMENT_MASK)  // CAN Virtual Filament Runout pin
 #else
   #define FILAMENT_IS_OUT() (READ(FIL_RUNOUT_PIN) == FIL_RUNOUT_STATE)
   #define RUNOUT_STATE(N) READ(FIL_RUNOUT##N##_PIN)               // DIO Filament Runout pin

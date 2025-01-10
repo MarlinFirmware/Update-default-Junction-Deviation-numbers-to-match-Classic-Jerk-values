@@ -50,8 +50,8 @@
   #include "motion.h"
 #endif
 
-#if ENABLED(CAN_MASTER)
-  #include "../HAL/shared/CAN.h"
+#if ENABLED(CAN_HOST)
+  #include "../HAL/shared/CAN_host.h"
 #endif
 
 #if ENABLED(DWIN_CREALITY_LCD)
@@ -2738,7 +2738,7 @@ void Temperature::updateTemperaturesFromRawValues() {
     temp_bed.setraw(read_max_tc_bed());
   #endif
 
-  #if HAS_HOTEND && DISABLED(CAN_MASTER) // For CAN Master we'll get temperature from CAN bus
+  #if HAS_HOTEND && DISABLED(CAN_HOST) // For CAN Host we'll get temperature from CAN bus
     HOTEND_LOOP() temp_hotend[e].celsius = analog_to_celsius_hotend(temp_hotend[e].getraw(), e);
   #endif
 
@@ -2753,7 +2753,7 @@ void Temperature::updateTemperaturesFromRawValues() {
   TERN_(FILAMENT_WIDTH_SENSOR, filwidth.update_measured_mm());
   TERN_(HAS_POWER_MONITOR,     power_monitor.capture_values());
 
-  #if HAS_HOTEND && DISABLED(CAN_MASTER) // Only for Head, no temp sampling on Master
+  #if HAS_HOTEND && DISABLED(CAN_HOST) // Only for toolhead, no temp sampling on Host
 
     #define _TEMPDIR(N) TEMP_SENSOR_IS_ANY_MAX_TC(N) ? 0 : TEMPDIR(N),
     static constexpr int8_t temp_dir[HOTENDS] = { REPEAT(HOTENDS, _TEMPDIR) };
@@ -2781,7 +2781,7 @@ void Temperature::updateTemperaturesFromRawValues() {
       }
     }
 
-  #endif // HAS_HOTEND && !CAN_MASTER
+  #endif // HAS_HOTEND && !CAN_HOST
 
   #if ENABLED(THERMAL_PROTECTION_BED)
     if (TP_CMP(BED, temp_bed.getraw(), temp_sensor_range_bed.raw_max))
@@ -3381,10 +3381,10 @@ void Temperature::disable_all_heaters() {
 
   #if HAS_HOTEND
 
-    #if ENABLED(CAN_MASTER) // Shut down the hotend in the head too
-      CAN_Send_Gcode_2params('M', 104, 'S',   0, 0, 0); // M104 S0 .... Switch off hotend heating
-      CAN_Send_Gcode_2params('M', 107,   0,   0, 0, 0); // M107 ....... Switch off part cooling fan
-      CAN_Send_Gcode_2params('M', 150, 'R', 255, 0, 0); // M150 R255 .. Set NeoPixel to red
+    #if ENABLED(CAN_HOST) // Shut down the hotend in the head too
+      CAN_host_send_gcode_2params('M', 104, 'S',   0, 0, 0); // M104 S0 .... Switch off hotend heating
+      CAN_host_send_gcode_2params('M', 107,   0,   0, 0, 0); // M107 ....... Switch off part cooling fan
+      CAN_host_send_gcode_2params('M', 150, 'R', 255, 0, 0); // M150 R255 .. Set NeoPixel to red
     #endif
 
     HOTEND_LOOP() {
@@ -4432,7 +4432,6 @@ void Temperature::isr() {
   endstops.poll();
 
 #if ENABLED(CAN_TOOLHEAD)  
-  HAL_StatusTypeDef CAN_Send_Message(bool TempUpdate); // Function Prototype
   static uint32_t loopCounter = 0;
   if ((loopCounter++ % 512) == 0) // Update E0 Temp every  512ms
     CAN_Send_Message(true); // Send temp report with IO report
