@@ -74,24 +74,12 @@
   #define EEPROM_SLOTS            ((FLASH_UNIT_SIZE) / (MARLIN_EEPROM_SIZE))
   #define SLOT_ADDRESS(slot)      (FLASH_ADDRESS_START + (slot * (MARLIN_EEPROM_SIZE)))
 
-#ifdef STM32H7xx
-  #define FLASHWORD_SIZE          32U //  STM32H7xx a FLASHWORD is 32 bytes (256 bits)
-  #define UNLOCK_FLASH()          if (!flash_unlocked) { \
-                                    HAL_FLASH_Unlock(); \
-                                    __HAL_FLASH_CLEAR_FLAG(FLASH_FLAG_EOP | FLASH_FLAG_OPERR | FLASH_FLAG_WRPERR | \
-                                                           FLASH_FLAG_PGSERR); \
-                                    flash_unlocked = true; \
-                                  }
-#else
-  #define FLASHWORD_SIZE          4U // STM32F4xx a FLASHWORD is 4 bytes sizeof(uint32_t)
   #define UNLOCK_FLASH()          if (!flash_unlocked) { \
                                     HAL_FLASH_Unlock(); \
                                     __HAL_FLASH_CLEAR_FLAG(FLASH_FLAG_EOP | FLASH_FLAG_OPERR | FLASH_FLAG_WRPERR | \
                                                            FLASH_FLAG_PGAERR | FLASH_FLAG_PGPERR | FLASH_FLAG_PGSERR); \
                                     flash_unlocked = true; \
                                   }
-#endif
-
   #define LOCK_FLASH()            if (flash_unlocked) { HAL_FLASH_Lock(); flash_unlocked = false; }
 
   #define EMPTY_UINT32            ((uint32_t)-1)
@@ -100,7 +88,7 @@
   static uint8_t ram_eeprom[MARLIN_EEPROM_SIZE] __attribute__((aligned(4))) = {0};
   static int current_slot = -1;
 
-  static_assert(0 == MARLIN_EEPROM_SIZE % FLASHWORD_SIZE, "MARLIN_EEPROM_SIZE must be a multiple of the FLASHWORD size"); // Ensure copying as uint32_t is safe
+  static_assert(0 == MARLIN_EEPROM_SIZE % 4, "MARLIN_EEPROM_SIZE must be a multiple of 4"); // Ensure copying as uint32_t is safe
   static_assert(0 == FLASH_UNIT_SIZE % MARLIN_EEPROM_SIZE, "MARLIN_EEPROM_SIZE must divide evenly into your FLASH_UNIT_SIZE");
   static_assert(FLASH_UNIT_SIZE >= MARLIN_EEPROM_SIZE, "FLASH_UNIT_SIZE must be greater than or equal to your MARLIN_EEPROM_SIZE");
   static_assert(IS_FLASH_SECTOR(FLASH_SECTOR), "FLASH_SECTOR is invalid");
@@ -159,12 +147,9 @@ bool PersistentStore::access_start() {
 bool PersistentStore::access_finish() {
 
   if (eeprom_data_written) {
-
-    #if STM32H7xx
+    #ifdef STM32F4xx
       // MCU may come up with flash error bits which prevent some flash operations.
       // Clear flags prior to flash operations to prevent errors.
-      __HAL_FLASH_CLEAR_FLAG(FLASH_FLAG_OPERR | FLASH_FLAG_WRPERR | FLASH_FLAG_PGSERR);
-    #else
       __HAL_FLASH_CLEAR_FLAG(FLASH_FLAG_OPERR | FLASH_FLAG_WRPERR | FLASH_FLAG_PGAERR | FLASH_FLAG_PGPERR | FLASH_FLAG_PGSERR);
     #endif
 
@@ -209,17 +194,13 @@ bool PersistentStore::access_finish() {
                data = 0;
 
       bool success = true;
-      while (address < address_end) {
 
-        #if STM32H7xx
-          status = HAL_FLASH_Program(FLASH_TYPEPROGRAM_FLASHWORD, address, uint32_t(ram_eeprom + offset));
-        #else
-          memcpy(&data, ram_eeprom + offset, sizeof(data));
-          status = HAL_FLASH_Program(FLASH_TYPEPROGRAM_WORD, address, data);
-        #endif
+      while (address < address_end) {
+        memcpy(&data, ram_eeprom + offset, sizeof(data));
+        status = HAL_FLASH_Program(FLASH_TYPEPROGRAM_WORD, address, data);
         if (status == HAL_OK) {
-          address += FLASHWORD_SIZE;
-          offset += FLASHWORD_SIZE;
+          address += sizeof(uint32_t);
+          offset += sizeof(uint32_t);
         }
         else {
           DEBUG_ECHOLNPGM("HAL_FLASH_Program=", status);

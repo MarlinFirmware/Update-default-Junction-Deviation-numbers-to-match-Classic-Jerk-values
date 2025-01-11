@@ -3496,12 +3496,6 @@
 
 #endif // HAS_TRINAMIC_CONFIG
 
-// @section spibus
-
-// This feature is EXPERIMENTAL
-// Warning: Enabling the sensor will probably conflict with the onboard SD Card
-//#define HAS_ADXL345_ACCELEROMETER; // uncomment to enable the 3-axis accelerometer
-
 // @section i2cbus
 
 //
