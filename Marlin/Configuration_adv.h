@@ -1226,6 +1226,9 @@
   //#define SHAPING_MENU                // Add a menu to the LCD to set shaping parameters.
 #endif
 
+// @section accelerometer
+// Enable support for the ADXL345 accelerometer
+//#define HAS_ADXL345_ACCELEROMETER
 // @section motion
 
 #define AXIS_RELATIVE_MODES { false, false, false, false }
