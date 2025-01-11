@@ -34,6 +34,14 @@
 #include "HAL/shared/esp_wifi.h"
 #include "HAL/shared/cpu_exception/exception_hook.h"
 
+#if ANY(CAN_HOST, CAN_TOOLHEAD)
+  #include "HAL/shared/CAN_host.h"
+#endif
+
+#if ENABLED(HAS_ADXL345_ACCELEROMETER)
+  #include "feature/accelerometer/acc_adxl345.h"
+#endif
+
 #if ENABLED(WIFISUPPORT)
   #include "HAL/shared/esp_wifi.h"
 #endif
@@ -882,6 +890,10 @@ void idle(const bool no_stepper_sleep/*=false*/) {
   // Manage Fixed-time Motion Control
   TERN_(FT_MOTION, ftMotion.loop());
 
+  TERN_(CAN_HOST, CAN_host_idle());
+
+  TERN_(CAN_TOOLHEAD, CAN_toolhead_idle());
+
   IDLE_DONE:
   TERN_(MARLIN_DEV_MODE, idle_depth--);
 
@@ -1235,6 +1247,24 @@ void setup() {
   TERN_(DYNAMIC_VECTORTABLE, hook_cpu_exceptions()); // If supported, install Marlin exception handlers at runtime
 
   SETUP_RUN(hal.init());
+
+  #if ENABLED(CAN_HOST)
+    SERIAL_ECHOLN(
+      F(">>> CAN Start: "),
+      CAN_host_start() == HAL_OK ? F("OK") : F("FAILED!")
+    );
+  #endif
+
+  #if ENABLED(CAN_TOOLHEAD)
+    SERIAL_ECHOLN(millis(), 
+      F(">>> CAN Start: "),
+      CAN_toolhead_start() == HAL_OK ? F("OK") : F("FAILED!")
+    );
+  #endif
+
+  #if ENABLED(HAS_ADXL345_ACCELEROMETER)
+    adxl345.begin();
+  #endif
 
   // Init and disable SPI thermocouples; this is still needed
   #if TEMP_SENSOR_IS_MAX_TC(0) || (TEMP_SENSOR_IS_MAX_TC(REDUNDANT) && REDUNDANT_TEMP_MATCH(SOURCE, E0))

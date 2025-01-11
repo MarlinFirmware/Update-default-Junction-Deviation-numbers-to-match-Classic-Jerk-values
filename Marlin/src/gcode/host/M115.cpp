@@ -35,8 +35,16 @@
   #include "../../feature/caselight.h"
 #endif
 
+#if ENABLED(CAN_TOOLHEAD)
+  #include "../../HAL/shared/CAN_host.h"
+#endif
+
 #if !defined(MACHINE_UUID) && ENABLED(HAS_STM32_UID)
   #include "../../libs/hex_print.h"
+#endif
+
+#if ENABLED(CAN_HOST)
+  #include "../../HAL/shared/CAN_host.h"
 #endif
 
 //#define MINIMAL_CAP_LINES // Don't even mention the disabled capabilities
@@ -76,6 +84,10 @@ void GcodeSuite::M115() {
     TERN_(IS_CARTESIAN, "Cartesian") \
     TERN_(BELTPRINTER, " BELTPRINTER")
 
+#if ENABLED(CAN_TOOLHEAD)
+  MString<60> buffer("FIRMWARE ", __DATE__, " ", __TIME__, "  Thermistor=", TEMP_SENSOR_0);
+  CAN_toolhead_send_string(buffer);
+#endif
   SERIAL_ECHOPGM("FIRMWARE_NAME:Marlin"
     " " DETAILED_BUILD_VERSION " (" __DATE__ " " __TIME__ ")"
     " SOURCE_CODE_URL:" SOURCE_CODE_URL

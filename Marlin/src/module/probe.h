@@ -29,6 +29,10 @@
 
 #include "motion.h"
 
+#if ENABLED(CAN_HOST)
+  #include "../HAL/shared/CAN_host.h"
+#endif
+
 #if ENABLED(BLTOUCH)
   #include "../feature/bltouch.h"
 #endif
@@ -47,11 +51,14 @@
 
 #if ENABLED(BD_SENSOR)
   #define PROBE_READ() bdp_state
+#elif ENABLED(CAN_HOST)
+  #define PROBE_READ() bool(CAN_host_get_iostate() & CAN_ID_PROBE_MASK)
 #elif USE_Z_MIN_PROBE
   #define PROBE_READ() READ(Z_MIN_PROBE_PIN)
 #else
   #define PROBE_READ() READ(Z_MIN_PIN)
 #endif
+
 #if USE_Z_MIN_PROBE
   #define PROBE_HIT_STATE Z_MIN_PROBE_ENDSTOP_HIT_STATE
 #else

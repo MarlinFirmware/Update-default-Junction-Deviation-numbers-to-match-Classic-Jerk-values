@@ -69,6 +69,11 @@ GcodeSuite gcode;
   #include "../feature/fancheck.h"
 #endif
 
+#if ENABLED(CAN_HOST)
+  #include "../HAL/shared/CAN_host.h"
+  #include "../libs/buzzer.h"
+#endif
+
 #include "../MarlinCore.h" // for idle, kill
 
 // Inactivity shutdown
@@ -322,6 +327,15 @@ void GcodeSuite::process_parsed_command(const bool no_ok/*=false*/) {
   TERN_(HAS_FANCHECK, fan_check.check_deferred_error());
 
   KEEPALIVE_STATE(IN_HANDLER);
+
+  #if ENABLED(CAN_HOST)
+    if (CAN_host_send_gcode() != HAL_OK) { // Send command to toolhead
+      SERIAL_ECHOLN(F("Error: CAN failed to send \""), parser.command_ptr, '"');
+      #if ENABLED(CAN_DEBUG)
+        BUZZ(1, SOUND_ERROR);
+      #endif
+    }
+  #endif
 
  /**
   * Block all Gcodes except M511 Unlock Printer, if printer is locked

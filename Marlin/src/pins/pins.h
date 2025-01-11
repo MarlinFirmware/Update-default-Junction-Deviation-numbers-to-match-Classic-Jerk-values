@@ -562,7 +562,7 @@
 //
 
 #elif MB(BTT_EBB42_V1_1)
-  #include "stm32g0/pins_BTT_EBB42_V1_1.h"          // STM32G0                              env:BTT_EBB42_V1_1_filament_extruder
+  #include "stm32g0/pins_BTT_EBB42_V1_1.h"          // STM32G0                              env:BTT_EBB42_V1_1_FDCAN env:BTT_EBB42_V1_1_filament_extruder
 #elif MB(BTT_SKR_MINI_E3_V3_0)
   #include "stm32g0/pins_BTT_SKR_MINI_E3_V3_0.h"    // STM32G0                              env:STM32G0B1RE_btt env:STM32G0B1RE_btt_xfer
 #elif MB(BTT_MANTA_E3_EZ_V1_0)
@@ -798,9 +798,9 @@
 #elif MB(MKS_ROBIN_NANO_V3_1)
   #include "stm32f4/pins_MKS_ROBIN_NANO_V3.h"       // STM32F4                              env:mks_robin_nano_v3_1 env:mks_robin_nano_v3_1_usb_flash_drive env:mks_robin_nano_v3_1_usb_flash_drive_msc
 #elif MB(MKS_MONSTER8_V1)
-  #include "stm32f4/pins_MKS_MONSTER8_V1.h"         // STM32F4                              env:mks_monster8 env:mks_monster8_usb_flash_drive env:mks_monster8_usb_flash_drive_msc
+  #include "stm32f4/pins_MKS_MONSTER8_V1.h"         // STM32F4                              env:mks_monster8 env:mks_monster8_usb_flash_drive env:mks_monster8_usb_flash_drive_msc env:mks_monster8_usb_flash_drive_msc_CAN
 #elif MB(MKS_MONSTER8_V2)
-  #include "stm32f4/pins_MKS_MONSTER8_V2.h"         // STM32F4                              env:mks_monster8 env:mks_monster8_usb_flash_drive env:mks_monster8_usb_flash_drive_msc
+  #include "stm32f4/pins_MKS_MONSTER8_V2.h"         // STM32F4                              env:mks_monster8 env:mks_monster8_usb_flash_drive env:mks_monster8_usb_flash_drive_msc env:mks_monster8_usb_flash_drive_msc_CAN
 #elif MB(ANET_ET4)
   #include "stm32f4/pins_ANET_ET4.h"                // STM32F4                              env:Anet_ET4_no_bootloader env:Anet_ET4_OpenBLT
 #elif MB(ANET_ET4P)

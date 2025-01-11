@@ -124,6 +124,11 @@
   //#define RS485_BUS_BUFFER_SIZE 128
 #endif
 
+// Enable CAN bus support and protocol
+//#define CAN_HOST
+//#define CAN_TOOLHEAD
+//#define CAN_DEBUG
+
 // Enable the Bluetooth serial interface on AT90USB devices
 //#define BLUETOOTH
 

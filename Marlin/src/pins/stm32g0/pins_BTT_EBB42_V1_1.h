@@ -27,7 +27,7 @@
  * This board definition is to facilitate support for a Filament Extrusion
  * devices, used to convert waste plastic into 3D printable filament.
  * This board is NOT a general 3D printing controller; it is NOT supported
- * as a toolboard via CANBUS (as it was originally designed) or any device
+ * as a toolboard via CAN bus (as it was originally designed) or any device
  * that requires kinematics.
  */
 
@@ -147,3 +147,6 @@
   #define BTN_EN2                           PB5
   #define BTN_ENC                           PB6
 #endif
+
+#define CAN_RX                              PB0
+#define CAN_TX                              PB1
