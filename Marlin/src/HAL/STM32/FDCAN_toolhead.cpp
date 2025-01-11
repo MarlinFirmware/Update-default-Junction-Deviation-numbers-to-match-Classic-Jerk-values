@@ -84,7 +84,7 @@ struct CAN_MSG_BUFFER {                          // Struct to hold a CAN message
   uint32_t receive_time; // Used for time sync
 };
 
-SString<CAN_MAX_STRING_MESSAGE_LENGTH>    CAN_string_buffer; // String buffer to hold outgoing string messages
+SString<CAN_MAX_STRING_MESSAGE_LENGTH> CAN_string_buffer; // String buffer to hold outgoing string messages
 char gcode_type[4]       = { 'D', 'G', 'M', 'T' }; // The 4 Gcode types
 bool CAN_toolhead_not_configured           = true; // Track if the host sent the required toolhead configuration
 uint32_t CAN_toolhead_error_code              = 0; // Signals an CAN error occured, report to host
@@ -134,69 +134,12 @@ uint32_t CAN_get_virtual_IO() {
   );
 }
 
-// Convert a float to a string, formatted as used in Gcode commands, store the result at codeP
-void floatToString(float value, char *codeP) {
-
-  if (value < 0.0) {
-    *codeP++ = '-'; // Add minus sign to float
-    value = -value; // Make value positive for further processing
-  }
-  
-  uint32_t i1 = int(value); // Get integer part of float
-  itoa(i1, codeP, 10);
-  codeP += strlen(codeP);   // Adjust pointer
-  value = (value - i1);     // Get fractional part of float
-
-  uint32_t j = 0;
-  for (int i = 0; i < 5; i++) { // Calculate 6 digits, 1 extra digit for rounding
-    value *= 10.0;
-    i1 = int(value);
-    j = (10 * j)  + i1;
-    value = value - i1;
-  }
-
-  if (value >= 0.5)
-    j++; // Round up
-
-  if (j) {
-    *codeP++ = '.';
-    if (j < 10000) {
-      *codeP++ = '0';
-      if (j < 1000) {
-        *codeP++ = '0';
-        if (j < 100) {
-          *codeP++ = '0';
-            if (j < 10)
-              *codeP++ = '0';
-        }
-      }
-    }
-
-    while (!(j % 10)) // Remove trailing zeros, "120" --> "12"
-      j = j / 10;
-
-    itoa(j, codeP, 10);
-  }
-}
-
-// Add received parameters to gcode string at codeP (used in ISR!)
-void CAN_add_gcode_parameters(uint32_t parameter, float value, char *codeP) {
-
-  *codeP++ = char(parameter + 64); // Add Gcode parameter letter, e.g., 'X'
-
-  if (!isnan(value)) // No value for parameter if value is "Not A Number"
-    floatToString(value, codeP);
-  else
-    *codeP = '\0';
-}
-
 // Process a received message (offline in the idle handler)
 void process_can_queue() {
-  static char CAN_gcode_buffer[MAX_CMD_SIZE];
+  static SString<MAX_CMD_SIZE> CAN_gcode_buffer;
   static uint32_t parameter_counter = 0;
 
   uint32_t identifier = CAN_QUEUE[CAN_queue_tail].identifier;
-  static char *codeP = CAN_gcode_buffer; // Put Gcode pointer to start of CAN_gcode_buffer;
   bool enqueue = true;
   
   // Receiving new Gcode
@@ -232,7 +175,7 @@ void process_can_queue() {
       NTP[2] = *uint32p;   
       NTP[3] = CAN_QUEUE[CAN_queue_tail].receive_time; // Record time sync response message receive time
 
-      enqueue = false; // Timestamps were stored, nothing else to do
+      enqueue = false; // Timestamps were stored, the idle process will handle the rest
     }
     
     // New Gcode started, so previous Gcode must be complete (all parameters received)
@@ -241,36 +184,49 @@ void process_can_queue() {
 
     parameter_counter = (identifier >> CAN_ID_PARAMETER_COUNT_BIT_POS) & CAN_ID_PARAMETER_COUNT_MASK; // Get Gcode parameter count
 
-    *codeP++ = gcode_type[(identifier >> CAN_ID_GCODE_TYPE_BIT_POS) & CAN_ID_GCODE_TYPE_MASK]; // Add Gcode letter e.g., "G"
-    itoa((identifier >> CAN_ID_GCODE_NUMBER_BIT_POS) & CAN_ID_GCODE_NUMBER_MASK, codeP, 10);   // Add Gcode number e.g., G"92"
+    CAN_gcode_buffer = gcode_type[(identifier >> CAN_ID_GCODE_TYPE_BIT_POS) & CAN_ID_GCODE_TYPE_MASK]; // Add Gcode letter e.g., "G"
+    CAN_gcode_buffer.append((identifier >> CAN_ID_GCODE_NUMBER_BIT_POS) & CAN_ID_GCODE_NUMBER_MASK);   // Add Gcode number e.g., G"92"
   }
 
+  uint32_t backupLength = 0; // Backup string length in case we cannot enqueue the Gcode and have to try again
   // Add parameters (if present) to the received Gcode
   if (parameter_counter && ((identifier >> CAN_ID_PARAMETER1_BIT_POS) & CAN_ID_PARAMETER_LETTER_MASK)) { // Get 1st parameter, make sure it's not empty.
-    codeP += strlen(codeP); // Adjust the pointer to the already present data in the buffer
-    CAN_add_gcode_parameters(identifier & CAN_ID_PARAMETER_LETTER_MASK, CAN_QUEUE[CAN_queue_tail].data[0], codeP);
+    backupLength = CAN_gcode_buffer.length();    // Point to place where parameters are added  
+    CAN_gcode_buffer.append(char((identifier & CAN_ID_PARAMETER_LETTER_MASK) + 64)); // Add Gcode parameter letter, e.g., 'X'
+    float value = CAN_QUEUE[CAN_queue_tail].data[0];
+    if (!isnan(value)) { // No value for parameter if value is "Not A Number"
+      if (value == int(value))  
+        CAN_gcode_buffer.append(int(CAN_QUEUE[CAN_queue_tail].data[0])); // Integer value
+      else
+        CAN_gcode_buffer.append(p_float_t(CAN_QUEUE[CAN_queue_tail].data[0], 5));
+    }
     parameter_counter--;
 
     // Add 2nd parameter if 2 values were provided
     if (parameter_counter && ((identifier >> CAN_ID_PARAMETER2_BIT_POS) & CAN_ID_PARAMETER_LETTER_MASK)) { // Get 2nd parameter, make sure it's not empty.
-      codeP += strlen(codeP); // Adjust the pointer to the already present data in the buffer
-      CAN_add_gcode_parameters((identifier >> CAN_ID_PARAMETER2_BIT_POS) & CAN_ID_PARAMETER_LETTER_MASK, CAN_QUEUE[CAN_queue_tail].data[1], codeP);
+      CAN_gcode_buffer.append(char(((identifier >> CAN_ID_PARAMETER2_BIT_POS) & CAN_ID_PARAMETER_LETTER_MASK) + 64)); // Add Gcode parameter letter, e.g., 'X'
+      if (!isnan(CAN_QUEUE[CAN_queue_tail].data[1])) { // No value for parameter if value is "Not A Number"
+        if (value == int(value))  
+          CAN_gcode_buffer.append(int(CAN_QUEUE[CAN_queue_tail].data[1])); // Integer value
+        else
+          CAN_gcode_buffer.append(p_float_t(CAN_QUEUE[CAN_queue_tail].data[1], 5));
+      }
       parameter_counter--;
     }
   }
 
   if (!parameter_counter) { // Gcode is complete, including all parameters, process the Gcode
-
-    codeP = CAN_gcode_buffer; // Move pointer to start of string
-     
       if (enqueue) {
           // queue.enqueue_one returns TRUE if the command was queued, FALSE if the Marlin cmd buffer was full
-          if (queue.enqueue_one(CAN_gcode_buffer)) { // Increase tail only when commands was handled
-            CAN_queue_tail = (CAN_queue_tail + 1) % CAN_QUEUE_DEPTH; // Advance tail only is command was enqueued
+          if (queue.enqueue_one(CAN_gcode_buffer)) { // Increase tail only when commands was enqueued
+            CAN_queue_tail = (CAN_queue_tail + 1) % CAN_QUEUE_DEPTH;
             #ifdef CAN_DEBUG
-              SERIAL_ECHOLNPGM(";", millis(), " ", CAN_gcode_buffer);
+              SERIAL_ECHOPGM(";", millis(), " "); CAN_gcode_buffer.echoln();
             #endif
           }
+          else
+          if (!(identifier & CAN_EXTENDED_ID_MARKER_MASK)) // Standard ID message, so parameters were added to the Gcode
+            CAN_gcode_buffer.trunc(backupLength); // Cut off the part of the Gcode that was added, so we can process the CAN message again
       }
       else
         CAN_queue_tail = (CAN_queue_tail + 1) % CAN_QUEUE_DEPTH; // Always advance tail
