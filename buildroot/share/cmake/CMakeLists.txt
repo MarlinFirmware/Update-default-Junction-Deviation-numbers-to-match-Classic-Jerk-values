@@ -1,15 +1,17 @@
-cmake_minimum_required(VERSION 3.5)
+cmake_minimum_required(VERSION 3.10)
 #====================================================================#
 # Usage under Linux:                                                 #
 #                                                                    #
-#    From buildroot/share/cmake folder:                              #
+#    From the project folder:                                        #
+#        cd buildroot/share/cmake                                    #
 #        mkdir -p build && cd build                                  #
 #        cmake ..                                                    #
 #        make                                                        #
 #                                                                    #
 # Usage under Windows:                                               #
 #                                                                    #
-#    From buildroot/share/cmake folder:                              #
+#    From the project folder:                                        #
+#        cd buildroot/share/cmake                                    #
 #        mkdir build && cd build                                     #
 #        cmake -G"Unix Makefiles" ..                                 #
 #        make                                                        #
@@ -82,7 +84,7 @@ message("-- Running CMake version: " ${CMAKE_VERSION})
 
 # Replace the CMake Ver. in the Arduino.cmake
 file(READ "${CMAKE_CURRENT_LIST_DIR}/marlin-cmake/Platform/Arduino.cmake" ORIGINAL_FILE_CONTENTS)
-string(REGEX REPLACE "cmake_minimum_required\\(VERSION[^\n]*\n" "cmake_minimum_required(VERSION 3.5)\n" NEW_FILE_CONTENTS "${ORIGINAL_FILE_CONTENTS}")
+string(REGEX REPLACE "cmake_minimum_required\\(VERSION[^\n]*\n" "cmake_minimum_required(VERSION 3.10)\n" NEW_FILE_CONTENTS "${ORIGINAL_FILE_CONTENTS}")
 file(WRITE "${CMAKE_CURRENT_LIST_DIR}/marlin-cmake/Platform/Arduino.cmake" "${NEW_FILE_CONTENTS}")
 
 # Fix "CMake Error... avr-gcc / avr-g++ is not a full path..."
@@ -127,6 +129,7 @@ set(CMAKE_TOOLCHAIN_FILE ${CMAKE_CURRENT_LIST_DIR}/marlin-cmake/toolchain/Arduin
 #   Go to the file in your CMake directory                           #
 #                                                                    #
 #   For Windows: cmake\Modules\Platform\WindowsPaths.cmake           #
+#   For macOS: cmake/Modules/Platform/UnixPaths.cmake                #
 #   For Linux: cmake/Modules/Platform/UnixPaths.cmake                #
 #                                                                    #
 #   Comment out "_cmake_record_install_prefix()"                     #
