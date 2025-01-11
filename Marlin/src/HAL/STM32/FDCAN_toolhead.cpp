@@ -86,10 +86,10 @@ struct CAN_MSG_BUFFER {                          // Struct to hold a CAN message
 
 SString<CAN_MAX_STRING_MESSAGE_LENGTH> CAN_string_buffer; // String buffer to hold outgoing string messages
 char gcode_type[4]       = { 'D', 'G', 'M', 'T' }; // The 4 Gcode types
-bool CAN_toolhead_not_configured           = true; // Track if the host sent the required toolhead configuration
+volatile bool CAN_toolhead_not_configured  = true; // Track if the host sent the required toolhead configuration
 uint32_t CAN_toolhead_error_code              = 0; // Signals an CAN error occured, report to host
 uint32_t CAN_previous_error_code              = 0; // Remember last error code so changes can be detected
-uint32_t CAN_next_temp_report_time            = 0; // The next temperature report time
+uint32_t CAN_next_temp_report_time            = 0; // The next temperature report time, delay on startup
 uint32_t CAN_send_next_string_part_time       = 0; // Send the next part of a string message
 volatile bool CAN_FIFO_toggle_bit             = 0; // FIFO toggle bit for receiver filtering to FIFO0 and FIFO1
 bool CAN_request_time_sync                    = false; // Request a timestamp for NTP time sync
@@ -106,10 +106,11 @@ volatile uint32_t CAN_queue_head              = 0; // Queue head index
 volatile uint32_t CAN_queue_tail              = 0; // Queue tail index
 
 // Function to calculate the CAN message ID holding various bits of information
-uint32_t CAN_get_virtual_IO() {
+uint32_t CAN_get_virtual_IO(bool tempUpdate) {
 
   CAN_FIFO_toggle_bit = !CAN_FIFO_toggle_bit; // Toggle FIFO bit for receiver filtering to FIFO0 and FIFO1
 
+  bool configured = tempUpdate && CAN_toolhead_not_configured; // Only request setup during temp updates, not IO interrupts
   return (
   
     #ifdef Z_MIN_PROBE_PIN
@@ -128,9 +129,9 @@ uint32_t CAN_get_virtual_IO() {
       (READ(FILAMENT_RUNOUT_PIN) << CAN_ID_FILAMENT_BIT_POS) | // Report filament detector status
     #endif
 
-    (CAN_FIFO_toggle_bit ? STDID_FIFO_TOGGLE_BIT : 0)      | // Add FIFO toggle bit
-    (CAN_toolhead_not_configured << CAN_ID_REQUEST_SETUP_BIT_POS) | // Request toolhead setup configuration
-    ((!!CAN_toolhead_error_code) << CAN_ID_ERROR_BIT_POS)           // Report error (if any)
+    (CAN_FIFO_toggle_bit ? STDID_FIFO_TOGGLE_BIT : 0)   | // Add FIFO toggle bit
+    (configured << CAN_ID_REQUEST_SETUP_BIT_POS)        | // Request toolhead setup configuration
+    ((!!CAN_toolhead_error_code) << CAN_ID_ERROR_BIT_POS) // Report error (if any)
   );
 }
 
@@ -278,12 +279,14 @@ void TIM16_IRQHandler(void) { // ISR! Combined TIM16 and CAN interrupt handler (
   // OR
   //
   // Call the required callbacks directly, faster but limited error reporting
-    if (hCAN1.Instance->IR & FDCAN_IR_RF0N) { // New FIFO0 CAN message
+  // New FIFO0 CAN message
+  if (hCAN1.Instance->IR & FDCAN_IR_RF0N) {
     __HAL_FDCAN_CLEAR_FLAG(&hCAN1, FDCAN_IR_RF0N);
     CAN_receive_msg(FDCAN_RX_FIFO0);
   }
 
-  if (hCAN1.Instance->IR & FDCAN_IR_RF1N) { // New FIFO1 CAN message
+ // New FIFO1 CAN message
+  if (hCAN1.Instance->IR & FDCAN_IR_RF1N) {
     __HAL_FDCAN_CLEAR_FLAG(&hCAN1, FDCAN_IR_RF1N);
     CAN_receive_msg(FDCAN_RX_FIFO1);
   }
@@ -469,8 +472,7 @@ HAL_StatusTypeDef CAN_toolhead_start(void) { // Start the CAN device
 } // CAN_toolhead_start
 
 // Send an IO status update to the host, and the E0 temperature if requested
-void CAN_toolhead_send_update(bool TempUpdate) { // Called from temperature ISR!
-
+void CAN_toolhead_send_update(bool tempUpdate) { // Called from temperature ISR!
   // Send a IO/temp report from the toolhead to the host
   FDCAN_TxHeaderTypeDef CanTxHeader;
   uint8_t can_tx_buffer[8]; // Transmit FDCAN message buffer
@@ -484,9 +486,9 @@ void CAN_toolhead_send_update(bool TempUpdate) { // Called from temperature ISR!
   CanTxHeader.IdType              = FDCAN_STANDARD_ID;  // FDCAN_STANDARD_ID / FDCAN_EXTENDED_ID
   CanTxHeader.BitRateSwitch       = FDCAN_BRS_OFF;      // FDCAN_BRS_OFF / FDCAN_BRS_ON
 
-  if (TempUpdate) {                      // Add temperature update to FDCAN message, 4 bytes
-    float * fp = (float *)can_tx_buffer; // Point to FDCAN TX buffer
-    *fp = thermalManager.degHotend(0);   // Copy temp to can_tx_buffer
+  if (tempUpdate) {                             // Add temperature update to FDCAN message, 4 bytes
+    float * fp = (float *)can_tx_buffer;        // Point to FDCAN TX buffer
+    *fp = thermalManager.degHotend(0);          // Copy temp to can_tx_buffer
     CanTxHeader.DataLength = FDCAN_DLC_BYTES_4; // Hotend temp in payload only
   }
   else
@@ -498,7 +500,7 @@ void CAN_toolhead_send_update(bool TempUpdate) { // Called from temperature ISR!
     CAN_toolhead_error_code |= CAN_ERROR_TOOLHEAD_TX_FIFO_OVERFLOW;
   }
 
-  CanTxHeader.Identifier = CAN_get_virtual_IO();
+  CanTxHeader.Identifier = CAN_get_virtual_IO(tempUpdate);
 
   if (CAN_request_time_sync) {
 
@@ -553,7 +555,7 @@ void CAN_send_next_string_part() {
   uint32_t c = MIN(8, len);
   CanTxHeader.DataLength = (c << CAN_DATALENGTH_OFFSET); // Max message length is 8 bytes (CAN), offset is 16 bits into the DataLength variable
 
-  CanTxHeader.Identifier = CAN_get_virtual_IO() | (1 << CAN_ID_STRING_MESSAGE_BIT_POS);
+  CanTxHeader.Identifier = CAN_get_virtual_IO(false) | CAN_ID_STRING_MESSAGE_BIT_MASK;
 
   // Low priority message, wait until TX FIFO is completely empty before sending the message
   if (HAL_FDCAN_GetTxFifoFreeLevel(&hCAN1) == CAN_FIFO_DEPTH) {

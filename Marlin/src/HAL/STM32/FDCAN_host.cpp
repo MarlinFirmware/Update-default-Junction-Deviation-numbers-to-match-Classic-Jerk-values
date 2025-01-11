@@ -56,38 +56,10 @@ extern "C" void HAL_FDCAN_RxFifo1Callback(FDCAN_HandleTypeDef *hfdcan, uint32_t 
   #error ERROR: Select a valid CAN_BAUDRATE: 1000000, 500000, 250000 or 125000 baud
 #endif
 
-//#define CAN_HOST_IO_MASK                            0b11111 // Masks for the 5 virtual IO bits (see below)
-//#define CAN_HOST_GCODE_NUMBER_MASK          0b1111111111111
-//#define CAN_HOST_PARAMETER_MASK                     0b11111
-//#define CAN_HOST_PARAMETER_COUNT_MASK                 0b111
-//#define CAN_HOST_GCODE_TYPE_MASK                       0b11
+#define FDCAN_HOST_TX_FIFO_DEPTH                         8 // TX FIFO0 and FIFO1 depth 0-32
+#define FDCAN_HOST_RX_FIFO_DEPTH                         8 // RX FIFO0 and FIFO1 depth 0-64
 
-//#define CAN_HOST_PARAMETER1_BIT_POS                       0
-//#define CAN_HOST_PARAMETER2_BIT_POS                       5
-//#define CAN_HOST_GCODE_NUMBER_BIT_POS                    10
-//#define CAN_HOST_GCODE_TYPE_BIT_POS                      23
-//#define CAN_HOST_PARAMETER_COUNT_BIT_POS                 25
-
-//#define CAN_HOST_GCODE_TYPE_D                             0
-//#define CAN_HOST_GCODE_TYPE_G                             1
-//#define CAN_HOST_GCODE_TYPE_M                             2
-//#define CAN_HOST_GCODE_TYPE_T                             3
-
-//#define CAN_HOST_MAX_STRING_MSG_LENGTH                  128 // Max string message length to receive from the toolhead
-//#define CAN_HOST_GCODE_TIME_SYNC_NO                    7777 // A unique unused Gcode number to trigger a time sync
-//#define CAN_HOST_CONFIGURATION_COMPLETE                7778 // Signal the configuration is complete
-#define FDCAN_HOST_TX_FIFO_DEPTH                            8 // TX FIFO0 and FIFO1 depth 0-32
-#define FDCAN_HOST_RX_FIFO_DEPTH                            8 // RX FIFO0 and FIFO1 depth 0-64
-//#define CAN_HOST_MAX_WAIT_TIME                           25 // Time in ms to wait for CAN FIFO buffers
-//#define CAN_HOST_E0_TEMP_UPDATE_WATCHDOG_TIME          3000 // An E0 temp update must be received withing this time
-//#define CAN_HOST_ERROR_REPEAT_TIME                    10000 // Time between report repeats of an error message
-
-#define FDCAN_HOST_DATALENGTH_OFFSET                       16 // Bit offset of FDCAN_DLC_BYTES_1 in register
-
-//#define CAN_ERROR_RX_FIFO_OVERFLOW                 (1 << 0) // Incoming message lost
-//#define CAN_ERROR_TX_MSG_DROPPED                   (1 << 1) // Outgoing message dropped
-//#define CAN_ERROR_INVALID_GCODE                    (1 << 2) // Gcode could not be sent over CANBUS
-//#define CAN_ERROR_INVALID_BAUDRATE                 (1 << 3) // Generated baudrate doesn't match CAN_BAUDRATE
+#define FDCAN_HOST_DATALENGTH_OFFSET                    16 // Bit offset of FDCAN_DLC_BYTES_1 in register
 
 FDCAN_HandleTypeDef hCAN1                          = { 0 }; // The global FDCAN handle
 FDCAN_TxHeaderTypeDef TxHeader                     = { 0 }; // Header to send a FDCAN message
@@ -102,11 +74,10 @@ volatile uint32_t CAN_host_error_code                  = 0; // Store the CAN hos
 
 volatile bool first_E0_error                        = true; // First CAN bus error, show warning only once
 volatile bool string_message_complete              = false; // Signals a complete string message was received
-volatile uint32_t string_message_index                 = 0; // Index into the CAN string that is being received
-uint32_t CAN_next_temp_report_time                 = 12000; // Track when the next toolhead temperature report should have arrived
+uint32_t CAN_next_temp_report_time                 = 10000; // Track when the next toolhead temperature report should arrive, delay at startup
 uint32_t CAN_next_error_message_time                   = 0; // Track when to display the next repeat of an error message
 volatile bool CAN_host_FIFO_toggle_bit             = false; // FIFO toggle flag for receiver FIFO filtering
-char string_message[CAN_HOST_MAX_STRING_MSG_LENGTH] = "\0"; // CAN string message buffer for incoming messages
+SString <CAN_HOST_MAX_STRING_MSG_LENGTH> string_message;    // CAN string message buffer for incoming messages
 
 uint32_t CAN_host_get_iostate() {
   return CAN_io_state;
@@ -225,7 +196,7 @@ HAL_StatusTypeDef CAN_host_send_gcode_2params(uint32_t Gcode_type, uint32_t Gcod
   return status;
 }
 
-void CAN_host_send_setup() { // Send setup to toolhead
+void CAN_host_send_setup(bool changeStatus) { // Send setup to toolhead
 
   // NOTE: Sending many command too fast will cause a Marlin command buffer overrun at the toolhead, add delays if needed
   CAN_toolhead_setup_request = false;
@@ -316,7 +287,8 @@ void CAN_host_send_setup() { // Send setup to toolhead
   #endif
 
   // Signal to the toolhead that the configuration is complete, use it as the last Gcode to send
-  CAN_host_send_gcode_2params('M', CAN_HOST_CONFIGURATION_COMPLETE, 0, 0, 0, 0);
+  if (changeStatus)
+    CAN_host_send_gcode_2params('M', CAN_HOST_CONFIGURATION_COMPLETE, 0, 0, 0, 0);
 }
 
 void CAN_host_idle() { // Tasks that can/should not be done in the ISR
@@ -326,18 +298,14 @@ void CAN_host_idle() { // Tasks that can/should not be done in the ISR
      CAN_host_send_timestamp();
   }
 
-  if (CAN_toolhead_setup_request) // The toolhead requested the setup configuration
-    CAN_host_send_setup();
-
   if (string_message_complete) { // Received string message is complete, display the string
     BUZZ(1, SOUND_OK);
     SERIAL_ECHOPGM(">>> CAN toolhead MSG: ");
 
-    for (uint32_t i = 0; i < string_message_index; i++)
-      SERIAL_CHAR(string_message[i]); // Show received string message, ends on '\n'
+    string_message.echo(); // Show received string message, ends on '\n'
 
     string_message_complete = false; // Get ready for the next string
-    string_message_index    = 0;
+    string_message.clear();
   }
 
   // Report time sync results
@@ -379,7 +347,7 @@ void CAN_host_idle() { // Tasks that can/should not be done in the ISR
     #endif
 
     if (CAN_toolhead_setup_request) // The toolhead requested the setup configuration
-      CAN_host_send_setup();
+      CAN_host_send_setup(true);
   }
 }
 
@@ -790,32 +758,29 @@ void FDCAN_host_read_message(FDCAN_HandleTypeDef *hfdcan, uint32_t RxFifo) { // 
       endstops.update();
     }
 
-    if (RxHeader.Identifier & CAN_ID_STRING_MESSAGE_MASK) { // Toolhead sent a string message
-      char * CAN_RX_p = (char *)CAN_RX_buffer_FIFO;
-      for (uint32_t i = 0; i < (RxHeader.DataLength >> FDCAN_HOST_DATALENGTH_OFFSET); i++) {
-        string_message[string_message_index++ % CAN_HOST_MAX_STRING_MSG_LENGTH] = CAN_RX_p[i]; // Copy message to global buffer
+    if (RxHeader.Identifier & CAN_ID_STRING_MESSAGE_BIT_MASK) { // Toolhead sent a string message
+      char *CAN_RX_p = (char *)CAN_RX_buffer_FIFO;
+      for (uint32_t i = 0; i < (RxHeader.DataLength >> FDCAN_HOST_DATALENGTH_OFFSET); i++)
+        string_message.append(CAN_RX_p[i]); // Copy message to global buffer
 
-        if (CAN_RX_p[i] == '\n') {
-          string_message_complete = true; // String is complete, idle task can show the string
-          string_message[string_message_index % CAN_HOST_MAX_STRING_MSG_LENGTH] = 0; // Close string with \0
-        }
-      }
+      if (CAN_RX_p[(RxHeader.DataLength >> FDCAN_HOST_DATALENGTH_OFFSET) - 1] == '\n')
+        string_message_complete = true; // String is complete, idle task can show the string
     }
     else if (RxHeader.DataLength == FDCAN_DLC_BYTES_4) { // Only 1 record, so it's a temperature update (DLC = Data Length Code == 4 bytes)
       float *fp = (float *)CAN_RX_buffer_FIFO;
       thermalManager.temp_hotend[0].celsius = *fp; // Set E0 hotend temperature from received message
       CAN_next_temp_report_time = millis() + CAN_HOST_E0_TEMP_UPDATE_WATCHDOG_TIME; // A temp update must be received within this window
-      first_E0_error = true;                      // Reset error status
+      first_E0_error = true;                       // Reset error status
     }
 
-    if (RxHeader.Identifier & CAN_ID_REQUEST_TIME_SYNC_MASK) { // Toolhead signals request for time stamp
+    if (RxHeader.Identifier & CAN_ID_REQUEST_TIME_SYNC_BIT_MASK) { // Toolhead signals request for time stamp
       time_sync_request_time = micros(); // Record the time sync request receive time
       CAN_time_sync_request = true;
     }
 
-    CAN_toolhead_setup_request = (RxHeader.Identifier & CAN_ID_REQUEST_SETUP_MASK) > 0; // Toolhead requests setup configuration
+    CAN_toolhead_setup_request = (RxHeader.Identifier & CAN_ID_REQUEST_SETUP_BIT_MASK) > 0; // Toolhead requests setup configuration
 
-    CAN_toolhead_error = (RxHeader.Identifier & CAN_ID_ERROR_MASK) > 0; // Toolhead signals an error
+    CAN_toolhead_error = (RxHeader.Identifier & CAN_ID_ERROR_BIT_MASK) > 0; // Toolhead signals an error
   }
 }
 
