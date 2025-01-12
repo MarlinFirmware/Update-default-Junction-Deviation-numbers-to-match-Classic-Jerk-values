@@ -227,7 +227,7 @@ struct Flags<N, true> {
   // Proxy class for handling bit assignment
   class BitProxy {
   public:
-    BitProxy(const uint8_t data[], int n) : data_(data[n >> 3]), bit_(n & 7) {}
+    BitProxy(uint8_t data[], int n) : data_(data[n >> 3]), bit_(n & 7) {}
 
     // Assignment operator
     BitProxy& operator=(const bool value) {
@@ -242,7 +242,7 @@ struct Flags<N, true> {
     operator bool() const { return TEST(data_, bit_); }
 
   private:
-    const uint8_t& data_;
+    uint8_t& data_;
     uint8_t bit_;
   };
 
@@ -1017,8 +1017,6 @@ struct XYZEarray {
 
   FI XYZEval<T> operator[](const int n) const { return XYZval<T>(LOGICAL_AXIS_ARRAY(e[n], x[n], y[n], z[n], i[n], j[n], k[n], u[n], v[n], w[n])); }
 };
-
-class AxisBits;
 
 class AxisBits {
 public:
