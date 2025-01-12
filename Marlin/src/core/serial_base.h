@@ -200,10 +200,6 @@ struct SerialBase {
 
   // Print a number with the given base
   NO_INLINE void printNumber_unsigned(uint_fixed_print_t n, PrintBase base) {
-    if (base < 2 || base > 36) { // Check for invalid base
-        write('?'); // Indicate an error (Division by zero)
-        return;
-    }
     if (n) {
       unsigned char buf[8 * sizeof(long)]; // Enough space for base 2
       int8_t i = 0;
