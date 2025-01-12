@@ -4557,28 +4557,28 @@ void Stepper::report_positions() {
 
 #if ENABLED(FREEZE_FEATURE)
 
-  void Stepper::set_frozen_solid(bool state) {
-    if (state != is_frozen_solid()) {
-      set_frozen_flag(state, FROZEN_SOLID);
+  void Stepper::set_frozen_solid(const bool state) {
+    if (state != is_frozen_solid()) return;
 
-      #if ENABLED(LASER_FEATURE)
-        if (state) {
-          frozen_last_laser_power = cutter.last_power_applied;
-          cutter.apply_power(0);                        // No movement in dynamic mode so turn Laser off
-        }
-        else {
-          cutter.apply_power(frozen_last_laser_power);  // Restore frozen laser power
-        }
-      #endif
-    }
+    set_frozen_flag(state, FROZEN_SOLID);
+
+    #if ENABLED(LASER_FEATURE)
+      if (state) {
+        frozen_last_laser_power = cutter.last_power_applied;
+        cutter.apply_power(0);                        // No movement in dynamic mode so turn Laser off
+      }
+      else {
+        cutter.apply_power(frozen_last_laser_power);  // Restore frozen laser power
+      }
+    #endif
   }
 
   void Stepper::check_frozen_time(uint32_t &step_rate) {
-    //If frozen_time is 0 there is no need to modify the current step_rate
+    // If frozen_time is 0 there is no need to modify the current step_rate
     if (!frozen_time) return;
 
     #if ENABLED(S_CURVE_ACCELERATION)
-      //If the machine is configured to use S_CURVE_ACCELERATION standard ramp acceleration
+      // If the machine is configured to use S_CURVE_ACCELERATION standard ramp acceleration
       // rate will not have been calculated at this point
       if (!current_block->acceleration_rate) {
         current_block->acceleration_rate = (uint32_t)(current_block->acceleration_steps_per_s2 * (float(1UL << 24) / (STEPPER_TIMER_RATE)));
@@ -4628,8 +4628,10 @@ void Stepper::report_positions() {
         // If frozen state is deactivated during the deceleration phase we need to double our acceleration efforts
         if (!is_frozen_triggered()) {
           if (frozen_time) {
-            if (frozen_time > interval * 2) frozen_time -= interval * 2;
-            else frozen_time = 0;
+            if (frozen_time > interval * 2)
+              frozen_time -= interval * 2;
+            else
+              frozen_time = 0;
           }
           set_frozen_solid(false);
         }

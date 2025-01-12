@@ -293,7 +293,7 @@ constexpr ena_mask_t enable_overlap[] = {
     FREEZE_DECELERATION,
     FREEZE_CRUISE
   };
-  enum FrozenState { FROZEN_SLOWING, FROZEN_SOLID };
+  enum FrozenState { FROZEN_TRIGGERED, FROZEN_SOLID };
 #endif
 
 //
@@ -345,8 +345,8 @@ class Stepper {
     #endif
 
     #if ENABLED(FREEZE_FEATURE)
-      static inline void set_frozen_triggered(bool state) { set_frozen_flag(state, FROZEN_SLOWING); }
-      static inline bool is_frozen_triggered() { return TEST(frozen_state, FROZEN_SLOWING); }
+      static void set_frozen_triggered(const bool state) { set_frozen_flag(state, FROZEN_TRIGGERED); }
+      static bool is_frozen_triggered() { return TEST(frozen_state, FROZEN_TRIGGERED); }
     #endif
 
     #if ENABLED(NONLINEAR_EXTRUSION)
@@ -748,9 +748,9 @@ class Stepper {
       #endif
       static void check_frozen_time(uint32_t &step_rate);
       static void check_frozen_state(const FreezePhase type, const uint32_t interval);
-      static inline void set_frozen_flag(bool state, uint8_t flag) { SET_BIT_TO(frozen_state, flag, state); }
-      static inline void set_frozen_solid(bool state);
-      static inline bool is_frozen_solid() { return TEST(frozen_state, FROZEN_SOLID); }
+      static void set_frozen_flag(const bool state, const uint8_t flag) { SET_BIT_TO(frozen_state, flag, state); }
+      static void set_frozen_solid(const bool state);
+      static bool is_frozen_solid() { return TEST(frozen_state, FROZEN_SOLID); }
     #endif // FREEZE_FEATURE
 };
 
