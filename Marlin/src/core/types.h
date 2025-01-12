@@ -242,7 +242,7 @@ struct Flags<N, true> {
     operator bool() const { return TEST(data_, bit_); }
 
   private:
-    uint8_t& data_;
+    const uint8_t& data_;
     uint8_t bit_;
   };
 
