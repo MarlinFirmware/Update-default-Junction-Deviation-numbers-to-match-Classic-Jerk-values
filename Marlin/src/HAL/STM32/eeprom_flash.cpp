@@ -74,25 +74,13 @@
   #define EEPROM_SLOTS            ((FLASH_UNIT_SIZE) / (MARLIN_EEPROM_SIZE))
   #define SLOT_ADDRESS(slot)      (FLASH_ADDRESS_START + (slot * (MARLIN_EEPROM_SIZE)))
 
-#ifdef STM32H7xx
-  #define FLASHWORD_SIZE          32U //  STM32H7xx a FLASHWORD is 32 bytes (256 bits)
-  #define UNLOCK_FLASH()          if (!flash_unlocked) { \
-                                    HAL_FLASH_Unlock(); \
-                                    __HAL_FLASH_CLEAR_FLAG(FLASH_FLAG_EOP | FLASH_FLAG_OPERR | FLASH_FLAG_WRPERR | \
-                                                           FLASH_FLAG_PGSERR); \
-                                    flash_unlocked = true; \
-                                  }
-#else
-  #define FLASHWORD_SIZE          4U // STM32F4xx a FLASHWORD is 4 bytes sizeof(uint32_t)
-  #define UNLOCK_FLASH()          if (!flash_unlocked) { \
-                                    HAL_FLASH_Unlock(); \
-                                    __HAL_FLASH_CLEAR_FLAG(FLASH_FLAG_EOP | FLASH_FLAG_OPERR | FLASH_FLAG_WRPERR | \
-                                                           FLASH_FLAG_PGAERR | FLASH_FLAG_PGPERR | FLASH_FLAG_PGSERR); \
-                                    flash_unlocked = true; \
-                                  }
-#endif
-
-  #define LOCK_FLASH()            if (flash_unlocked) { HAL_FLASH_Lock(); flash_unlocked = false; }
+  #ifdef STM32H7xx
+    #define FLASHWORD_SIZE          32U //  STM32H7xx a FLASHWORD is 32 bytes (256 bits)
+    #define FLASH_FLAGS_TO_CLEAR    (FLASH_FLAG_EOP | FLASH_FLAG_OPERR | FLASH_FLAG_WRPERR | FLASH_FLAG_PGSERR)
+  #else
+    #define FLASHWORD_SIZE          4U // STM32F4xx a FLASHWORD is 4 bytes sizeof(uint32_t)
+    #define FLASH_FLAGS_TO_CLEAR    (FLASH_FLAG_EOP | FLASH_FLAG_OPERR | FLASH_FLAG_WRPERR | FLASH_FLAG_PGAERR | FLASH_FLAG_PGPERR | FLASH_FLAG_PGSERR)
+  #endif
 
   #define EMPTY_UINT32            ((uint32_t)-1)
   #define EMPTY_UINT8             ((uint8_t)-1)
@@ -186,7 +174,12 @@ bool PersistentStore::access_finish() {
         EraseInitStruct.NbSectors = 1;
 
         current_slot = EEPROM_SLOTS - 1;
-        UNLOCK_FLASH();
+
+        if (!flash_unlocked) {
+          HAL_FLASH_Unlock();
+          __HAL_FLASH_CLEAR_FLAG(FLASH_FLAGS_TO_CLEAR);
+          flash_unlocked = true;
+        }
 
         TERN_(HAS_PAUSE_SERVO_OUTPUT, PAUSE_SERVO_OUTPUT());
         hal.isr_off();
@@ -197,17 +190,23 @@ bool PersistentStore::access_finish() {
           DEBUG_ECHOLNPGM("HAL_FLASHEx_Erase=", status);
           DEBUG_ECHOLNPGM("GetError=", HAL_FLASH_GetError());
           DEBUG_ECHOLNPGM("SectorError=", SectorError);
-          LOCK_FLASH();
+          if (flash_unlocked) {
+            HAL_FLASH_Lock();
+            flash_unlocked = false;
+          }
           return false;
         }
       }
 
-      UNLOCK_FLASH();
+      if (!flash_unlocked) {
+        HAL_FLASH_Unlock();
+        __HAL_FLASH_CLEAR_FLAG(FLASH_FLAGS_TO_CLEAR);
+        flash_unlocked = true;
+      }
 
       uint32_t offset = 0,
                address = SLOT_ADDRESS(current_slot),
                address_end = address + MARLIN_EEPROM_SIZE;
-//               data = 0;
 
       bool success = true;
 
@@ -215,8 +214,8 @@ bool PersistentStore::access_finish() {
         #ifdef STM32H7xx
           status = HAL_FLASH_Program(FLASH_TYPEPROGRAM_FLASHWORD, address, uint32_t(ram_eeprom + offset));
         #else
-//          memcpy(&data, ram_eeprom + offset, sizeof(data)); // IRON, IMPROVED
-//          status = HAL_FLASH_Program(FLASH_TYPEPROGRAM_WORD, address, data);
+          //memcpy(&data, ram_eeprom + offset, sizeof(data)); // IRON, IMPROVED
+          //status = HAL_FLASH_Program(FLASH_TYPEPROGRAM_WORD, address, data);
           status = HAL_FLASH_Program(FLASH_TYPEPROGRAM_WORD, address, *(uint32_t*)(ram_eeprom + offset)); // IRON, OPTIMIZED
         #endif
         if (status == HAL_OK) {
@@ -232,7 +231,10 @@ bool PersistentStore::access_finish() {
         }
       }
 
-      LOCK_FLASH();
+      if (flash_unlocked) {
+        HAL_FLASH_Lock();
+        flash_unlocked = false;
+      }
 
       if (success) {
         eeprom_data_written = false;
