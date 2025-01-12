@@ -227,7 +227,7 @@ struct Flags<N, true> {
   // Proxy class for handling bit assignment
   class BitProxy {
   public:
-    BitProxy(uint8_t data[], int n) : data_(data[n >> 3]), bit_(n & 7) {}
+    BitProxy(const uint8_t data[], int n) : data_(data[n >> 3]), bit_(n & 7) {}
 
     // Assignment operator
     BitProxy& operator=(const bool value) {
