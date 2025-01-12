@@ -1769,7 +1769,7 @@ void Stepper::pulse_phase_isr() {
 
   // Skipping step processing causes motion to freeze
   #if ENABLED(FREEZE_FEATURE)
-    if(is_frozen_triggered() && is_frozen_solid()) return;
+    if (is_frozen_triggered() && is_frozen_solid()) return;
   #endif
 
   // Count of pending loops and events for this iteration
@@ -2415,7 +2415,7 @@ hal_timer_t Stepper::block_phase_isr() {
 
   // If we are frozen solid
   #if ENABLED(FREEZE_FEATURE)
-    if(is_frozen_triggered() && is_frozen_solid()) {
+    if (is_frozen_triggered() && is_frozen_solid()) {
       return interval;
     } else
   #endif
@@ -4579,11 +4579,11 @@ void Stepper::report_positions() {
 #if ENABLED(FREEZE_FEATURE)
 
 void Stepper::set_frozen_solid(bool state) {
-  if(state != is_frozen_solid()) {
+  if (state != is_frozen_solid()) {
     set_frozen_flag(state, 2);
 
     #if ENABLED(LASER_FEATURE)
-      if(state) {
+      if (state) {
           frozen_last_laser_power = cutter.last_power_applied;
           cutter.apply_power(0);  // No movement in dynamic mode so turn Laser off
       } else {
@@ -4595,22 +4595,22 @@ void Stepper::set_frozen_solid(bool state) {
 
 void Stepper::check_frozen_time(uint32_t &step_rate) {
   //If frozen_time is 0 there is no need to modify the current step_rate
-  if(!frozen_time) return;
+  if (!frozen_time) return;
 
   #if ENABLED(S_CURVE_ACCELERATION)
-    //If the machine is configured to use S_CURVE_ACCELERATION standard ramp acceleration 
+    //If the machine is configured to use S_CURVE_ACCELERATION standard ramp acceleration
     // rate will not have been calculated at this point
-    if(!current_block->acceleration_rate) {
+    if (!current_block->acceleration_rate) {
       current_block->acceleration_rate = (uint32_t)(current_block->acceleration_steps_per_s2 * (float(1UL << 24) / (STEPPER_TIMER_RATE)));
     }
   #endif
 
   uint32_t freeze_rate = STEP_MULTIPLY(frozen_time, current_block->acceleration_rate);
-  if(freeze_rate >= step_rate) step_rate = 0;
+  if (freeze_rate >= step_rate) step_rate = 0;
   else step_rate -= freeze_rate;
 
   uint32_t min_step_rate = (current_block->steps_per_mm * FREEZE_JERK);
-  if(step_rate <= min_step_rate) {
+  if (step_rate <= min_step_rate) {
     set_frozen_solid(true);
     step_rate = min_step_rate;
   }
@@ -4620,7 +4620,7 @@ void Stepper::check_frozen_state(uint8_t type, uint32_t interval) {
   switch(type) {
     case 0: //Stationary
       //If triggered while stationary immediately set solid flag
-      if(is_frozen_triggered()) {
+      if (is_frozen_triggered()) {
         frozen_time = 0;
         set_frozen_solid(true);
       } else {
@@ -4630,8 +4630,8 @@ void Stepper::check_frozen_state(uint8_t type, uint32_t interval) {
 
     case 1: //Acceleration
       //If frozen state is activated during the acceleration phase of a block we need to double our decceleration efforts
-      if(is_frozen_triggered()) {
-        if(!is_frozen_solid()) {
+      if (is_frozen_triggered()) {
+        if (!is_frozen_solid()) {
           frozen_time += interval * 2;
         }
       } else {
@@ -4641,9 +4641,9 @@ void Stepper::check_frozen_state(uint8_t type, uint32_t interval) {
 
     case 2: //Deceleration
       //If frozen state is deactivated during the deceleration phase we need to double our acceleration efforts
-      if(!is_frozen_triggered()) {
-        if(frozen_time) {
-          if(frozen_time > interval * 2) frozen_time -= interval * 2;
+      if (!is_frozen_triggered()) {
+        if (frozen_time) {
+          if (frozen_time > interval * 2) frozen_time -= interval * 2;
           else frozen_time = 0;
         }
 
@@ -4653,10 +4653,10 @@ void Stepper::check_frozen_state(uint8_t type, uint32_t interval) {
 
     case 3: //Cruise
       //During cruise stage acceleration/deceleration take place at regular rate
-      if(is_frozen_triggered()) {
-          if(!is_frozen_solid()) frozen_time += interval;
+      if (is_frozen_triggered()) {
+          if (!is_frozen_solid()) frozen_time += interval;
       } else {
-        if(frozen_time) {
+        if (frozen_time) {
           if (frozen_time > interval) {
             frozen_time -= interval;
           }
