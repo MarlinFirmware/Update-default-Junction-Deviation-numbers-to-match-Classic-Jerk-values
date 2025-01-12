@@ -17,8 +17,7 @@
 
 from __future__ import print_function
 from PIL import Image
-import argparse
-import textwrap
+import argparse, textwrap
 
 def pack_rle(data):
   """Use run-length encoding to pack the bytes"""

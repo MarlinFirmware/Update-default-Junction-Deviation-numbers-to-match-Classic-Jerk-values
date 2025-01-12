@@ -58,7 +58,7 @@ void FilamentMenu::onRedraw(draw_mode_t what) {
     cmd.font(font_large)
        .text(TITLE_POS, GET_TEXT_F(MSG_FILAMENT))
        .font(font_medium).colors(normal_btn)
-       .enabled(ENABLED(FILAMENT_RUNOUT_SENSOR))
+       .enabled(ENABLED(HAS_FILAMENT_SENSOR))
        .tag(2).button(RUNOUT_SENSOR_POS, GET_TEXT_F(MSG_RUNOUT_SENSOR))
        .enabled(ENABLED(LIN_ADVANCE))
        .tag(3).button(LIN_ADVANCE_POS, GET_TEXT_F(MSG_LINEAR_ADVANCE))
@@ -69,12 +69,12 @@ void FilamentMenu::onRedraw(draw_mode_t what) {
 
 bool FilamentMenu::onTouchEnd(uint8_t tag) {
   switch (tag) {
-    case 1: GOTO_PREVIOUS();                   break;
-    #if ENABLED(FILAMENT_RUNOUT_SENSOR)
-    case 2: GOTO_SCREEN(FilamentRunoutScreen); break;
+    case 1: GOTO_PREVIOUS(); break;
+    #if HAS_FILAMENT_SENSOR
+      case 2: GOTO_SCREEN(FilamentRunoutScreen); break;
     #endif
     #if ENABLED(LIN_ADVANCE)
-    case 3: GOTO_SCREEN(LinearAdvanceScreen);  break;
+      case 3: GOTO_SCREEN(LinearAdvanceScreen);  break;
     #endif
     default: return false;
   }

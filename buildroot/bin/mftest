@@ -16,23 +16,24 @@ bugout() { ((DEBUG)) && echo -e "\033[0;32m$1\033[0m" ; }
 
 usage() {
   echo "
-Usage: mftest [-t|--env=<env|index>] [-n|--num=<num>] [-m|--make] [-y|--build=<Y|n>]
-       mftest [-a|--autobuild]
+Usage: mftest [-a|--autobuild]
        mftest [-r|--rebuild]
        mftest [-s|--silent]
+       mftest [-t|--env=<env|index>] [-n|--num=<num>] [-m|--make] [-y|--build=<Y|n>]
        mftest [-u|--autoupload] [-n|--num=<num>]
 
 OPTIONS
-  -t --env         The environment to apply / run, or the menu index number.
-  -n --num         The index of the test to run. (In file order.)
-  -m --make        Use the make / Docker method for the build.
-  -y --build       Skip 'Do you want to build this test?' and assume YES.
-  -h --help        Print this help.
   -a --autobuild   PIO Build using the MOTHERBOARD environment.
+  -d --default     Restore to defaults before applying configs.
+  -h --help        Print this help.
+  -m --make        Use the make / Docker method for the build.
+  -n --num         The index of the test to run. (In file order.)
+  -r --rebuild     Rebuild previous PIO Build.
+  -s --silent      Silence build output from PlatformIO.
+  -t --env         The environment to apply / run, or the menu index number.
   -u --autoupload  PIO Upload using the MOTHERBOARD environment.
   -v --verbose     Extra output for debugging.
-  -s --silent      Silence build output from PlatformIO.
-  -d --default     Restore to defaults before applying configs.
+  -y --build       Skip 'Do you want to build this test?' and assume YES.
 
 env shortcuts: tree due esp lin lp8|lpc8 lp9|lpc9 m128 m256|mega stm|f1 f4 f7 s6 teensy|t31|t32 t35|t36 t40|t41
 "
@@ -56,7 +57,7 @@ TESTENV='-'
 CHOICE=0
 DEBUG=0
 
-while getopts 'abdhmrsuvyn:t:-:' OFLAG; do
+while getopts 'adhmn:rst:uvy-:' OFLAG; do
   case "${OFLAG}" in
     a) AUTO_BUILD=1 ; bugout "Auto-Build target..." ;;
     d) DL_DEFAULTS=1 ; bugout "Restore to defaults..." ;;
@@ -195,7 +196,7 @@ if ((AUTO_BUILD)); then
       fi
     else
       echo "Detected \"$BDESC\" | $MB ($BNUM)."
-      [[ $CHOICE > $ECOUNT ]] && { echo "Environment selection out of range." ; exit 1 ; }
+      [[ $CHOICE > $ECOUNT ]] && { echo "Environment selection out of range." ; exit 66 ; }
     fi
     TARGET="${ENVS[$CHOICE-1]}"
     if [[ $MB == 'SIMULATED' && $TARGET == 'linux_native' ]]; then

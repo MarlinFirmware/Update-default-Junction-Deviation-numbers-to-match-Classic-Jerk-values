@@ -472,6 +472,7 @@
 #define BOARD_MELLOW_FLY_E3_V2        5250  // Mellow Fly E3 V2 (STM32F407VG)
 #define BOARD_BLACKBEEZMINI_V1        5251  // BlackBeezMini V1 (STM32F401CCU6)
 #define BOARD_XTLW_CLIMBER_8TH        5252  // XTLW Climber-8th (STM32F407VGT6)
+#define BOARD_FLY_RRF_E3_V1           5253  // Fly RRF E3 V1.0 (STM32F407VG)
 
 //
 // Other ARM Cortex-M4

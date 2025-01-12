@@ -138,7 +138,7 @@ void menu_advanced_settings();
     #if HAS_BED_PROBE && !HAS_DELTA_SENSORLESS_PROBING
       __STOP_ITEM(GET_TEXT_F(MSG_Z_PROBE), Z_MIN_PROBE);
     #endif
-    #if ENABLED(FILAMENT_RUNOUT_SENSOR)
+    #if HAS_FILAMENT_SENSOR
       REPEAT_1(NUM_RUNOUT_SENSORS, FIL_ITEM)
     #endif
 

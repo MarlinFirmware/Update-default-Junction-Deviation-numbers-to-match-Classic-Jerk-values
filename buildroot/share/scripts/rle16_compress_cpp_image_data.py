@@ -5,8 +5,7 @@
 #
 # Usage: rle16_compress_cpp_image_data.py INPUT_FILE.cpp OUTPUT_FILE.cpp
 #
-import sys, struct
-import re
+import sys, struct, re
 
 def addCompressedData(input_file, output_file):
     ofile = open(output_file, 'wt')

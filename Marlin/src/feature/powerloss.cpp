@@ -28,8 +28,9 @@
 
 #if ENABLED(POWER_LOSS_RECOVERY)
 
+#include "../inc/MarlinConfig.h"
+
 #include "powerloss.h"
-#include "../core/macros.h"
 
 #if ENABLED(EXTENSIBLE_UI)
   #include "../lcd/extui/ui_api.h"
@@ -60,7 +61,6 @@ uint32_t PrintJobRecovery::cmd_sdpos, // = 0
 #include "../module/planner.h"
 #include "../module/printcounter.h"
 #include "../module/temperature.h"
-#include "../core/serial.h"
 
 #if HOMING_Z_WITH_PROBE
   #include "../module/probe.h"

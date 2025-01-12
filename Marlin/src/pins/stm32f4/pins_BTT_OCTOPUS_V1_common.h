@@ -531,13 +531,13 @@
   /**
    *                      -------
    *            GND | 9  |       | 8 | 3.3V
-   *  (ESP-CS) PB12 | 10 |       | 7 | PB15 (ESP-MOSI)
-   *           3.3V | 11 |       | 6 | PB14 (ESP-MISO)
+   *  (ESP-CS) PB12 | 10 |       | 7 | PC3  (ESP-MOSI)
+   *             -- | 11 |       | 6 | PC2  (ESP-MISO)
    * (ESP-IO0)  PD7 | 12 |       | 5 | PB13 (ESP-CLK)
    * (ESP-IO4) PD10 | 13 |       | 4 | --
-   *             -- | 14 |       | 3 | PE15 (ESP-EN)
+   *             -- | 14 |       | 3 | PG8  (ESP-EN)
    *  (ESP-RX)  PD8 | 15 |       | 2 | --
-   *  (ESP-TX)  PD9 | 16 |       | 1 | PE14 (ESP-RST)
+   *  (ESP-TX)  PD9 | 16 |       | 1 | PG7  (ESP-RST)
    *                      -------
    *                       WIFI
    */

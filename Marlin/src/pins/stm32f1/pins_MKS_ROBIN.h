@@ -232,7 +232,7 @@
 #endif
 
 //
-// Trinamic TMC2208/2209 UART
+// Trinamic TMC2208/TMC2209 UART
 //
 #if HAS_TMC_UART
   /**

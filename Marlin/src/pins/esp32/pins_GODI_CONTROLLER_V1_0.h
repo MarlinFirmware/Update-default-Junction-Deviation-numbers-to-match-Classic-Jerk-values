@@ -96,7 +96,7 @@
 
 #if HAS_TMC_UART
   //
-  // TMC2209 stepper drivers
+  // TMC2208/TMC2209 stepper drivers
   //
 
   //

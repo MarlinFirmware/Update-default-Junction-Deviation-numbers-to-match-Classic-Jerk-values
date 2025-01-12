@@ -136,7 +136,7 @@
 
 #if HAS_TMC_UART
   /**
-   * TMC2209 stepper drivers
+   * TMC2208/TMC2209 stepper drivers
    * Hardware serial communication ports.
    */
   #define X_HARDWARE_SERIAL  MSerial4

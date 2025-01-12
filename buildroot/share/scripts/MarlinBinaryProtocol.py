@@ -2,14 +2,9 @@
 # MarlinBinaryProtocol.py
 # Supporting Firmware upload via USB/Serial, saving to the attached media.
 #
-import serial
-import math
-import time
+import serial, math, time, threading, sys, datetime, random
 from collections import deque
-import threading
-import sys
-import datetime
-import random
+
 try:
     import heatshrink2 as heatshrink
     heatshrink_exists = True

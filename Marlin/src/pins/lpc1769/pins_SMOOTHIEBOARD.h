@@ -26,6 +26,7 @@
  * See https://smoothieware.github.io/Webif-pack/documentation/web/html/smoothieboard.html
  */
 
+#define ALLOW_LPC1768_OR_9
 #include "env_validate.h"
 
 #define BOARD_INFO_NAME   "Smoothieboard"

@@ -346,7 +346,7 @@ enum AxisEnum : uint8_t {
 #define LOOP_DISTINCT_E(VAR) for (uint8_t VAR = 0; VAR < DISTINCT_E; ++VAR)
 
 //
-// feedRate_t is just a humble float
+// feedRate_t is just a humble float that can represent mm/s or mm/min
 //
 typedef float feedRate_t;
 

@@ -4,8 +4,7 @@
 # Author: Taylor Talkington
 # License: GPL
 
-import bdflib.reader
-import math
+import bdflib.reader, math
 
 def glyph_bits(size_x, size_y, font, glyph_ord):
     asc = font[b'FONT_ASCENT']

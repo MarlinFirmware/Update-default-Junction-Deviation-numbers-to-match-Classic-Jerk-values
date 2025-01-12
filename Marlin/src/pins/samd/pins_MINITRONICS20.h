@@ -22,7 +22,9 @@
 #pragma once
 
 /**
- * ReprapWorld's Minitronics v2.0
+ * ReprapWorld Minitronics v2.0
+ * https://reprap.org/wiki/Minitronics_20
+ * 48MHz Atmel SAMD21J18 ARM Cortex-M0+
  */
 
 #if NOT_TARGET(__SAMD21__)
@@ -123,6 +125,11 @@
 
   #define FIL_RUNOUT2_PIN                     14
 
+#endif
+
+// Verify that drivers match the hardware
+#if (HAS_X_AXIS && !AXIS_DRIVER_TYPE_X(DRV8825)) || (HAS_Y_AXIS && !AXIS_DRIVER_TYPE_Y(DRV8825)) || (HAS_Z_AXIS && !AXIS_DRIVER_TYPE_Z(DRV8825)) || (HAS_EXTRUDER && !AXIS_DRIVER_TYPE_E0(DRV8825))
+  #error "Minitronics v2.0 has hard-wired DRV8825 drivers. Comment out this line to continue."
 #endif
 
 //

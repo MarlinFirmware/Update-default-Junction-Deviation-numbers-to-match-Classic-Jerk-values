@@ -2,21 +2,22 @@
 #
 # Usage:
 #
-#  build_all_examples [-b|--branch=<branch>] - Branch to fetch from Configurations repo (import-2.1.x)
+#  build_all_examples [-a|--archive]         - Copy the binary to the export location
 #                     [-B|--base]            - Base path of configurations, overriding -b
+#                     [-b|--branch=<branch>] - Branch to fetch from Configurations repo (import-2.1.x)
 #                     [-c|--continue]        - Continue the paused build
-#                     [-p|--purge]           - Purge the status file and start over
-#                     [-s|--skip]            - Continue the paused build, skipping one
-#                     [-r|--resume=<path>]   - Start at some config in the filesystem order
-#                     [-l|--limit=#]         - Limit the number of builds in this run
-#                     [-d|--debug]           - Print extra debug output (after)
-#                     [-n|--nobuild]         - Don't actually build anything
+#                     [-d|-v|--debug]        - Print extra debug output (after)
+#                     [-e|--export=N]        - Set CONFIG_EXPORT and export to the export location
 #                     [-f|--nofail]          - Don't stop on a failed build
-#                     [-e|--export=N]        - Set CONFIG_EXPORT and export into each config folder
-#                     [-a|--archive]         - Copy the binary to the export location
+#                     [-h|--help]            - Print usage and exit
+#                     [-l|--limit=#]         - Limit the number of builds in this run
+#                     [-m|--many]            - Build all the environments for each example
+#                     [-n|--nobuild]         - Don't actually build anything
 #                     [-o|--output]          - Redirect export / archiving to another location
 #                                              (By default export to origin config folders)
-#                     [-h|--help]            - Print usage and exit
+#                     [-p|--purge]           - Purge the status file and start over
+#                     [-r|--resume=<path>]   - Start at some config in the filesystem order
+#                     [-s|--skip]            - Continue the paused build, skipping one
 #
 
 HERE=`dirname $0`
@@ -29,21 +30,22 @@ STAT_FILE=./.pio/.buildall
 
 usage() { echo "Usage:
 
-build_all_examples [-b|--branch=<branch>] - Branch to fetch from Configurations repo (import-2.1.x)
+build_all_examples [-a|--archive]         - Copy the binary to the export location
                    [-B|--base]            - Base path of configurations, overriding -b
+                   [-b|--branch=<branch>] - Branch to fetch from Configurations repo (import-2.1.x)
                    [-c|--continue]        - Continue the paused build
-                   [-p|--purge]           - Purge the status file and start over
-                   [-s|--skip]            - Continue the paused build, skipping one
-                   [-r|--resume=<path>]   - Start at some config in the filesystem order
+                   [-d|-v|--debug]        - Print extra debug output (after)
                    [-e|--export=N]        - Set CONFIG_EXPORT and export to the export location
-                   [-a|--archive]         - Copy the binary to the export location
-                   [-o|--output]          - Redirect export / archiving to another location
-                                            (By default export to origin config folders)
-                   [-d|--debug]           - Print extra debug output (after)
-                   [-l|--limit=#]         - Limit the number of builds in this run
-                   [-n|--nobuild]         - Don't actually build anything
                    [-f|--nofail]          - Don't stop on a failed build
                    [-h|--help]            - Print usage and exit
+                   [-l|--limit=#]         - Limit the number of builds in this run
+                   [-m|--many]            - Build all the environments for each example
+                   [-n|--nobuild]         - Don't actually build anything
+                   [-o|--output]          - Redirect export / archiving to another location
+                                            (By default export to origin config folders)
+                   [-p|--purge]           - Purge the status file and start over
+                   [-r|--resume=<path>]   - Start at some config in the filesystem order
+                   [-s|--skip]            - Continue the paused build, skipping one
 "
 }
 
@@ -53,27 +55,29 @@ unset FIRST_CONF
 EXIT_USAGE=
 LIMIT=1000
 
-while getopts 'aB:b:ce:fdhl:no:pr:sv-:' OFLAG; do
+while getopts 'aB:b:cde:fhl:mno:pr:sv-:' OFLAG; do
   case "${OFLAG}" in
     a) ARCHIVE=1                ; bugout "Archiving" ;;
     B) CBASE=${OPTARG%/}        ; bugout "Base: $CBASE" ;;
     b) BRANCH=$OPTARG           ; bugout "Branch: $BRANCH" ;;
-    f) NOFAIL=1                 ; bugout "Continue on Fail" ;;
-    r) ISRES=1 ; FIRST_CONF=$OPTARG ; bugout "Resume: $FIRST_CONF" ;;
     c) CONTINUE=1               ; bugout "Continue" ;;
-    s) CONTSKIP=1               ; bugout "Continue, skipping" ;;
+  d|v) DEBUG=1                  ; bugout "Debug ON" ;;
     e) CEXPORT=$OPTARG          ; bugout "Export $CEXPORT" ;;
-    o) OUTBASE="${OPTARG%/}"    ; bugout "Archive to $OUTBASE" ;;
+    f) NOFAIL=1                 ; bugout "Continue on Fail" ;;
     h) EXIT_USAGE=1 ; break ;;
     l) LIMIT=$OPTARG            ; bugout "Limit to $LIMIT build(s)" ;;
-  d|v) DEBUG=1                  ; bugout "Debug ON" ;;
+    m) MANY=1                   ; bugout "Many Envs" ;;
     n) DRYRUN=1                 ; bugout "Dry Run" ;;
+    o) OUTBASE="${OPTARG%/}"    ; bugout "Archive to $OUTBASE" ;;
     p) PURGE=1                  ; bugout "Purge stat file" ;;
+    r) ISRES=1 ; FIRST_CONF=$OPTARG ; bugout "Resume: $FIRST_CONF" ;;
+    s) CONTSKIP=1               ; bugout "Continue, skipping" ;;
     -) ONAM="${OPTARG%%=*}" ; OVAL="${OPTARG#*=}"
        case "$ONAM" in
       archive) ARCHIVE=1        ; bugout "Archiving" ;;
          base) CBASE=${OVAL%/}  ; bugout "Base: $CBASE" ;;
        branch) BRANCH=$OVAL     ; bugout "Branch: $BRANCH" ;;
+         many) MANY=1           ; bugout "Many Envs" ;;
        nofail) NOFAIL=1         ; bugout "Continue on Fail" ;;
        resume) ISRES=1 ; FIRST_CONF=$OVAL ; bugout "Resume: $FIRST_CONF" ;;
      continue) CONTINUE=1       ; bugout "Continue" ;;
@@ -178,6 +182,9 @@ find -ds "$CBASE"/config/examples -type d -name 'Configuration.h' -o -name 'Conf
 
   # Exporting? Add -e argument
   ((CEXPORT)) && CARGS+=("-e" "$CEXPORT")
+
+  # Build many environments? Add -m argument
+  ((MANY)) && CARGS+=("-m")
 
   # Continue on fail? Add -f argument
   ((NOFAIL)) && CARGS+=("-f")

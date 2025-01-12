@@ -33,7 +33,7 @@
   #define FLASH_EEPROM_EMULATION
   //#define I2C_EEPROM
 #endif
-//#define E2END                            0xFFF  // 4K
+#define MARLIN_EEPROM_SIZE 0x1000                 // 4K
 
 #define HAL_TIMER_RATE                     F_CPU
 

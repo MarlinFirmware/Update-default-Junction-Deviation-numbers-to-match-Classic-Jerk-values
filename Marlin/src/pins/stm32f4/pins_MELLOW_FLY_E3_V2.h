@@ -21,9 +21,7 @@
  */
 #pragma once
 
-#if NOT_TARGET(STM32F4)
-  #error "Oops! Select an STM32F4 board in 'Tools > Board.'"
-#endif
+#include "env_validate.h"
 
 #ifndef BOARD_INFO_NAME
   #define BOARD_INFO_NAME "Mellow Fly E3 V2"

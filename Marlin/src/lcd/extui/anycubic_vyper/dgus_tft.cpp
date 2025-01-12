@@ -45,6 +45,10 @@
   #include "../../../feature/powerloss.h"
 #endif
 
+#if HAS_FILAMENT_SENSOR
+  #include "../../../feature/runout.h"
+#endif
+
 #define DEBUG_OUT ACDEBUGLEVEL
 #include "../../../core/debug_out.h"
 
@@ -438,7 +442,7 @@ namespace Anycubic {
     }
   }
 
-  #if ENABLED(FILAMENT_RUNOUT_SENSOR)
+  #if HAS_FILAMENT_SENSOR
 
     void DgusTFT::filamentRunout() {
       #if ACDEBUG(AC_MARLIN)
@@ -453,7 +457,7 @@ namespace Anycubic {
 
       pop_up_index = 15;  // show filament lack.
 
-      if (READ(FIL_RUNOUT_PIN) == FIL_RUNOUT_STATE) {
+      if (FILAMENT_IS_OUT()) {
         playTune(FilamentOut);
 
         feedrate_back = getFeedrate_percent();
@@ -466,7 +470,7 @@ namespace Anycubic {
       }
     }
 
-  #endif // FILAMENT_RUNOUT_SENSOR
+  #endif // HAS_FILAMENT_SENSOR
 
   void DgusTFT::confirmationRequest(const char * const msg) {
     // M108 continue
@@ -598,7 +602,7 @@ namespace Anycubic {
           printer_state = AC_printer_stopping_from_media_remove;
         }
         else {
-          #if ENABLED(FILAMENT_RUNOUT_SENSOR)
+          #if HAS_FILAMENT_SENSOR
             #if ACDEBUG(AC_MARLIN)
               DEBUG_ECHOLNPGM("setFilamentRunoutState: ", __LINE__);
             #endif
