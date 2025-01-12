@@ -1,3 +1,25 @@
+/**
+ * Marlin 3D Printer Firmware
+ * Copyright (c) 2025 MarlinFirmware [https://github.com/MarlinFirmware/Marlin]
+ *
+ * Based on Sprinter and grbl.
+ * Copyright (c) 2011 Camiel Gubbels / Erik van der Zalm
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ *
+ */
+
 /***************************************************************
  *
  * ADXL345 3-AXIS ACCELEROMETER ON SPI BUS
@@ -8,7 +30,7 @@
 
 #include "../../inc/MarlinConfig.h"
 
-#if ENABLED(HAS_ADXL345_ACCELEROMETER)
+#if ENABLED(ACCELEROMETER_ADXL345)
 
 #include "acc_ADXL345.h"
 
@@ -65,21 +87,21 @@ void ADXL345::readRegister(uint8_t registerAddress, int numBytes, uint8_t * buff
   delayMicroseconds(5);          // allow 5us for the FIFO/registers to update (see datasheet)
 }
 
-// get a acceleration measurement for the X, Y and Z axis
+// get an acceleration measurement for the X, Y and Z axis
 void ADXL345::readMeasurementXYZ(ADXL345_measurementXYZ_t *acceleration) {
   readRegister(ADXL345_DATA_X0_REG, 6, (uint8_t*)acceleration);
 }
 
-// get a acceleration measurement for the X axis
+// get an acceleration measurement for the X axis
 void ADXL345::readMeasurementX(ADXL345_measurement_t *acceleration) {
   readRegister(ADXL345_DATA_X0_REG, 2, (uint8_t*)acceleration);
 }
 
-// get a acceleration measurement for the Y axis
+// get an acceleration measurement for the Y axis
 void ADXL345::readMeasurementY(ADXL345_measurement_t *acceleration) {
   readRegister(ADXL345_DATA_Y0_REG, 2, (uint8_t*)acceleration);
 }
-// get a acceleration measurement for the Z axis
+// get an acceleration measurement for the Z axis
 void ADXL345::readMeasurementZ(ADXL345_measurement_t *acceleration) {
   readRegister(ADXL345_DATA_Z0_REG, 2, (uint8_t*)acceleration);
 }
@@ -88,4 +110,4 @@ void ADXL345::setDataRate(uint8_t dataRate) { // 0->0.1Hz ... 15->3200Hz
   writeRegister(ADXL345_DATA_FORMAT_REG, dataRate & 0xF);
 }
 
-#endif // HAS_ADXL345_ACCELEROMETER
+#endif // ACCELEROMETER_ADXL345

@@ -34,7 +34,7 @@
 #include "HAL/shared/esp_wifi.h"
 #include "HAL/shared/cpu_exception/exception_hook.h"
 
-#if ENABLED(HAS_ADXL345_ACCELEROMETER)
+#if ENABLED(ACCELEROMETER_ADXL345)
   #include "feature/accelerometer/acc_adxl345.h"
 #endif
 
@@ -1240,8 +1240,9 @@ void setup() {
 
   SETUP_RUN(hal.init());
 
-  #if ENABLED(HAS_ADXL345_ACCELEROMETER)
-    adxl345.begin();
+  // Accelerometer quick initialization
+  #if ENABLED(ACCELEROMETER_ADXL345)
+    SETUP_RUN(adxl345.begin());
   #endif
 
   // Init and disable SPI thermocouples; this is still needed

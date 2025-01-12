@@ -1227,8 +1227,12 @@
 #endif
 
 // @section accelerometer
-// Enable support for the ADXL345 accelerometer
-//#define HAS_ADXL345_ACCELEROMETER
+
+/**
+ * Enable support for the ADXL345 accelerometer over SPI
+ */
+//#define ACCELEROMETER_ADXL345
+
 // @section motion
 
 #define AXIS_RELATIVE_MODES { false, false, false, false }
