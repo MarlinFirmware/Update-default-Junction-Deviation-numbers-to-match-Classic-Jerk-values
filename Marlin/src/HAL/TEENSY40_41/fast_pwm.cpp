@@ -1,6 +1,6 @@
 /**
  * Marlin 3D Printer Firmware
- * Copyright (c) 2024 MarlinFirmware [https://github.com/MarlinFirmware/Marlin]
+ * Copyright (c) 2025 MarlinFirmware [https://github.com/MarlinFirmware/Marlin]
  *
  * Based on Sprinter and grbl.
  * Copyright (c) 2011 Camiel Gubbels / Erik van der Zalm
@@ -29,12 +29,9 @@
 void MarlinHAL::set_pwm_duty(const pin_t pin, const uint16_t v, const uint16_t v_size /*=255*/, const bool invert) {
 
   uint32_t bits = 1;
-  uint16_t value = v;
+  uint16_t value = _MIN(v, v_size);
 
-  if (v > v_size) {
-    value = v_size;
-  }
-  value = invert ? v_size - value : value;
+  if (invert) value = v_size - value;
 
   // Choose scale as smallest power of 2 which holds v_size.
   uint32_t scale = 1;
