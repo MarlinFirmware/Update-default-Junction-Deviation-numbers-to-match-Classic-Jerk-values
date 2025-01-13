@@ -287,7 +287,7 @@ constexpr ena_mask_t enable_overlap[] = {
 #endif
 
 #if ENABLED(FREEZE_FEATURE)
-  typedef enum FreezePhase : uint8_t {
+  enum FreezePhase : uint8_t {
     FREEZE_STATIONARY,
     FREEZE_ACCELERATION,
     FREEZE_DECELERATION,
