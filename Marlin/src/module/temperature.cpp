@@ -2361,7 +2361,7 @@ void Temperature::task() {
       if (cooler.check_flow_too_low()) {
         TERN_(HAS_DISPLAY, if (cutter.enabled()) ui.flow_fault());
         cutter.disable();
-        cutter.cutter_mode = CUTTER_MODE_ERROR;   // Immediately kill stepper inline power output
+        cutter.cutter_mode = CUTTER_MODE_ERROR;   // Immediately kill inline power output of cutter
       }
     #endif
   #endif
