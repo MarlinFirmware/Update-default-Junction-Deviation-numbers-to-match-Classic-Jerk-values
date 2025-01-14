@@ -28,7 +28,6 @@
 #define MIN_FILE_PRINTED   100 //5000
 
 void printer_state_polling();
-void filament_pin_setup();
 void filament_check();
 
 #ifdef __cplusplus
