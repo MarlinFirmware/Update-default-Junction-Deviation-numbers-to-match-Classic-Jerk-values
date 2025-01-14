@@ -231,14 +231,26 @@ public:
     #if PIN_EXISTS(SPINDLE_LASER_ENA)
       WRITE(SPINDLE_LASER_ENA_PIN, enable ? SPINDLE_LASER_ACTIVE_STATE : !SPINDLE_LASER_ACTIVE_STATE);
     #endif
-    enable_state = enable;
+    if (enable_state != enable) {
+      power_delay(enable);
+      enable_state = enable;
+    }
   }
 
   static void disable() { isReadyForUI = false; set_enabled(false); }
 
   // Wait for spindle/laser to startup or shutdown
   static void power_delay(const bool on) {
-    safe_delay(on ? SPINDLE_LASER_POWERUP_DELAY : SPINDLE_LASER_POWERDOWN_DELAY);
+    #if ENABLED(SPINDLE_FEATURE)
+      if (active_tool_type == TYPE_SPINDLE) {
+        safe_delay(on ? SPINDLE_LASER_POWERUP_DELAY : SPINDLE_LASER_POWERDOWN_DELAY);
+      }
+    #endif
+    #if ENABLED(LASER_FEATURE)
+      if (active_tool_type == TYPE_LASER) {
+        safe_delay(on ? LASER_POWERUP_DELAY : LASER_POWERDOWN_DELAY);
+      }
+    #endif
   }
 
   #if ENABLED(SPINDLE_CHANGE_DIR)

@@ -1264,7 +1264,6 @@ void tool_change(const uint8_t new_tool, bool no_move/*=false*/) {
           cutter.inline_power(cutter.power);
         #endif
         cutter.set_enabled(false);
-        TERN_(SPINDLE_FEATURE, safe_delay(1000));
       #endif
 
       #if ENABLED(COOLANT_MIST)
@@ -1474,9 +1473,6 @@ void tool_change(const uint8_t new_tool, bool no_move/*=false*/) {
               }
             #endif
             cutter.set_enabled(true);
-            if (TERN0(SPINDLE_FEATURE, cutter.active_tool_type = TYPE_SPINDLE)) {
-             safe_delay(1000);
-            }
           }
       #endif
 
