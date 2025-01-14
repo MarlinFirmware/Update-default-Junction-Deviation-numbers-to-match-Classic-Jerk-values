@@ -1289,10 +1289,8 @@ void do_blocking_move_to(const xyze_pos_t &raw, const_feedRate_t fr_mm_s/*=0.0f*
    *  - If lowering is not allowed then skip a downward move
    *  - Execute the move at the probing (or homing) feedrate
    */
-  void do_z_clearance(const_float_t zclear, const bool with_probe/*=true*/, const bool lower_allowed/*=false*/) {
-    UNUSED(with_probe);
+  void do_z_clearance(const_float_t zclear, const bool lower_allowed/*=false*/) {
     float zdest = zclear;
-    TERN_(HAS_BED_PROBE, if (with_probe && probe.offset.z < 0) zdest -= probe.offset.z);
     NOMORE(zdest, Z_MAX_POS);
     if (DEBUGGING(LEVELING)) DEBUG_ECHOLNPGM("do_z_clearance(", zclear, " [", current_position.z, " to ", zdest, "], ", lower_allowed, ")");
     if ((!lower_allowed && zdest < current_position.z) || zdest == current_position.z) return;
@@ -1300,7 +1298,7 @@ void do_blocking_move_to(const xyze_pos_t &raw, const_feedRate_t fr_mm_s/*=0.0f*
   }
   void do_z_clearance_by(const_float_t zclear) {
     if (DEBUGGING(LEVELING)) DEBUG_ECHOLNPGM("do_z_clearance_by(", zclear, ")");
-    do_z_clearance(current_position.z + zclear, false);
+    do_z_clearance(current_position.z + zclear);
   }
   /**
    * Move Z to Z_POST_CLEARANCE,
@@ -1309,7 +1307,7 @@ void do_blocking_move_to(const xyze_pos_t &raw, const_feedRate_t fr_mm_s/*=0.0f*
   void do_move_after_z_homing() {
     DEBUG_SECTION(mzah, "do_move_after_z_homing", DEBUGGING(LEVELING));
     #ifdef Z_POST_CLEARANCE
-      do_z_clearance(Z_POST_CLEARANCE, true, true);
+      do_z_clearance(Z_POST_CLEARANCE, true);
     #elif ENABLED(USE_PROBE_FOR_Z_HOMING)
       probe.move_z_after_probing();
     #endif
