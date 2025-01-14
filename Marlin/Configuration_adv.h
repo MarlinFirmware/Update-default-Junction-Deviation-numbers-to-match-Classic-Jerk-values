@@ -1216,7 +1216,7 @@
   //#define SHAPING_MAX_STEPRATE 10000  // By default the maximum total step rate of the shaped axes. Override to affect SRAM usage.
   //#define SHAPING_MENU                // Add a menu to the LCD to set shaping parameters.
   #if ENABLED(SHAPING_MENU)
-    //#define EDIT_SHAPING_FREQ_INT     // Edit shaping frequencies as integers instead of floats.
+    //#define EDIT_SHAPING_FREQ_INT     // Edit shaping frequencies with whole increments.
   #endif
 #endif
 
