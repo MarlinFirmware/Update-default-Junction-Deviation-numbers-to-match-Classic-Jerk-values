@@ -51,16 +51,9 @@
    */
 
   #define X_SERIAL_TX_PIN                   PC1
-  #define X_SERIAL_RX_PIN                   PC1
-
   #define Y_SERIAL_TX_PIN                   PC0
-  #define Y_SERIAL_RX_PIN                   PC0
-
   #define Z_SERIAL_TX_PIN                   PA15
-  #define Z_SERIAL_RX_PIN                   PA15
-
   #define E0_SERIAL_TX_PIN                  PC14
-  #define E0_SERIAL_RX_PIN                  PC14
 
   // Default TMC slave addresses
   #ifndef X_SLAVE_ADDRESS

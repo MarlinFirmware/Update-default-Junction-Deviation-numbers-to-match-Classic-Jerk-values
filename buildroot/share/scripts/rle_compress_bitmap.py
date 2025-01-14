@@ -6,8 +6,7 @@
 #
 # Usage: rle_compress_bitmap.py INPUT_FILE OUTPUT_FILE
 #
-import sys, struct
-import re
+import sys, struct, re
 
 def addCompressedData(input_file, output_file):
     input_lines = input_file.readlines()

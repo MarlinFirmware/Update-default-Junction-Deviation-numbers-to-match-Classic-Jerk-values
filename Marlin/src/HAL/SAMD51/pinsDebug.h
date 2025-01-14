@@ -22,40 +22,56 @@
 #pragma once
 
 /**
- * SAMD51 HAL developed by Giuliano Zaro (AKA GMagician)
+ * Pins Debugging for SAMD51
+ *
+ *   - NUMBER_PINS_TOTAL
+ *   - MULTI_NAME_PAD
+ *   - getPinByIndex(index)
+ *   - printPinNameByIndex(index)
+ *   - getPinIsDigitalByIndex(index)
+ *   - digitalPinToAnalogIndex(pin)
+ *   - getValidPinMode(pin)
+ *   - isValidPin(pin)
+ *   - isAnalogPin(pin)
+ *   - digitalRead_mod(pin)
+ *   - pwm_status(pin)
+ *   - printPinPWM(pin)
+ *   - printPinPort(pin)
+ *   - printPinNumber(pin)
+ *   - printPinAnalog(pin)
  */
 
 #define NUMBER_PINS_TOTAL PINS_COUNT
 
-#define digitalRead_mod(p) extDigitalRead(p)
-#define PRINT_PORT(p) do{ SERIAL_ECHOPGM("  Port: "); sprintf_P(buffer, PSTR("%c%02ld"), 'A' + g_APinDescription[p].ulPort, g_APinDescription[p].ulPin); SERIAL_ECHO(buffer); }while (0)
-#define PRINT_ARRAY_NAME(x) do{ sprintf_P(buffer, PSTR("%-" STRINGIFY(MAX_NAME_LENGTH) "s"), pin_array[x].name); SERIAL_ECHO(buffer); }while(0)
-#define PRINT_PIN(p) do{ sprintf_P(buffer, PSTR("%3d "), p); SERIAL_ECHO(buffer); }while(0)
-#define PRINT_PIN_ANALOG(p) do{ sprintf_P(buffer, PSTR(" (A%2d)  "), DIGITAL_PIN_TO_ANALOG_PIN(pin)); SERIAL_ECHO(buffer); }while(0)
-#define GET_ARRAY_PIN(p) pin_array[p].pin
-#define GET_ARRAY_IS_DIGITAL(p) pin_array[p].is_digital
-#define VALID_PIN(pin) (pin >= 0 && pin < int8_t(NUMBER_PINS_TOTAL))
-#define DIGITAL_PIN_TO_ANALOG_PIN(p) digitalPinToAnalogInput(p)
-#define IS_ANALOG(P) (DIGITAL_PIN_TO_ANALOG_PIN(P)!=-1)
-#define pwm_status(pin) digitalPinHasPWM(pin)
+#define digitalRead_mod(P) extDigitalRead(P)
+#define printPinNameByIndex(x) do{ sprintf_P(buffer, PSTR("%-" STRINGIFY(MAX_NAME_LENGTH) "s"), pin_array[x].name); SERIAL_ECHO(buffer); }while(0)
+#define printPinNumber(P) do{ sprintf_P(buffer, PSTR("%3d "), P); SERIAL_ECHO(buffer); }while(0)
+#define printPinAnalog(P) do{ sprintf_P(buffer, PSTR(" (A%2d)  "), digitalPinToAnalogIndex(P)); SERIAL_ECHO(buffer); }while(0)
+#define getPinByIndex(x) pin_array[x].pin
+#define getPinIsDigitalByIndex(x) pin_array[x].is_digital
+#define isValidPin(P) (P >= 0 && P < pin_t(NUMBER_PINS_TOTAL))
+#define isAnalogPin(P) (digitalPinToAnalogIndex(P) != -1)
+#define pwm_status(P) digitalPinHasPWM(P)
 #define MULTI_NAME_PAD 27 // space needed to be pretty if not first name assigned to a pin
 
 // pins that will cause hang/reset/disconnect in M43 Toggle and Watch utilities
 // uses pin index
 #define M43_NEVER_TOUCH(Q) ((Q) >= 75)
 
-bool GET_PINMODE(int8_t pin) {  // 1: output, 0: input
+bool getValidPinMode(const int8_t pin) {  // 1: output, 0: input
   const EPortType samdport = g_APinDescription[pin].ulPort;
   const uint32_t samdpin = g_APinDescription[pin].ulPin;
   return PORT->Group[samdport].DIR.reg & MASK(samdpin) || (PORT->Group[samdport].PINCFG[samdpin].reg & (PORT_PINCFG_INEN | PORT_PINCFG_PULLEN)) == PORT_PINCFG_PULLEN;
 }
 
-void pwm_details(int32_t pin) {
+void printPinPWM(const int32_t pin) {
   if (pwm_status(pin)) {
     //uint32_t chan = g_APinDescription[pin].ulPWMChannel TODO when fast pwm is operative;
     //SERIAL_ECHOPGM("PWM = ", duty);
   }
 }
+
+void printPinPort(const pin_t) {}
 
 /**
  * AGCM4 Board pin |  PORT  | Label

@@ -60,7 +60,7 @@ constexpr uint8_t DGUS_CMD_WRITEVAR = 0x82;
 constexpr uint8_t DGUS_CMD_READVAR = 0x83;
 
 #if ENABLED(DEBUG_DGUSLCD)
-  bool dguslcd_local_debug; // = false;
+  bool dguslcd_local_debug; // = false
 #endif
 
 void DGUSDisplay::initDisplay() {

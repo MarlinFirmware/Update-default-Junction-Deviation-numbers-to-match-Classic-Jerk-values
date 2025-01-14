@@ -50,7 +50,6 @@
 #include "../../gcode/gcode.h"
 #include "../../module/motion.h"
 #include "../../module/planner.h"
-#include "../../module/probe.h"
 #include "../../module/temperature.h"
 #include "../../module/printcounter.h"
 #include "../../libs/duration_t.h"
@@ -80,6 +79,10 @@
 
 #if ENABLED(BACKLASH_GCODE)
   #include "../../feature/backlash.h"
+#endif
+
+#if HAS_BED_PROBE
+  #include "../../module/probe.h"
 #endif
 
 #if HAS_LEVELING
@@ -290,7 +293,7 @@ namespace ExtUI {
     return GET_TEMP_ADJUSTMENT(thermalManager.degHotend(extruder - E0));
   }
 
-  celsius_float_t getTargetTemp_celsius(const heater_t heater) {
+  celsius_t getTargetTemp_celsius(const heater_t heater) {
     switch (heater) {
       #if HAS_HEATED_BED
         case BED: return GET_TEMP_ADJUSTMENT(thermalManager.degTargetBed());
@@ -302,19 +305,19 @@ namespace ExtUI {
     }
   }
 
-  celsius_float_t getTargetTemp_celsius(const extruder_t extruder) {
+  celsius_t getTargetTemp_celsius(const extruder_t extruder) {
     return GET_TEMP_ADJUSTMENT(thermalManager.degTargetHotend(extruder - E0));
   }
 
   //
   // Fan target/actual speed
   //
-  float getTargetFan_percent(const fan_t fan) {
+  uint8_t getTargetFan_percent(const fan_t fan) {
     UNUSED(fan);
     return TERN0(HAS_FAN, thermalManager.fanSpeedPercent(fan - FAN0));
   }
 
-  float getActualFan_percent(const fan_t fan) {
+  uint8_t getActualFan_percent(const fan_t fan) {
     UNUSED(fan);
     return TERN0(HAS_FAN, thermalManager.scaledFanSpeedPercent(fan - FAN0));
   }
@@ -1000,7 +1003,7 @@ namespace ExtUI {
             feedrate_mm_s = MMM_TO_MMS(Z_PROBE_FEEDRATE_FAST);
             destination.set(current_position.x, current_position.y, Z_CLEARANCE_BETWEEN_PROBES);
             prepare_line_to_destination();
-            feedrate_mm_s = XY_PROBE_FEEDRATE_MM_S;
+            if (XY_PROBE_FEEDRATE_MM_S) feedrate_mm_s = XY_PROBE_FEEDRATE_MM_S;
             destination.set(x_target, y_target);
             prepare_line_to_destination();
           }
@@ -1067,7 +1070,7 @@ namespace ExtUI {
   void injectCommands_P(PGM_P const gcode) { queue.inject_P(gcode); }
   void injectCommands(char * const gcode)  { queue.inject(gcode); }
 
-  bool commandsInQueue() { return (planner.movesplanned() || queue.has_commands_queued()); }
+  bool commandsInQueue() { return (planner.has_blocks_queued() || queue.has_commands_queued()); }
 
   bool isAxisPositionKnown(const axis_t axis) { return axis_is_trusted((AxisEnum)axis); }
   bool isAxisPositionKnown(const extruder_t) { return axis_is_trusted(E_AXIS); }
@@ -1175,10 +1178,10 @@ namespace ExtUI {
   }
 
   bool isPrintingFromMediaPaused() {
-    return TERN0(HAS_MEDIA, IS_SD_PAUSED());
+    return IS_SD_PAUSED();
   }
 
-  bool isPrintingFromMedia() { return TERN0(HAS_MEDIA, IS_SD_PRINTING() || IS_SD_PAUSED()); }
+  bool isPrintingFromMedia() { return IS_SD_PRINTING() || IS_SD_PAUSED(); }
 
   bool isPrinting() {
     return commandsInQueue() || isPrintingFromMedia() || printJobOngoing() || printingIsPaused();
@@ -1186,6 +1189,10 @@ namespace ExtUI {
 
   bool isPrintingPaused() {
     return isPrinting() && (isPrintingFromMediaPaused() || print_job_timer.isPaused());
+  }
+
+  bool isOngoingPrintJob() {
+    return isPrintingFromMedia() || printJobOngoing();
   }
 
   bool isMediaMounted() { return TERN0(HAS_MEDIA, card.isMounted()); }
@@ -1219,7 +1226,7 @@ namespace ExtUI {
   void onSurviveInKilled() {
     thermalManager.disable_all_heaters();
     flags.printer_killed = 0;
-    marlin_state = MF_RUNNING;
+    marlin_state = MarlinState::MF_RUNNING;
     //SERIAL_ECHOLNPGM("survived at: ", millis());
   }
 

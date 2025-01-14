@@ -8,7 +8,7 @@ set -e
 
 restore_configs
 opt_set MOTHERBOARD BOARD_AQUILA_V101 SERIAL_PORT 1
-opt_enable EEPROM_SETTINGS SDSUPPORT EMERGENCY_PARSER
+opt_enable EEPROM_SETTINGS SDSUPPORT EMERGENCY_PARSER PINS_DEBUGGING
 exec_test $1 $2 "Default Configuration with Fallback SD EEPROM" "$3"
 
 # cleanup

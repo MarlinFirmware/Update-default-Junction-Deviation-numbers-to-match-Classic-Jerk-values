@@ -173,7 +173,6 @@
     #define E2_CS_PIN                EXP1_06_PIN
     #if HAS_TMC_UART
       #define E2_SERIAL_TX_PIN       EXP1_06_PIN
-      #define E2_SERIAL_RX_PIN  E2_SERIAL_TX_PIN
     #endif
   #endif
 
@@ -186,7 +185,6 @@
     #define E3_CS_PIN                EXP1_04_PIN
     #if HAS_TMC_UART
       #define E3_SERIAL_TX_PIN       EXP1_04_PIN
-      #define E3_SERIAL_RX_PIN  E3_SERIAL_TX_PIN
     #endif
   #else
     #define E3_ENABLE_PIN            EXP2_07_PIN
@@ -201,7 +199,6 @@
     #define E4_CS_PIN                EXP1_02_PIN
     #if HAS_TMC_UART
       #define E4_SERIAL_TX_PIN       EXP1_02_PIN
-      #define E4_SERIAL_RX_PIN  E4_SERIAL_TX_PIN
     #endif
   #else
     #define E4_ENABLE_PIN            EXP2_07_PIN

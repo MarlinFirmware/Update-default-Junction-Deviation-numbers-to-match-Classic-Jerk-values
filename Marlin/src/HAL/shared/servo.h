@@ -82,13 +82,15 @@
   #include "../STM32/Servo.h"
 #elif defined(ARDUINO_ARCH_ESP32)
   #include "../ESP32/Servo.h"
+#elif defined(__PLAT_RP2040__)
+ #include "../RP2040/Servo.h"
 #else
   #include <stdint.h>
 
-  #if defined(__AVR__) || defined(ARDUINO_ARCH_SAM) || defined(__SAMD51__) || defined(__SAMD21__)
+  #if defined(__AVR__) || defined(ARDUINO_ARCH_SAM) || defined(__SAMD51__) || defined(__SAMD21__) || defined(__PLAT_RP2040__)
     // we're good to go
   #else
-    #error "This library only supports boards with an AVR, SAM3X, SAMD21 or SAMD51 processor."
+    #error "This library only supports boards with an AVR, SAM3X, SAMD21, SAMD51, or RP2040 processor."
   #endif
 
   #define Servo_VERSION           2     // software version of this library

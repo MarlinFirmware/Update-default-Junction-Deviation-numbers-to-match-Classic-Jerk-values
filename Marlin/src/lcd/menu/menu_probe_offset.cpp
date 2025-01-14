@@ -59,7 +59,7 @@ void probe_offset_wizard_menu() {
     STATIC_ITEM(MSG_MOVE_NOZZLE_TO_BED, SS_CENTER|SS_INVERT);
 
   STATIC_ITEM_F(F("Z"), SS_CENTER, ftostr42_52(current_position.z));
-  STATIC_ITEM(MSG_ZPROBE_ZOFFSET, SS_FULL, ftostr42_52(calculated_z_offset));
+  STATIC_ITEM_N(Z_AXIS, MSG_ZPROBE_OFFSET_N, SS_FULL, ftostr42_52(calculated_z_offset));
 
   SUBMENU_S(F("1.0"), MSG_MOVE_N_MM, []{ _goto_manual_move_z( 1.0f); });
   SUBMENU_S(F("0.1"), MSG_MOVE_N_MM, []{ _goto_manual_move_z( 0.1f); });

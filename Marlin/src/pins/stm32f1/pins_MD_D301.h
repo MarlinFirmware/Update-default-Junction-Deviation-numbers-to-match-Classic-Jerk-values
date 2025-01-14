@@ -120,19 +120,10 @@
   // Software serial
   //
   #define X_SERIAL_TX_PIN                   PD6
-  #define X_SERIAL_RX_PIN                   PD6
-
   #define Y_SERIAL_TX_PIN                   PC11
-  #define Y_SERIAL_RX_PIN                   PC11
-
   #define Z_SERIAL_TX_PIN                   PA8
-  #define Z_SERIAL_RX_PIN                   PA8
-
   #define E0_SERIAL_TX_PIN                  PG2
-  #define E0_SERIAL_RX_PIN                  PG2
-
   #define Z2_SERIAL_TX_PIN                  PG6
-  #define Z2_SERIAL_RX_PIN                  PG6
 
   // Reduce baud rate to improve software serial reliability
   #define TMC_BAUD_RATE 19200
@@ -187,9 +178,6 @@
  * to let the bootloader init the screen.
  */
 
-#define DOGLCD_MOSI                         -1    // Prevent auto-define by Conditionals_post.h
-#define DOGLCD_SCK                          -1
-
 //
 // TFT with FSMC interface
 //
@@ -200,16 +188,17 @@
   #define TOUCH_MISO_PIN                    PB4   // SPI2_MISO
   #define TOUCH_INT_PIN                     PB7   // PenIRQ coming from XPT2046
 
-  #define LCD_USE_DMA_FSMC                        // Use DMA transfers to send data to the TFT
-  #define LCD_BACKLIGHT_PIN                 PG10
-  #define TFT_BACKLIGHT_PIN    LCD_BACKLIGHT_PIN
+  #define LCD_USE_DMA_FSMC
   #define FSMC_CS_PIN                       PD7   // FSMC_NE1
   #define FSMC_RS_PIN                       PE2   // A23 Register. Only one address needed
+  #define TFT_CS_PIN                 FSMC_CS_PIN
+  #define TFT_RS_PIN                 FSMC_RS_PIN
+
   #define FSMC_DMA_DEV                      DMA1
   #define FSMC_DMA_CHANNEL               DMA_CH4
 
-  #define TFT_CS_PIN                 FSMC_CS_PIN
-  #define TFT_RS_PIN                 FSMC_RS_PIN
+  #define LCD_BACKLIGHT_PIN                 PG10
+  #define TFT_BACKLIGHT_PIN    LCD_BACKLIGHT_PIN
 
   // Buffer for Color UI
   #define TFT_BUFFER_WORDS                  3200

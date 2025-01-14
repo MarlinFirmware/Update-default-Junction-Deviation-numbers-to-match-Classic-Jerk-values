@@ -32,9 +32,9 @@
 #define Z_MAX_PIN                              2
 
 #if HAS_TMC_UART
-  /**
-   * TMC2208/TMC2209 stepper drivers
-   */
+  //
+  // TMC2208/TMC2209 stepper drivers
+  //
   #define X_SERIAL_TX_PIN                     71
   #define X_SERIAL_RX_PIN                     72
 

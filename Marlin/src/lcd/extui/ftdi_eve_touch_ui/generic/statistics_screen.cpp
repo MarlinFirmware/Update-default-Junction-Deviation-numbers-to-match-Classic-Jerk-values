@@ -44,7 +44,7 @@ void StatisticsScreen::onRedraw(draw_mode_t what) {
        .tag(0)
 
        .font(Theme::font_medium)
-       .text(BTN_POS(1,1), BTN_SIZE(4,1), GET_TEXT_F(MSG_INFO_STATS_MENU))
+       .text(BTN_POS(1,1), BTN_SIZE(4,1), GET_TEXT_F(MSG_INFO_PRINTER_STATS_MENU))
        .font(Theme::font_small)
        .tag(0)
        .text(BTN_POS(1,2), BTN_SIZE(2,1), GET_TEXT_F(MSG_INFO_PRINT_COUNT),      OPT_RIGHTX | OPT_CENTERY)

@@ -33,7 +33,7 @@ constexpr static BaseNumericAdjustmentScreenData &mydata = screen_data.BaseNumer
 
 #if ENABLED(TOUCH_UI_PORTRAIT)
   #define GRID_COLS 13
-  #define GRID_ROWS 10
+  #define GRID_ROWS (8+EXTRUDERS)
   #define LAYOUT_FONT font_small
 #else
   #define GRID_COLS 18
@@ -57,7 +57,7 @@ BaseNumericAdjustmentScreen::widgets_t::widgets_t(draw_mode_t what) : _what(what
   cmd.font(font_medium);
   _button(cmd, 1,
     #if ENABLED(TOUCH_UI_PORTRAIT)
-      BTN_POS(1,10), BTN_SIZE(13,1),
+      BTN_POS(1,GRID_ROWS), BTN_SIZE(13,1),
     #else
       BTN_POS(15,7), BTN_SIZE(4,1),
     #endif

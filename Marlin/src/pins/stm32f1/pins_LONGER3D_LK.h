@@ -135,19 +135,15 @@
 // TFT with FSMC interface
 //
 #if HAS_FSMC_TFT
-  #define LCD_USE_DMA_FSMC                        // Use DMA transfers to send data to the TFT
+  #define LCD_USE_DMA_FSMC
   #define FSMC_CS_PIN                       PD7   // FSMC_NE1
   #define FSMC_RS_PIN                       PD11  // A16 Register. Only one address needed
-
   #define TFT_CS_PIN                 FSMC_CS_PIN
   #define TFT_RS_PIN                 FSMC_RS_PIN
 
   #define TFT_RESET_PIN                     PC4
   #define TFT_BACKLIGHT_PIN                 PD12
   #define TFT_BACKLIGHT_PWM                 150   // Brightness with alt. TIM4 chan 1 (1-255)
-
-  #define DOGLCD_MOSI                       -1    // Prevent auto-define by Conditionals_post.h
-  #define DOGLCD_SCK                        -1
 
   // Buffer for Color UI
   #define TFT_BUFFER_WORDS                  3200
@@ -156,6 +152,13 @@
 #if defined(TFT_BACKLIGHT_PWM) && !defined(MAPLE_STM32F1)
   #define HAS_LCD_BRIGHTNESS 1
   #define LCD_BRIGHTNESS_DEFAULT TFT_BACKLIGHT_PWM
+#endif
+
+//
+// SD Support
+//
+#ifndef SDCARD_CONNECTION
+  #define SDCARD_CONNECTION              ONBOARD
 #endif
 
 #if SD_CONNECTION_IS(ONBOARD)

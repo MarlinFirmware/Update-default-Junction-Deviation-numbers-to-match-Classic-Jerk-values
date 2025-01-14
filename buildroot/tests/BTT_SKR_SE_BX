@@ -11,6 +11,3 @@ set -e
 #
 use_example_configs BIQU/BX
 exec_test $1 $2 "BIQU/BX" "$3"
-
-# clean up
-restore_configs

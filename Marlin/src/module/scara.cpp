@@ -229,9 +229,15 @@ float segments_per_second = DEFAULT_SEGMENTS_PER_SECOND;
     // Move all carriages together linearly until an endstop is hit.
     //do_blocking_move_to_xy_z(pos, mlz, homing_feedrate(Z_AXIS));
 
+    // Set the homing current for all motors
+    TERN_(HAS_HOMING_CURRENT, set_homing_current(Z_AXIS));
+
     current_position.set(0, 0, max_length(Z_AXIS));
     line_to_current_position(homing_feedrate(Z_AXIS));
     planner.synchronize();
+
+    // Restore the homing current for all motors
+    TERN_(HAS_HOMING_CURRENT, restore_homing_current(Z_AXIS));
 
     // Re-enable stealthChop if used. Disable diag1 pin on driver.
     #if ENABLED(SENSORLESS_HOMING)

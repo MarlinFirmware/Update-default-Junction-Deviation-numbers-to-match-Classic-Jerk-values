@@ -23,6 +23,3 @@ restore_configs
 opt_set MOTHERBOARD BOARD_MELZI
 opt_enable ZONESTAR_LCD
 exec_test $1 $2 "Default Configuration | ZONESTAR_LCD " "$3"
-
-# clean up
-restore_configs

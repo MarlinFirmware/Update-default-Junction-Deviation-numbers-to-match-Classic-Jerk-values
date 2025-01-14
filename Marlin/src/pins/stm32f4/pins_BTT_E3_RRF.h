@@ -21,9 +21,7 @@
  */
 #pragma once
 
-#if NOT_TARGET(STM32F4)
-  #error "Oops! Select an STM32F4 board in 'Tools > Board.'"
-#endif
+#include "env_validate.h"
 
 #ifndef BOARD_INFO_NAME
   #define BOARD_INFO_NAME "BTT E3 RRF"
@@ -118,23 +116,12 @@
  */
 #if HAS_TMC_UART
   #define X_SERIAL_TX_PIN                   PD6
-  #define X_SERIAL_RX_PIN        X_SERIAL_TX_PIN
-
   #define Y_SERIAL_TX_PIN                   PD1
-  #define Y_SERIAL_RX_PIN        Y_SERIAL_TX_PIN
-
   #define Z_SERIAL_TX_PIN                   PD15
-  #define Z_SERIAL_RX_PIN        Z_SERIAL_TX_PIN
-
   #define E0_SERIAL_TX_PIN                  PD11
-  #define E0_SERIAL_RX_PIN      E0_SERIAL_TX_PIN
-
   #if ENABLED(BTT_E3_RRF_IDEX_BOARD)
     #define X2_SERIAL_TX_PIN           FPC12_PIN  // X2UART
-    #define X2_SERIAL_RX_PIN    X2_SERIAL_TX_PIN
-
     #define E1_SERIAL_TX_PIN            FPC6_PIN  // E1UART
-    #define E1_SERIAL_RX_PIN    E1_SERIAL_TX_PIN
   #endif
 
   // Reduce baud rate to improve software serial reliability
@@ -225,33 +212,33 @@
 
       CONTROLLER_WARNING("BTT_E3_RRF", "LCD_FOR_MELZI")
 
-     /** LCD_FOR_MELZI display pinout
-      *
-      *               BTT E3 RRF                                   Display Ribbon
-      *                ------                                         ------
-      * (BEEPER)  PE8 | 1  2 | PE9  (BTN_ENC)                    GND |10  9 | 5V
-      * (BTN_EN1) PE7 | 3  4 | RESET                          BEEPER | 8  7 | ESTOP    (RESET)
-      * (BTN_EN2) PB2   5  6 | PE10 (LCD_D4)       (BTN_ENC) ENC_BTN | 6  5 | LCD_SCLK (LCD_D4)
-      * (LCD_RS)  PB1 | 7  8 | PE11 (LCD_EN)       (BTN_EN2) ENC_A   | 4  3 | LCD_DATA (LCD_EN)
-      *           GND | 9 10 | 5V                  (BTN_EN1) ENC_B   | 2  1 | LCD_CS   (LCD_RS)
-      *                ------                                         ------
-      *                 EXP1                                           LCD
-      *
-      * Needs custom cable:
-      *
-      *    Board   Adapter   Display Ribbon (coming from display)
-      *  ----------------------------------
-      *  EXP1-10 ---------- LCD-9   5V
-      *  EXP1-9 ----------- LCD-10  GND
-      *  EXP1-8 ----------- LCD-3   LCD_EN
-      *  EXP1-7 ----------- LCD-1   LCD_RS
-      *  EXP1-6 ----------- LCD-5   LCD_D4
-      *  EXP1-5 ----------- LCD-4   EN2
-      *  EXP1-4 ----------- LCD-7   RESET
-      *  EXP1-3 ----------- LCD-2   EN1
-      *  EXP1-2 ----------- LCD-6   BTN
-      *  EXP1-1 ----------- LCD-8   BEEPER
-      */
+      /** LCD_FOR_MELZI display pinout
+       *
+       *               BTT E3 RRF                                   Display Ribbon
+       *                ------                                         ------
+       * (BEEPER)  PE8 | 1  2 | PE9  (BTN_ENC)                    GND |10  9 | 5V
+       * (BTN_EN1) PE7 | 3  4 | RESET                          BEEPER | 8  7 | ESTOP    (RESET)
+       * (BTN_EN2) PB2   5  6 | PE10 (LCD_D4)       (BTN_ENC) ENC_BTN | 6  5 | LCD_SCLK (LCD_D4)
+       * (LCD_RS)  PB1 | 7  8 | PE11 (LCD_EN)       (BTN_EN2) ENC_A   | 4  3 | LCD_DATA (LCD_EN)
+       *           GND | 9 10 | 5V                  (BTN_EN1) ENC_B   | 2  1 | LCD_CS   (LCD_RS)
+       *                ------                                         ------
+       *                 EXP1                                           LCD
+       *
+       * Needs custom cable:
+       *
+       *    Board   Adapter   Display Ribbon (coming from display)
+       *  ----------------------------------
+       *  EXP1-10 ---------- LCD-9   5V
+       *  EXP1-9 ----------- LCD-10  GND
+       *  EXP1-8 ----------- LCD-3   LCD_EN
+       *  EXP1-7 ----------- LCD-1   LCD_RS
+       *  EXP1-6 ----------- LCD-5   LCD_D4
+       *  EXP1-5 ----------- LCD-4   EN2
+       *  EXP1-4 ----------- LCD-7   RESET
+       *  EXP1-3 ----------- LCD-2   EN1
+       *  EXP1-2 ----------- LCD-6   BTN
+       *  EXP1-1 ----------- LCD-8   BEEPER
+       */
 
     #endif
 

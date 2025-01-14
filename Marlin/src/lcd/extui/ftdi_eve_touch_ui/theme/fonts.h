@@ -31,6 +31,7 @@ namespace Theme {
       constexpr int16_t  font_medium   = 30;
       constexpr int16_t  font_large    = 30;
       constexpr int16_t  font_xlarge   = 31;
+      constexpr int16_t  font_xxlarge  = 31.5;
     #else
       constexpr int16_t  font_tiny     = 27;
       constexpr int16_t  font_xsmall   = 29;
@@ -38,8 +39,10 @@ namespace Theme {
       constexpr int16_t  font_medium   = 30;
       constexpr int16_t  font_large    = 31;
       constexpr int16_t  font_xlarge   = 31;
+      constexpr int16_t  font_xxlarge  = 32;
     #endif
     constexpr float      icon_scale    = 1.0;
+    constexpr float      icon_scale_lg = 2.0;
   #elif defined(TOUCH_UI_480x272)
     #if ENABLED(TOUCH_UI_PORTRAIT)
     constexpr int16_t  font_tiny     = 26;
@@ -48,6 +51,7 @@ namespace Theme {
     constexpr int16_t  font_medium   = 27;
     constexpr int16_t  font_large    = 28;
     constexpr int16_t  font_xlarge   = 29;
+    constexpr int16_t  font_xxlarge  = 30;
     constexpr float    icon_scale    = 0.7;
     #else
     constexpr int16_t  font_tiny     = 26;
@@ -56,6 +60,7 @@ namespace Theme {
     constexpr int16_t  font_medium   = 28;
     constexpr int16_t  font_large    = 30;
     constexpr int16_t  font_xlarge   = 30;
+    constexpr int16_t  font_xxlarge  = 31;
     constexpr float    icon_scale    = 0.6;
     #endif
   #elif defined(TOUCH_UI_320x240)
@@ -66,6 +71,7 @@ namespace Theme {
     constexpr int16_t  font_medium   = 27;
     constexpr int16_t  font_large    = 27;
     constexpr int16_t  font_xlarge   = 28;
+    constexpr int16_t  font_xxlarge  = 29;
     constexpr float    icon_scale    = 0.6;
     #else
     constexpr int16_t  font_tiny     = 26;
@@ -74,6 +80,7 @@ namespace Theme {
     constexpr int16_t  font_medium   = 27;
     constexpr int16_t  font_large    = 29;
     constexpr int16_t  font_xlarge   = 30;
+    constexpr int16_t  font_xxlarge  = 31;
     constexpr float    icon_scale    = 0.5;
     #endif
   #endif

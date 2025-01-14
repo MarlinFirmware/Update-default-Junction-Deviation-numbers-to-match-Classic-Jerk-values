@@ -41,7 +41,7 @@ void GcodeSuite::M486() {
 
   if (parser.seen('T')) {
     cancelable.reset();
-    cancelable.object_count = parser.intval('T', 1);
+    cancelable.state.object_count = parser.intval('T', 1);
   }
 
   if (parser.seenval('S'))

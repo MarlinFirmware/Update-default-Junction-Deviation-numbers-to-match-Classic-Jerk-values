@@ -103,7 +103,7 @@ typedef int8_t pin_t;
 // ------------------------
 
 #ifndef analogInputToDigitalPin
-  #define analogInputToDigitalPin(p) ((p < 12U) ? (p) + 54U : -1)
+  #define analogInputToDigitalPin(p) pin_t((p < 12U) ? (p) + 54U : -1)
 #endif
 
 #define HAL_ADC_VREF_MV   3300

@@ -178,5 +178,5 @@ template<> inline uint16_t DGUSDisplay::swapBytes(const uint16_t value) {
 
 extern DGUSDisplay dgus;
 
-/// Helper to populate a DGUS_VP for a given VP. Return false if not found.
+// Helper to populate a DGUS_VP for a given VP. Return false if not found.
 extern bool populateVP(const DGUS_Addr addr, DGUS_VP * const buffer);

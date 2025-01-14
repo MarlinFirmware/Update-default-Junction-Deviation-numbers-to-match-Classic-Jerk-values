@@ -152,7 +152,7 @@ void stepperTask(void *parameter) {
     xQueueReceive(dma.queue, &dma.current, portMAX_DELAY);
     dma.rw_pos = 0;
 
-    const bool using_ftMotion = TERN0(FT_MOTION, ftMotion.cfg.mode);
+    const bool using_ftMotion = TERN0(FT_MOTION, ftMotion.cfg.active);
 
     while (dma.rw_pos < DMA_SAMPLE_COUNT) {
 

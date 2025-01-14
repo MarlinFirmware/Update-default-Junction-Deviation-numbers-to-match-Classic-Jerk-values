@@ -24,5 +24,5 @@
 #include <stdint.h>
 
 void menu_mmu2();
-void mmu2_M600();
+void mmu2_M600(const bool automatic=false);
 uint8_t mmu2_choose_filament();

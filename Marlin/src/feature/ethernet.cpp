@@ -141,7 +141,7 @@ void MarlinEthernet::check() {
 
     case CONNECTING:
       telnetClient.println("Marlin " SHORT_BUILD_VERSION);
-      #if defined(STRING_DISTRIBUTION_DATE) && defined(STRING_CONFIG_H_AUTHOR)
+      #ifdef STRING_DISTRIBUTION_DATE
         telnetClient.println(
           " Last Updated: " STRING_DISTRIBUTION_DATE
           " | Author: " STRING_CONFIG_H_AUTHOR

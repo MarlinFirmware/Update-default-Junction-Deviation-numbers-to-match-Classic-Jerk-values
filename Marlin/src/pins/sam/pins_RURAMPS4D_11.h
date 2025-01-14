@@ -271,7 +271,7 @@
 
   #elif ENABLED(SPARK_FULL_GRAPHICS)
 
-    //http://doku.radds.org/dokumentation/other-electronics/sparklcd/
+    // https://sparklab-shop.de/elektronik/40/sparklcd-adapter
     #error "Oops! SPARK_FULL_GRAPHICS not supported with RURAMPS4D."
     //#define LCD_PINS_D4                     29  //?
     //#define LCD_PINS_EN                     27  //?

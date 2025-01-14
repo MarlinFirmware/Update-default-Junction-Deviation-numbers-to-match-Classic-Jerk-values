@@ -313,6 +313,7 @@ bool Touch::get_point(int16_t * const x, int16_t * const y) {
     next_sleep_ms = ui.sleep_timeout_minutes ? millis() + MIN_TO_MS(ui.sleep_timeout_minutes) : 0;
   }
 
+  bool MarlinUI::display_is_asleep() { return touch.isSleeping(); }
   void MarlinUI::sleep_display(const bool sleep/*=true*/) {
     if (!sleep) touch.wakeUp();
   }

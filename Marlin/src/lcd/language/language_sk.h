@@ -74,7 +74,7 @@ namespace LanguageNarrow_sk {
   LSTR MSG_PROGRESS_BAR_TEST              = _UxGT("Test uk. priebehu");
   LSTR MSG_HOMING                         = _UxGT("Parkovanie");
   LSTR MSG_AUTO_HOME                      = _UxGT("Domovská pozícia");
-  LSTR MSG_AUTO_HOME_A                    = _UxGT("Domov os @");
+  LSTR MSG_AUTO_HOME_N                    = _UxGT("Domov os @");
   LSTR MSG_AUTO_HOME_X                    = _UxGT("Domov os X");
   LSTR MSG_AUTO_HOME_Y                    = _UxGT("Domov os Y");
   LSTR MSG_AUTO_HOME_Z                    = _UxGT("Domov os Z");
@@ -148,6 +148,7 @@ namespace LanguageNarrow_sk {
   LSTR MSG_EXTRUDE                        = _UxGT("Vytlačiť (extr.)");
   LSTR MSG_RETRACT                        = _UxGT("Vytiahnuť (retr.)");
   LSTR MSG_MOVE_AXIS                      = _UxGT("Posunúť osy");
+  LSTR MSG_PROBE_AND_LEVEL                = _UxGT("Sonda a vyrovnanie");
   LSTR MSG_BED_LEVELING                   = _UxGT("Vyrovnanie podložky");
   LSTR MSG_LEVEL_BED                      = _UxGT("Vyrovnať podložku");
   LSTR MSG_BED_TRAMMING                   = _UxGT("Vyrovnať rohy");
@@ -189,7 +190,7 @@ namespace LanguageNarrow_sk {
   LSTR MSG_IDEX_MODE_FULL_CTRL            = _UxGT("Plná kontrola");
   LSTR MSG_IDEX_DUPE_GAP                  = _UxGT("Duplik. medz.-X");
   LSTR MSG_HOTEND_OFFSET_Z                = _UxGT("2. tryska Z");
-  LSTR MSG_HOTEND_OFFSET_A                = _UxGT("2. tryska @");
+  LSTR MSG_HOTEND_OFFSET_N                = _UxGT("2. tryska @");
   LSTR MSG_UBL_DOING_G29                  = _UxGT("Vykonávam G29");
   LSTR MSG_UBL_TOOLS                      = _UxGT("Nástroje UBL");
   LSTR MSG_LCD_TILTING_MESH               = _UxGT("Vyrovnávam bod");
@@ -202,13 +203,10 @@ namespace LanguageNarrow_sk {
   LSTR MSG_UBL_BC_INSERT2                 = _UxGT("Zmerajte");
   LSTR MSG_UBL_BC_REMOVE                  = _UxGT("Odstráňte a zmerajte");
   LSTR MSG_UBL_MOVING_TO_NEXT             = _UxGT("Presun na ďalší");
-  LSTR MSG_UBL_ACTIVATE_MESH              = _UxGT("Aktivovať UBL");
-  LSTR MSG_UBL_DEACTIVATE_MESH            = _UxGT("Deaktivovať UBL");
   LSTR MSG_UBL_SET_TEMP_BED               = _UxGT("Teplota podložky");
   LSTR MSG_UBL_BED_TEMP_CUSTOM            = _UxGT("Teplota podložky");
   LSTR MSG_UBL_SET_TEMP_HOTEND            = _UxGT("Teplota hotendu");
   LSTR MSG_UBL_HOTEND_TEMP_CUSTOM         = _UxGT("Teplota hotendu");
-  LSTR MSG_UBL_MESH_EDIT                  = _UxGT("Úprava siete bodov");
   LSTR MSG_UBL_EDIT_CUSTOM_MESH           = _UxGT("Upraviť vlastnú sieť");
   LSTR MSG_UBL_FINE_TUNE_MESH             = _UxGT("Doladiť sieť bodov");
   LSTR MSG_UBL_DONE_EDITING_MESH          = _UxGT("Koniec úprav siete");
@@ -273,7 +271,8 @@ namespace LanguageNarrow_sk {
   LSTR MSG_UBL_7_SAVE_MESH                = _UxGT("7.Uložiť sieť bodov");
 
   LSTR MSG_LED_CONTROL                    = _UxGT("Nastavenie LED");
-  LSTR MSG_LEDS                           = _UxGT("Svetlo");
+  LSTR MSG_LIGHTS                         = _UxGT("Svetlo");
+  LSTR MSG_LIGHT_N                        = _UxGT("Svetlo #{");
   LSTR MSG_LED_PRESETS                    = _UxGT("Predvolby svetla");
   LSTR MSG_SET_LEDS_RED                   = _UxGT("Červená");
   LSTR MSG_SET_LEDS_ORANGE                = _UxGT("Oranžová");
@@ -285,7 +284,6 @@ namespace LanguageNarrow_sk {
   LSTR MSG_SET_LEDS_WHITE                 = _UxGT("Biela");
   LSTR MSG_SET_LEDS_DEFAULT               = _UxGT("Obnoviť nastavenie");
   LSTR MSG_LED_CHANNEL_N                  = _UxGT("Kanál {");
-  LSTR MSG_LEDS2                          = _UxGT("Svetlo #2");
   LSTR MSG_NEO2_PRESETS                   = _UxGT("Predvolby svetla #2");
   LSTR MSG_NEO2_BRIGHTNESS                = _UxGT("Jas");
   LSTR MSG_CUSTOM_LEDS                    = _UxGT("Vlastná farba");
@@ -394,10 +392,10 @@ namespace LanguageNarrow_sk {
   LSTR MSG_A_RETRACT                      = _UxGT("A-retrakt");
   LSTR MSG_A_TRAVEL                       = _UxGT("A-prejazd");
   LSTR MSG_INPUT_SHAPING                  = _UxGT("Tvarov. vstupu");
-  LSTR MSG_SHAPING_ENABLE                 = _UxGT("Povol. tvarov. @");
-  LSTR MSG_SHAPING_DISABLE                = _UxGT("Zakáz. tvarov. @");
-  LSTR MSG_SHAPING_FREQ                   = _UxGT("Frekvencia @");
-  LSTR MSG_SHAPING_ZETA                   = _UxGT("Tlmenie @");
+  LSTR MSG_SHAPING_ENABLE_N               = _UxGT("Povol. tvarov. @");
+  LSTR MSG_SHAPING_DISABLE_N              = _UxGT("Zakáz. tvarov. @");
+  LSTR MSG_SHAPING_FREQ_N                 = _UxGT("Frekvencia @");
+  LSTR MSG_SHAPING_ZETA_N                 = _UxGT("Tlmenie @");
   LSTR MSG_XY_FREQUENCY_LIMIT             = _UxGT("Max. frekvencia");
   LSTR MSG_XY_FREQUENCY_FEEDRATE          = _UxGT("Min. posun");
   LSTR MSG_STEPS_PER_MM                   = _UxGT("Kroky/mm");
@@ -569,6 +567,8 @@ namespace LanguageNarrow_sk {
   LSTR MSG_ZPROBE_XOFFSET                 = _UxGT("X ofset");
   LSTR MSG_ZPROBE_YOFFSET                 = _UxGT("Y ofset");
   LSTR MSG_ZPROBE_ZOFFSET                 = _UxGT("Z ofset");
+  LSTR MSG_ZPROBE_OFFSET_N                = _UxGT("@ ofset");
+  LSTR MSG_BABYSTEP_PROBE_Z               = _UxGT("Krok Z posuň");
   LSTR MSG_ZPROBE_MARGIN                  = _UxGT("Hranica sondy");
   LSTR MSG_Z_FEED_RATE                    = _UxGT("Rýchl. posunu Z");
   LSTR MSG_ENABLE_HS_MODE                 = _UxGT("Povoliť rež. HS");

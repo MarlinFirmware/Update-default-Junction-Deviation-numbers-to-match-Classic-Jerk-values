@@ -253,31 +253,14 @@
 
 #if HAS_TMC_UART
   #define X_SERIAL_TX_PIN                   PG13
-  #define X_SERIAL_RX_PIN        X_SERIAL_TX_PIN
-
   #define Y_SERIAL_TX_PIN                   PG10
-  #define Y_SERIAL_RX_PIN        Y_SERIAL_TX_PIN
-
   #define Z_SERIAL_TX_PIN                   PD5
-  #define Z_SERIAL_RX_PIN        Z_SERIAL_TX_PIN
-
   #define E0_SERIAL_TX_PIN                  PD1
-  #define E0_SERIAL_RX_PIN      E0_SERIAL_TX_PIN
-
   #define E1_SERIAL_TX_PIN                  PA14
-  #define E1_SERIAL_RX_PIN      E1_SERIAL_TX_PIN
-
   #define E2_SERIAL_TX_PIN                  PG6
-  #define E2_SERIAL_RX_PIN      E2_SERIAL_TX_PIN
-
   #define E3_SERIAL_TX_PIN                  PG3
-  #define E3_SERIAL_RX_PIN      E3_SERIAL_TX_PIN
-
   #define E4_SERIAL_TX_PIN                  PD10
-  #define E4_SERIAL_RX_PIN      E4_SERIAL_TX_PIN
-
   #define E5_SERIAL_TX_PIN                  PB12
-  #define E5_SERIAL_RX_PIN      E5_SERIAL_TX_PIN
 #endif
 
 //

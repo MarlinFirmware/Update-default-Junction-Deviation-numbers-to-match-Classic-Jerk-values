@@ -5,6 +5,7 @@
 /****************************************************************************
  *   Written By Mark Pelletier  2017 - Aleph Objects, Inc.                  *
  *   Written By Marcio Teixeira 2018 - Aleph Objects, Inc.                  *
+ *   Written By Brian Kahl      2023 - FAME3D.                              *
  *                                                                          *
  *   This program is free software: you can redistribute it and/or modify   *
  *   it under the terms of the GNU General Public License as published by   *
@@ -31,6 +32,8 @@ using namespace ExtUI;
 using namespace Theme;
 
 #define SHEET_THICKNESS 0.1
+#define GRID_COLS 13
+#define GRID_ROWS (9+EXTRUDERS)
 
 constexpr static ZOffsetScreenData &mydata = screen_data.ZOffsetScreen;
 
@@ -48,12 +51,19 @@ void ZOffsetScreen::onExit() {
 
 void ZOffsetScreen::onRedraw(draw_mode_t what) {
   widgets_t w(what);
+  CommandProcessor cmd;
+
   w.precision(2, BaseNumericAdjustmentScreen::DEFAULT_MIDRANGE).units(GET_TEXT_F(MSG_UNITS_MM));
 
-  w.heading(                  GET_TEXT_F(MSG_ZPROBE_ZOFFSET));
-  w.color(z_axis).adjuster(4, GET_TEXT_F(MSG_ZPROBE_ZOFFSET), getZOffset_mm());
+  w.heading(                  GET_TEXT_F(MSG_ZOFFSET));
+  w.color(z_axis).adjuster(4, GET_TEXT_F(MSG_ZOFFSET), getZOffset_mm());
   w.increments();
-  w.button(2, GET_TEXT_F(MSG_PROBE_WIZARD), !isPrinting() && !wizardRunning());
+  //w.button(2, GET_TEXT_F(MSG_PROBE_WIZARD), !isPrinting() && !wizardRunning());
+  if (what & FOREGROUND) {
+    cmd.colors(normal_btn)
+       .font(font_medium)
+       .tag(6).colors(action_btn).button(BTN_POS(1,GRID_ROWS), BTN_SIZE(GRID_COLS,1), GET_TEXT_F(MSG_BUTTON_DONE));
+  }
 }
 
 void ZOffsetScreen::move(float mm, int16_t steps) {
@@ -73,11 +83,11 @@ void ZOffsetScreen::runWizard() {
   setZOffset_mm(offset[Z_AXIS]);
   // Move above probe point
   char cmd[64], str[10];
-  strcpy_P(cmd, PSTR("G28 Z\nG0 F1000 X"));
-  dtostrf(TERN(Z_SAFE_HOMING,Z_SAFE_HOMING_X_POINT,X_CENTER), 3, 1, str);
+  strcpy_P(cmd, PSTR("G28O\nG0 F1000 X"));
+  dtostrf(TERN(Z_SAFE_HOMING, Z_SAFE_HOMING_X_POINT, X_CENTER), 3, 1, str);
   strcat(cmd, str);
   strcat_P(cmd, PSTR("Y"));
-  dtostrf(TERN(Z_SAFE_HOMING,Z_SAFE_HOMING_Y_POINT,Y_CENTER), 3, 1, str);
+  dtostrf(TERN(Z_SAFE_HOMING, Z_SAFE_HOMING_Y_POINT, Y_CENTER), 3, 1, str);
   strcat(cmd, str);
   strcat_P(cmd, PSTR("Z"));
   dtostrf(SHEET_THICKNESS, 3, 1, str);
@@ -101,6 +111,7 @@ bool ZOffsetScreen::onTouchHeld(uint8_t tag) {
     case 2: runWizard(); break;
     case 4: UI_DECREMENT(ZOffset_mm); move(-increment, -steps); break;
     case 5: UI_INCREMENT(ZOffset_mm); move( increment,  steps); break;
+    case 6: GOTO_SCREEN(SaveSettingsDialogBox); break;
     default:
       return false;
   }

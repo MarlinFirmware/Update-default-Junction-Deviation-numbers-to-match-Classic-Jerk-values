@@ -69,13 +69,23 @@
     #endif
   #endif
 
-  #ifdef MMU2_SERIAL_PORT
-    #if MMU2_SERIAL_PORT == -1
-      #define MMU2_SERIAL MSerial0
-    #elif WITHIN(MMU2_SERIAL_PORT, 0, 3)
-      #define MMU2_SERIAL MSERIAL(MMU2_SERIAL_PORT)
+  #ifdef SERIAL_PORT_3
+    #if SERIAL_PORT_3 == -1
+      #define MYSERIAL3 MSerial0
+    #elif WITHIN(SERIAL_PORT_3, 0, 3)
+      #define MYSERIAL3 MSERIAL(SERIAL_PORT_3)
     #else
-      #error "MMU2_SERIAL_PORT must be from 0 to 3. You can also use -1 if the board supports Native USB."
+      #error "SERIAL_PORT_3 must be from 0 to 3. You can also use -1 if the board supports Native USB."
+    #endif
+  #endif
+
+  #ifdef MMU_SERIAL_PORT
+    #if MMU_SERIAL_PORT == -1
+      #define MMU_SERIAL MSerial0
+    #elif WITHIN(MMU_SERIAL_PORT, 0, 3)
+      #define MMU_SERIAL MSERIAL(MMU_SERIAL_PORT)
+    #else
+      #error "MMU_SERIAL_PORT must be from 0 to 3. You can also use -1 if the board supports Native USB."
     #endif
   #endif
 

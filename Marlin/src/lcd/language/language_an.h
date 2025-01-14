@@ -78,6 +78,7 @@ namespace LanguageNarrow_an {
   LSTR MSG_EXTRUDE                        = _UxGT("Extruir");
   LSTR MSG_RETRACT                        = _UxGT("Retraer");
   LSTR MSG_MOVE_AXIS                      = _UxGT("Mover Eixes");
+  LSTR MSG_PROBE_AND_LEVEL                = _UxGT("Sondar y Nivelar");
   LSTR MSG_BED_LEVELING                   = _UxGT("Nivelar base");
   LSTR MSG_LEVEL_BED                      = _UxGT("Nivelar base");
   LSTR MSG_MOVE_X                         = _UxGT("Mover X");
@@ -158,7 +159,11 @@ namespace LanguageNarrow_an {
   LSTR MSG_CHANGE_MEDIA                   = _UxGT("Cambiar tarcheta");
   LSTR MSG_ZPROBE_OUT                     = _UxGT("Sonda Z fuera");
   LSTR MSG_BLTOUCH_RESET                  = _UxGT("Reset BLTouch");
+  LSTR MSG_ZPROBE_XOFFSET                 = _UxGT("Desfase X");
+  LSTR MSG_ZPROBE_YOFFSET                 = _UxGT("Desfase Y");
   LSTR MSG_ZPROBE_ZOFFSET                 = _UxGT("Desfase Z");
+  LSTR MSG_ZPROBE_OFFSET_N                = _UxGT("Desfase @");
+  LSTR MSG_BABYSTEP_PROBE_Z               = _UxGT("Probe Z con pas");
   LSTR MSG_BABYSTEP_X                     = _UxGT("Micropaso X");
   LSTR MSG_BABYSTEP_Y                     = _UxGT("Micropaso Y");
   LSTR MSG_BABYSTEP_Z                     = _UxGT("Micropaso Z");

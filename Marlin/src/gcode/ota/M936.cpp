@@ -26,10 +26,6 @@
 #include "../gcode.h"
 #include "../../libs/BL24CXX.h"
 
-#if ENABLED(CREALITY_RTS)
-  #include "../../lcd/rts/lcd_rts.h"
-#endif
-
 #define OTA_FLAG_EEPROM 90
 
 //#define DEBUG_OUT 1
@@ -48,21 +44,11 @@ void GcodeSuite::M936() {
       // Set the OTA board firmware upgrade flag ahead of reboot.
       ota_update_flag = 0x01;
       DEBUG_ECHOLNPGM("Motherboard upgrade flag set");
-      TERN_(CREALITY_RTS, RTS_Error(Error_205));
       break;
-
-    #if ENABLED(CREALITY_RTS)
-      case 3:
-        // Set the OTA screen firmware upgrade flag ahead of reboot.
-        ota_update_flag = 0x02;
-        DEBUG_ECHOLNPGM("DWIN upgrade flag set");
-        TERN_(CREALITY_RTS, RTS_Error(Error_206));
-        break;
-    #endif
   }
 
   switch (ota) {
-    case 2: TERN_(CREALITY_RTS, case 3:)
+    case 2:
       BL24CXX::write(OTA_FLAG_EEPROM, &ota_update_flag, sizeof(ota_update_flag));
       safe_delay(100);
       hal.reboot();

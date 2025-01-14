@@ -171,17 +171,29 @@ public:
 
     #endif // !IS_KINEMATIC
 
-    static float probe_at_point(const_float_t rx, const_float_t ry, const ProbePtRaise raise_after=PROBE_PT_NONE,
-      const uint8_t verbose_level=0, const bool probe_relative=true, const bool sanity_check=true,
-      const_float_t z_min_point=Z_PROBE_LOW_POINT, const_float_t z_clearance=Z_TWEEN_SAFE_CLEARANCE,
-      const bool raise_after_is_relative=false);
+    static float probe_at_point(
+      const_float_t      rx,
+      const_float_t      ry,
+      const ProbePtRaise raise_after        = PROBE_PT_NONE,
+      const uint8_t      verbose_level      = 0,
+      const bool         probe_relative     = true,
+      const bool         sanity_check       = true,
+      const_float_t      z_min_point        = Z_PROBE_LOW_POINT,
+      const_float_t      z_clearance        = Z_TWEEN_SAFE_CLEARANCE,
+      const bool         raise_after_is_rel = false
+    );
 
-    static float probe_at_point(const xy_pos_t &pos, const ProbePtRaise raise_after=PROBE_PT_NONE,
-      const uint8_t verbose_level=0, const bool probe_relative=true, const bool sanity_check=true,
-      const_float_t z_min_point=Z_PROBE_LOW_POINT, float z_clearance=Z_TWEEN_SAFE_CLEARANCE,
-      const bool raise_after_is_relative=false
+    static float probe_at_point(
+      const xy_pos_t     &pos,
+      const ProbePtRaise raise_after        = PROBE_PT_NONE,
+      const uint8_t      verbose_level      = 0,
+      const bool         probe_relative     = true,
+      const bool         sanity_check       = true,
+      const_float_t      z_min_point        = Z_PROBE_LOW_POINT,
+      const_float_t      z_clearance        = Z_TWEEN_SAFE_CLEARANCE,
+      const bool         raise_after_is_rel = false
     ) {
-      return probe_at_point(pos.x, pos.y, raise_after, verbose_level, probe_relative, sanity_check, z_min_point, z_clearance, raise_after_is_relative);
+      return probe_at_point(pos.x, pos.y, raise_after, verbose_level, probe_relative, sanity_check, z_min_point, z_clearance, raise_after_is_rel);
     }
 
   #else // !HAS_BED_PROBE
@@ -349,8 +361,10 @@ public:
   #endif
 
 private:
-  static bool probe_down_to_z(const_float_t z, const_feedRate_t fr_mm_s);
-  static float run_z_probe(const bool sanity_check=true, const_float_t z_min_point=Z_PROBE_LOW_POINT, const_float_t z_clearance=Z_TWEEN_SAFE_CLEARANCE);
+  #if HAS_BED_PROBE
+    static bool probe_down_to_z(const_float_t z, const_feedRate_t fr_mm_s);
+    static float run_z_probe(const bool sanity_check=true, const_float_t z_min_point=Z_PROBE_LOW_POINT, const_float_t z_clearance=Z_TWEEN_SAFE_CLEARANCE);
+  #endif
 };
 
 extern Probe probe;

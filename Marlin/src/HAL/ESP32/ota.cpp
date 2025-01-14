@@ -22,11 +22,15 @@
 
 #ifdef ARDUINO_ARCH_ESP32
 
+#include <WiFi.h>
+
+#undef ENABLED
+#undef DISABLED
+
 #include "../../inc/MarlinConfigPre.h"
 
 #if ALL(WIFISUPPORT, OTASUPPORT)
 
-#include <WiFi.h>
 #include <ESPmDNS.h>
 #include <WiFiUdp.h>
 #include <ArduinoOTA.h>

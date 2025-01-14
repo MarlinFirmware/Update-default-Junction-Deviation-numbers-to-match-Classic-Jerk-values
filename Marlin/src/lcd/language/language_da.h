@@ -69,6 +69,7 @@ namespace LanguageNarrow_da {
   LSTR MSG_SWITCH_PS_OFF                  = _UxGT("Slå strøm fra");
   LSTR MSG_EXTRUDE                        = _UxGT("Extruder");
   LSTR MSG_MOVE_AXIS                      = _UxGT("Flyt akser");
+  LSTR MSG_PROBE_AND_LEVEL                = _UxGT("Probe og nivellér");
   LSTR MSG_BED_LEVELING                   = _UxGT("Juster bed");
   LSTR MSG_LEVEL_BED                      = _UxGT("Juster bed");
   LSTR MSG_MOVE_X                         = _UxGT("Flyt X");
@@ -136,6 +137,7 @@ namespace LanguageNarrow_da {
   LSTR MSG_ZPROBE_OUT                     = _UxGT("Probe udenfor plade");
   LSTR MSG_BLTOUCH_SELFTEST               = _UxGT("BLTouch Selv-Test");
   LSTR MSG_HOME_FIRST                     = _UxGT("Home %s først");
+  LSTR MSG_BABYSTEP_PROBE_Z               = _UxGT("Justér Z trin");
   LSTR MSG_ERR_HEATING_FAILED             = _UxGT("Opvarmning fejlet");
   LSTR MSG_ERR_REDUNDANT_TEMP             = _UxGT("Fejl: reserve temp");
   LSTR MSG_ERR_THERMAL_RUNAWAY            = _UxGT("Temp løber løbsk");

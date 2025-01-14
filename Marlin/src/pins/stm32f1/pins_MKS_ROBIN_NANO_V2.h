@@ -155,19 +155,10 @@
   //#define E1_HARDWARE_SERIAL MSerial1
 
   #define X_SERIAL_TX_PIN                   PD5
-  #define X_SERIAL_RX_PIN                   PD5
-
   #define Y_SERIAL_TX_PIN                   PD7
-  #define Y_SERIAL_RX_PIN                   PD7
-
   #define Z_SERIAL_TX_PIN                   PD4
-  #define Z_SERIAL_RX_PIN                   PD4
-
   #define E0_SERIAL_TX_PIN                  PD9
-  #define E0_SERIAL_RX_PIN                  PD9
-
   #define E1_SERIAL_TX_PIN                  PD8
-  #define E1_SERIAL_RX_PIN                  PD8
 
   // Reduce baud rate to improve software serial reliability
   #ifndef TMC_BAUD_RATE
@@ -220,9 +211,15 @@
 // Misc. Functions
 //
 #if HAS_TFT_LVGL_UI
-  #define MT_DET_1_PIN                      PA4
-  #define MT_DET_2_PIN                      PE6
-  #define MT_DET_PIN_STATE                  LOW
+  #ifndef FIL_RUNOUT_PIN
+    #define FIL_RUNOUT_PIN                  PA4   // MT_DET_1
+  #endif
+  #ifndef FIL_RUNOUT2_PIN
+    #define FIL_RUNOUT2_PIN                 PE6   // MT_DET_2
+  #endif
+  #ifndef FIL_RUNOUT_STATE
+    #define FIL_RUNOUT_STATE                LOW
+  #endif
 
   #define WIFI_IO0_PIN                      PC13
   #define WIFI_IO1_PIN                      PC7
@@ -300,8 +297,7 @@
 
 /**
  * Note: MKS Robin TFT screens use various TFT controllers.
- * If the screen stays white, disable 'LCD_RESET_PIN'
- * to let the bootloader init the screen.
+ * If the screen stays white, disable 'LCD_RESET_PIN' to let the bootloader init the screen.
  */
 
 #if ENABLED(TFT_CLASSIC_UI)

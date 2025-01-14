@@ -298,19 +298,10 @@
   // Software serial
   //
   #define X_SERIAL_TX_PIN                   PD5
-  #define X_SERIAL_RX_PIN        X_SERIAL_TX_PIN
-
   #define Y_SERIAL_TX_PIN                   PD0
-  #define Y_SERIAL_RX_PIN        Y_SERIAL_TX_PIN
-
   #define Z_SERIAL_TX_PIN                   PE1
-  #define Z_SERIAL_RX_PIN        Z_SERIAL_TX_PIN
-
   #define E0_SERIAL_TX_PIN                  PC6
-  #define E0_SERIAL_RX_PIN      E0_SERIAL_TX_PIN
-
   #define E1_SERIAL_TX_PIN                  PD12
-  #define E1_SERIAL_RX_PIN      E1_SERIAL_TX_PIN
 
   // Reduce baud rate to improve software serial reliability
   #ifndef TMC_BAUD_RATE
@@ -394,7 +385,6 @@
     #define E2_CS_PIN                EXP1_06_PIN
     #if HAS_TMC_UART
       #define E2_SERIAL_TX_PIN       EXP1_06_PIN
-      #define E2_SERIAL_RX_PIN       EXP1_06_PIN
     #endif
   #endif
 
@@ -407,7 +397,6 @@
     #define E3_CS_PIN                EXP1_04_PIN
     #if HAS_TMC_UART
       #define E3_SERIAL_TX_PIN       EXP1_04_PIN
-      #define E3_SERIAL_RX_PIN       EXP1_04_PIN
     #endif
   #else
     #define E3_ENABLE_PIN            EXP2_07_PIN
@@ -422,7 +411,6 @@
     #define E4_CS_PIN                EXP1_02_PIN
     #if HAS_TMC_UART
       #define E4_SERIAL_TX_PIN       EXP1_02_PIN
-      #define E4_SERIAL_RX_PIN       EXP1_02_PIN
     #endif
   #else
     #define E4_ENABLE_PIN            EXP2_07_PIN

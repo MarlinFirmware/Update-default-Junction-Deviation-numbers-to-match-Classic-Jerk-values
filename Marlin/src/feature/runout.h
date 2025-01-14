@@ -30,7 +30,7 @@
 #include "../module/planner.h"
 #include "../module/stepper.h" // for block_t
 #include "../gcode/queue.h"
-#include "../feature/pause.h" // for did_pause_print
+#include "pause.h" // for did_pause_print
 #include "../MarlinCore.h" // for printingIsActive()
 
 #include "../inc/MarlinConfig.h"
@@ -50,6 +50,8 @@
 #if DISABLED(FILAMENT_MOTION_SENSOR) || ENABLED(FILAMENT_SWITCH_AND_MOTION)
   #define HAS_FILAMENT_SWITCH 1
 #endif
+
+#define FILAMENT_IS_OUT(N...) (READ(FIL_RUNOUT##N##_PIN) == FIL_RUNOUT##N##_STATE)
 
 typedef Flags<
           #if NUM_MOTION_SENSORS > NUM_RUNOUT_SENSORS

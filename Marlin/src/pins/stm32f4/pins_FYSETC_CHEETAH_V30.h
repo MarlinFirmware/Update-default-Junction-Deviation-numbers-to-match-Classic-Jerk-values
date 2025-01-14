@@ -94,28 +94,16 @@
   #ifndef X_SERIAL_TX_PIN
     #define X_SERIAL_TX_PIN                 PB3
   #endif
-  #ifndef X_SERIAL_RX_PIN
-    #define X_SERIAL_RX_PIN      X_SERIAL_TX_PIN
-  #endif
 
   #ifndef Y_SERIAL_TX_PIN
     #define Y_SERIAL_TX_PIN                 PB3
-  #endif
-  #ifndef Y_SERIAL_RX_PIN
-    #define Y_SERIAL_RX_PIN      Y_SERIAL_TX_PIN
   #endif
 
   #ifndef Z_SERIAL_TX_PIN
     #define Z_SERIAL_TX_PIN                 PB3
   #endif
-  #ifndef Z_SERIAL_RX_PIN
-    #define Z_SERIAL_RX_PIN      Z_SERIAL_TX_PIN
-  #endif
   #ifndef E0_SERIAL_TX_PIN
     #define E0_SERIAL_TX_PIN                PB3
-  #endif
-  #ifndef E0_SERIAL_RX_PIN
-    #define E0_SERIAL_RX_PIN    E0_SERIAL_TX_PIN
   #endif
 
   // Default TMC slave addresses

@@ -188,76 +188,74 @@ if pioutil.is_pio_build():
                 set_env_field('lib_ignore', lib_ignore)
 
         build_src_filter = ""
-        if True:
-            # Build the actual equivalent build_src_filter list based on the inclusions by the features.
-            # PlatformIO doesn't do it this way, but maybe in the future....
-            cur_srcs = set()
-            # Remove the references to the same folder
-            my_srcs = re.findall(r'([+-]<.*?>)', build_filters)
-            for d in my_srcs:
-                # Assume normalized relative paths
-                plain = d[2:-1]
-                if d[0] == '+':
-                    def addentry(fullpath, info=None):
-                        relp = os.path.relpath(fullpath, marlinbasedir)
-                        if srcfilepattern.match(relp):
-                            if info:
-                                blab("Added src file %s (%s)" % (relp, str(info)), 3)
-                            else:
-                                blab("Added src file %s " % relp, 3)
-                            cur_srcs.add(relp)
-                    # Special rule: If a direct folder is specified add all files within.
-                    fullplain = os.path.join(marlinbasedir, plain)
-                    if os.path.isdir(fullplain):
-                        blab("Directory content addition for %s " % plain, 3)
-                        gpattern = os.path.join(fullplain, "**")
-                        for fname in glob.glob(gpattern, recursive=True):
-                            addentry(fname, "dca")
-                    else:
-                        # Add all the things from the pattern by GLOB.
-                        def srepl(matchi):
-                            g0 = matchi.group(0)
-                            return r"**" + g0[1:]
-                        gpattern = re.sub(r'[*]($|[^*])', srepl, plain)
-                        gpattern = os.path.join(marlinbasedir, gpattern)
 
-                        for fname in glob.glob(gpattern, recursive=True):
-                            addentry(fname)
-                else:
-                    # Special rule: If a direct folder is specified then remove all files within.
-                    def onremove(relp, info=None):
+        # Build the actual equivalent build_src_filter list based on the inclusions by the features.
+        # PlatformIO doesn't do it this way, but maybe in the future....
+        cur_srcs = set()
+        # Remove the references to the same folder
+        my_srcs = re.findall(r'([+-]<.*?>)', build_filters)
+        for d in my_srcs:
+            # Assume normalized relative paths
+            plain = d[2:-1]
+            if d[0] == '+':
+                def addentry(fullpath, info=None):
+                    relp = os.path.relpath(fullpath, marlinbasedir)
+                    if srcfilepattern.match(relp):
                         if info:
-                            blab("Removed src file %s (%s)" % (relp, str(info)), 3)
+                            blab("Added src file %s (%s)" % (relp, str(info)), 3)
                         else:
-                            blab("Removed src file %s " % relp, 3)
-                    fullplain = os.path.join(marlinbasedir, plain)
-                    if os.path.isdir(fullplain):
-                        blab("Directory content removal for %s " % plain, 2)
-                        def filt(x):
-                            common = os.path.commonpath([plain, x])
-                            if not common == os.path.normpath(plain): return True
-                            onremove(x, "dcr")
-                            return False
-                        cur_srcs = set(filter(filt, cur_srcs))
-                    else:
-                        # Remove matching source entries.
-                        def filt(x):
-                            if not fnmatch.fnmatch(x, plain): return True
-                            onremove(x)
-                            return False
-                        cur_srcs = set(filter(filt, cur_srcs))
-            # Transform the resulting set into a string.
-            for x in cur_srcs:
-                if build_src_filter != "": build_src_filter += ' '
-                build_src_filter += "+<" + x + ">"
+                            blab("Added src file %s " % relp, 3)
+                        cur_srcs.add(relp)
+                # Special rule: If a direct folder is specified add all files within.
+                fullplain = os.path.join(marlinbasedir, plain)
+                if os.path.isdir(fullplain):
+                    blab("Directory content addition for %s " % plain, 3)
+                    gpattern = os.path.join(fullplain, "**")
+                    for fname in glob.glob(gpattern, recursive=True):
+                        addentry(fname, "dca")
+                else:
+                    # Add all the things from the pattern by GLOB.
+                    def srepl(matchi):
+                        g0 = matchi.group(0)
+                        return r"**" + g0[1:]
+                    gpattern = re.sub(r'[*]($|[^*])', srepl, plain)
+                    gpattern = os.path.join(marlinbasedir, gpattern)
 
-            #blab("Final build_src_filter: " + build_src_filter, 3)
-        else:
-            build_src_filter = build_filters
+                    for fname in glob.glob(gpattern, recursive=True):
+                        addentry(fname)
+            else:
+                # Special rule: If a direct folder is specified then remove all files within.
+                def onremove(relp, info=None):
+                    if info:
+                        blab("Removed src file %s (%s)" % (relp, str(info)), 3)
+                    else:
+                        blab("Removed src file %s " % relp, 3)
+                fullplain = os.path.join(marlinbasedir, plain)
+                if os.path.isdir(fullplain):
+                    blab("Directory content removal for %s " % plain, 2)
+                    def filt(x):
+                        common = os.path.commonpath([plain, x])
+                        if not common == os.path.normpath(plain): return True
+                        onremove(x, "dcr")
+                        return False
+                    cur_srcs = set(filter(filt, cur_srcs))
+                else:
+                    # Remove matching source entries.
+                    def filt(x):
+                        if not fnmatch.fnmatch(x, plain): return True
+                        onremove(x)
+                        return False
+                    cur_srcs = set(filter(filt, cur_srcs))
+        # Transform the resulting set into a string.
+        for x in cur_srcs:
+            if build_src_filter != "": build_src_filter += ' '
+            build_src_filter += "+<" + x + ">"
 
         # Update in PlatformIO
         set_env_field('build_src_filter', [build_src_filter])
         env.Replace(SRC_FILTER=build_src_filter)
+
+        #blab("Final build_src_filter: " + build_src_filter, 3)
 
     #
     # Use the compiler to get a list of all enabled features

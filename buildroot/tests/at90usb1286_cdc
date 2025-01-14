@@ -12,6 +12,3 @@ set -e
 restore_configs
 opt_set MOTHERBOARD BOARD_BRAINWAVE_PRO
 exec_test $1 $2 "Default Configuration" "$3"
-
-# clean up
-restore_configs

@@ -489,7 +489,7 @@ void MarlinUI::draw_status_message(const bool blink) {
         maxlen -= 2;
       }
 
-      dwin_string.add(ui.scrolled_filename(theCard, maxlen, row, sel), maxlen);
+      dwin_string.add(ui.scrolled_filename(theCard, maxlen, sel), maxlen);
       uint8_t n = maxlen - dwin_string.length;
       while (n > 0) { dwin_string.add(' '); --n; }
       lcd_moveto(1, row);

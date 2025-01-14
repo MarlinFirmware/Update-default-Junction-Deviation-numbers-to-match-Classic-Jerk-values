@@ -246,7 +246,7 @@
 
 #endif // !USBCON
 
-#ifdef MMU2_SERIAL_PORT
+#ifdef MMU_SERIAL_PORT
   template <uint8_t serial>
   struct MMU2SerialCfg {
     static constexpr int PORT               = serial;
@@ -260,7 +260,7 @@
     static constexpr bool RX_OVERRUNS       = false;
   };
 
-  typedef Serial1Class< MarlinSerial< MMU2SerialCfg<MMU2_SERIAL_PORT> > > MSerialMMU2;
+  typedef Serial1Class< MarlinSerial< MMU2SerialCfg<MMU_SERIAL_PORT> > > MSerialMMU2;
   extern MSerialMMU2 mmuSerial;
 #endif
 

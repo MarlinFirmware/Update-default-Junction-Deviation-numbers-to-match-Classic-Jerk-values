@@ -55,13 +55,8 @@
 
 #if HAS_TMC_UART
   #define E1_SERIAL_TX_PIN                  PF8
-  #define E1_SERIAL_RX_PIN      E1_SERIAL_TX_PIN
-
   #define E2_SERIAL_TX_PIN                  PD13
-  #define E2_SERIAL_RX_PIN      E2_SERIAL_TX_PIN
-
   #define E3_SERIAL_TX_PIN                  PC7
-  #define E3_SERIAL_RX_PIN      E3_SERIAL_TX_PIN
 
   // Reduce baud rate to improve software serial reliability
   #ifndef TMC_BAUD_RATE

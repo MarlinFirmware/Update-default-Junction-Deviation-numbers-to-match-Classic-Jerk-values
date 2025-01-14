@@ -22,7 +22,23 @@
 #pragma once
 
 /**
- * HAL Pins Debugging for Teensy 3.5 (MK64FX512) and Teensy 3.6 (MK66FX1M0)
+ * Pins Debugging for Teensy 3.5 (MK64FX512) and Teensy 3.6 (MK66FX1M0)
+ *
+ *   - NUMBER_PINS_TOTAL
+ *   - MULTI_NAME_PAD
+ *   - getPinByIndex(index)
+ *   - printPinNameByIndex(index)
+ *   - getPinIsDigitalByIndex(index)
+ *   - digitalPinToAnalogIndex(pin)
+ *   - getValidPinMode(pin)
+ *   - isValidPin(pin)
+ *   - isAnalogPin(pin)
+ *   - digitalRead_mod(pin)
+ *   - pwm_status(pin)
+ *   - printPinPWM(pin)
+ *   - printPinPort(pin)
+ *   - printPinNumber(pin)
+ *   - printPinAnalog(pin)
  */
 
 #define NUMBER_PINS_TOTAL NUM_DIGITAL_PINS
@@ -53,9 +69,18 @@
   #define TPM1_CH1_PIN 17
 #endif
 
-#define IS_ANALOG(P) ((P) >= analogInputToDigitalPin(0) && (P) <= analogInputToDigitalPin(9)) || ((P) >= analogInputToDigitalPin(12) && (P) <= analogInputToDigitalPin(20))
+#define getPinByIndex(x) pin_array[x].pin
+#define printPinNameByIndex(x) do{ sprintf_P(buffer, PSTR("%-" STRINGIFY(MAX_NAME_LENGTH) "s"), pin_array[x].name); SERIAL_ECHO(buffer); }while(0)
+#define getPinIsDigitalByIndex(x) pin_array[x].is_digital
+#define digitalPinToAnalogIndex(P) int(P - analogInputToDigitalPin(0))
+#define getValidPinMode(P) (isValidPin(P) && IS_OUTPUT(P))
+#define isValidPin(P) (P >= 0 && P < pin_t(NUMBER_PINS_TOTAL))
+#define printPinNumber(P) do{ sprintf_P(buffer, PSTR("%02d"), P); SERIAL_ECHO(buffer); }while(0)
+#define printPinAnalog(P) do{ sprintf_P(buffer, PSTR(" (A%2d)  "), digitalPinToAnalogIndex(P)); SERIAL_ECHO(buffer); }while(0)
 
-void print_analog_pin(char buffer[], int8_t pin) {
+#define isAnalogPin(P) ((P) >= analogInputToDigitalPin(0) && (P) <= analogInputToDigitalPin(9)) || ((P) >= analogInputToDigitalPin(12) && (P) <= analogInputToDigitalPin(20))
+
+void printAnalogPin(char buffer[], int8_t pin) {
   if (pin <= 23)      sprintf_P(buffer, PSTR("(A%2d)  "), int(pin - 14));
   else if (pin <= 39) sprintf_P(buffer, PSTR("(A%2d)  "), int(pin - 19));
 }
@@ -77,7 +102,7 @@ void analog_pin_state(char buffer[], int8_t pin) {
  * Print a pin's PWM status.
  * Return true if it's currently a PWM pin.
  */
-bool pwm_status(int8_t pin) {
+bool pwm_status(const int8_t pin) {
   char buffer[20];   // for the sprintf statements
   switch (pin) {
     FTM_CASE(0,0);
@@ -108,4 +133,6 @@ bool pwm_status(int8_t pin) {
   SERIAL_ECHOPGM("  ");
 }
 
-void pwm_details(uint8_t pin) { /* TODO */ }
+void printPinPWM(const pin_t) { /* TODO */ }
+
+void printPinPort(const pin_t) {}

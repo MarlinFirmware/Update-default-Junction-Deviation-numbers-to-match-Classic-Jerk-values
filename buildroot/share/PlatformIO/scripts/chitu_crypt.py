@@ -34,7 +34,7 @@ if pioutil.is_pio_build():
 
         for loop_counter in range(0, block_size):
             # meant to make sure different bits of the key are used.
-            xor_seed = int(loop_counter / key_length)
+            xor_seed = loop_counter // key_length
 
             # IP is a scratch register / R12
             ip = loop_counter - (key_length * xor_seed)
@@ -83,7 +83,7 @@ if pioutil.is_pio_build():
         output_file.write(struct.pack("<I", file_key))
 
         #TODO - how to enforce that the firmware aligns to block boundaries?
-        block_count = int(len(input_file) / block_size)
+        block_count = len(input_file) // block_size
         print ("Block Count is ", block_count)
         for block_number in range(0, block_count):
             block_offset = (block_number * block_size)

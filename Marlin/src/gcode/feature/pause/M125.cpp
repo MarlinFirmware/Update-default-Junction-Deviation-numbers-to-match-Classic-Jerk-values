@@ -88,7 +88,7 @@ void GcodeSuite::M125() {
     park_point += hotend_offset[active_extruder];
   #endif
 
-  const bool sd_printing = TERN0(HAS_MEDIA, IS_SD_PRINTING());
+  const bool sd_printing = IS_SD_PRINTING();
 
   ui.pause_show_message(PAUSE_MESSAGE_PARKING, PAUSE_MODE_PAUSE_PRINT);
 

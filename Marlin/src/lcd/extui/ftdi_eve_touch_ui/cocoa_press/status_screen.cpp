@@ -116,7 +116,7 @@ void StatusScreen::send_buffer(CommandProcessor &cmd, const void *data, uint16_t
     memcpy_P(block, ptr, nBytes);
     cmd.write((const void*)block, nBytes);
     cmd.execute();
-    if(cmd.has_fault()) {
+    if (cmd.has_fault()) {
       SERIAL_ECHOLNPGM("Recovering from fault: ");
       cmd.reset();
       delay(1000);

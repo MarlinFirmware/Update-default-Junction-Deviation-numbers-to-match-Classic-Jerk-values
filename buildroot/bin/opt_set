@@ -1,17 +1,25 @@
-#!/usr/bin/env bash
+#!/usr/bin/env python
 
-# exit on first failure
-set -e
+import sys, os, config
 
-SED=$(which gsed sed | head -n1)
+def main():
+    args = sys.argv[1:]
+    if len(args) % 2 != 0:
+        print("ERROR: Please provide pairs of <name> <value>")
+        return
 
-while [[ $# > 1 ]]; do
-  DID=0
-  for FN in Configuration Configuration_adv; do
-    "${SED}" -i "/^\(\s*\)\/*\s*\(#define\s\+${1}\b\) *\(.*\)$/{s//\1\2 ${2} \/\/ \3/;h};\${x;/./{x;q0};x;q9}" Marlin/$FN.h && DID=1
-  done
-  ((DID)) ||
-    eval "echo '#define ${1} ${2}' >>Marlin/Configuration.h" ||
-      (echo "ERROR: opt_set Can't set or add ${1}" >&2 && exit 9)
-  shift 2
-done
+    for i in range(0, len(args), 2):
+        name = args[i]
+        value = args[i + 1]
+        changed = False
+
+        for file in config.FILES:
+            if os.path.exists(file):
+                if config.set(file, name, value):
+                    changed = True
+
+        if not changed:
+            config.add(config.FILES[0], name, value)
+
+if __name__ == "__main__":
+    main()

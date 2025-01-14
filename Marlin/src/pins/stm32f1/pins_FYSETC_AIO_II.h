@@ -85,9 +85,9 @@
 #define E0_ENABLE_PIN                       PC13
 
 #if HAS_TMC_UART
-  /**
-   * TMC2208/TMC2209 stepper drivers
-   */
+  //
+  // TMC2208/TMC2209 stepper drivers
+  //
 
   // Hardware serial with switch
   #define X_HARDWARE_SERIAL  MSerial2

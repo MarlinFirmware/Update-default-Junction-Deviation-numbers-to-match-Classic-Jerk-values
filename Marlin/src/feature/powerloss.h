@@ -30,12 +30,16 @@
 
 #include "../inc/MarlinConfig.h"
 
+#if ENABLED(CANCEL_OBJECTS)
+  #include "cancel_object.h"
+#endif
+
 #if ENABLED(GCODE_REPEAT_MARKERS)
-  #include "../feature/repeat.h"
+  #include "repeat.h"
 #endif
 
 #if ENABLED(MIXING_EXTRUDER)
-  #include "../feature/mixing.h"
+  #include "mixing.h"
 #endif
 
 #if !defined(POWER_LOSS_STATE) && PIN_EXISTS(POWER_LOSS)
@@ -63,6 +67,11 @@ typedef struct {
   uint16_t flow_percentage[EXTRUDERS];
 
   float zraise;
+
+  // Canceled objects
+  #if ENABLED(CANCEL_OBJECTS)
+    cancel_state_t cancel_state;
+  #endif
 
   // Repeat information
   #if ENABLED(GCODE_REPEAT_MARKERS)

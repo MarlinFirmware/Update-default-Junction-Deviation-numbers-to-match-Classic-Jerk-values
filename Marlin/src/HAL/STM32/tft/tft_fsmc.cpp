@@ -182,6 +182,7 @@ void TFT_FSMC::transmitDMA(uint32_t memoryIncrease, uint16_t *data, uint16_t cou
   DMAtx.Init.PeriphInc = memoryIncrease;
   HAL_DMA_Init(&DMAtx);
   HAL_DMA_Start(&DMAtx, (uint32_t)data, (uint32_t)&(LCD->RAM), count);
+  TERN_(TFT_SHARED_IO, while (isBusy()));
 }
 
 void TFT_FSMC::transmit(uint32_t memoryIncrease, uint16_t *data, uint16_t count) {

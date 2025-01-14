@@ -29,7 +29,7 @@
 #include <TMCStepper.h>
 #include "../module/planner.h"
 
-#define CHOPPER_DEFAULT_12V  { 3, -1, 1 }
+#define CHOPPER_DEFAULT_12V  { 3, -1, 1 }   // { toff, hend, hstrt }
 #define CHOPPER_DEFAULT_19V  { 4,  1, 1 }
 #define CHOPPER_DEFAULT_24V  { 4,  2, 1 }
 #define CHOPPER_DEFAULT_36V  { 5,  2, 4 }
@@ -77,8 +77,8 @@ class TMCStorage {
 
     struct {
       OPTCODE(HAS_STEALTHCHOP,  bool stealthChop_enabled = false)
-      OPTCODE(HYBRID_THRESHOLD, uint8_t hybrid_thrs = 0)
-      OPTCODE(USE_SENSORLESS,   int16_t homing_thrs = 0)
+      OPTCODE(HYBRID_THRESHOLD, uint16_t hybrid_thrs = 0)
+      OPTCODE(USE_SENSORLESS,   int16_t  homing_thrs = 0)
     } stored;
 };
 
@@ -320,14 +320,14 @@ class TMCMarlin<TMC2660Stepper, AXIS_LETTER, DRIVER_ID, AXIS_ID> : public TMC266
 };
 
 void monitor_tmc_drivers();
-void test_tmc_connection(LOGICAL_AXIS_DECL(const bool, true));
+void test_tmc_connection(LOGICAL_AXIS_DECL_LC(const bool, true));
 
 #if ENABLED(TMC_DEBUG)
   #if ENABLED(MONITOR_DRIVER_STATUS)
     void tmc_set_report_interval(const uint16_t update_interval);
   #endif
-  void tmc_report_all(LOGICAL_AXIS_DECL(const bool, true));
-  void tmc_get_registers(LOGICAL_AXIS_ARGS(const bool));
+  void tmc_report_all(LOGICAL_AXIS_DECL_LC(const bool, true));
+  void tmc_get_registers(LOGICAL_AXIS_ARGS_LC(const bool));
 #endif
 
 /**

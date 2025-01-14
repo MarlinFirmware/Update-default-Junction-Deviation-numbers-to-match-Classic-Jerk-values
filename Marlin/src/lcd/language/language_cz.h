@@ -102,6 +102,7 @@ namespace LanguageNarrow_cz {
   LSTR MSG_EXTRUDE                        = _UxGT("Vytlačit (extr.)");
   LSTR MSG_RETRACT                        = _UxGT("Zatlačit (retr.)");
   LSTR MSG_MOVE_AXIS                      = _UxGT("Posunout osy");
+  LSTR MSG_PROBE_AND_LEVEL                = _UxGT("Měření a vyrovnání");
   LSTR MSG_BED_LEVELING                   = _UxGT("Vyrovnat podložku");
   LSTR MSG_LEVEL_BED                      = _UxGT("Vyrovnat podložku");
   LSTR MSG_BED_TRAMMING                   = _UxGT("Vyrovnat rohy");
@@ -125,7 +126,7 @@ namespace LanguageNarrow_cz {
   LSTR MSG_IDEX_MODE_MIRRORED_COPY        = _UxGT("Zrcadlení");
   LSTR MSG_IDEX_MODE_FULL_CTRL            = _UxGT("Plná kontrola");
   LSTR MSG_HOTEND_OFFSET_Z                = _UxGT("2. tryska Z");
-  LSTR MSG_HOTEND_OFFSET_A                = _UxGT("2. tryska @");
+  LSTR MSG_HOTEND_OFFSET_N                = _UxGT("2. tryska @");
 
   LSTR MSG_UBL_DOING_G29                  = _UxGT("Provádím G29");
   LSTR MSG_UBL_TOOLS                      = _UxGT("UBL nástroje");
@@ -135,13 +136,10 @@ namespace LanguageNarrow_cz {
   LSTR MSG_UBL_BC_INSERT2                 = _UxGT("Změřte");
   LSTR MSG_UBL_BC_REMOVE                  = _UxGT("Odstraňte a změřte");
   LSTR MSG_UBL_MOVING_TO_NEXT             = _UxGT("Přesun na další");
-  LSTR MSG_UBL_ACTIVATE_MESH              = _UxGT("Aktivovat UBL");
-  LSTR MSG_UBL_DEACTIVATE_MESH            = _UxGT("Deaktivovat UBL");
   LSTR MSG_UBL_SET_TEMP_BED               = _UxGT("Teplota podložky");
   LSTR MSG_UBL_BED_TEMP_CUSTOM            = _UxGT("Teplota podložky");
   LSTR MSG_UBL_SET_TEMP_HOTEND            = _UxGT("Teplota hotendu");
   LSTR MSG_UBL_HOTEND_TEMP_CUSTOM         = _UxGT("Teplota hotendu");
-  LSTR MSG_UBL_MESH_EDIT                  = _UxGT("Úprava sítě bodů");
   LSTR MSG_UBL_EDIT_CUSTOM_MESH           = _UxGT("Upravit vlastní síť");
   LSTR MSG_UBL_FINE_TUNE_MESH             = _UxGT("Doladit síť bodů");
   LSTR MSG_UBL_DONE_EDITING_MESH          = _UxGT("Konec úprav sítě");
@@ -202,7 +200,8 @@ namespace LanguageNarrow_cz {
   LSTR MSG_UBL_7_SAVE_MESH                = _UxGT("7. Uložit síť bodů");
 
   LSTR MSG_LED_CONTROL                    = _UxGT("Nastavení LED");
-  LSTR MSG_LEDS                           = _UxGT("Světla");
+  LSTR MSG_LIGHTS                         = _UxGT("Světla");
+  LSTR MSG_LIGHT_N                        = _UxGT("Světla #{");
   LSTR MSG_LED_PRESETS                    = _UxGT("Světla Předvolby");
   LSTR MSG_SET_LEDS_RED                   = _UxGT("Červená");
   LSTR MSG_SET_LEDS_ORANGE                = _UxGT("Oranžová");
@@ -386,7 +385,11 @@ namespace LanguageNarrow_cz {
   LSTR MSG_MANUAL_DEPLOY                  = _UxGT("Vysunout Z-sondu");
   LSTR MSG_MANUAL_STOW                    = _UxGT("Zasunout Z-sondu");
   LSTR MSG_HOME_FIRST                     = _UxGT("Domů %s první");
+  LSTR MSG_ZPROBE_XOFFSET                 = _UxGT("X ofset");
+  LSTR MSG_ZPROBE_YOFFSET                 = _UxGT("Y ofset");
   LSTR MSG_ZPROBE_ZOFFSET                 = _UxGT("Z ofset");
+  LSTR MSG_ZPROBE_OFFSET_N                = _UxGT("@ ofset");
+  LSTR MSG_BABYSTEP_PROBE_Z               = _UxGT("Krok a Z offset");
   LSTR MSG_BABYSTEP_X                     = _UxGT("Babystep X");
   LSTR MSG_BABYSTEP_Y                     = _UxGT("Babystep Y");
   LSTR MSG_BABYSTEP_Z                     = _UxGT("Babystep Z");

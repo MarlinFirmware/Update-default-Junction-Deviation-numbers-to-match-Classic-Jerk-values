@@ -112,6 +112,7 @@ namespace LanguageNarrow_pl {
   LSTR MSG_EXTRUDE                        = _UxGT("Ekstruzja");
   LSTR MSG_RETRACT                        = _UxGT("Wycofanie");
   LSTR MSG_MOVE_AXIS                      = _UxGT("Ruch osi");
+  LSTR MSG_PROBE_AND_LEVEL                = _UxGT("Sonda/poziomowanie");
   LSTR MSG_BED_LEVELING                   = _UxGT("Poziomowanie stołu");
   LSTR MSG_LEVEL_BED                      = _UxGT("Wypoziomuj stół");
   LSTR MSG_BED_TRAMMING                   = _UxGT("Narożniki poziomowania");
@@ -134,7 +135,7 @@ namespace LanguageNarrow_pl {
   LSTR MSG_IDEX_MODE_MIRRORED_COPY        = _UxGT("Kopia lustrzana");
   LSTR MSG_IDEX_MODE_FULL_CTRL            = _UxGT("Pełne sterowanie");
   LSTR MSG_HOTEND_OFFSET_Z                = _UxGT("2ga dysza Z");
-  LSTR MSG_HOTEND_OFFSET_A                = _UxGT("2ga dysza @");
+  LSTR MSG_HOTEND_OFFSET_N                = _UxGT("2ga dysza @");
   LSTR MSG_UBL_DOING_G29                  = _UxGT("Wykonywanie G29");
   LSTR MSG_UBL_TOOLS                      = _UxGT("Narzędzia UBL");
   LSTR MSG_LCD_TILTING_MESH               = _UxGT("Punkt pochylenia");
@@ -143,13 +144,10 @@ namespace LanguageNarrow_pl {
   LSTR MSG_UBL_BC_INSERT2                 = _UxGT("Zmierz");
   LSTR MSG_UBL_BC_REMOVE                  = _UxGT("Usuń & Zmierz Stół");
   LSTR MSG_UBL_MOVING_TO_NEXT             = _UxGT("Przesuwanie do następnego");
-  LSTR MSG_UBL_ACTIVATE_MESH              = _UxGT("Aktywacja UBL");
-  LSTR MSG_UBL_DEACTIVATE_MESH            = _UxGT("Dezaktywacja UBL");
   LSTR MSG_UBL_SET_TEMP_BED               = _UxGT("Temperatura stołu");
   LSTR MSG_UBL_BED_TEMP_CUSTOM            = _UxGT("Temperatura stołu");
   LSTR MSG_UBL_SET_TEMP_HOTEND            = _UxGT("Temperatura dyszy");
   LSTR MSG_UBL_HOTEND_TEMP_CUSTOM         = _UxGT("Temperatura dyszy");
-  LSTR MSG_UBL_MESH_EDIT                  = _UxGT("Edycja siatki");
   LSTR MSG_UBL_EDIT_CUSTOM_MESH           = _UxGT("Edycja własnej siatki");
   LSTR MSG_UBL_FINE_TUNE_MESH             = _UxGT("Dostrajanie siatki");
   LSTR MSG_UBL_DONE_EDITING_MESH          = _UxGT("Koniec edycji siati");
@@ -210,7 +208,8 @@ namespace LanguageNarrow_pl {
   LSTR MSG_UBL_7_SAVE_MESH                = _UxGT("7. Zapis siatki stołu");
 
   LSTR MSG_LED_CONTROL                    = _UxGT("Sterowanie LED");
-  LSTR MSG_LEDS                           = _UxGT("Światła");
+  LSTR MSG_LIGHTS                         = _UxGT("Światła");
+  LSTR MSG_LIGHT_N                        = _UxGT("Światło #{");
   LSTR MSG_LED_PRESETS                    = _UxGT("Ustawienia świateł");
   LSTR MSG_SET_LEDS_RED                   = _UxGT("Czerwony");
   LSTR MSG_SET_LEDS_ORANGE                = _UxGT("Pomarańczowy");
@@ -368,7 +367,11 @@ namespace LanguageNarrow_pl {
   LSTR MSG_BLTOUCH_RESET                  = _UxGT("Reset BLTouch");
   LSTR MSG_BLTOUCH_MODE_CHANGE            = _UxGT("UWAGA: Złe ustawienia mogą uszkodzić drukarkę. Kontynuować?");
   LSTR MSG_HOME_FIRST                     = _UxGT("Najpierw Home %s");
+  LSTR MSG_ZPROBE_XOFFSET                 = _UxGT("Offset X");
+  LSTR MSG_ZPROBE_YOFFSET                 = _UxGT("Offset Y");
   LSTR MSG_ZPROBE_ZOFFSET                 = _UxGT("Offset Z");
+  LSTR MSG_ZPROBE_OFFSET_N                = _UxGT("Offset @");
+  LSTR MSG_BABYSTEP_PROBE_Z               = _UxGT("Krok Z offsetu");
   LSTR MSG_MOVE_NOZZLE_TO_BED             = _UxGT("Przesuń dyszę do stołu");
   LSTR MSG_BABYSTEP_TOTAL                 = _UxGT("Łącznie");
   LSTR MSG_ENDSTOP_ABORT                  = _UxGT("Błąd krańcówki");

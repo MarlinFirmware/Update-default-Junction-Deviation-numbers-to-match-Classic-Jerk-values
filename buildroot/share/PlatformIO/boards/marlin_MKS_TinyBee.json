@@ -1,0 +1,38 @@
+{
+  "build": {
+    "arduino":{
+      "ldscript": "esp32_out.ld"
+    },
+    "core": "esp32",
+    "extra_flags": "-DARDUINO_ESP32_DEV",
+    "f_cpu": "240000000L",
+    "f_flash": "40000000L",
+    "flash_mode": "dio",
+    "mcu": "esp32",
+    "variant": "esp32"
+  },
+  "connectivity": [
+    "wifi",
+    "bluetooth",
+    "ethernet",
+    "can"
+  ],
+  "debug": {
+    "openocd_board": "esp-wroom-32.cfg"
+  },
+  "frameworks": [
+    "arduino",
+    "espidf"
+  ],
+  "name": "MKS TinyBee V1.0",
+  "upload": {
+    "flash_size": "8MB",
+    "maximum_ram_size": 524288,
+    "maximum_size": 8388608,
+    "require_upload_port": true,
+    "speed": 460800,
+    "offset_address": 65536
+  },
+  "url": "https://github.com/makerbase-mks/MKS-TinyBee",
+  "vendor": "MKS Makerbase"
+}

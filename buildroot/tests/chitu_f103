@@ -11,6 +11,3 @@ set -e
 #
 use_example_configs Tronxy/X5SA
 exec_test $1 $2 "Tronxy/X5SA" "$3"
-
-# clean up
-restore_configs

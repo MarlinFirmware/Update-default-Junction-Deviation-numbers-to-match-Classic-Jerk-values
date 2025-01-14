@@ -24,7 +24,7 @@
 /**
  * CartesioV11 pin assignments
  * Comes with an Arduino Mega, see
- * https://web.archive.org/web/20171024190029/http://mauk.cc/mediawiki/index.php/Electronical_assembly
+ * https://web.archive.org/web/20171024190029/mauk.cc/mediawiki/index.php/Electronical_assembly
  * ATmega2560, ATmega1280
  */
 
@@ -149,8 +149,6 @@
   #if HAS_MARLINUI_U8GLIB
     #define DOGLCD_A0                         26
     #define DOGLCD_CS                         24
-    #define DOGLCD_MOSI                       -1  // Prevent auto-define by Conditionals_post.h
-    #define DOGLCD_SCK                        -1
   #endif
 #endif
 

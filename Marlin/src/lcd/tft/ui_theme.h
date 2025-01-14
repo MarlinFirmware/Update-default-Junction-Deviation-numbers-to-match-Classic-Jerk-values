@@ -31,5 +31,10 @@
 #define TFT_THEME_INCL(M) TFT_THEME_INCL_(M)
 
 #include "tft_color.h"
+
+#if ENABLED(BOOT_MARLIN_LOGO_HUGE)
+  #define COLOR_WEBSITE_URL COLOR_YELLOW
+#endif
+
 #include TFT_THEME_INCL(TFT_THEME)
 #include "themes/theme_default.h"

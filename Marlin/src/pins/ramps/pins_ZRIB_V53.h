@@ -187,7 +187,7 @@
 
 #if HAS_TMC_UART
   /**
-   * TMC2209 stepper drivers
+   * TMC2208/TMC2209 stepper drivers
    *
    * Hardware serial communication ports.
    * If undefined software serial is used according to the pins below

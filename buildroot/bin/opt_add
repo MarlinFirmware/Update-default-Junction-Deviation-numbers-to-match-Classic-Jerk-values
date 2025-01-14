@@ -1,3 +1,11 @@
-#!/usr/bin/env bash
+#!/usr/bin/env python
 
-eval "echo '#define ${@}' | cat - Marlin/Configuration.h > temp && mv temp Marlin/Configuration.h"
+import sys, config
+
+def main():
+    args = sys.argv[1:]
+    for name in args:
+        config.add(config.FILES[0], name)
+
+if __name__ == "__main__":
+    main()

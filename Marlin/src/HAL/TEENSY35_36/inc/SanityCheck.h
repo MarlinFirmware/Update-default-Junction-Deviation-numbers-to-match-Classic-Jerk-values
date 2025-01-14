@@ -48,3 +48,7 @@
 #if USING_PULLDOWNS
   #error "PULLDOWN pin mode is not available for Teensy 3.5/3.6."
 #endif
+
+#if ENABLED(PINS_DEBUGGING)
+  #error "PINS_DEBUGGING is not yet supported for Teensy 3.5/3.6. Needs is_output(pin), etc."
+#endif

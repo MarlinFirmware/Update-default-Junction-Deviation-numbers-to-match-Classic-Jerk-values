@@ -34,7 +34,7 @@
 static lv_obj_t *scr;
 
 void lv_draw_error_message(FSTR_P const fmsg) {
-  FSTR_P fhalted = F("PRINTER HALTED"), fplease = F("Please Reset");
+  FSTR_P const fhalted = F("PRINTER HALTED"), fplease = F("Please Reset");
   SPI_TFT.lcdClear(0x0000);
   if (fmsg) disp_string((TFT_WIDTH - strlen_P(FTOP(fmsg)) * 16) / 2, 100, fmsg, 0xFFFF, 0x0000);
   disp_string((TFT_WIDTH - strlen_P(FTOP(fhalted)) * 16) / 2, 140, fhalted, 0xFFFF, 0x0000);

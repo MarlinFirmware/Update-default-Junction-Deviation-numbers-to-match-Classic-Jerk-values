@@ -24,6 +24,10 @@
 
 #if HAS_PRUSA_MMU2
 
+/**
+ * mmu2.cpp - Support for Průša MMU2 and MMU2S
+ */
+
 #include "mmu2.h"
 #include "../../lcd/menu/menu_mmu2.h"
 
@@ -39,14 +43,14 @@ MMU2 mmu2;
 #include "../../MarlinCore.h"
 
 #if ENABLED(HOST_PROMPT_SUPPORT)
-  #include "../../feature/host_actions.h"
+  #include "../host_actions.h"
 #endif
 
 #if ENABLED(EXTENSIBLE_UI)
   #include "../../lcd/extui/ui_api.h"
 #endif
 
-#define DEBUG_OUT ENABLED(MMU2_DEBUG)
+#define DEBUG_OUT ENABLED(MMU_DEBUG)
 #include "../../core/debug_out.h"
 
 #define MMU_TODELAY 100
@@ -57,7 +61,7 @@ MMU2 mmu2;
 #define MMU2_SEND(S) tx_str(F(S "\n"))
 #define MMU2_RECV(S) rx_str(F(S "\n"))
 
-#if ENABLED(MMU_EXTRUDER_SENSOR)
+#if ENABLED(MMU2_EXTRUDER_SENSOR)
   uint8_t mmu_idl_sens = 0;
   static bool mmu_loading_flag = false;
 #endif
@@ -106,12 +110,12 @@ void MMU2::init() {
 
   set_runout_valid(false);
 
-  #if PIN_EXISTS(MMU2_RST)
-    WRITE(MMU2_RST_PIN, HIGH);
-    SET_OUTPUT(MMU2_RST_PIN);
+  #if PIN_EXISTS(MMU_RST)
+    WRITE(MMU_RST_PIN, HIGH);
+    SET_OUTPUT(MMU_RST_PIN);
   #endif
 
-  MMU2_SERIAL.begin(MMU_BAUD);
+  MMU_SERIAL.begin(MMU_BAUD);
   extruder = MMU2_NO_TOOL;
 
   safe_delay(10);
@@ -123,10 +127,10 @@ void MMU2::init() {
 void MMU2::reset() {
   DEBUG_ECHOLNPGM("MMU <= reset");
 
-  #if PIN_EXISTS(MMU2_RST)
-    WRITE(MMU2_RST_PIN, LOW);
+  #if PIN_EXISTS(MMU_RST)
+    WRITE(MMU_RST_PIN, LOW);
     safe_delay(20);
-    WRITE(MMU2_RST_PIN, HIGH);
+    WRITE(MMU_RST_PIN, HIGH);
   #else
     MMU2_SEND("X0");  // Send soft reset
   #endif
@@ -134,7 +138,7 @@ void MMU2::reset() {
 
 int8_t MMU2::get_current_tool() { return extruder == MMU2_NO_TOOL ? -1 : extruder; }
 
-#if ANY(HAS_PRUSA_MMU2S, MMU_EXTRUDER_SENSOR)
+#if ANY(HAS_PRUSA_MMU2S, MMU2_EXTRUDER_SENSOR)
   #define FILAMENT_PRESENT() (READ(FIL_RUNOUT1_PIN) != FIL_RUNOUT1_STATE)
 #else
   #define FILAMENT_PRESENT() true
@@ -226,7 +230,7 @@ void MMU2::mmu_loop() {
           const int filament = cmd - MMU_CMD_T0;
           DEBUG_ECHOLNPGM("MMU <= T", filament);
           tx_printf(F("T%d\n"), filament);
-          TERN_(MMU_EXTRUDER_SENSOR, mmu_idl_sens = 1); // enable idler sensor, if any
+          TERN_(MMU2_EXTRUDER_SENSOR, mmu_idl_sens = 1); // enable idler sensor, if any
           state = 3; // wait for response
         }
         else if (WITHIN(cmd, MMU_CMD_L0, MMU_CMD_L0 + EXTRUDERS - 1)) {
@@ -299,7 +303,7 @@ void MMU2::mmu_loop() {
       break;
 
     case 3:   // response to mmu commands
-      #if ENABLED(MMU_EXTRUDER_SENSOR)
+      #if ENABLED(MMU2_EXTRUDER_SENSOR)
         if (mmu_idl_sens) {
           if (FILAMENT_PRESENT() && mmu_loading_flag) {
             DEBUG_ECHOLNPGM("MMU <= 'A'");
@@ -361,8 +365,8 @@ bool MMU2::rx_str(FSTR_P fstr) {
 
   uint8_t i = strlen(rx_buffer);
 
-  while (MMU2_SERIAL.available()) {
-    rx_buffer[i++] = MMU2_SERIAL.read();
+  while (MMU_SERIAL.available()) {
+    rx_buffer[i++] = MMU_SERIAL.read();
 
     if (i == sizeof(rx_buffer) - 1) {
       DEBUG_ECHOLNPGM("rx buffer overrun");
@@ -393,7 +397,7 @@ bool MMU2::rx_str(FSTR_P fstr) {
 void MMU2::tx_str(FSTR_P fstr) {
   clear_rx_buffer();
   PGM_P pstr = FTOP(fstr);
-  while (const char c = pgm_read_byte(pstr)) { MMU2_SERIAL.write(c); pstr++; }
+  while (const char c = pgm_read_byte(pstr)) { MMU_SERIAL.write(c); pstr++; }
   prev_request = millis();
 }
 
@@ -403,7 +407,7 @@ void MMU2::tx_str(FSTR_P fstr) {
 void MMU2::tx_printf(FSTR_P format, int argument = -1) {
   clear_rx_buffer();
   const uint8_t len = sprintf_P(tx_buffer, FTOP(format), argument);
-  for (uint8_t i = 0; i < len; ++i) MMU2_SERIAL.write(tx_buffer[i]);
+  for (uint8_t i = 0; i < len; ++i) MMU_SERIAL.write(tx_buffer[i]);
   prev_request = millis();
 }
 
@@ -413,7 +417,7 @@ void MMU2::tx_printf(FSTR_P format, int argument = -1) {
 void MMU2::tx_printf(FSTR_P format, int argument1, int argument2) {
   clear_rx_buffer();
   const uint8_t len = sprintf_P(tx_buffer, FTOP(format), argument1, argument2);
-  for (uint8_t i = 0; i < len; ++i) MMU2_SERIAL.write(tx_buffer[i]);
+  for (uint8_t i = 0; i < len; ++i) MMU_SERIAL.write(tx_buffer[i]);
   prev_request = millis();
 }
 
@@ -421,7 +425,7 @@ void MMU2::tx_printf(FSTR_P format, int argument1, int argument2) {
  * Empty the rx buffer
  */
 void MMU2::clear_rx_buffer() {
-  while (MMU2_SERIAL.available()) MMU2_SERIAL.read();
+  while (MMU_SERIAL.available()) MMU_SERIAL.read();
   rx_buffer[0] = '\0';
 }
 
@@ -526,7 +530,7 @@ inline void beep_bad_cmd() { BUZZ(400, 40); }
 
       switch (*special) {
         case '?': {
-          #if ENABLED(MMU2_MENUS)
+          #if ENABLED(MMU_MENUS)
             const uint8_t index = mmu2_choose_filament();
             while (!thermalManager.wait_for_hotend(active_extruder, false)) safe_delay(100);
             load_to_nozzle(index);
@@ -536,7 +540,7 @@ inline void beep_bad_cmd() { BUZZ(400, 40); }
         } break;
 
         case 'x': {
-          #if ENABLED(MMU2_MENUS)
+          #if ENABLED(MMU_MENUS)
             planner.synchronize();
             const uint8_t index = mmu2_choose_filament();
             stepper.disable_extruder();
@@ -563,7 +567,7 @@ inline void beep_bad_cmd() { BUZZ(400, 40); }
       set_runout_valid(true);
   }
 
-#elif ENABLED(MMU_EXTRUDER_SENSOR)
+#elif ENABLED(MMU2_EXTRUDER_SENSOR)
 
   /**
    * Handle tool change
@@ -614,7 +618,7 @@ inline void beep_bad_cmd() { BUZZ(400, 40); }
     switch (*special) {
       case '?': {
         DEBUG_ECHOLNPGM("case ?\n");
-        #if ENABLED(MMU2_MENUS)
+        #if ENABLED(MMU_MENUS)
           uint8_t index = mmu2_choose_filament();
           while (!thermalManager.wait_for_hotend(active_extruder, false)) safe_delay(100);
           load_to_nozzle(index);
@@ -625,7 +629,7 @@ inline void beep_bad_cmd() { BUZZ(400, 40); }
 
       case 'x': {
         DEBUG_ECHOLNPGM("case x\n");
-        #if ENABLED(MMU2_MENUS)
+        #if ENABLED(MMU_MENUS)
           planner.synchronize();
           uint8_t index = mmu2_choose_filament();
           stepper.disable_extruder();
@@ -656,7 +660,7 @@ inline void beep_bad_cmd() { BUZZ(400, 40); }
   void MMU2::mmu_continue_loading() {
     // Try to load the filament a limited number of times
     bool fil_present = 0;
-    for (uint8_t i = 0; i < MMU_LOADING_ATTEMPTS_NR; i++) {
+    for (uint8_t i = 0; i < MMU2_LOADING_ATTEMPTS_NR; i++) {
       DEBUG_ECHOLNPGM("Load attempt #", i + 1);
 
       // Done as soon as filament is present
@@ -688,7 +692,7 @@ inline void beep_bad_cmd() { BUZZ(400, 40); }
     mmu_idl_sens = 0;
   }
 
-#else // !HAS_PRUSA_MMU2S && !MMU_EXTRUDER_SENSOR
+#else // !HAS_PRUSA_MMU2S && !MMU2_EXTRUDER_SENSOR
 
   /**
    * Handle tool change
@@ -729,7 +733,7 @@ inline void beep_bad_cmd() { BUZZ(400, 40); }
     switch (*special) {
       case '?': {
         DEBUG_ECHOLNPGM("case ?\n");
-        #if ENABLED(MMU2_MENUS)
+        #if ENABLED(MMU_MENUS)
           uint8_t index = mmu2_choose_filament();
           while (!thermalManager.wait_for_hotend(active_extruder, false)) safe_delay(100);
           load_to_nozzle(index);
@@ -740,7 +744,7 @@ inline void beep_bad_cmd() { BUZZ(400, 40); }
 
       case 'x': {
         DEBUG_ECHOLNPGM("case x\n");
-        #if ENABLED(MMU2_MENUS)
+        #if ENABLED(MMU_MENUS)
           planner.synchronize();
           uint8_t index = mmu2_choose_filament();
           stepper.disable_extruder();
@@ -891,8 +895,8 @@ void MMU2::filament_runout() {
   }
 
   bool MMU2::can_load() {
-    static const E_Step can_load_sequence[] PROGMEM = { MMU2_CAN_LOAD_SEQUENCE },
-                        can_load_increment_sequence[] PROGMEM = { MMU2_CAN_LOAD_INCREMENT_SEQUENCE };
+    static constexpr E_Step can_load_sequence[] PROGMEM = { MMU2_CAN_LOAD_SEQUENCE },
+                  can_load_increment_sequence[] PROGMEM = { MMU2_CAN_LOAD_INCREMENT_SEQUENCE };
 
     execute_extruder_sequence(can_load_sequence, COUNT(can_load_sequence));
 
@@ -1041,7 +1045,8 @@ void MMU2::load_to_nozzle_sequence() {
   execute_extruder_sequence(sequence, COUNT(sequence));
 }
 
-void MMU2::execute_extruder_sequence(const E_Step * sequence, int steps) {
+void MMU2::execute_extruder_sequence(const E_Step * const sequence, const uint8_t steps) {
+
   planner.synchronize();
 
   const E_Step *step = sequence;

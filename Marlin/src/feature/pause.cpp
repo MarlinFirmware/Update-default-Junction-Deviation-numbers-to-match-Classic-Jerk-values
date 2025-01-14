@@ -62,6 +62,8 @@
 
 #if ENABLED(EXTENSIBLE_UI)
   #include "../lcd/extui/ui_api.h"
+#elif ENABLED(SOVOL_SV06_RTS)
+  #include "../lcd/sovol_rts/sovol_rts.h"
 #endif
 
 #include "../lcd/marlinui.h"
@@ -150,6 +152,11 @@ static bool ensure_safe_temperature(const bool wait=true, const PauseMode mode=P
 
   ui.pause_show_message(PAUSE_MESSAGE_HEATING, mode);
 
+  #if ENABLED(SOVOL_SV06_RTS)
+    rts.gotoPage(ID_Cold_L, ID_Cold_D);
+    rts.updateTempE0();
+  #endif
+
   if (wait) return thermalManager.wait_for_hotend(active_extruder);
 
   // Allow interruption by Emergency Parser M108
@@ -212,14 +219,14 @@ bool load_filament(const_float_t slow_load_length/*=0*/, const_float_t fast_load
 
     while (wait_for_user) {
       impatient_beep(max_beep_count);
-      #if ALL(FILAMENT_CHANGE_RESUME_ON_INSERT, FILAMENT_RUNOUT_SENSOR)
+      #if ALL(HAS_FILAMENT_SENSOR, FILAMENT_CHANGE_RESUME_ON_INSERT)
         #if MULTI_FILAMENT_SENSOR
-          #define _CASE_INSERTED(N) case N-1: if (READ(FIL_RUNOUT##N##_PIN) != FIL_RUNOUT##N##_STATE) wait_for_user = false; break;
+          #define _CASE_INSERTED(N) case N-1: if (!FILAMENT_IS_OUT(N)) wait_for_user = false; break;
           switch (active_extruder) {
             REPEAT_1(NUM_RUNOUT_SENSORS, _CASE_INSERTED)
           }
         #else
-          if (READ(FIL_RUNOUT_PIN) != FIL_RUNOUT_STATE) wait_for_user = false;
+          if (!FILAMENT_IS_OUT()) wait_for_user = false;
         #endif
       #endif
       idle_no_sleep();
@@ -277,6 +284,11 @@ bool load_filament(const_float_t slow_load_length/*=0*/, const_float_t fast_load
         // "Wait for filament purge"
         if (show_lcd) ui.pause_show_message(PAUSE_MESSAGE_PURGE);
 
+        #if ENABLED(SOVOL_SV06_RTS)
+          rts.updateTempE0();
+          rts.gotoPage(ID_Purge_L, ID_Purge_D);
+        #endif
+
         // Extrude filament to get into hotend
         unscaled_e_move(purge_length, ADVANCED_PAUSE_PURGE_FEEDRATE);
       }
@@ -292,6 +304,7 @@ bool load_filament(const_float_t slow_load_length/*=0*/, const_float_t fast_load
             ui.pause_show_message(PAUSE_MESSAGE_OPTION); // MarlinUI and MKS UI also set PAUSE_RESPONSE_WAIT_FOR
           #else
             pause_menu_response = PAUSE_RESPONSE_WAIT_FOR;
+            TERN_(SOVOL_SV06_RTS, rts.gotoPage(ID_PurgeMore_L, ID_PurgeMore_D));
           #endif
           while (pause_menu_response == PAUSE_RESPONSE_WAIT_FOR) idle_no_sleep();
         }
@@ -354,6 +367,11 @@ bool unload_filament(const_float_t unload_length, const bool show_lcd/*=false*/,
   }
 
   if (show_lcd) ui.pause_show_message(PAUSE_MESSAGE_UNLOAD, mode);
+
+  #if ENABLED(SOVOL_SV06_RTS)
+    rts.updateTempE0();
+    rts.gotoPage(ID_Unload_L, ID_Unload_D);
+  #endif
 
   // Retract filament
   unscaled_e_move(-(FILAMENT_UNLOAD_PURGE_RETRACT) * mix_multiplier, (PAUSE_PARK_RETRACT_FEEDRATE) * mix_multiplier);
@@ -503,6 +521,11 @@ void show_continue_prompt(const bool is_reload) {
   DEBUG_ECHOLNPGM("... is_reload:", is_reload);
 
   ui.pause_show_message(is_reload ? PAUSE_MESSAGE_INSERT : PAUSE_MESSAGE_WAITING);
+  #if ENABLED(SOVOL_SV06_RTS)
+    rts.updateTempE0();
+    rts.gotoPage(ID_Insert_L, ID_Insert_D);
+    rts.sendData(Beep, SoundAddr);
+  #endif
   SERIAL_ECHO_START();
   SERIAL_ECHO(is_reload ? F(_PMSG(STR_FILAMENT_CHANGE_INSERT) "\n") : F(_PMSG(STR_FILAMENT_CHANGE_WAIT) "\n"));
 }
@@ -544,6 +567,10 @@ void wait_for_confirmation(const bool is_reload/*=false*/, const int8_t max_beep
     // re-heat the nozzle, re-show the continue prompt, restart idle timers, start over
     if (nozzle_timed_out) {
       ui.pause_show_message(PAUSE_MESSAGE_HEAT);
+      #if ENABLED(SOVOL_SV06_RTS)
+        rts.updateTempE0();
+        rts.gotoPage(ID_HeatNozzle_L, ID_HeatNozzle_D);
+      #endif
       SERIAL_ECHO_MSG(_PMSG(STR_FILAMENT_CHANGE_HEAT));
 
       TERN_(HOST_PROMPT_SUPPORT, hostui.prompt_do(PROMPT_USER_CONTINUE, GET_TEXT_F(MSG_HEATER_TIMEOUT), GET_TEXT_F(MSG_REHEAT)));
@@ -611,9 +638,27 @@ void wait_for_confirmation(const bool is_reload/*=false*/, const int8_t max_beep
  * - Send host action for resume, if configured
  * - Resume the current SD print job, if any
  */
-void resume_print(const_float_t slow_load_length/*=0*/, const_float_t fast_load_length/*=0*/, const_float_t purge_length/*=ADVANCED_PAUSE_PURGE_LENGTH*/, const int8_t max_beep_count/*=0*/, const celsius_t targetTemp/*=0*/ DXC_ARGS) {
+void resume_print(
+  const_float_t   slow_load_length/*=0*/,
+  const_float_t   fast_load_length/*=0*/,
+  const_float_t   purge_length/*=ADVANCED_PAUSE_PURGE_LENGTH*/,
+  const int8_t    max_beep_count/*=0*/,
+  const celsius_t targetTemp/*=0*/,
+  const bool      show_lcd/*=true*/,
+  const bool      pause_for_user/*=false*/
+  DXC_ARGS
+) {
   DEBUG_SECTION(rp, "resume_print", true);
-  DEBUG_ECHOLNPGM("... slowlen:", slow_load_length, " fastlen:", fast_load_length, " purgelen:", purge_length, " maxbeep:", max_beep_count, " targetTemp:", targetTemp DXC_SAY);
+  DEBUG_ECHOLNPGM(
+      "... slowlen:", slow_load_length
+    , " fastlen:", fast_load_length
+    , " purgelen:", purge_length
+    , " maxbeep:", max_beep_count
+    , " targetTemp:", targetTemp
+    , " show_lcd:", show_lcd
+    , " pause_for_user:", pause_for_user
+    DXC_SAY
+  );
 
   /*
   SERIAL_ECHOLNPGM(
@@ -627,7 +672,7 @@ void resume_print(const_float_t slow_load_length/*=0*/, const_float_t fast_load_
   if (!did_pause_print) return;
 
   // Re-enable the heaters if they timed out
-  bool nozzle_timed_out = false;
+  bool nozzle_timed_out = pause_for_user;
   HOTEND_LOOP() {
     nozzle_timed_out |= thermalManager.heater_idle[e].timed_out;
     thermalManager.reset_hotend_idle_timer(e);
@@ -637,7 +682,7 @@ void resume_print(const_float_t slow_load_length/*=0*/, const_float_t fast_load_
     thermalManager.setTargetHotend(targetTemp, active_extruder);
 
   // Load the new filament
-  load_filament(slow_load_length, fast_load_length, purge_length, max_beep_count, true, nozzle_timed_out, PAUSE_MODE_SAME DXC_PASS);
+  load_filament(slow_load_length, fast_load_length, purge_length, max_beep_count, show_lcd, nozzle_timed_out, PAUSE_MODE_SAME DXC_PASS);
 
   if (targetTemp > 0) {
     thermalManager.setTargetHotend(targetTemp, active_extruder);
@@ -691,6 +736,12 @@ void resume_print(const_float_t slow_load_length/*=0*/, const_float_t fast_load_
   planner.set_e_position_mm((destination.e = current_position.e = resume_position.e));
 
   ui.pause_show_message(PAUSE_MESSAGE_STATUS);
+  #if ENABLED(SOVOL_SV06_RTS)
+    if (pause_flag)
+      rts.gotoPage(ID_PrintResume_L, ID_PrintResume_D);
+    else
+      rts.refreshTime();
+  #endif
 
   #ifdef ACTION_ON_RESUMED
     hostui.resumed();

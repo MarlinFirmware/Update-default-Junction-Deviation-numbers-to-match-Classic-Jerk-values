@@ -15,6 +15,3 @@ opt_set MOTHERBOARD BOARD_BTT_SKR_E3_DIP \
         X_DRIVER_TYPE TMC2209 Y_DRIVER_TYPE TMC2130
 opt_enable SERIAL_DMA
 exec_test $1 $2 "BTT SKR E3 DIP 1.0 | Mixed TMC Drivers" "$3"
-
-# clean up
-restore_configs

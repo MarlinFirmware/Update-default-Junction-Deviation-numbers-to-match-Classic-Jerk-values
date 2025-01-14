@@ -111,7 +111,7 @@
 
 /**
  * RADDS Extension Board V2 / V3
- * http://doku.radds.org/dokumentation/extension-board
+ * https://web.archive.org/web/20210627142010/doku.radds.org/dokumentation/extension-board/
  */
 //#define RADDS_EXTENSION                      2
 #if RADDS_EXTENSION >= 2

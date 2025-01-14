@@ -1,0 +1,16 @@
+#!/usr/bin/env bash
+#
+# Build tests for Simulator on Linux
+#
+
+# exit on first failure
+set -e
+
+#
+# Build with the default configurations
+#
+use_example_configs Simulator
+exec_test $1 $2 "Simulator" "$3"
+
+# cleanup
+restore_configs

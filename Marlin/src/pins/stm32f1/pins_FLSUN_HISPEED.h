@@ -95,10 +95,6 @@
 #define Z_MIN_PIN                           PA11  // -Z
 #define Z_MAX_PIN                           PC4   // +Z
 
-#ifndef FIL_RUNOUT_PIN
-  #define FIL_RUNOUT_PIN                    PA4   // MT_DET
-#endif
-
 //
 // Steppers
 //
@@ -125,13 +121,10 @@
  */
 #if HAS_TMC_UART
   // SoftwareSerial with one pin per driver
-  // Compatible with TMC2208 and TMC2209 drivers
+  // Compatible with TMC2208/TMC2209 drivers
   #define X_SERIAL_TX_PIN                   PA10  // RXD1
-  #define X_SERIAL_RX_PIN        X_SERIAL_TX_PIN
   #define Y_SERIAL_TX_PIN                   PA9   // TXD1
-  #define Y_SERIAL_RX_PIN        Y_SERIAL_TX_PIN
   #define Z_SERIAL_TX_PIN                   PC7   // IO1
-  #define Z_SERIAL_RX_PIN        Z_SERIAL_TX_PIN
   #ifndef TMC_BAUD_RATE
     #define TMC_BAUD_RATE                  19200
   #endif
@@ -172,9 +165,8 @@
 //
 // EXTRUDER
 //
-#if AXIS_DRIVER_TYPE_E0(TMC2208) || AXIS_DRIVER_TYPE_E0(TMC2209)
+#if AXIS_HAS_UART(E0)
   #define E0_SERIAL_TX_PIN                  PA8   // IO0
-  #define E0_SERIAL_RX_PIN                  PA8   // IO0
 #else
   // Motor current PWM pins
   #define MOTOR_CURRENT_PWM_E_PIN           PB0   // VREF1 CONTROL E
@@ -229,9 +221,15 @@
 #endif
 
 #if HAS_TFT_LVGL_UI
-  #define MT_DET_1_PIN                      PA4   // MT_DET
-  #define MT_DET_2_PIN                      PE6
-  #define MT_DET_PIN_STATE                   LOW
+  #ifndef FIL_RUNOUT_PIN
+    #define FIL_RUNOUT_PIN                  PA4   // MT_DET_1
+  #endif
+  #ifndef FIL_RUNOUT2_PIN
+    #define FIL_RUNOUT2_PIN                 PE6   // MT_DET_2
+  #endif
+  #ifndef FIL_RUNOUT_STATE
+    #define FIL_RUNOUT_STATE                LOW
+  #endif
 #endif
 
 //
@@ -291,20 +289,17 @@
    * ILI9488 is not supported
    * Define init sequences for other screens in u8g_dev_tft_320x240_upscale_from_128x64.cpp
    *
-   * If the screen stays white, disable 'LCD_RESET_PIN'
-   * to let the bootloader init the screen.
+   * If the screen stays white, disable 'TFT_RESET_PIN' to let the bootloader init the screen.
    *
-   * Setting an 'LCD_RESET_PIN' may cause a flicker when entering the LCD menu
+   * Setting a 'TFT_RESET_PIN' may cause a flicker when switching menus
    * because Marlin uses the reset as a failsafe to revive a glitchy LCD.
    */
   //#define TFT_RESET_PIN                   PC6   // FSMC_RST
   #define TFT_BACKLIGHT_PIN                 PD13
 
-  #define LCD_USE_DMA_FSMC                        // Use DMA transfers to send data to the TFT
-
+  #define LCD_USE_DMA_FSMC
   #define FSMC_CS_PIN                       PD7   // NE4
   #define FSMC_RS_PIN                       PD11  // A0
-
   #define TFT_CS_PIN                 FSMC_CS_PIN
   #define TFT_RS_PIN                 FSMC_RS_PIN
 

@@ -11,6 +11,3 @@ set -e
 #
 use_example_configs "Creality/Ender-3/FYSETC Cheetah 1.2/base"
 exec_test $1 $2 "Maple build of Cheetah 1.2 Configuration" "$3"
-
-# clean up
-restore_configs

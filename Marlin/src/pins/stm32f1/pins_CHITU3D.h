@@ -161,6 +161,7 @@
       #define LCD_SDSS                      PD5   // 53
       #define SD_DETECT_PIN                 -1
       #define KILL_PIN                      PC9   // 41
+      #undef LCD_PINS_EN                          // not used, causes false pin conflict report
 
     #elif ENABLED(LCD_I2C_VIKI)
 

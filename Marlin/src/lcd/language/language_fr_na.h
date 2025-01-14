@@ -58,7 +58,7 @@ namespace LanguageNarrow_fr_na {
   LSTR MSG_PROGRESS_BAR_TEST              = _UxGT("Test barre progress.");
   LSTR MSG_HOMING                         = _UxGT("Origine");
   LSTR MSG_AUTO_HOME                      = _UxGT("Origine auto");
-  LSTR MSG_AUTO_HOME_A                    = _UxGT("Origine @ auto");
+  LSTR MSG_AUTO_HOME_N                    = _UxGT("Origine @ auto");
   LSTR MSG_AUTO_HOME_X                    = _UxGT("Origine X auto");
   LSTR MSG_AUTO_HOME_Y                    = _UxGT("Origine Y auto");
   LSTR MSG_AUTO_HOME_Z                    = _UxGT("Origine Z auto");
@@ -103,6 +103,7 @@ namespace LanguageNarrow_fr_na {
   LSTR MSG_EXTRUDE                        = _UxGT("Extrusion");
   LSTR MSG_RETRACT                        = _UxGT("Retractation");
   LSTR MSG_MOVE_AXIS                      = _UxGT("Deplacer un axe");
+  LSTR MSG_PROBE_AND_LEVEL                = _UxGT("Calibrage auto");
   LSTR MSG_BED_LEVELING                   = _UxGT("Regler Niv. lit");
   LSTR MSG_LEVEL_BED                      = _UxGT("Niveau du lit");
   LSTR MSG_BED_TRAMMING                   = _UxGT("Niveau des coins");
@@ -129,7 +130,7 @@ namespace LanguageNarrow_fr_na {
   LSTR MSG_IDEX_MODE_FULL_CTRL            = _UxGT("Controle complet");
   LSTR MSG_OFFSETS_MENU                   = _UxGT("Offsets Outil");
   LSTR MSG_HOTEND_OFFSET_Z                = _UxGT("Buse 2 Z");
-  LSTR MSG_HOTEND_OFFSET_A                = _UxGT("Buse 2 @");
+  LSTR MSG_HOTEND_OFFSET_N                = _UxGT("Buse 2 @");
   LSTR MSG_G26_HEATING_BED                = _UxGT("G26: Chauffage du lit");
   LSTR MSG_G26_HEATING_NOZZLE             = _UxGT("Buse en chauffe...");
   LSTR MSG_G26_MANUAL_PRIME               = _UxGT("Amorce manuelle...");
@@ -144,13 +145,10 @@ namespace LanguageNarrow_fr_na {
   LSTR MSG_UBL_BC_INSERT2                 = _UxGT("Mesure");
   LSTR MSG_UBL_BC_REMOVE                  = _UxGT("oter et mesurer lit");
   LSTR MSG_UBL_MOVING_TO_NEXT             = _UxGT("Aller au suivant");
-  LSTR MSG_UBL_ACTIVATE_MESH              = _UxGT("Activer l'UBL");
-  LSTR MSG_UBL_DEACTIVATE_MESH            = _UxGT("Desactiver l'UBL");
   LSTR MSG_UBL_SET_TEMP_BED               = _UxGT("Temperature lit");
   LSTR MSG_UBL_BED_TEMP_CUSTOM            = _UxGT("Temperature lit");
   LSTR MSG_UBL_SET_TEMP_HOTEND            = _UxGT("Temperature buse");
   LSTR MSG_UBL_HOTEND_TEMP_CUSTOM         = _UxGT("Temperature buse");
-  LSTR MSG_UBL_MESH_EDIT                  = _UxGT("Modifier grille");
   LSTR MSG_UBL_EDIT_CUSTOM_MESH           = _UxGT("Modif. grille perso");
   LSTR MSG_UBL_FINE_TUNE_MESH             = _UxGT("Reglage fin");
   LSTR MSG_UBL_DONE_EDITING_MESH          = _UxGT("Terminer");
@@ -204,7 +202,8 @@ namespace LanguageNarrow_fr_na {
   LSTR MSG_UBL_7_SAVE_MESH                = _UxGT("7.Stocker grille");
 
   LSTR MSG_LED_CONTROL                    = _UxGT("Controle LED");
-  LSTR MSG_LEDS                           = _UxGT("Lumiere");
+  LSTR MSG_LIGHTS                         = _UxGT("Lumiere");
+  LSTR MSG_LIGHT_N                        = _UxGT("Lumiere #{");
   LSTR MSG_LED_PRESETS                    = _UxGT("Preregl. LED");
   LSTR MSG_SET_LEDS_RED                   = _UxGT("Rouge");
   LSTR MSG_SET_LEDS_ORANGE                = _UxGT("Orange");
@@ -422,6 +421,8 @@ namespace LanguageNarrow_fr_na {
   LSTR MSG_ZPROBE_XOFFSET                 = _UxGT("Decalage X");
   LSTR MSG_ZPROBE_YOFFSET                 = _UxGT("Decalage Y");
   LSTR MSG_ZPROBE_ZOFFSET                 = _UxGT("Decalage Z");
+  LSTR MSG_ZPROBE_OFFSET_N                = _UxGT("Decalage @");
+  LSTR MSG_BABYSTEP_PROBE_Z               = _UxGT("Babystep sonde Z");
   LSTR MSG_BABYSTEP_X                     = _UxGT("Babystep X");
   LSTR MSG_BABYSTEP_Y                     = _UxGT("Babystep Y");
   LSTR MSG_BABYSTEP_Z                     = _UxGT("Babystep Z");

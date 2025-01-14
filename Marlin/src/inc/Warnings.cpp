@@ -60,6 +60,21 @@
   #endif
 #endif
 
+#if !USE_STD_CONFIGS
+  #if __has_include("../../Configuration.h")
+    #define HAS_IGNORED_CONFIGS
+  #elif __has_include("../../Configuration_adv.h")
+    #define HAS_IGNORED_CONFIGS
+  #endif
+  #ifdef HAS_IGNORED_CONFIGS
+    #warning "Configuration.h and Configuration_adv.h are being ignored, overridden by Config.h."
+  #endif
+#endif
+
+#if CONFIG_EXPORT % 100 == 5
+  #warning "Rename 'Config-export.h' to 'Config.h' to override Configuration.h and Configuration_adv.h."
+#endif
+
 #if DISABLED(DEBUG_FLAGS_GCODE)
   #warning "DEBUG_FLAGS_GCODE is recommended if you have space. Some hosts rely on it."
 #endif
@@ -694,6 +709,10 @@
   #error "Z_SAFE_HOMING is recommended when homing with a probe. (Enable Z_SAFE_HOMING or define NO_Z_SAFE_HOMING_WARNING to suppress this warning.)"
 #endif
 
+#if HAS_TRINAMIC_CONFIG && NONE(EDGE_STEPPING, NO_EDGE_STEPPING_WARNING)
+  #error "EDGE_STEPPING is strongly recommended with Trinamic stepper drivers. (Enable EDGE_STEPPING or define NO_EDGE_STEPPING_WARNING to suppress this warning.)"
+#endif
+
 #if ENABLED(BIQU_MICROPROBE_V2) && NONE(Z_MIN_PROBE_USES_Z_MIN_ENDSTOP_PIN, NO_MICROPROBE_WARNING)
   #warning "BIQU MicroProbe V2 detect signal requires a strong pull-up. Some processors have weak internal pull-up capabilities, so we recommended connecting MicroProbe SIGNAL / GND to Z-MIN / Z-STOP instead of the dedicated PROBE port. (Define NO_MICROPROBE_WARNING to suppress this warning.)"
 #endif
@@ -710,8 +729,38 @@
   #endif
 #endif
 
-#if ENABLED(QUICK_HOME) && (X_SPI_SENSORLESS || Y_SPI_SENSORLESS)
-  #warning "SPI_ENDSTOPS may be unreliable with QUICK_HOME. Adjust back-offs for better results."
+#if ENABLED(QUICK_HOME)
+  #if X_SPI_SENSORLESS || Y_SPI_SENSORLESS
+    #warning "If SPI_ENDSTOPS are unreliable with QUICK_HOME try adjusting SENSORLESS_BACKOFF_MM, Travel Acceleration (M204 T), Homing Feedrate (M210 XY), or disable QUICK_HOME."
+  #elif X_SENSORLESS || Y_SENSORLESS
+    #warning "If SENSORLESS_HOMING is unreliable with QUICK_HOME try adjusting SENSORLESS_BACKOFF_MM, Travel Acceleration (M204 T), Homing Feedrate (M210 XY), or disable QUICK_HOME."
+  #endif
+#endif
+
+#if HIGHER_CURRENT_HOME_WARNING
+  #warning "High homing currents can lead to damage if a sensor fails or is set up incorrectly."
+#endif
+
+#if USE_SENSORLESS && DISABLED(NO_HOMING_CURRENT_WARNING)
+  #if ENABLED(X_SENSORLESS) && defined(X_CURRENT_HOME) && !HAS_CURRENT_HOME(X)
+    #warning "It's recommended to set X_CURRENT_HOME lower than X_CURRENT with SENSORLESS_HOMING. (Define NO_HOMING_CURRENT_WARNING to suppress this warning.)"
+  #elif ENABLED(X2_SENSORLESS) && defined(X2_CURRENT_HOME) && !HAS_CURRENT_HOME(X2)
+    #warning "It's recommended to set X2_CURRENT_HOME lower than X2_CURRENT with SENSORLESS_HOMING. (Define NO_HOMING_CURRENT_WARNING to suppress this warning.)"
+  #endif
+  #if ENABLED(Y_SENSORLESS) && defined(Y_CURRENT_HOME) && !HAS_CURRENT_HOME(Y)
+    #warning "It's recommended to set Y_CURRENT_HOME lower than Y_CURRENT with SENSORLESS_HOMING. (Define NO_HOMING_CURRENT_WARNING to suppress this warning.)"
+  #elif ENABLED(Y2_SENSORLESS) && defined(Y2_CURRENT_HOME) && !HAS_CURRENT_HOME(Y2)
+    #warning "It's recommended to set Y2_CURRENT_HOME lower than Y2_CURRENT with SENSORLESS_HOMING. (Define NO_HOMING_CURRENT_WARNING to suppress this warning.)"
+  #endif
+  #if ENABLED(Z_SENSORLESS) && defined(Z_CURRENT_HOME) && !HAS_CURRENT_HOME(Z)
+    #warning "It's recommended to set Z_CURRENT_HOME lower than Z_CURRENT with SENSORLESS_HOMING. (Define NO_HOMING_CURRENT_WARNING to suppress this warning.)"
+  #elif ENABLED(Z2_SENSORLESS) && defined(Z2_CURRENT_HOME) && !HAS_CURRENT_HOME(Z2)
+    #warning "It's recommended to set Z2_CURRENT_HOME lower than Z2_CURRENT with SENSORLESS_HOMING. (Define NO_HOMING_CURRENT_WARNING to suppress this warning.)"
+  #elif ENABLED(Z3_SENSORLESS) && defined(Z3_CURRENT_HOME) && !HAS_CURRENT_HOME(Z3)
+    #warning "It's recommended to set Z3_CURRENT_HOME lower than Z3_CURRENT with SENSORLESS_HOMING. (Define NO_HOMING_CURRENT_WARNING to suppress this warning.)"
+  #elif ENABLED(Z4_SENSORLESS) && defined(Z4_CURRENT_HOME) && !HAS_CURRENT_HOME(Z4)
+    #warning "It's recommended to set Z4_CURRENT_HOME lower than Z4_CURRENT with SENSORLESS_HOMING. (Define NO_HOMING_CURRENT_WARNING to suppress this warning.)"
+  #endif
 #endif
 
 #if CANNOT_EMBED_CONFIGURATION
@@ -871,8 +920,8 @@
 #endif
 
 /**
- * HC32 clock speed is hard-coded in Marlin
+ * Peltier with PIDTEMPBED
  */
-#if defined(ARDUINO_ARCH_HC32) && F_CPU == 200000000
-  #warning "HC32 clock is assumed to be 200MHz. If this isn't the case for your board please submit a report so we can add support."
+#if ALL(PELTIER_BED, PIDTEMPBED)
+  #warning "PELTIER_BED with PIDTEMPBED requires extra circuitry. Use with caution."
 #endif

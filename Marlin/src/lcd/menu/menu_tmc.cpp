@@ -90,7 +90,7 @@ void menu_tmc_current() {
 
 #if ENABLED(HYBRID_THRESHOLD)
 
-  #define TMC_EDIT_STORED_HYBRID_THRS(ST, STR) EDIT_ITEM_F(uint8, F(STR), &stepper##ST.stored.hybrid_thrs, 0, 255, []{ stepper##ST.refresh_hybrid_thrs(); });
+  #define TMC_EDIT_STORED_HYBRID_THRS(ST, STR) EDIT_ITEM_F(uint16_3, F(STR), &stepper##ST.stored.hybrid_thrs, 0, STEPPER_MAX_THRS(ST), []{ stepper##ST.refresh_hybrid_thrs(); });
 
   void menu_tmc_hybrid_thrs() {
     START_MENU();

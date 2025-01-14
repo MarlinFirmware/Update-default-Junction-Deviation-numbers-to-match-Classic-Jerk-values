@@ -36,13 +36,15 @@
 //
 #define MIN_FEEDRATE_EDIT_VALUE 1
 
-constexpr xyze_float_t min_feedrate_edit_values = LOGICAL_AXIS_ARRAY_1(MIN_FEEDRATE_EDIT_VALUE),
-                       default_max_feedrate = DEFAULT_MAX_FEEDRATE,
-                       max_feedrate_edit_values =
+constexpr xyze_feedrate_t min_feedrate_edit_values = LOGICAL_AXIS_ARRAY_1(MIN_FEEDRATE_EDIT_VALUE);
+#if !defined(MAX_FEEDRATE_EDIT_VALUES) && defined(DEFAULT_MAX_MULTIPLIER)
+  constexpr xyze_feedrate_t default_max_feedrate = DEFAULT_MAX_FEEDRATE;
+#endif
+constexpr xyze_feedrate_t max_feedrate_edit_values =
                          #ifdef MAX_FEEDRATE_EDIT_VALUES
                            MAX_FEEDRATE_EDIT_VALUES
                          #else
-                           default_max_feedrate * float(DEFAULT_MAX_MULTIPLIER)
+                           default_max_feedrate * DEFAULT_MAX_MULTIPLIER
                          #endif
                        ;
 
@@ -51,35 +53,39 @@ constexpr xyze_float_t min_feedrate_edit_values = LOGICAL_AXIS_ARRAY_1(MIN_FEEDR
 //
 #define MIN_ACCELERATION_EDIT_VALUE 1
 
-constexpr xyze_float_t min_acceleration_edit_values = LOGICAL_AXIS_ARRAY_1(MIN_ACCELERATION_EDIT_VALUE),
-                       default_max_acceleration = DEFAULT_MAX_ACCELERATION,
-                       max_acceleration_edit_values =
-                        #ifdef MAX_ACCEL_EDIT_VALUES
-                          MAX_ACCEL_EDIT_VALUES
-                        #else
-                          default_max_acceleration * float(DEFAULT_MAX_MULTIPLIER)
-                        #endif
-                      ;
+constexpr xyze_float_t min_acceleration_edit_values = LOGICAL_AXIS_ARRAY_1(MIN_ACCELERATION_EDIT_VALUE);
+#if !defined(MAX_ACCEL_EDIT_VALUES) && defined(DEFAULT_MAX_MULTIPLIER)
+  constexpr xyze_float_t default_max_acceleration = DEFAULT_MAX_ACCELERATION;
+#endif
+constexpr xyze_float_t max_acceleration_edit_values =
+                         #ifdef MAX_ACCEL_EDIT_VALUES
+                           MAX_ACCEL_EDIT_VALUES
+                         #else
+                           default_max_acceleration * DEFAULT_MAX_MULTIPLIER
+                         #endif
+                       ;
 
 //
-// Max jerk limits
+// Max Jerk limits
 //
-#define MIN_JERK_EDIT_VALUE 0.1
-#define DEFAULT_MAX_JERK_MULTIPLIER 2
-
 #if ENABLED(CLASSIC_JERK)
-  constexpr xyze_float_t min_jerk_edit_values = LOGICAL_AXIS_ARRAY_1(MIN_JERK_EDIT_VALUE),
-                         default_jerk = LOGICAL_AXIS_ARRAY(
-                           DEFAULT_EJERK,
-                           DEFAULT_XJERK, DEFAULT_YJERK, DEFAULT_ZJERK,
-                           DEFAULT_IJERK, DEFAULT_JJERK, DEFAULT_KJERK,
-                           DEFAULT_UJERK, DEFAULT_VJERK, DEFAULT_WJERK
-                         ),
-                         max_jerk_edit_values =
+  #define MIN_JERK_EDIT_VALUE 0.1
+
+  constexpr xyze_float_t min_jerk_edit_values = LOGICAL_AXIS_ARRAY_1(MIN_JERK_EDIT_VALUE);
+  #if !defined(MAX_JERK_EDIT_VALUES) && defined(DEFAULT_MAX_MULTIPLIER)
+    #define DEFAULT_MAX_JERK_MULTIPLIER 2
+    constexpr xyze_float_t default_jerk = LOGICAL_AXIS_ARRAY(
+                             DEFAULT_EJERK,
+                             DEFAULT_XJERK, DEFAULT_YJERK, DEFAULT_ZJERK,
+                             DEFAULT_IJERK, DEFAULT_JJERK, DEFAULT_KJERK,
+                             DEFAULT_UJERK, DEFAULT_VJERK, DEFAULT_WJERK
+                           );
+  #endif
+  constexpr xyze_float_t max_jerk_edit_values =
                            #ifdef MAX_JERK_EDIT_VALUES
                              MAX_JERK_EDIT_VALUES
                            #else
-                             default_jerk * float(DEFAULT_MAX_JERK_MULTIPLIER)
+                             default_jerk * DEFAULT_MAX_JERK_MULTIPLIER
                            #endif
                          ;
 #endif
@@ -89,12 +95,33 @@ constexpr xyze_float_t min_acceleration_edit_values = LOGICAL_AXIS_ARRAY_1(MIN_A
 //
 #define MIN_STEPS_EDIT_VALUE 1
 
-constexpr xyze_float_t min_steps_edit_values = LOGICAL_AXIS_ARRAY_1(MIN_STEPS_EDIT_VALUE),
-                       default_steps = DEFAULT_AXIS_STEPS_PER_UNIT,
-                       max_steps_edit_values =
+constexpr xyze_float_t min_steps_edit_values = LOGICAL_AXIS_ARRAY_1(MIN_STEPS_EDIT_VALUE);
+#if !defined(MAX_STEPS_EDIT_VALUES) && defined(DEFAULT_MAX_MULTIPLIER)
+  constexpr xyze_float_t default_steps = DEFAULT_AXIS_STEPS_PER_UNIT;
+#endif
+constexpr xyze_float_t max_steps_edit_values =
                          #ifdef MAX_STEPS_EDIT_VALUES
                            MAX_STEPS_EDIT_VALUES
                          #else
-                           default_steps * float(DEFAULT_MAX_MULTIPLIER)
+                           default_steps * DEFAULT_MAX_MULTIPLIER
                          #endif
                        ;
+
+//
+// Homing Feedrate limits
+//
+#if ENABLED(EDITABLE_HOMING_FEEDRATE)
+  #define MIN_HOMING_EDIT_VALUE 1
+
+  constexpr xyz_uint_t min_homing_edit_values = NUM_AXIS_ARRAY_1(MIN_HOMING_EDIT_VALUE);
+  #ifdef DEFAULT_MAX_MULTIPLIER
+    constexpr xyz_long_t default_homing = HOMING_FEEDRATE_MM_M;
+  #endif
+  constexpr xyz_long_t max_homing_edit_values =
+                           #ifdef DEFAULT_MAX_MULTIPLIER
+                             default_homing * DEFAULT_MAX_MULTIPLIER
+                           #else
+                             { 10000, 10000, 3000 }
+                           #endif
+                         ;
+#endif

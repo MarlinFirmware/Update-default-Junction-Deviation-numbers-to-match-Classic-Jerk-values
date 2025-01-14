@@ -43,7 +43,7 @@ We have a Message Board and a Facebook group where our knowledgable user communi
 
 If chat is more your speed, you can join the MarlinFirmware Discord server:
 
-* Use the link https://discord.gg/n5NJ59y to join up as a General User.
+* Use the link https://discord.com/servers/marlin-firmware-461605380783472640 to join up as a General User.
 * Even though our Discord is pretty active, it may take a while for community members to respond &mdash; please be patient!
 * Use the `#general` channel for general questions or discussion about Marlin.
 * Other channels exist for certain topics or are limited to Patrons. Check the channel list.

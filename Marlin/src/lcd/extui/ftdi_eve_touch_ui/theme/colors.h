@@ -60,7 +60,7 @@ namespace Theme {
   // Shades of gray
 
   constexpr float    gray_sat               = 0.14;
-  constexpr uint32_t gray_color_0           = hsl_to_rgb(accent_hue, gray_sat, 0.15); // Darkest
+  constexpr uint32_t gray_color_0           = hsl_to_rgb(accent_hue, gray_sat, 0.10); // Darkest
   constexpr uint32_t gray_color_1           = hsl_to_rgb(accent_hue, gray_sat, 0.26);
   constexpr uint32_t gray_color_2           = hsl_to_rgb(accent_hue, gray_sat, 0.39);
   constexpr uint32_t gray_color_3           = hsl_to_rgb(accent_hue, gray_sat, 0.52);
@@ -113,8 +113,10 @@ namespace Theme {
     constexpr uint32_t theme_darkest        = gray_color_1;
     constexpr uint32_t theme_dark           = gray_color_2;
 
+    constexpr uint32_t bg_dark_color        = gray_color_0;
     constexpr uint32_t bg_color             = gray_color_1;
     constexpr uint32_t axis_label           = gray_color_2;
+    constexpr uint32_t bg_light_color       = gray_color_3;
 
     constexpr uint32_t bg_text_enabled      = 0xFFFFFF;
     constexpr uint32_t bg_text_disabled     = gray_color_2;
@@ -126,6 +128,7 @@ namespace Theme {
     constexpr uint32_t logo_bg_rgb          = accent_color_4;
     constexpr uint32_t logo_fill_rgb        = accent_color_3;
     constexpr uint32_t logo_stroke_rgb      = 0x000000;
+    constexpr uint32_t lulzbot_accent       = 0xA8A845;
 
     constexpr uint32_t bed_mesh_lines_rgb   = 0xFFFFFF;
     constexpr uint32_t bed_mesh_shadow_rgb  = 0x444444;
@@ -154,6 +157,8 @@ namespace Theme {
   constexpr uint32_t e_axis                 = axis_label;
   constexpr uint32_t feedrate               = axis_label;
   constexpr uint32_t other                  = axis_label;
+  constexpr uint32_t cold_pull              = hsl_to_rgb(190, 0.5, 0.50);
+  constexpr uint32_t cancel                 = hsl_to_rgb( 25, 0.7, 0.50);
 
   // Status screen
   constexpr uint32_t progress               = axis_label;
@@ -162,8 +167,10 @@ namespace Theme {
     constexpr uint32_t fan_speed            = hsl_to_rgb(240, 0.5, 0.13);
     constexpr uint32_t temp                 = hsl_to_rgb(343, 1.0, 0.23);
   #else
-    constexpr uint32_t fan_speed            = hsl_to_rgb(204, 0.47, 0.41);
-    constexpr uint32_t temp                 = hsl_to_rgb(311, 0.51, 0.35);
+    constexpr uint32_t fan_speed            = hsl_to_rgb(30, 0.85, 0.50);
+    constexpr uint32_t fan_speed_button     = hsl_to_rgb(30, 0.85, 0.50);
+    constexpr uint32_t temp                 = hsl_to_rgb(accent_hue, accent_sat, 0.30);
+    constexpr uint32_t temp_button          = hsl_to_rgb(accent_hue, accent_sat, 0.39);
   #endif
 
   constexpr uint32_t disabled_icon          = gray_color_1;
@@ -177,17 +184,29 @@ namespace Theme {
   constexpr uint32_t transformF             = 0x8010D0;
   constexpr uint32_t transformVal           = 0x104010;
 
-  constexpr btn_colors disabled_btn         = {.bg = bg_color,      .grad = fg_disabled, .fg = fg_disabled,  .rgb = fg_disabled };
-  constexpr btn_colors normal_btn           = {.bg = fg_action,     .grad = 0xFFFFFF,    .fg = fg_normal,    .rgb = 0xFFFFFF };
-  constexpr btn_colors action_btn           = {.bg = bg_color,      .grad = 0xFFFFFF,    .fg = fg_action,    .rgb = 0xFFFFFF };
-  constexpr btn_colors red_btn              = {.bg = 0xFF5555,      .grad = 0xFFFFFF,    .fg = 0xFF0000,     .rgb = 0xFFFFFF };
-  constexpr btn_colors ui_slider            = {.bg = theme_darkest, .grad = 0xFFFFFF,    .fg = theme_dark,   .rgb = accent_color_3 };
-  constexpr btn_colors ui_toggle            = {.bg = theme_darkest, .grad = 0xFFFFFF,    .fg = theme_dark,   .rgb = 0xFFFFFF };
+  constexpr btn_colors disabled_btn         = {.bg = bg_color,      .grad = fg_disabled, .fg = fg_disabled,     .rgb = fg_disabled };
+  constexpr btn_colors normal_btn           = {.bg = fg_action,     .grad = 0xFFFFFF,    .fg = fg_normal,       .rgb = 0xFFFFFF };
+  constexpr btn_colors accent_btn           = {.bg = fg_action,     .grad = 0xFFFFFF,    .fg = lulzbot_accent,  .rgb = 0xFFFFFF };
+  constexpr btn_colors action_btn           = {.bg = bg_color,      .grad = 0xFFFFFF,    .fg = fg_action,       .rgb = 0xFFFFFF };
+  constexpr btn_colors red_btn              = {.bg = 0xFF5555,      .grad = 0xFFFFFF,    .fg = 0xFF0000,        .rgb = 0xFFFFFF };
+  constexpr btn_colors ui_slider            = {.bg = theme_darkest, .grad = 0xFFFFFF,    .fg = theme_dark,      .rgb = accent_color_3 };
+  constexpr btn_colors ui_toggle            = {.bg = theme_darkest, .grad = 0xFFFFFF,    .fg = theme_dark,      .rgb = 0xFFFFFF };
+  constexpr btn_colors text_x_axis_btn      = {.bg = fg_action,     .grad = 0xFFFFFF,    .fg = fg_normal,       .rgb = x_axis };
+  constexpr btn_colors text_y_axis_btn      = {.bg = fg_action,     .grad = 0xFFFFFF,    .fg = fg_normal,       .rgb = y_axis };
+  constexpr btn_colors text_z_axis_btn      = {.bg = fg_action,     .grad = 0xFFFFFF,    .fg = fg_normal,       .rgb = z_axis };
+  constexpr btn_colors normal_text          = {.bg = fg_action,     .grad = fg_normal,   .fg = fg_normal,       .rgb = 0xFFFFFF };
+  constexpr btn_colors text_x_axis          = {.bg = fg_action,     .grad = fg_normal,   .fg = fg_normal,       .rgb = x_axis };
+  constexpr btn_colors text_y_axis          = {.bg = fg_action,     .grad = fg_normal,   .fg = fg_normal,       .rgb = y_axis };
+  constexpr btn_colors text_z_axis          = {.bg = fg_action,     .grad = fg_normal,   .fg = fg_normal,       .rgb = z_axis };
+  constexpr btn_colors cold_pull_btn        = {.bg = fg_action,     .grad = fg_normal,   .fg = cold_pull,       .rgb = 0xFFFFFF };
+  constexpr btn_colors cancel_btn           = {.bg = fg_action,     .grad = fg_normal,   .fg = cancel,          .rgb = 0xFFFFFF };
+  constexpr btn_colors temp_btn             = {.bg = bg_color,      .grad = fg_disabled, .fg = fg_disabled,     .rgb = 0xFFFFFF };
+  constexpr btn_colors temp_disabled_btn    = {.bg = bg_color,      .grad = bg_dark_color, .fg = bg_dark_color, .rgb = bg_light_color };
 
   // Temperature color scale
 
-  const rgb_t cool_rgb (  0,   0,   0);
-  const rgb_t low_rgb  (128,   0,   0);
-  const rgb_t med_rgb  (255, 128,   0);
-  const rgb_t high_rgb (255, 255, 128);
+  const rgb_t cool_rgb (100, 100,  80);
+  const rgb_t low_rgb  (128,  50,   0);
+  const rgb_t med_rgb  (200,  85,   0);
+  const rgb_t high_rgb (255,  85,   0);
 };

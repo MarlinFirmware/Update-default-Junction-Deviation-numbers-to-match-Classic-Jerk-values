@@ -12,6 +12,3 @@ set -e
 restore_configs
 opt_set MOTHERBOARD BOARD_BTT_SKR_MINI_V1_1 SERIAL_PORT 1 SERIAL_PORT_2 -1 BAUDRATE_2 115200
 exec_test $1 $2 "BigTreeTech SKR Mini v1.1 - Basic Configuration" "$3"
-
-# clean up
-restore_configs

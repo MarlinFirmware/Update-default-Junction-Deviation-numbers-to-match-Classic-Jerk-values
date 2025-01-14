@@ -145,9 +145,15 @@ extern "C" {
 
 // Extra HAL modules
 #if defined(STM32F103xE) || defined(STM32F103xG)
-#define HAL_DAC_MODULE_ENABLED
-#define HAL_SD_MODULE_ENABLED
-#define HAL_SRAM_MODULE_ENABLED
+#ifndef HAL_DAC_MODULE_ENABLED
+  #define HAL_DAC_MODULE_ENABLED
+#endif
+#ifndef HAL_SD_MODULE_ENABLED
+  #define HAL_SD_MODULE_ENABLED
+#endif
+#ifndef HAL_SRAM_MODULE_ENABLED
+  #define HAL_SRAM_MODULE_ENABLED
+#endif
 #endif
 
 // Default pin used for 'Serial' instance (ex: ST-Link)

@@ -247,21 +247,21 @@ void MarlinUI::draw_status_screen() {
   tft.set_background(COLOR_BACKGROUND);
   tft.add_rectangle(0, 0, COORDINATES_W, COORDINATES_H, COLOR_AXIS_HOMED);
 
-  #if ENABLED(HAS_X_AXIS) && defined(X_MARK_X) && defined(X_MARK_Y) && defined(X_VALUE_X) && defined(X_VALUE_Y)
+  #if HAS_X_AXIS && defined(X_MARK_X) && defined(X_MARK_Y) && defined(X_VALUE_X) && defined(X_VALUE_Y)
     tft.add_text(X_MARK_X, X_MARK_Y, COLOR_AXIS_HOMED , "X");
     const bool nhx = axis_should_home(X_AXIS);
     tft_string.set(blink && nhx ? "?" : ftostr4sign(LOGICAL_X_POSITION(current_position.x)));
     tft.add_text(X_VALUE_X, X_VALUE_Y, nhx ? COLOR_AXIS_NOT_HOMED : COLOR_AXIS_HOMED, tft_string);
   #endif
 
-  #if ENABLED(HAS_Y_AXIS) && defined(Y_MARK_X) && defined(Y_MARK_Y) && defined(Y_VALUE_X) && defined(Y_VALUE_Y)
+  #if HAS_Y_AXIS && defined(Y_MARK_X) && defined(Y_MARK_Y) && defined(Y_VALUE_X) && defined(Y_VALUE_Y)
     tft.add_text(Y_MARK_X, Y_MARK_Y, COLOR_AXIS_HOMED , "Y");
     const bool nhy = axis_should_home(Y_AXIS);
     tft_string.set(blink && nhy ? "?" : ftostr4sign(LOGICAL_Y_POSITION(current_position.y)));
     tft.add_text(Y_VALUE_X, Y_VALUE_Y, nhy ? COLOR_AXIS_NOT_HOMED : COLOR_AXIS_HOMED, tft_string);
   #endif
 
-  #if ENABLED(HAS_Z_AXIS) && defined(Z_MARK_X) && defined(Z_MARK_Y) && defined(Z_VALUE_X) && defined(Z_VALUE_Y) && defined(Z_VALUE_OFFSET)
+  #if HAS_Z_AXIS && defined(Z_MARK_X) && defined(Z_MARK_Y) && defined(Z_VALUE_X) && defined(Z_VALUE_Y) && defined(Z_VALUE_OFFSET)
     tft.add_text(Z_MARK_X, Z_MARK_Y, COLOR_AXIS_HOMED , "Z");
     uint16_t offset = Z_VALUE_OFFSET;
     const bool nhz = axis_should_home(Z_AXIS);
@@ -301,7 +301,7 @@ void MarlinUI::draw_status_screen() {
   tft.add_image(0, 0, imgFeedRate, color);
   tft_string.set(i16tostr3rj(feedrate_percentage));
   tft_string.add('%');
-  tft.add_text(36, tft_string.vcenter(30), color , tft_string);
+  tft.add_text(36, tft_string.vcenter(30), color, tft_string);
   TERN_(TOUCH_SCREEN, touch.add_control(FEEDRATE, FEEDRATE_X, FEEDRATE_Y, FEEDRATE_W, FEEDRATE_H));
 
   #if HAS_EXTRUDERS
@@ -312,7 +312,7 @@ void MarlinUI::draw_status_screen() {
     tft.add_image(FLOWRATE_ICON_X, FLOWRATE_ICON_X, imgFlowRate, color);
     tft_string.set(i16tostr3rj(planner.flow_percentage[active_extruder]));
     tft_string.add('%');
-    tft.add_text(FLOWRATE_TEXT_X, FLOWRATE_TEXT_Y, color , tft_string);
+    tft.add_text(FLOWRATE_TEXT_X, FLOWRATE_TEXT_Y, color, tft_string);
     TERN_(TOUCH_SCREEN, touch.add_control(FLOWRATE, FLOWRATE_X, FLOWRATE_Y, FLOWRATE_W, FLOWRATE_H, active_extruder));
   #endif
 

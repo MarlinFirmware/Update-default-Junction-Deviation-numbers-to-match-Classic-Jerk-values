@@ -167,7 +167,7 @@
 #endif
 
 // Extra HAL modules
-#if !defined(HAL_DAC_MODULE_DISABLED)
+#ifndef HAL_DAC_MODULE_DISABLED
   #define HAL_DAC_MODULE_ENABLED
 #endif
 

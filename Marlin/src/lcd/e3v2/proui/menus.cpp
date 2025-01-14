@@ -390,14 +390,14 @@ CustomMenuItem** Menu::items() {
 
 int8_t Menu::count() {
   return MenuItemCount;
-};
+}
 
 /* MenuItem Class ===========================================================*/
 
 void CustomMenuItem::draw(int8_t line) {
   if (line < 0 || line >= TROWS) return;
   if (onDraw != nullptr) (*onDraw)(static_cast<MenuItem*>(this), line);
-};
+}
 
 void CustomMenuItem::redraw(bool erase/*=false*/) {
   const int8_t line = currentMenu->line(this->pos);
@@ -436,7 +436,7 @@ void MenuItem::setFrame(uint8_t id, uint16_t x1, uint16_t y1, uint16_t x2, uint1
 
 MenuItemPtr::MenuItemPtr(uint8_t cicon, const char * const text, OnDrawItem ondraw, OnClickItem onclick, void* val) : MenuItem(cicon, text, ondraw, onclick) {
   value = val;
-};
+}
 
 // Menu auxiliary functions ===================================================
 

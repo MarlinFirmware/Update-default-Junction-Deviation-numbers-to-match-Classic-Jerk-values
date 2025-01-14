@@ -35,8 +35,12 @@
 // Inline laser power
 #include "../module/planner.h"
 
+#define RPM_TO_PWM(X) ((X) * 255 / (SPEED_POWER_MAX))
+#define PWM_TO_RPM(X) ((X) * (SPEED_POWER_MAX) / 255)
 #define PCT_TO_PWM(X) ((X) * 255 / 100)
+#define PWM_TO_PCT(X) ((X) * 100 / 255)
 #define PCT_TO_SERVO(X) ((X) * 180 / 100)
+#define CUTTER_PWM_TO_SPWR(X) (CUTTER_UNIT_IS(PERCENT) ? PWM_TO_PCT(X) : (CUTTER_UNIT_IS(RPM) ? PWM_TO_RPM(X) : X))
 
 // Laser/Cutter operation mode
 enum CutterMode : int8_t {

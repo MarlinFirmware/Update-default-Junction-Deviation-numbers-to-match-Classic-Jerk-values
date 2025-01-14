@@ -19,6 +19,7 @@ VERSION="$(git -C "${DIR}" describe --tags --first-parent 2>/dev/null || true)"
 STRING_DISTRIBUTION_DATE="${STRING_DISTRIBUTION_DATE:-$(date '+%Y-%m-%d %H:%M')}"
 SHORT_BUILD_VERSION="${SHORT_BUILD_VERSION:-${BRANCH}}"
 DETAILED_BUILD_VERSION="${DETAILED_BUILD_VERSION:-${BRANCH}-${VERSION}}"
+PROTOCOL_VERSION="1.0"
 
 # Gets some misc options from their defaults
 DEFAULT_MACHINE_UUID="${DEFAULT_MACHINE_UUID:-$(awk -F'"' \
@@ -65,68 +66,52 @@ cat > "${WRITE_FILE}" <<EOF
  */
 
 /**
-  * Marlin release version identifier
-  */
-#ifndef SHORT_BUILD_VERSION
-  #define SHORT_BUILD_VERSION "${SHORT_BUILD_VERSION}"
-#endif
+ * Marlin release version identifier
+ */
+#define SHORT_BUILD_VERSION "${SHORT_BUILD_VERSION}"
 
 /**
-  * Verbose version identifier which should contain a reference to the location
-  * from where the binary was downloaded or the source code was compiled.
-  */
-#ifndef DETAILED_BUILD_VERSION
-  #define DETAILED_BUILD_VERSION "${DETAILED_BUILD_VERSION}"
-#endif
+ * Verbose version identifier which should contain a reference to the location
+ * from where the binary was downloaded or the source code was compiled.
+ */
+#define DETAILED_BUILD_VERSION "${DETAILED_BUILD_VERSION}"
 
 /**
-  * The STRING_DISTRIBUTION_DATE represents when the binary file was built,
-  * here we define this default string as the date where the latest release
-  * version was tagged.
-  */
-#ifndef STRING_DISTRIBUTION_DATE
-  #define STRING_DISTRIBUTION_DATE "${STRING_DISTRIBUTION_DATE}"
-#endif
+ * The STRING_DISTRIBUTION_DATE represents when the binary file was built,
+ * here we define this default string as the date where the latest release
+ * version was tagged.
+ */
+#define STRING_DISTRIBUTION_DATE "${STRING_DISTRIBUTION_DATE}"
 
 /**
-  * The protocol for communication to the host. Protocol indicates communication
-  * standards such as the use of ASCII, "echo:" and "error:" line prefixes, etc.
-  * (Other behaviors are given by the firmware version and capabilities report.)
-  */
-#ifndef PROTOCOL_VERSION
-  #define PROTOCOL_VERSION "${PROTOCOL_VERSION}"
-#endif
+ * The protocol for communication to the host. Protocol indicates communication
+ * standards such as the use of ASCII, "echo:" and "error:" line prefixes, etc.
+ * (Other behaviors are given by the firmware version and capabilities report.)
+ */
+#define PROTOCOL_VERSION "${PROTOCOL_VERSION}"
 
 /**
-  * Defines a generic printer name to be output to the LCD after booting Marlin.
-  */
-#ifndef MACHINE_NAME
-  #define MACHINE_NAME "${MACHINE_NAME}"
-#endif
+ * Defines a generic printer name to be output to the LCD after booting Marlin.
+ */
+#define MACHINE_NAME "${MACHINE_NAME}"
 
 /**
-  * The SOURCE_CODE_URL is the location where users will find the Marlin Source
-  * Code which is installed on the device. In most cases —unless the manufacturer
-  * has a distinct Github fork— the Source Code URL should just be the main
-  * Marlin repository.
-  */
-#ifndef SOURCE_CODE_URL
-  #define SOURCE_CODE_URL "${SOURCE_CODE_URL}"
-#endif
+ * The SOURCE_CODE_URL is the location where users will find the Marlin Source
+ * Code which is installed on the device. In most cases —unless the manufacturer
+ * has a distinct Github fork— the Source Code URL should just be the main
+ * Marlin repository.
+ */
+#define SOURCE_CODE_URL "${SOURCE_CODE_URL}"
 
 /**
-  * Default generic printer UUID.
-  */
-#ifndef DEFAULT_MACHINE_UUID
-  #define DEFAULT_MACHINE_UUID "${DEFAULT_MACHINE_UUID}"
-#endif
+ * Default generic printer UUID.
+ */
+#define DEFAULT_MACHINE_UUID "${DEFAULT_MACHINE_UUID}"
 
 /**
-  * The WEBSITE_URL is the location where users can get more information such as
-  * documentation about a specific Marlin release.
-  */
-#ifndef WEBSITE_URL
-  #define WEBSITE_URL "${WEBSITE_URL}"
-#endif
+ * The WEBSITE_URL is the location where users can get more information such as
+ * documentation about a specific Marlin release.
+ */
+#define WEBSITE_URL "${WEBSITE_URL}"
 
 EOF

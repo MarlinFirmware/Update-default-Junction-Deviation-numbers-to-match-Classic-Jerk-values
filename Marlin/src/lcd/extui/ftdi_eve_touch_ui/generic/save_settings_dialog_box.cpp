@@ -27,6 +27,8 @@
 
 using namespace ExtUI;
 
+using namespace Theme;
+
 bool SaveSettingsDialogBox::needs_save = false;
 
 void SaveSettingsDialogBox::onRedraw(draw_mode_t) {
@@ -39,7 +41,9 @@ bool SaveSettingsDialogBox::onTouchEnd(uint8_t tag) {
   switch (tag) {
     case 1:
       injectCommands(F("M500"));
-      AlertDialogBox::show(GET_TEXT_F(MSG_EEPROM_SAVED));
+      sound.play(twinkle, PLAY_ASYNCHRONOUS);
+      GOTO_SCREEN(StatusScreen);
+      //AlertDialogBox::show(GET_TEXT_F(MSG_EEPROM_SAVED));
       // Remove SaveSettingsDialogBox from the stack
       // so the alert box doesn't return to me.
       current_screen.forget();

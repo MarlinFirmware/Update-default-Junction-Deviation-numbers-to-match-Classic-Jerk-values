@@ -30,8 +30,12 @@ extern "C" {
   #undef HAL_HCD_MODULE_ENABLED // USB Host
 #endif
 
-#define HAL_EXTI_MODULE_ENABLED   // Needed for Endstop (and other external) Interrupts
-#define HAL_IWDG_MODULE_ENABLED // USE_WATCHDOG
+#ifndef HAL_EXTI_MODULE_ENABLED
+  #define HAL_EXTI_MODULE_ENABLED // Needed for Endstop (and other external) Interrupts
+#endif
+#ifndef HAL_IWDG_MODULE_ENABLED
+  #define HAL_IWDG_MODULE_ENABLED // USE_WATCHDOG
+#endif
 
 #undef HAL_PWR_MODULE_ENABLED
 #define HAL_PWR_MODULE_ONLY   // disable low power & PA0 wakeup pin (its T°c pin)
@@ -44,39 +48,105 @@ extern "C" {
 /**
  * @brief List of modules in the framework (first ones enabled by default)
  */
-//#define HAL_MODULE_ENABLED
-//#define HAL_ADC_MODULE_ENABLED
-//#define HAL_CORTEX_MODULE_ENABLED
-//#define HAL_DAC_MODULE_ENABLED
-//#define HAL_DMA_MODULE_ENABLED
-//#define HAL_FLASH_MODULE_ENABLED
-//#define HAL_GPIO_MODULE_ENABLED
-//#define HAL_I2C_MODULE_ENABLED
-//#define HAL_PCD_MODULE_ENABLED
-//#define HAL_PWR_MODULE_ENABLED
-//#define HAL_RCC_MODULE_ENABLED
-//#define HAL_RTC_MODULE_ENABLED
-//#define HAL_SD_MODULE_ENABLED
-//#define HAL_SPI_MODULE_ENABLED
-//#define HAL_SRAM_MODULE_ENABLED
-//#define HAL_TIM_MODULE_ENABLED
-//#define HAL_UART_MODULE_ENABLED
-//#define HAL_CAN_MODULE_ENABLED
-//#define HAL_CAN_LEGACY_MODULE_ENABLED
-//#define HAL_CEC_MODULE_ENABLED
-//#define HAL_CRC_MODULE_ENABLED
-//#define HAL_ETH_MODULE_ENABLED
-//#define HAL_HCD_MODULE_ENABLED
-//#define HAL_I2S_MODULE_ENABLED
-//#define HAL_IRDA_MODULE_ENABLED
-//#define HAL_IWDG_MODULE_ENABLED
-//#define HAL_NAND_MODULE_ENABLED
-//#define HAL_NOR_MODULE_ENABLED
-//#define HAL_PCCARD_MODULE_ENABLED
-//#define HAL_SMARTCARD_MODULE_ENABLED
-//#define HAL_USART_MODULE_ENABLED // Useless.... UART_MODULE does it
-//#define HAL_WWDG_MODULE_ENABLED
-//#define HAL_MMC_MODULE_ENABLED
+#ifndef HAL_MODULE_ENABLED
+  //#define HAL_MODULE_ENABLED
+#endif
+#ifndef HAL_ADC_MODULE_ENABLED
+  //#define HAL_ADC_MODULE_ENABLED
+#endif
+#ifndef HAL_CORTEX_MODULE_ENABLED
+  //#define HAL_CORTEX_MODULE_ENABLED
+#endif
+#ifndef HAL_DAC_MODULE_ENABLED
+  //#define HAL_DAC_MODULE_ENABLED
+#endif
+#ifndef HAL_DMA_MODULE_ENABLED
+  //#define HAL_DMA_MODULE_ENABLED
+#endif
+#ifndef HAL_FLASH_MODULE_ENABLED
+  //#define HAL_FLASH_MODULE_ENABLED
+#endif
+#ifndef HAL_GPIO_MODULE_ENABLED
+  //#define HAL_GPIO_MODULE_ENABLED
+#endif
+#ifndef HAL_I2C_MODULE_ENABLED
+  //#define HAL_I2C_MODULE_ENABLED
+#endif
+#ifndef HAL_PCD_MODULE_ENABLED
+  //#define HAL_PCD_MODULE_ENABLED
+#endif
+#ifndef HAL_PWR_MODULE_ENABLED
+  //#define HAL_PWR_MODULE_ENABLED
+#endif
+#ifndef HAL_RCC_MODULE_ENABLED
+  //#define HAL_RCC_MODULE_ENABLED
+#endif
+#ifndef HAL_RTC_MODULE_ENABLED
+  //#define HAL_RTC_MODULE_ENABLED
+#endif
+#ifndef HAL_SD_MODULE_ENABLED
+  //#define HAL_SD_MODULE_ENABLED
+#endif
+#ifndef HAL_SPI_MODULE_ENABLED
+  //#define HAL_SPI_MODULE_ENABLED
+#endif
+#ifndef HAL_SRAM_MODULE_ENABLED
+  //#define HAL_SRAM_MODULE_ENABLED
+#endif
+#ifndef HAL_TIM_MODULE_ENABLED
+  //#define HAL_TIM_MODULE_ENABLED
+#endif
+#ifndef HAL_UART_MODULE_ENABLED
+  //#define HAL_UART_MODULE_ENABLED
+#endif
+#ifndef HAL_CAN_MODULE_ENABLED
+  //#define HAL_CAN_MODULE_ENABLED
+#endif
+#ifndef HAL_CAN_LEGACY_MODULE_ENABLED
+  //#define HAL_CAN_LEGACY_MODULE_ENABLED
+#endif
+#ifndef HAL_CEC_MODULE_ENABLED
+  //#define HAL_CEC_MODULE_ENABLED
+#endif
+#ifndef HAL_CRC_MODULE_ENABLED
+  //#define HAL_CRC_MODULE_ENABLED
+#endif
+#ifndef HAL_ETH_MODULE_ENABLED
+  //#define HAL_ETH_MODULE_ENABLED
+#endif
+#ifndef HAL_HCD_MODULE_ENABLED
+  //#define HAL_HCD_MODULE_ENABLED
+#endif
+#ifndef HAL_I2S_MODULE_ENABLED
+  //#define HAL_I2S_MODULE_ENABLED
+#endif
+#ifndef HAL_IRDA_MODULE_ENABLED
+  //#define HAL_IRDA_MODULE_ENABLED
+#endif
+#ifndef HAL_IWDG_MODULE_ENABLED
+  //#define HAL_IWDG_MODULE_ENABLED
+#endif
+#ifndef HAL_NAND_MODULE_ENABLED
+  //#define HAL_NAND_MODULE_ENABLED
+#endif
+#ifndef HAL_NOR_MODULE_ENABLED
+  //#define HAL_NOR_MODULE_ENABLED
+#endif
+#ifndef HAL_PCCARD_MODULE_ENABLED
+  //#define HAL_PCCARD_MODULE_ENABLED
+#endif
+#ifndef HAL_SMARTCARD_MODULE_ENABLED
+  //#define HAL_SMARTCARD_MODULE_ENABLED
+#endif
+#ifndef HAL_USART_MODULE_ENABLED
+  //#define HAL_USART_MODULE_ENABLED // Useless.... UART_MODULE does it
+#endif
+#ifndef HAL_WWDG_MODULE_ENABLED
+  //#define HAL_WWDG_MODULE_ENABLED
+#endif
+#ifndef HAL_MMC_MODULE_ENABLED
+  //#define HAL_MMC_MODULE_ENABLED
+#endif
 
 /* ########################## Oscillator Values adaptation ####################*/
 /**

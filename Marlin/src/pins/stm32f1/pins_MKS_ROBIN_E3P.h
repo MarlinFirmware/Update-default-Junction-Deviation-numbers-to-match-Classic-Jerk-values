@@ -80,6 +80,10 @@
 #define Z_MIN_PIN                           PA11
 #define Z_MAX_PIN                           PC4
 
+#ifndef FIL_RUNOUT_PIN
+  #define FIL_RUNOUT_PIN                    PA4   // MT_DET
+#endif
+
 //
 // Probe enable
 //
@@ -151,16 +155,9 @@
   //#define E4_HARDWARE_SERIAL Serial1
 
   #define X_SERIAL_TX_PIN                   PD5
-  #define X_SERIAL_RX_PIN                   PD5
-
   #define Y_SERIAL_TX_PIN                   PD7
-  #define Y_SERIAL_RX_PIN                   PD7
-
   #define Z_SERIAL_TX_PIN                   PD4
-  #define Z_SERIAL_RX_PIN                   PD4
-
   #define E0_SERIAL_TX_PIN                  PD9
-  #define E0_SERIAL_RX_PIN                  PD9
 
   // Reduce baud rate to improve software serial reliability
   #ifndef TMC_BAUD_RATE
@@ -194,8 +191,9 @@
     #define KILL_PIN_STATE                  HIGH
   #endif
 
-  #define MT_DET_1_PIN                      PA4
-  #define MT_DET_PIN_STATE                  LOW
+  #ifndef FIL_RUNOUT_STATE
+    #define FIL_RUNOUT_STATE                LOW
+  #endif
 
   #define WIFI_IO0_PIN                      PC13
   #define WIFI_IO1_PIN                      PC7
@@ -212,7 +210,6 @@
 #else
   //#define POWER_LOSS_PIN                  PA2   // PW_DET
   //#define PS_ON_PIN                       PB2   // PW_OFF
-  #define FIL_RUNOUT_PIN                    PA4
 #endif
 
 //#define LED_PIN                           PB2
@@ -271,19 +268,25 @@
 //
 
 /**
- * Note: MKS Robin TFT screens use various TFT controllers.
- * If the screen stays white, disable 'LCD_RESET_PIN'
- * to let the bootloader init the screen.
+ * Note: MKS Robin TFT screens use various TFT controllers
+ * Supported screens are based on the ILI9341, ST7789V and ILI9328 (320x240)
+ * ILI9488 is not supported
+ * Define init sequences for other screens in u8g_dev_tft_320x240_upscale_from_128x64.cpp
+ *
+ * If the screen stays white, disable 'LCD_RESET_PIN' to let the bootloader init the screen.
+ *
+ * Setting an 'LCD_RESET_PIN' may cause a flicker when switching menus
+ * because Marlin uses the reset as a failsafe to revive a glitchy LCD.
  */
 
-#if ENABLED(TFT_CLASSIC_UI)
+#if ENABLED(TFT_SCALED_DOGLCD)
   // Emulated DOGM SPI
   #define LCD_PINS_EN                EXP1_03_PIN
   #define LCD_PINS_RS                EXP1_04_PIN
   #define BTN_ENC                    EXP1_02_PIN
   #define BTN_EN1                    EXP2_03_PIN
   #define BTN_EN2                    EXP2_05_PIN
-#elif ENABLED(TFT_COLOR_UI)
+#elif ENABLED(HAS_GRAPHICAL_TFT)
   #define TFT_BUFFER_WORDS                 14400
 #endif
 

@@ -178,6 +178,12 @@
   #include "../feature/hotend_idle.h"
 #endif
 
+#if HAS_PRUSA_MMU3
+  #include "../feature/mmu3/mmu3.h"
+  #include "../feature/mmu3/SpoolJoin.h"
+  #include "../feature/mmu3/mmu3_reporting.h"
+#endif
+
 #pragma pack(push, 1) // No padding between variables
 
 #if HAS_ETHERNET
@@ -457,6 +463,13 @@ typedef struct SettingsDataStruct {
   bool autoretract_enabled;                             // M209 S
 
   //
+  // EDITABLE_HOMING_FEEDRATE
+  //
+  #if ENABLED(EDITABLE_HOMING_FEEDRATE)
+    xyz_feedrate_t homing_feedrate_mm_m;                // M210 X Y Z I J K U V W
+  #endif
+
+  //
   // !NO_VOLUMETRIC
   //
   bool parser_volumetric_enabled;                       // M200 S  parser.volumetric_enabled
@@ -651,6 +664,23 @@ typedef struct SettingsDataStruct {
   //
   #if ENABLED(NONLINEAR_EXTRUSION)
     ne_coeff_t stepper_ne;                              // M592 A B C
+  #endif
+
+  //
+  // MMU3
+  //
+  #if HAS_PRUSA_MMU3
+    bool spool_join_enabled;      // EEPROM_SPOOL_JOIN
+    uint16_t fail_total_num;      // EEPROM_MMU_FAIL_TOT
+    uint8_t fail_num;             // EEPROM_MMU_FAIL
+    uint16_t load_fail_total_num; // EEPROM_MMU_LOAD_FAIL_TOT
+    uint8_t load_fail_num;        // EEPROM_MMU_LOAD_FAIL
+    uint16_t tool_change_counter;
+    uint32_t tool_change_total_counter; // EEPROM_MMU_MATERIAL_CHANGES
+    uint8_t cutter_mode;          // EEPROM_MMU_CUTTER_ENABLED
+    uint8_t stealth_mode;         // EEPROM_MMU_STEALTH
+    bool mmu_hw_enabled;          // EEPROM_MMU_ENABLED
+    // uint32_t material_changes
   #endif
 
 } SettingsData;
@@ -931,7 +961,10 @@ void MarlinSettings::postprocess() {
     // Global Leveling
     //
     {
-      const float zfh = TERN(ENABLE_LEVELING_FADE_HEIGHT, planner.z_fade_height, (DEFAULT_LEVELING_FADE_HEIGHT));
+      #ifndef DEFAULT_LEVELING_FADE_HEIGHT
+        #define DEFAULT_LEVELING_FADE_HEIGHT 0
+      #endif
+      const float zfh = TERN(ENABLE_LEVELING_FADE_HEIGHT, planner.z_fade_height, DEFAULT_LEVELING_FADE_HEIGHT);
       EEPROM_WRITE(zfh);
     }
 
@@ -1308,6 +1341,14 @@ void MarlinSettings::postprocess() {
     }
 
     //
+    // Homing Feedrate
+    //
+    #if ENABLED(EDITABLE_HOMING_FEEDRATE)
+      _FIELD_TEST(homing_feedrate_mm_m);
+      EEPROM_WRITE(homing_feedrate_mm_m);
+    #endif
+
+    //
     // Volumetric & Filament Size
     //
     {
@@ -1320,7 +1361,7 @@ void MarlinSettings::postprocess() {
         #if ENABLED(VOLUMETRIC_EXTRUDER_LIMIT)
           EEPROM_WRITE(planner.volumetric_extruder_limit);
         #else
-          dummyf = DEFAULT_VOLUMETRIC_EXTRUDER_LIMIT;
+          dummyf = 0.0;
           for (uint8_t q = EXTRUDERS; q--;) EEPROM_WRITE(dummyf);
         #endif
 
@@ -1330,7 +1371,7 @@ void MarlinSettings::postprocess() {
         EEPROM_WRITE(volumetric_enabled);
         dummyf = DEFAULT_NOMINAL_FILAMENT_DIA;
         for (uint8_t q = EXTRUDERS; q--;) EEPROM_WRITE(dummyf);
-        dummyf = DEFAULT_VOLUMETRIC_EXTRUDER_LIMIT;
+        dummyf = 0.0;
         for (uint8_t q = EXTRUDERS; q--;) EEPROM_WRITE(dummyf);
 
       #endif
@@ -1758,6 +1799,23 @@ void MarlinSettings::postprocess() {
     #endif
 
     //
+    // MMU3
+    //
+    #if HAS_PRUSA_MMU3
+      EEPROM_WRITE(spooljoin.enabled); // EEPROM_SPOOL_JOIN
+      // for testing purposes fill with default values
+      EEPROM_WRITE(MMU3::operation_statistics.fail_total_num); //EEPROM_MMU_FAIL_TOT
+      EEPROM_WRITE(MMU3::operation_statistics.fail_num); // EEPROM_MMU_FAIL
+      EEPROM_WRITE(MMU3::operation_statistics.load_fail_total_num); // EEPROM_MMU_LOAD_FAIL_TOT
+      EEPROM_WRITE(MMU3::operation_statistics.load_fail_num); // EEPROM_MMU_LOAD_FAIL
+      EEPROM_WRITE(MMU3::operation_statistics.tool_change_counter);
+      EEPROM_WRITE(MMU3::operation_statistics.tool_change_total_counter); // EEPROM_MMU_MATERIAL_CHANGES
+      EEPROM_WRITE(mmu3.cutter_mode); // EEPROM_MMU_CUTTER_ENABLED
+      EEPROM_WRITE(mmu3.stealth_mode); // EEPROM_MMU_STEALTH
+      EEPROM_WRITE(mmu3.mmu_hw_enabled); // EEPROM_MMU_ENABLED
+    #endif
+
+    //
     // Report final CRC and Data Size
     //
     if (eeprom_error == ERR_EEPROM_NOERR) {
@@ -1823,7 +1881,7 @@ void MarlinSettings::postprocess() {
     EEPROM_Error eeprom_error = ERR_EEPROM_NOERR;
 
     const EEPROM_Error check = check_version();
-    if (check == ERR_EEPROM_VERSION) return eeprom_error;
+    if (check == ERR_EEPROM_NOPROM) return eeprom_error;
 
     uint16_t stored_crc;
 
@@ -2379,6 +2437,14 @@ void MarlinSettings::postprocess() {
       }
 
       //
+      // Homing Feedrate
+      //
+      #if ENABLED(EDITABLE_HOMING_FEEDRATE)
+        _FIELD_TEST(homing_feedrate_mm_m);
+        EEPROM_READ(homing_feedrate_mm_m);
+      #endif
+
+      //
       // Volumetric & Filament Size
       //
       {
@@ -2879,6 +2945,41 @@ void MarlinSettings::postprocess() {
       #endif
 
       //
+      // MMU3
+      //
+      #if HAS_PRUSA_MMU3
+        spooljoin.epprom_addr = eeprom_index;
+        EEPROM_READ(spooljoin.enabled);  // EEPROM_SPOOL_JOIN
+
+        MMU3::operation_statistics.fail_total_num_addr = eeprom_index;
+        EEPROM_READ(MMU3::operation_statistics.fail_total_num); //EEPROM_MMU_FAIL_TOT
+
+        MMU3::operation_statistics.fail_num_addr = eeprom_index;
+        EEPROM_READ(MMU3::operation_statistics.fail_num); // EEPROM_MMU_FAIL;
+
+        MMU3::operation_statistics.load_fail_total_num_addr = eeprom_index;
+        EEPROM_READ(MMU3::operation_statistics.load_fail_total_num); // EEPROM_MMU_LOAD_FAIL_TOT
+
+        MMU3::operation_statistics.load_fail_num_addr = eeprom_index;
+        EEPROM_READ(MMU3::operation_statistics.load_fail_num); // EEPROM_MMU_LOAD_FAIL
+
+        MMU3::operation_statistics.tool_change_counter_addr = eeprom_index;
+        EEPROM_READ(MMU3::operation_statistics.tool_change_counter);
+
+        MMU3::operation_statistics.tool_change_total_counter_addr = eeprom_index;
+        EEPROM_READ(MMU3::operation_statistics.tool_change_total_counter); // EEPROM_MMU_MATERIAL_CHANGES
+
+        mmu3.cutter_mode_addr = eeprom_index;
+        EEPROM_READ(mmu3.cutter_mode); // EEPROM_MMU_CUTTER_ENABLED
+
+        mmu3.stealth_mode_addr = eeprom_index;
+        EEPROM_READ(mmu3.stealth_mode); // EEPROM_MMU_STEALTH
+
+        mmu3.mmu_hw_enabled_addr = eeprom_index;
+        EEPROM_READ(mmu3.mmu_hw_enabled); // EEPROM_MMU_ENABLED
+      #endif
+
+      //
       // Validate Final Size and CRC
       //
       const uint16_t eeprom_total = eeprom_index - (EEPROM_OFFSET);
@@ -2892,7 +2993,7 @@ void MarlinSettings::postprocess() {
       }
       else if (!validating) {
         DEBUG_ECHO_START();
-        DEBUG_ECHOLN(version_str, F(" stored settings retrieved ("), eeprom_total, F(" bytes; crc "), working_crc, ')');
+        DEBUG_ECHOLN(version_str, F(" stored settings retrieved ("), eeprom_total, F(" bytes; crc "), working_crc, C(')'));
         TERN_(HOST_EEPROM_CHITCHAT, hostui.notify(F("Stored settings retrieved")));
       }
 
@@ -2999,17 +3100,24 @@ void MarlinSettings::postprocess() {
   #endif // HAS_EARLY_LCD_SETTINGS
 
   bool MarlinSettings::load() {
+    // If the EEPROM data is valid load it
     if (validate()) {
       const EEPROM_Error err = _load();
       const bool success = (err == ERR_EEPROM_NOERR);
       TERN_(EXTENSIBLE_UI, ExtUI::onSettingsLoaded(success));
       return success;
     }
+
+    // Otherwise reset settings to default "factory settings"
     reset();
+
+    // Options to overwrite the EEPROM on error
     #if ANY(EEPROM_AUTO_INIT, EEPROM_INIT_NOW)
-      (void)save();
-      SERIAL_ECHO_MSG("EEPROM Initialized");
+      (void)init_eeprom();
+      LCD_MESSAGE(MSG_EEPROM_INITIALIZED);
+      SERIAL_ECHO_MSG(STR_EEPROM_INITIALIZED);
     #endif
+
     return false;
   }
 
@@ -3311,7 +3419,7 @@ void MarlinSettings::reset() {
   //
   // Global Leveling
   //
-  TERN_(ENABLE_LEVELING_FADE_HEIGHT, new_z_fade_height = (DEFAULT_LEVELING_FADE_HEIGHT));
+  TERN_(ENABLE_LEVELING_FADE_HEIGHT, new_z_fade_height = DEFAULT_LEVELING_FADE_HEIGHT);
   TERN_(HAS_LEVELING, reset_bed_level());
 
   //
@@ -3572,6 +3680,11 @@ void MarlinSettings::reset() {
   TERN_(FWRETRACT, fwretract.reset());
 
   //
+  // Homing Feedrate
+  //
+  TERN_(EDITABLE_HOMING_FEEDRATE, homing_feedrate_mm_m = xyz_feedrate_t(HOMING_FEEDRATE_MM_M));
+
+  //
   // Volumetric & Filament Size
   //
   #if DISABLED(NO_VOLUMETRICS)
@@ -3738,6 +3851,17 @@ void MarlinSettings::reset() {
       stepper.set_shaping_frequency(Z_AXIS, SHAPING_FREQ_Z);
       stepper.set_shaping_damping_ratio(Z_AXIS, SHAPING_ZETA_Z);
     #endif
+  #endif
+
+  //
+  // MMU Settings
+  //
+  #if HAS_PRUSA_MMU3
+    spooljoin.enabled = false;
+    MMU3::operation_statistics.reset_stats();
+    mmu3.cutter_mode = 0;
+    mmu3.stealth_mode = 0;
+    mmu3.mmu_hw_enabled = true;
   #endif
 
   //
@@ -3961,6 +4085,11 @@ void MarlinSettings::reset() {
     #endif
 
     //
+    // Homing Feedrate
+    //
+    TERN_(EDITABLE_HOMING_FEEDRATE, gcode.M210_report(forReplay));
+
+    //
     // Probe Offset
     //
     TERN_(HAS_BED_PROBE, gcode.M851_report(forReplay));
@@ -4059,6 +4188,11 @@ void MarlinSettings::reset() {
     // Model predictive control
     //
     TERN_(MPCTEMP, gcode.M306_report(forReplay));
+
+    //
+    // MMU3
+    //
+    TERN_(HAS_PRUSA_MMU3, gcode.MMU3_report(forReplay));
   }
 
 #endif // !DISABLE_M503

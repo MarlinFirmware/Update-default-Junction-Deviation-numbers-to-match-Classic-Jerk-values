@@ -172,22 +172,21 @@
 // TFT with FSMC interface
 //
 #if HAS_FSMC_TFT
-  #define TOUCH_CS_PIN                      PD11
-  #define TOUCH_SCK_PIN                     PB13
-  #define TOUCH_MISO_PIN                    PB14
-  #define TOUCH_MOSI_PIN                    PB15
+  #define LCD_USE_DMA_FSMC
+  //#define FSMC_DMA_DEV                    DMA2 // Maple
+  //#define FSMC_DMA_CHANNEL             DMA_CH5 // Maple
+  #define FSMC_CS_PIN                       PG12
+  #define FSMC_RS_PIN                       PG2
+  #define TFT_CS_PIN                 FSMC_CS_PIN
+  #define TFT_RS_PIN                 FSMC_RS_PIN
 
   #define TFT_RESET_PIN                     PB12
   #define TFT_BACKLIGHT_PIN                 PG8
 
-  #define LCD_USE_DMA_FSMC                    // Use DMA transfers to send data to the TFT
-  #define FSMC_DMA_DEV                      DMA2
-  #define FSMC_DMA_CHANNEL               DMA_CH5
-  #define FSMC_CS_PIN                       PG12
-  #define FSMC_RS_PIN                       PG2
-
-  #define TFT_CS_PIN                 FSMC_CS_PIN
-  #define TFT_RS_PIN                 FSMC_RS_PIN
+  #define TOUCH_CS_PIN                      PD11
+  #define TOUCH_SCK_PIN                     PB13
+  #define TOUCH_MISO_PIN                    PB14
+  #define TOUCH_MOSI_PIN                    PB15
 
   #if ENABLED(TFT_LVGL_UI)
     #define HAS_SPI_FLASH_FONT                    1

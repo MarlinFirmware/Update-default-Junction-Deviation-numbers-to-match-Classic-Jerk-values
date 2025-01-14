@@ -31,7 +31,7 @@
  * - https://github.com/Ultimaker/Ultimaker2/blob/master/1546%20ultimainboard%20V2.1.4/schema4.SchDoc
  * - https://github.com/Ultimaker/Ultimaker2/blob/master/1546%20ultimainboard%20V2.1.4/schema5.SchDoc
  * Schematics (Original+):
- * Schematic (Original+): https://github.com/Ultimaker/Ultimaker-Original-Plus/blob/master/1091_Main_board_v2.1.1_(x1)/Ultimainboard%20rev.%202.1.1%20altium.zip
+ * Schematic (Original+): https://github.com/Ultimaker/Ultimaker-Original-Plus/blob/master/1091_Main_board_v2.1.1_%28x1%29/Ultimainboard%20rev.%202.1.1%20altium.zip
  * ATmega2560
  */
 

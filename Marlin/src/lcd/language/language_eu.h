@@ -79,6 +79,7 @@ namespace LanguageNarrow_eu {
   LSTR MSG_EXTRUDE                        = _UxGT("Estruitu");
   LSTR MSG_RETRACT                        = _UxGT("Atzera eragin");
   LSTR MSG_MOVE_AXIS                      = _UxGT("Ardatzak mugitu");
+  LSTR MSG_PROBE_AND_LEVEL                = _UxGT("Proba eta Berdindu");
   LSTR MSG_BED_LEVELING                   = _UxGT("Ohe berdinketa");
   LSTR MSG_LEVEL_BED                      = _UxGT("Ohea berdindu");
   LSTR MSG_BED_TRAMMING                   = _UxGT("Ertzak berdindu");
@@ -89,13 +90,10 @@ namespace LanguageNarrow_eu {
   LSTR MSG_UBL_TOOLS                      = _UxGT("UBL Tresnak");
   LSTR MSG_UBL_MANUAL_MESH                = _UxGT("Sarea eskuz sortu");
   LSTR MSG_UBL_BC_INSERT2                 = _UxGT("Neurtu");
-  LSTR MSG_UBL_ACTIVATE_MESH              = _UxGT("UBL aktibatu");
-  LSTR MSG_UBL_DEACTIVATE_MESH            = _UxGT("UBL desaktibatu");
   LSTR MSG_UBL_SET_TEMP_BED               = _UxGT("Ohearen tenperatura");
   LSTR MSG_UBL_BED_TEMP_CUSTOM            = _UxGT("Bed Temp");
   LSTR MSG_UBL_SET_TEMP_HOTEND            = _UxGT("Mutur beroaren tenp.");
   LSTR MSG_UBL_HOTEND_TEMP_CUSTOM         = _UxGT("Hotend Temp");
-  LSTR MSG_UBL_MESH_EDIT                  = _UxGT("Sarea editatu");
   LSTR MSG_UBL_DONE_EDITING_MESH          = _UxGT("Sarea editatzea eginda");
   LSTR MSG_UBL_BUILD_MESH_MENU            = _UxGT("Sarea sortu");
   LSTR MSG_UBL_BUILD_MESH_M               = _UxGT("$ sarea sortu");
@@ -110,7 +108,8 @@ namespace LanguageNarrow_eu {
   LSTR MSG_UBL_MESH_LEVEL                 = _UxGT("Sarea berdindu");
   LSTR MSG_UBL_MAP_TYPE                   = _UxGT("Mapa mota");
   LSTR MSG_LED_CONTROL                    = _UxGT("LED ezarpenak");
-  LSTR MSG_LEDS                           = _UxGT("Argiak");
+  LSTR MSG_LIGHTS                         = _UxGT("Argiak");
+  LSTR MSG_LIGHT_N                        = _UxGT("Argi #{");
   LSTR MSG_LED_PRESETS                    = _UxGT("Argi aurrehautaketak");
   LSTR MSG_SET_LEDS_RED                   = _UxGT("Gorria");
   LSTR MSG_SET_LEDS_ORANGE                = _UxGT("Laranja");
@@ -230,7 +229,11 @@ namespace LanguageNarrow_eu {
   LSTR MSG_BLTOUCH_DEPLOY                 = _UxGT("BLTouch jaitsi/luzatu");
   LSTR MSG_BLTOUCH_STOW                   = _UxGT("BLTouch igo/jaso");
   LSTR MSG_HOME_FIRST                     = _UxGT("Etxera %s lehenengo");
+  LSTR MSG_ZPROBE_XOFFSET                 = _UxGT("X Konpentsatu");
+  LSTR MSG_ZPROBE_YOFFSET                 = _UxGT("Y Konpentsatu");
   LSTR MSG_ZPROBE_ZOFFSET                 = _UxGT("Z Konpentsatu");
+  LSTR MSG_ZPROBE_OFFSET_N                = _UxGT("@ Konpentsatu");
+  LSTR MSG_BABYSTEP_PROBE_Z               = _UxGT("Z pausoz egokitu");
   LSTR MSG_BABYSTEP_X                     = _UxGT("Mikro-urratsa X");
   LSTR MSG_BABYSTEP_Y                     = _UxGT("Mikro-urratsa Y");
   LSTR MSG_BABYSTEP_Z                     = _UxGT("Mikro-urratsa Z");

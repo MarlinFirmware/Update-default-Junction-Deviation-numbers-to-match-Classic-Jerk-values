@@ -75,18 +75,13 @@
 // the jumper next to the limit switch socket when using sensorless homing.
 //
 #if HAS_TMC_UART
-  /**
-   * TMC2208/TMC2209 stepper drivers
-   */
-  #define X_SERIAL_RX_PIN                     73
+  //
+  // TMC2208/TMC2209 stepper drivers
+  //
   #define X_SERIAL_TX_PIN                     73
-  #define Y_SERIAL_RX_PIN                     73
   #define Y_SERIAL_TX_PIN                     73
-  #define Z_SERIAL_RX_PIN                     73
   #define Z_SERIAL_TX_PIN                     73
-  #define E0_SERIAL_RX_PIN                    73
   #define E0_SERIAL_TX_PIN                    73
-  #define E1_SERIAL_RX_PIN                    12
   #define E1_SERIAL_TX_PIN                    12
 
   // Default TMC slave addresses

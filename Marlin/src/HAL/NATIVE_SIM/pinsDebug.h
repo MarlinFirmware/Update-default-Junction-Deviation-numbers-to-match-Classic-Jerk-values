@@ -19,30 +19,43 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  *
  */
-
-/**
- * Support routines for X86_64
- */
 #pragma once
 
 /**
- * Translation of routines & variables used by pinsDebug.h
+ * Pins Debugging for x86_64
+ *
+ *   - NUMBER_PINS_TOTAL
+ *   - MULTI_NAME_PAD
+ *   - getPinByIndex(index)
+ *   - printPinNameByIndex(index)
+ *   - getPinIsDigitalByIndex(index)
+ *   - digitalPinToAnalogIndex(pin)
+ *   - getValidPinMode(pin)
+ *   - isValidPin(pin)
+ *   - isAnalogPin(pin)
+ *   - digitalRead_mod(pin)
+ *   - pwm_status(pin)
+ *   - printPinPWM(pin)
+ *   - printPinPort(pin)
+ *   - printPinNumber(pin)
+ *   - printPinAnalog(pin)
  */
 
 #define NUMBER_PINS_TOTAL NUM_DIGITAL_PINS
-#define IS_ANALOG(P) (DIGITAL_PIN_TO_ANALOG_PIN(P) >= 0 ? 1 : 0)
-#define digitalRead_mod(p)  digitalRead(p)
-#define GET_ARRAY_PIN(p) pin_array[p].pin
-#define PRINT_ARRAY_NAME(x) do{ sprintf_P(buffer, PSTR("%-" STRINGIFY(MAX_NAME_LENGTH) "s"), pin_array[x].name); SERIAL_ECHO(buffer); }while(0)
-#define PRINT_PIN(p) do{ sprintf_P(buffer, PSTR("%3d "), p); SERIAL_ECHO(buffer); }while(0)
-#define PRINT_PIN_ANALOG(p) do{ sprintf_P(buffer, PSTR(" (A%2d)  "), DIGITAL_PIN_TO_ANALOG_PIN(pin)); SERIAL_ECHO(buffer); }while(0)
+#define isValidPin(P) (P >= 0 && P < pin_t(NUMBER_PINS_TOTAL))
+#define isAnalogPin(P) (digitalPinToAnalogIndex(P) >= 0)
+#define digitalRead_mod(P)  digitalRead(P)
+#define getPinByIndex(x) pin_array[x].pin
+#define printPinNameByIndex(x) do{ sprintf_P(buffer, PSTR("%-" STRINGIFY(MAX_NAME_LENGTH) "s"), pin_array[x].name); SERIAL_ECHO(buffer); }while(0)
+#define printPinNumber(P) do{ sprintf_P(buffer, PSTR("%3d "), P); SERIAL_ECHO(buffer); }while(0)
+#define printPinAnalog(P) do{ sprintf_P(buffer, PSTR(" (A%2d)  "), digitalPinToAnalogIndex(P)); SERIAL_ECHO(buffer); }while(0)
 #define MULTI_NAME_PAD 16 // space needed to be pretty if not first name assigned to a pin
 
 // Active ADC function/mode/code values for PINSEL registers
-int8_t ADC_pin_mode(pin_t pin);
-int8_t get_pin_mode(const pin_t pin);
-bool GET_PINMODE(const pin_t pin);
-bool GET_ARRAY_IS_DIGITAL(const pin_t pin);
-void print_port(const pin_t);
-void pwm_details(const pin_t);
+int8_t ADC_pin_mode(const pin_t);
+int8_t get_pin_mode(const pin_t);
+bool getValidPinMode(const pin_t);
+bool getPinIsDigitalByIndex(const pin_t);
+void printPinPort(const pin_t);
+void printPinPWM(const pin_t);
 bool pwm_status(const pin_t);

@@ -135,10 +135,10 @@ uint8_t Planner::delay_before_delivering;       // Delay block delivery so initi
 #if ENABLED(EDITABLE_STEPS_PER_UNIT)
   float Planner::mm_per_step[DISTINCT_AXES];    // (mm) Millimeters per step
 #else
-  constexpr float PlannerSettings::axis_steps_per_mm[DISTINCT_AXES];
-  constexpr float Planner::mm_per_step[DISTINCT_AXES];
+  constexpr float PlannerSettings::axis_steps_per_mm[DISTINCT_AXES],
+                  Planner::mm_per_step[DISTINCT_AXES];
 #endif
-planner_settings_t Planner::settings;           // Initialized by settings.load()
+planner_settings_t Planner::settings;           // Initialized by settings.load
 
 /**
  * Set up inline block variables
@@ -179,8 +179,8 @@ uint32_t Planner::max_acceleration_steps_per_s2[DISTINCT_AXES]; // (steps/s^2) D
 #endif
 
 #if DISABLED(NO_VOLUMETRICS)
+  float Planner::volumetric_area_nominal = CIRCLE_AREA(float(DEFAULT_NOMINAL_FILAMENT_DIA) * 0.5f); // Nominal cross-sectional area
   float Planner::filament_size[EXTRUDERS],          // diameter of filament (in millimeters), typically around 1.75 or 2.85, 0 disables the volumetric calculations for the extruder
-        Planner::volumetric_area_nominal = CIRCLE_AREA(float(DEFAULT_NOMINAL_FILAMENT_DIA) * 0.5f), // Nominal cross-sectional area
         Planner::volumetric_multiplier[EXTRUDERS];  // Reciprocal of cross-sectional area of filament (in mm^2). Pre-calculated to reduce computation in the planner
 #endif
 
@@ -199,7 +199,7 @@ uint32_t Planner::max_acceleration_steps_per_s2[DISTINCT_AXES]; // (steps/s^2) D
     matrix_3x3 Planner::bed_level_matrix; // Transform to compensate for bed level
   #endif
   #if ENABLED(ENABLE_LEVELING_FADE_HEIGHT)
-    float Planner::z_fade_height,      // Initialized by settings.load()
+    float Planner::z_fade_height,      // Initialized by settings.load
           Planner::inverse_z_fade_height,
           Planner::last_fade_z;
   #endif
@@ -208,7 +208,7 @@ uint32_t Planner::max_acceleration_steps_per_s2[DISTINCT_AXES]; // (steps/s^2) D
 #endif
 
 #if ENABLED(SKEW_CORRECTION)
-  skew_factor_t Planner::skew_factor; // Initialized by settings.load()
+  skew_factor_t Planner::skew_factor; // Initialized by settings.load
 #endif
 
 #if ENABLED(AUTOTEMP)
@@ -235,7 +235,7 @@ float Planner::previous_nominal_speed;
 #endif
 
 #if ENABLED(LIN_ADVANCE)
-  float Planner::extruder_advance_K[DISTINCT_E]; // Initialized by settings.load()
+  float Planner::extruder_advance_K[DISTINCT_E]; // Initialized by settings.load
 #endif
 
 #if HAS_POSITION_FLOAT
@@ -729,8 +729,6 @@ void Planner::init() {
   #endif
 #endif
 
-#define MINIMAL_STEP_RATE 120
-
 /**
  * Get the current block for processing
  * and mark the block as busy.
@@ -784,9 +782,9 @@ block_t* Planner::get_current_block() {
  * sqrt(block->acceleration_steps_per_s2 / 2). This is ensured through
  * minimum_planner_speed_sqr / min_entry_speed_sqr though note there's one
  * exception in recalculate_trapezoids().
- **
+ *
  * ############ VERY IMPORTANT ############
- * NOTE that the PRECONDITION to call this function is that the block is
+ * NOTE: The PRECONDITION to call this function is that the block is
  * NOT BUSY and it is marked as RECALCULATE. That WARRANTIES the Stepper ISR
  * is not and will not use the block while we modify it.
  */
@@ -796,13 +794,9 @@ void Planner::calculate_trapezoid_for_block(block_t * const block, const_float_t
   uint32_t initial_rate = entry_speed ? LROUND(entry_speed * spmm) : block->initial_rate,
            final_rate = LROUND(exit_speed * spmm);
 
-  // Removing code to constrain values produces judder in direction-switching moves because the
-  // current discrete stepping math diverges from physical motion under constant acceleration
-  // when acceleration_steps_per_s2 is large compared to initial/final_rate.
-  NOLESS(initial_rate, long(MINIMAL_STEP_RATE));
-  NOLESS(final_rate,   long(MINIMAL_STEP_RATE));
-  NOMORE(initial_rate, block->nominal_rate);  // NOTE: The nominal rate may be less than MINIMAL_STEP_RATE!
-  NOMORE(final_rate,   block->nominal_rate);
+  NOLESS(initial_rate,        stepper.minimal_step_rate);
+  NOLESS(final_rate,          stepper.minimal_step_rate);
+  NOLESS(block->nominal_rate, stepper.minimal_step_rate);
 
   #if ANY(S_CURVE_ACCELERATION, LIN_ADVANCE)
     // If we have some plateau time, the cruise rate will be the nominal rate
@@ -1548,7 +1542,7 @@ void Planner::check_axes_activity() {
         else if (z_full_fade >= z_fade_height)                                // Above the fade height?
           raw.z = z_full_fade;                                                //  Nothing more to unapply.
         else                                                                  // Within the fade zone?
-          raw.z = z_no_fade / (1.0f - z_correction * inverse_z_fade_height);  // Unapply the faded Z offset
+          raw.z = z_no_fade / (1.0f - z_correction * inverse_z_fade_height);  //  Unapply the faded Z offset
       #else
         raw.z = z_no_fade;
       #endif
@@ -1576,11 +1570,14 @@ void Planner::check_axes_activity() {
 
 void Planner::quick_stop() {
 
-  // Remove all the queued blocks. Note that this function is NOT
-  // called from the Stepper ISR, so we must consider tail as readonly!
-  // that is why we set head to tail - But there is a race condition that
-  // must be handled: The tail could change between the read and the assignment
-  // so this must be enclosed in a critical section
+  /**
+   * Remove all the queued blocks.
+   * NOTE: This function is NOT called from the Stepper ISR,
+   * so we must consider tail as readonly!
+   * That is why we set head to tail - But there is a race condition that
+   * must be handled: The tail could change between the read and the assignment
+   * so this must be enclosed in a critical section
+   */
 
   const bool was_enabled = stepper.suspend();
 
@@ -1590,7 +1587,7 @@ void Planner::quick_stop() {
   // Restart the block delay for the first movement - As the queue was
   // forced to empty, there's no risk the ISR will touch this.
 
-  delay_before_delivering = TERN_(FT_MOTION, ftMotion.cfg.mode ? BLOCK_DELAY_NONE :) BLOCK_DELAY_FOR_1ST_MOVE;
+  delay_before_delivering = TERN_(FT_MOTION, ftMotion.cfg.active ? BLOCK_DELAY_NONE :) BLOCK_DELAY_FOR_1ST_MOVE;
 
   TERN_(HAS_WIRED_LCD, clear_block_buffer_runtime()); // Clear the accumulated runtime
 
@@ -1709,9 +1706,9 @@ void Planner::synchronize() { while (busy()) idle(); }
  * @param target        Target position in steps units
  * @param target_float  Target position in direct (mm, degrees) units.
  * @param cart_dist_mm  The pre-calculated move lengths for all axes, in mm
- * @param fr_mm_s       (target) speed of the move
- * @param extruder      target extruder
- * @param hints         parameters to aid planner calculations
+ * @param fr_mm_s       (Target) speed of the move
+ * @param extruder      Target extruder
+ * @param hints         Parameters to aid planner calculations
  *
  * @return  true if movement was properly queued, false otherwise (if cleaning)
  */
@@ -1751,7 +1748,7 @@ bool Planner::_buffer_steps(const xyze_long_t &target
     // As there are no queued movements, the Stepper ISR will not touch this
     // variable, so there is no risk setting this here (but it MUST be done
     // before the following line!!)
-    delay_before_delivering = TERN_(FT_MOTION, ftMotion.cfg.mode ? BLOCK_DELAY_NONE :) BLOCK_DELAY_FOR_1ST_MOVE;
+    delay_before_delivering = TERN_(FT_MOTION, ftMotion.cfg.active ? BLOCK_DELAY_NONE :) BLOCK_DELAY_FOR_1ST_MOVE;
   }
 
   // Move buffer head
@@ -1771,7 +1768,7 @@ bool Planner::_buffer_steps(const xyze_long_t &target
 }
 
 /**
- * @brief Populate a block in preparation for insertion
+ * @brief Populate a block in preparation for insertion.
  * @details Populate the fields of a new linear movement block
  *          that will be added to the queue and processed soon
  *          by the Stepper ISR.
@@ -1780,9 +1777,9 @@ bool Planner::_buffer_steps(const xyze_long_t &target
  * @param target        Target position in steps units
  * @param target_float  Target position in native mm
  * @param cart_dist_mm  The pre-calculated move lengths for all axes, in mm
- * @param fr_mm_s       (target) speed of the move
- * @param extruder      target extruder
- * @param hints         parameters to aid planner calculations
+ * @param fr_mm_s       (Target) speed of the move
+ * @param extruder      Target extruder
+ * @param hints         Parameters to aid planner calculations
  *
  * @return  true if movement is acceptable, false otherwise
  */
@@ -2201,9 +2198,11 @@ bool Planner::_populate_block(
 
   const float inverse_millimeters = 1.0f / block->millimeters;  // Inverse millimeters to remove multiple divides
 
-  // Calculate inverse time for this move. No divide by zero due to previous checks.
-  // Example: At 120mm/s a 60mm move involving XYZ axes takes 0.5s. So this will give 2.0.
-  // Example 2: At 120°/s a 60° move involving only rotational axes takes 0.5s. So this will give 2.0.
+  /**
+   * Calculate inverse time for this move. No divide by zero due to previous checks.
+   * EXAMPLE: At 120mm/s a 60mm move involving XYZ axes takes 0.5s. So this will give 2.0.
+   * EXAMPLE: At 120°/s a 60° move involving only rotational axes takes 0.5s. So this will give 2.0.
+   */
   float inverse_secs = inverse_millimeters * (
     #if ALL(HAS_ROTATIONAL_AXES, INCH_MODE_SUPPORT)
       /**
@@ -2772,8 +2771,8 @@ bool Planner::_populate_block(
 } // _populate_block()
 
 /**
- * @brief Add a block to the buffer that just updates the position
- *        Supports LASER_SYNCHRONOUS_M106_M107 and LASER_POWER_SYNC power sync block buffer queueing.
+ * @brief Add a block to the buffer that just updates the position.
+ * @details Supports LASER_SYNCHRONOUS_M106_M107 and LASER_POWER_SYNC power sync block buffer queueing.
  *
  * @param sync_flag  The sync flag to set, determining the type of sync the block will do
  */
@@ -2810,7 +2809,7 @@ void Planner::buffer_sync_block(const BlockFlagBit sync_flag/*=BLOCK_BIT_SYNC_PO
     // As there are no queued movements, the Stepper ISR will not touch this
     // variable, so there is no risk setting this here (but it MUST be done
     // before the following line!!)
-    delay_before_delivering = TERN_(FT_MOTION, ftMotion.cfg.mode ? BLOCK_DELAY_NONE :) BLOCK_DELAY_FOR_1ST_MOVE;
+    delay_before_delivering = TERN_(FT_MOTION, ftMotion.cfg.active ? BLOCK_DELAY_NONE :) BLOCK_DELAY_FOR_1ST_MOVE;
   }
 
   block_buffer_head = next_buffer_head;
@@ -2819,16 +2818,15 @@ void Planner::buffer_sync_block(const BlockFlagBit sync_flag/*=BLOCK_BIT_SYNC_PO
 } // buffer_sync_block()
 
 /**
- * @brief Add a single linear movement
- *
- * @description Add a new linear movement to the buffer in axis units.
- *              Leveling and kinematics should be applied before calling this.
+ * @brief Add a single linear movement.
+ * @details Add a new linear movement to the buffer in axis units.
+ *          Leveling and kinematics should be applied before calling this.
  *
  * @param abce          Target position in mm and/or degrees
  * @param cart_dist_mm  The pre-calculated move lengths for all axes, in mm
- * @param fr_mm_s       (target) speed of the move
- * @param extruder      optional target extruder (otherwise active_extruder)
- * @param hints         optional parameters to aid planner calculations
+ * @param fr_mm_s       (Target) speed of the move
+ * @param extruder      Optional target extruder (otherwise active_extruder)
+ * @param hints         Optional parameters to aid planner calculations
  *
  * @return  false if no segment was queued due to cleaning, cold extrusion, full queue, etc.
  */
@@ -2873,7 +2871,7 @@ bool Planner::buffer_segment(const abce_pos_t &abce
 
   #if HAS_EXTRUDERS
     // DRYRUN prevents E moves from taking place
-    if (DEBUGGING(DRYRUN) || TERN0(CANCEL_OBJECTS, cancelable.skipping)) {
+    if (DEBUGGING(DRYRUN) || TERN0(CANCEL_OBJECTS, cancelable.state.skipping)) {
       position.e = target.e;
       TERN_(HAS_POSITION_FLOAT, position_float.e = abce.e);
     }
@@ -2950,14 +2948,14 @@ bool Planner::buffer_segment(const abce_pos_t &abce
 } // buffer_segment()
 
 /**
- * Add a new linear movement to the buffer.
- * The target is cartesian. It's translated to
- * delta/scara if needed.
+ * @brief Add a new linear movement to the buffer.
+ * @details The target is cartesian. It's translated to
+ *          delta/scara if needed.
  *
- *  cart            - target position in mm or degrees
- *  fr_mm_s         - (target) speed of the move (mm/s)
- *  extruder        - optional target extruder (otherwise active_extruder)
- *  hints           - optional parameters to aid planner calculations
+ * @param cart      Target position in mm or degrees
+ * @param fr_mm_s   (Target) speed of the move (mm/s)
+ * @param extruder  Optional target extruder (otherwise active_extruder)
+ * @param hints     Optional parameters to aid planner calculations
  */
 bool Planner::buffer_line(const xyze_pos_t &cart, const_feedRate_t fr_mm_s
   , const uint8_t extruder/*=active_extruder*/
@@ -3103,7 +3101,7 @@ bool Planner::buffer_line(const xyze_pos_t &cart, const_feedRate_t fr_mm_s
       // As there are no queued movements, the Stepper ISR will not touch this
       // variable, so there is no risk setting this here (but it MUST be done
       // before the following line!!)
-      delay_before_delivering = TERN_(FT_MOTION, ftMotion.cfg.mode ? BLOCK_DELAY_NONE :) BLOCK_DELAY_FOR_1ST_MOVE;
+      delay_before_delivering = TERN_(FT_MOTION, ftMotion.cfg.active ? BLOCK_DELAY_NONE :) BLOCK_DELAY_FOR_1ST_MOVE;
     }
 
     // Move buffer head
@@ -3124,7 +3122,7 @@ bool Planner::buffer_line(const xyze_pos_t &cart, const_feedRate_t fr_mm_s
 void Planner::set_machine_position_mm(const abce_pos_t &abce) {
 
   // When FT Motion is enabled, call synchronize() here instead of generating a sync block
-  if (TERN0(FT_MOTION, ftMotion.cfg.mode)) synchronize();
+  if (TERN0(FT_MOTION, ftMotion.cfg.active)) synchronize();
 
   TERN_(DISTINCT_E_FACTORS, last_extruder = active_extruder);
   TERN_(HAS_POSITION_FLOAT, position_float = abce);
@@ -3159,6 +3157,14 @@ void Planner::set_machine_position_mm(const abce_pos_t &abce) {
   }
 }
 
+/**
+ * Set the machine positions in millimeters (soon) given the native position.
+ * Synchonized with the planner queue.
+ *
+ *   - Modifiers are applied for skew, leveling, retract, etc.
+ *   - Kinematics are applied to remap cartesian positions to stepper positions.
+ *   - The resulting stepper positions are synchronized at the end of the planner queue.
+ */
 void Planner::set_position_mm(const xyze_pos_t &xyze) {
   xyze_pos_t machine = xyze;
   TERN_(HAS_POSITION_MODIFIERS, apply_modifiers(machine, true));
@@ -3175,12 +3181,13 @@ void Planner::set_position_mm(const xyze_pos_t &xyze) {
 #if HAS_EXTRUDERS
 
   /**
-   * Setters for planner position (also setting stepper position).
+   * Special setter for planner E position (also setting E stepper position).
    */
   void Planner::set_e_position_mm(const_float_t e) {
     const uint8_t axis_index = E_AXIS_N(active_extruder);
     TERN_(DISTINCT_E_FACTORS, last_extruder = active_extruder);
 
+    // Unapply the current retraction before (immediately) setting the planner position
     const float e_new = DIFF_TERN(FWRETRACT, e, fwretract.current_retract[active_extruder]);
     position.e = LROUND(settings.axis_steps_per_mm[axis_index] * e_new);
     TERN_(HAS_POSITION_FLOAT, position_float.e = e_new);
@@ -3189,12 +3196,14 @@ void Planner::set_position_mm(const xyze_pos_t &xyze) {
     if (has_blocks_queued())
       buffer_sync_block(BLOCK_BIT_SYNC_POSITION);
     else
-      stepper.set_axis_position(E_AXIS, position.e);
+      stepper.set_e_position(position.e);
   }
 
-#endif
+#endif // HAS_EXTRUDERS
 
-// Recalculate the steps/s^2 acceleration rates, based on the mm/s^2
+/**
+ * Recalculate steps/s^2 acceleration rates based on mm/s^2 acceleration rates
+ */
 void Planner::refresh_acceleration_rates() {
   uint32_t highest_rate = 1;
   LOOP_DISTINCT_AXES(i) {
@@ -3228,7 +3237,7 @@ inline void limit_and_warn(float &val, const AxisEnum axis, FSTR_P const setting
 }
 
 /**
- * For the specified 'axis' set the Maximum Acceleration to the given value (mm/s^2)
+ * For the specified 'axis' set the Maximum Acceleration to the given value (mm/s^2).
  * The value may be limited with warning feedback, if configured.
  * Calls refresh_acceleration_rates to precalculate planner terms in steps.
  *
@@ -3252,7 +3261,7 @@ void Planner::set_max_acceleration(const AxisEnum axis, float inMaxAccelMMS2) {
 }
 
 /**
- * For the specified 'axis' set the Maximum Feedrate to the given value (mm/s)
+ * For the specified 'axis' set the Maximum Feedrate to the given value (mm/s).
  * The value may be limited with warning feedback, if configured.
  *
  * This hard limit is applied as a block is being added to the planner queue.
@@ -3274,7 +3283,7 @@ void Planner::set_max_feedrate(const AxisEnum axis, float inMaxFeedrateMMS) {
 #if ENABLED(CLASSIC_JERK)
 
   /**
-   * For the specified 'axis' set the Maximum Jerk (instant change) to the given value (mm/s)
+   * For the specified 'axis' set the Maximum Jerk (instant change) to the given value (mm/s).
    * The value may be limited with warning feedback, if configured.
    *
    * This hard limit is applied (to the block start speed) as the block is being added to the planner queue.
@@ -3305,7 +3314,7 @@ void Planner::set_max_feedrate(const AxisEnum axis, float inMaxFeedrateMMS) {
   uint16_t Planner::block_buffer_runtime() {
     #ifdef __AVR__
       // Protect the access to the variable. Only required for AVR, as
-      //  any 32bit CPU offers atomic access to 32bit variables
+      // any 32bit CPU offers atomic access to 32bit variables
       const bool was_enabled = stepper.suspend();
     #endif
 
@@ -3327,7 +3336,7 @@ void Planner::set_max_feedrate(const AxisEnum axis, float inMaxFeedrateMMS) {
   void Planner::clear_block_buffer_runtime() {
     #ifdef __AVR__
       // Protect the access to the variable. Only required for AVR, as
-      //  any 32bit CPU offers atomic access to 32bit variables
+      // any 32bit CPU offers atomic access to 32bit variables
       const bool was_enabled = stepper.suspend();
     #endif
 

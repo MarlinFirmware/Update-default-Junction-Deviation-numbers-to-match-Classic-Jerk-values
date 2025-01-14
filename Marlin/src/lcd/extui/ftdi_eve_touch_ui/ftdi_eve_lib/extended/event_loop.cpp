@@ -21,6 +21,7 @@
  ****************************************************************************/
 
 #include "ftdi_extended.h"
+#include "../../screens.h"
 
 #if ENABLED(FTDI_EXTENDED)
 using namespace FTDI;
@@ -32,6 +33,7 @@ enum {
 tiny_timer_t touch_timer;
 UIData::flags_t UIData::flags;
 uint8_t pressed_tag  = UNPRESSED;
+uint8_t lastPauseMsgState   = 0;
 
 uint8_t UIData::get_persistent_data_mask() {
   // A bit mask for flags that should be stored to the EEPROM.
@@ -116,6 +118,31 @@ namespace FTDI {
     if (!touch_timer.elapsed(TOUCH_UPDATE_INTERVAL) || CLCD::CommandFifo::is_processing()) {
       return;
     }
+
+    #if ENABLED(ADVANCED_PAUSE_FEATURE)
+      if (ExtUI::awaitingUserConfirm() && (lastPauseMsgState != ExtUI::pauseModeStatus)) {
+        //SERIAL_ECHOLNPGM("Calling Pause Screen : ", lastPauseMsgState);
+        switch (ExtUI::pauseModeStatus) {
+          case PAUSE_MESSAGE_PARKING:  ExtUI::onStatusChanged(GET_TEXT_F(MSG_PAUSE_PRINT_PARKING)); break;
+          case PAUSE_MESSAGE_CHANGING: ExtUI::onStatusChanged(GET_TEXT_F(MSG_FILAMENT_CHANGE_INIT)); break;
+          case PAUSE_MESSAGE_UNLOAD:   ExtUI::onStatusChanged(GET_TEXT_F(MSG_FILAMENT_CHANGE_UNLOAD)); break;
+          case PAUSE_MESSAGE_WAITING:  ExtUI::onStatusChanged(GET_TEXT_F(MSG_ADVANCED_PAUSE_WAITING)); break;
+          case PAUSE_MESSAGE_INSERT:   ExtUI::onStatusChanged(GET_TEXT_F(MSG_FILAMENT_CHANGE_INSERT)); break;
+          case PAUSE_MESSAGE_LOAD:     ExtUI::onStatusChanged(GET_TEXT_F(MSG_FILAMENT_CHANGE_LOAD)); break;
+          case PAUSE_MESSAGE_PURGE:    ExtUI::onStatusChanged(GET_TEXT_F(TERN(ADVANCED_PAUSE_CONTINUOUS_PURGE, MSG_FILAMENT_CHANGE_CONT_PURGE, MSG_FILAMENT_CHANGE_PURGE))); break;
+          case PAUSE_MESSAGE_RESUME:   ExtUI::onStatusChanged(GET_TEXT_F(MSG_FILAMENT_CHANGE_RESUME)); break;
+          case PAUSE_MESSAGE_HEAT:     ExtUI::onStatusChanged(GET_TEXT_F(MSG_FILAMENT_CHANGE_HEAT)); break;
+          case PAUSE_MESSAGE_HEATING:  ExtUI::onStatusChanged(GET_TEXT_F(MSG_FILAMENT_CHANGE_HEATING)); break;
+          case PAUSE_MESSAGE_OPTION:   FilamentPromptBox::show(); break;
+          case PAUSE_MESSAGE_STATUS: break;
+          default: ExtUI::onUserConfirmRequired(PSTR("Confirm Continue")); break;
+        }
+      }
+      else if (!ExtUI::awaitingUserConfirm() && !ExtUI::isPrintingPaused() && !ExtUI::getHostKeepaliveIsPaused()) {
+        ConfirmUserRequestAlertBox::hide();
+        FilamentPromptBox::hide();
+      }
+    #endif // ADVANCED_PAUSE_FEATURE
 
     const uint8_t tag = CLCD::get_tag();
 

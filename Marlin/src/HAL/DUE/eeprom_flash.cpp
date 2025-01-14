@@ -291,7 +291,7 @@ static bool ee_PageWrite(uint16_t page, const void *data) {
       uint32_t *p1 = (uint32_t*)addrflash;
       uint32_t *p2 = (uint32_t*)data;
       int count = 0;
-      for (i =0; i<PageSize >> 2; i++) {
+      for (i = 0; i < PageSize >> 2; i++) {
         if (p1[i] != p2[i]) {
           uint32_t delta = p1[i] ^ p2[i];
           while (delta) {

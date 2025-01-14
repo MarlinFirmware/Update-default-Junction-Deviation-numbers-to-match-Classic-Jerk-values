@@ -28,17 +28,18 @@
 
 #if ENABLED(POWER_LOSS_RECOVERY)
 
+#include "../inc/MarlinConfig.h"
+
 #include "powerloss.h"
-#include "../core/macros.h"
 
 #if ENABLED(EXTENSIBLE_UI)
   #include "../lcd/extui/ui_api.h"
 #endif
 
-bool PrintJobRecovery::enabled; // Initialized by settings.load()
+bool PrintJobRecovery::enabled; // Initialized by settings.load
 
 #if HAS_PLR_BED_THRESHOLD
-  celsius_t PrintJobRecovery::bed_temp_threshold; // Initialized by settings.load()
+  celsius_t PrintJobRecovery::bed_temp_threshold; // Initialized by settings.load
 #endif
 
 MediaFile PrintJobRecovery::file;
@@ -60,10 +61,13 @@ uint32_t PrintJobRecovery::cmd_sdpos, // = 0
 #include "../module/planner.h"
 #include "../module/printcounter.h"
 #include "../module/temperature.h"
-#include "../core/serial.h"
 
 #if HOMING_Z_WITH_PROBE
   #include "../module/probe.h"
+#endif
+
+#if ENABLED(SOVOL_SV06_RTS)
+  #include "../lcd/sovol_rts/sovol_rts.h"
 #endif
 
 #if ENABLED(FWRETRACT)
@@ -95,7 +99,7 @@ PrintJobRecovery recovery;
 /**
  * Clear the recovery info
  */
-void PrintJobRecovery::init() { memset(&info, 0, sizeof(info)); }
+void PrintJobRecovery::init() { info = {}; }
 
 /**
  * Enable or disable then call changed()
@@ -211,6 +215,7 @@ void PrintJobRecovery::save(const bool force/*=false*/, const float zraise/*=POW
     info.zraise = zraise;
     info.flag.raised = raised;                      // Was Z raised before power-off?
 
+    TERN_(CANCEL_OBJECTS, info.cancel_state = cancelable.state);
     TERN_(GCODE_REPEAT_MARKERS, info.stored_repeat = repeat);
     TERN_(HAS_HOME_OFFSET, info.home_offset = home_offset);
     TERN_(HAS_WORKSPACE_OFFSET, info.workspace_offset = workspace_offset);
@@ -571,6 +576,11 @@ void PrintJobRecovery::resume() {
   // Restore E position with G92.9
   PROCESS_SUBCOMMANDS_NOW(TS(F("G92.9E"), p_float_t(resume_pos.e, 3)));
 
+  #if ENABLED(CANCEL_OBJECTS)
+    cancelable.state = info.cancel_state;
+    cancelable.set_active_object(); // Sets the status message
+  #endif
+
   TERN_(GCODE_REPEAT_MARKERS, repeat = info.stored_repeat);
   TERN_(HAS_HOME_OFFSET, home_offset = info.home_offset);
   TERN_(HAS_WORKSPACE_OFFSET, workspace_offset = info.workspace_offset);
@@ -584,6 +594,11 @@ void PrintJobRecovery::resume() {
   // Resume the SD file from the last position
   PROCESS_SUBCOMMANDS_NOW(MString<MAX_CMD_SIZE>(F("M23 "), info.sd_filename));
   PROCESS_SUBCOMMANDS_NOW(TS(F("M24S"), resume_sdpos, 'T', info.print_job_elapsed));
+
+  #if ENABLED(SOVOL_SV06_RTS)
+    if (rts.print_state) rts.refreshTime();
+    rts.start_print_flag = false;
+  #endif
 }
 
 #if ENABLED(DEBUG_POWER_LOSS_RECOVERY)
@@ -603,6 +618,14 @@ void PrintJobRecovery::resume() {
         EXTRUDER_LOOP() DEBUG_ECHOLN('E', e + 1, F(" flow %: "), info.flow_percentage[e]);
 
         DEBUG_ECHOLNPGM("zraise: ", info.zraise, " ", info.flag.raised ? "(before)" : "");
+
+        #if ENABLED(CANCEL_OBJECTS)
+          const cancel_state_t cs = info.cancel_state;
+          DEBUG_ECHOPGM("Canceled:");
+          for (int i = 0; i < cs.object_count; i++)
+            if (TEST(cs.canceled, i)) { DEBUG_CHAR(' '); DEBUG_ECHO(i); }
+          DEBUG_EOL();
+        #endif
 
         #if ENABLED(GCODE_REPEAT_MARKERS)
           const uint8_t ind = info.stored_repeat.count();

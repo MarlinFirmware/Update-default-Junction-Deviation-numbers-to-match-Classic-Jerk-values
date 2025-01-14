@@ -91,6 +91,7 @@ typedef const char Language_Str[];
 #define LANG_CHARSIZE GET_TEXT(CHARSIZE)
 #define USE_WIDE_GLYPH (LANG_CHARSIZE > 2)
 
+// The final "\0" is added invisibly by the compiler
 #define MSG_1_LINE(A)     A "\0"   "\0"
 #define MSG_2_LINE(A,B)   A "\0" B "\0"
 #define MSG_3_LINE(A,B,C) A "\0" B "\0" C

@@ -7,7 +7,7 @@ TMPDIR=`mktemp -d`
 HERE=`dirname "$0"`
 
 # Reformat a single file to tmp/
-if uncrustify -l CPP -c "$HERE/../share/extras/uncrustify.cfg" -f "$1" >$TMPDIR/uncrustify.out ; then
+if uncrustify -l CPP -c "$HERE/../share/uncrustify/uncrustify.cfg" -f "$1" >$TMPDIR/uncrustify.out ; then
   cp "$TMPDIR/uncrustify.out" "$1"  ; # Replace the original file
 else
   echo "Something went wrong with uncrustify."

@@ -59,7 +59,7 @@ bool FilamentMonitorBase::enabled = true,
 // Filament Runout event handler
 //
 #include "../MarlinCore.h"
-#include "../feature/pause.h"
+#include "pause.h"
 #include "../gcode/queue.h"
 
 #if ENABLED(HOST_ACTION_COMMANDS)

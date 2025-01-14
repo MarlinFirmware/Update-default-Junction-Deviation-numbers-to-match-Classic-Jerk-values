@@ -33,6 +33,7 @@
 #include "../../../module/motion.h"
 #include "../../../module/planner.h"
 #include "../../../module/probe.h"
+#include "../../../module/temperature.h"
 #include "../../queue.h"
 
 #if ENABLED(AUTO_BED_LEVELING_LINEAR)
@@ -51,6 +52,8 @@
   #include "../../../lcd/extui/ui_api.h"
 #elif ENABLED(DWIN_CREALITY_LCD)
   #include "../../../lcd/e3v2/creality/dwin.h"
+#elif ENABLED(SOVOL_SV06_RTS)
+  #include "../../../lcd/sovol_rts/sovol_rts.h"
 #endif
 
 #define DEBUG_OUT ENABLED(DEBUG_LEVELING_FEATURE)
@@ -70,14 +73,21 @@
   #endif
 #endif
 
+/**
+ * @brief Do some things before returning from G29.
+ * @param retry : true if the G29 can and should be retried. false if the failure is too serious.
+ * @param   did : true if the leveling procedure completed successfully.
+ */
 static void pre_g29_return(const bool retry, const bool did) {
   if (!retry) {
     TERN_(FULL_REPORT_TO_HOST_FEATURE, set_and_report_grblstate(M_IDLE, false));
   }
-  if (did) {
-    TERN_(DWIN_CREALITY_LCD, dwinLevelingDone());
-    TERN_(EXTENSIBLE_UI, ExtUI::onLevelingDone());
-  }
+  #if DISABLED(G29_RETRY_AND_RECOVER)
+    if (!retry || did) {
+      TERN_(DWIN_CREALITY_LCD, dwinLevelingDone());
+      TERN_(EXTENSIBLE_UI, ExtUI::onLevelingDone());
+    }
+  #endif
 }
 
 #define G29_RETURN(retry, did) do{ \
@@ -277,6 +287,11 @@ G29_TYPE GcodeSuite::G29() {
 
     probe.use_probing_tool();
 
+    #ifdef EVENT_GCODE_BEFORE_G29
+      if (DEBUGGING(LEVELING)) DEBUG_ECHOLNPGM("Before G29 G-code: ", EVENT_GCODE_BEFORE_G29);
+      gcode.process_subcommands_now(F(EVENT_GCODE_BEFORE_G29));
+    #endif
+
     #if ANY(PROBE_MANUALLY, AUTO_BED_LEVELING_LINEAR)
       abl.abl_probe_index = -1;
     #endif
@@ -382,7 +397,12 @@ G29_TYPE GcodeSuite::G29() {
 
     #if ABL_USES_GRID
 
+      constexpr feedRate_t min_probe_feedrate_mm_s = XY_PROBE_FEEDRATE_MIN;
       xy_probe_feedrate_mm_s = MMM_TO_MMS(parser.linearval('S', XY_PROBE_FEEDRATE));
+      if (xy_probe_feedrate_mm_s < min_probe_feedrate_mm_s) {
+        xy_probe_feedrate_mm_s = min_probe_feedrate_mm_s;
+        SERIAL_ECHOLNPGM(GCODE_ERR_MSG("Feedrate (S) too low. (Using ", min_probe_feedrate_mm_s, ")"));
+      }
 
       const float x_min = probe.min_x(), x_max = probe.max_x(),
                   y_min = probe.min_y(), y_max = probe.max_y();
@@ -431,6 +451,12 @@ G29_TYPE GcodeSuite::G29() {
       remember_feedrate_scaling_off();
 
       #if ENABLED(PREHEAT_BEFORE_LEVELING)
+        #if ENABLED(SOVOL_SV06_RTS)
+          rts.updateTempE0();
+          rts.updateTempBed();
+          rts.sendData(1, Wait_VP);
+          rts.gotoPage(ID_ABL_HeatWait_L, ID_ABL_HeatWait_D);
+        #endif
         if (!abl.dryrun) probe.preheat_for_probing(LEVELING_NOZZLE_TEMP,
           TERN(EXTENSIBLE_UI, ExtUI::getLevelingBedTemp(), LEVELING_BED_TEMP)
         );
@@ -768,6 +794,12 @@ G29_TYPE GcodeSuite::G29() {
             abl.z_values[abl.meshCount.x][abl.meshCount.y] = z;
             TERN_(EXTENSIBLE_UI, ExtUI::onMeshUpdate(abl.meshCount, z));
 
+            #if ENABLED(SOVOL_SV06_RTS)
+              if (pt_index <= GRID_MAX_POINTS) rts.sendData(pt_index, AUTO_BED_LEVEL_ICON_VP);
+              rts.sendData(z * 100.0f, AUTO_BED_LEVEL_1POINT_VP + (pt_index - 1) * 2);
+              rts.gotoPage(ID_ABL_Wait_L, ID_ABL_Wait_D);
+            #endif
+
           #endif
 
           abl.reenable = false; // Don't re-enable after modifying the mesh
@@ -805,7 +837,7 @@ G29_TYPE GcodeSuite::G29() {
 
     #endif // AUTO_BED_LEVELING_3POINT
 
-    TERN_(HAS_STATUS_MESSAGE, ui.reset_status());
+    ui.reset_status();
 
     // Stow the probe. No raise for FIX_MOUNTED_PROBE.
     if (probe.stow()) {
@@ -980,10 +1012,12 @@ G29_TYPE GcodeSuite::G29() {
   TERN_(HAS_BED_PROBE, probe.move_z_after_probing());
 
   #ifdef EVENT_GCODE_AFTER_G29
-    if (DEBUGGING(LEVELING)) DEBUG_ECHOLNPGM("Z Probe End Script: ", EVENT_GCODE_AFTER_G29);
+    if (DEBUGGING(LEVELING)) DEBUG_ECHOLNPGM("After G29 G-code: ", EVENT_GCODE_AFTER_G29);
     planner.synchronize();
     process_subcommands_now(F(EVENT_GCODE_AFTER_G29));
   #endif
+
+  TERN_(SOVOL_SV06_RTS, RTS_AutoBedLevelPage());
 
   probe.use_probing_tool(false);
 

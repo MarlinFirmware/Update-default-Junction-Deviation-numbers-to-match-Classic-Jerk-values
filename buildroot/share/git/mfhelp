@@ -12,6 +12,7 @@ Marlin Firmware Commands:
   mfadd ....... Fetch a remote branch from any Marlin fork
   mfclean ..... Attempt to clean up merged and deleted branches
   mfdoc ....... Build the website, serve locally, and browse
+  mfenvs ...... Get current board SHORT_NAME (###): [ env1 env2 ... ]
   mffp ........ Push new commits directly to MarlinFirmware
   mfinfo ...... Provide branch information (for the other scripts)
   mfinit ...... Create an 'upstream' remote for 'MarlinFirmare'
@@ -40,7 +41,6 @@ Modify Configuration.h / Configuration_adv.h:
 
 Modify pins files:
 
-  pins_set ............. Set the value of a pin in a pins file
   pinsformat.py ........ Python script to format pins files
 
 THIS

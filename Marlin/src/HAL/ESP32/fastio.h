@@ -37,6 +37,10 @@
 // Set pin as output
 #define _SET_OUTPUT(IO)         pinMode(IO, OUTPUT)
 
+// TODO: Store set modes in an array and use those to get the mode
+#define _IS_OUTPUT(IO)           true
+#define _IS_INPUT(IO)            true
+
 // Set pin as input with pullup mode
 #define _PULLUP(IO, v)          pinMode(IO, v ? INPUT_PULLUP : INPUT)
 
@@ -69,6 +73,9 @@
 
 // Set pin as output and init
 #define OUT_WRITE(IO,V)         do{ _SET_OUTPUT(IO); WRITE(IO,V); }while(0)
+
+#define IS_OUTPUT(IO)            _IS_OUTPUT(IO)
+#define IS_INPUT(IO)             _IS_INPUT(IO)
 
 // digitalRead/Write wrappers
 #define extDigitalRead(IO)      digitalRead(IO)

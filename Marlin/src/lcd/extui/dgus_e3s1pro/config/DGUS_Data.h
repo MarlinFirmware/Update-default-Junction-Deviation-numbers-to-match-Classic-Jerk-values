@@ -23,6 +23,13 @@
 
 #include <inttypes.h>
 
+#include "../../../../inc/MarlinConfigPre.h"
+
+#ifndef LCD_LANGUAGE
+  #define LCD_LANGUAGE en
+  #warning "LCD_LANGUAGE not defined, defaulting to English."
+#endif
+
 namespace DGUS_Data {
 
   // RX constants

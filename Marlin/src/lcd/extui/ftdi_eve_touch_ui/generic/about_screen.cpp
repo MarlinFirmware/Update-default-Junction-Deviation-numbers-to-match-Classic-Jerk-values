@@ -5,6 +5,7 @@
 /****************************************************************************
  *   Written By Mark Pelletier  2017 - Aleph Objects, Inc.                  *
  *   Written By Marcio Teixeira 2018 - Aleph Objects, Inc.                  *
+ *   Written By Brian Kahl 2023 - FAME3D                                    *
  *                                                                          *
  *   This program is free software: you can redistribute it and/or modify   *
  *   it under the terms of the GNU General Public License as published by   *
@@ -22,11 +23,12 @@
 
 #include "../config.h"
 #include "../screens.h"
+#include "../../ui_api.h"
 
 #ifdef FTDI_ABOUT_SCREEN
 
 #define GRID_COLS 4
-#define GRID_ROWS 8
+#define GRID_ROWS 30
 
 using namespace FTDI;
 using namespace Theme;
@@ -43,74 +45,63 @@ void AboutScreen::onRedraw(draw_mode_t) {
      .cmd(CLEAR(true,true,true))
      .cmd(COLOR_RGB(bg_text_enabled))
      .tag(0);
-
-  #define HEADING_POS BTN_POS(1,1), BTN_SIZE(4,2)
-  #define FW_VERS_POS BTN_POS(1,3), BTN_SIZE(4,1)
-  #define FW_INFO_POS BTN_POS(1,4), BTN_SIZE(4,1)
-  #define LICENSE_POS BTN_POS(1,5), BTN_SIZE(4,3)
-  #define STATS_POS   BTN_POS(1,8), BTN_SIZE(2,1)
-  #define BACK_POS    BTN_POS(3,8), BTN_SIZE(2,1)
-
-  char about_str[1
-    + strlen_P(GET_TEXT(MSG_ABOUT_TOUCH_PANEL_2))
-    #ifdef TOOLHEAD_NAME
-      + strlen_P(TOOLHEAD_NAME)
-    #endif
-  ];
-  #ifdef TOOLHEAD_NAME
-    // If MSG_ABOUT_TOUCH_PANEL_2 has %s, substitute in the toolhead name.
-    // But this is optional, so squelch the compiler warning here.
-    #pragma GCC diagnostic push
-    #pragma GCC diagnostic ignored "-Wformat-extra-args"
-    sprintf_P(about_str, GET_TEXT(MSG_ABOUT_TOUCH_PANEL_2), TOOLHEAD_NAME);
-    #pragma GCC diagnostic pop
-  #else
-    strcpy_P(about_str, GET_TEXT(MSG_ABOUT_TOUCH_PANEL_2));
+ #ifdef LULZBOT_LCD_MACHINE_NAME
+    draw_text_box(cmd, BTN_POS(1,1), BTN_SIZE(4,6), F(
+        #if ENABLED(LULZBOT_LONG_BED)
+          "" LULZBOT_LCD_MACHINE_NAME " \nWith Long Bed"
+        #elif ENABLED(LULZBOT_LONG_BED_V2)
+          "" LULZBOT_LCD_MACHINE_NAME " \nWith Long Bed V2"
+        #elif ENABLED(LULZBOT_BLTouch) && NONE(LULZBOT_LONG_BED_V2, TAZProV2)
+          "" LULZBOT_LCD_MACHINE_NAME " \nWith BLTouch"
+        #else
+          "" LULZBOT_LCD_MACHINE_NAME "\n"
+        #endif
+    ), OPT_CENTER, font_xxlarge);
   #endif
 
-  draw_text_box(cmd, HEADING_POS,
-    #ifdef MACHINE_NAME
-      F(MACHINE_NAME)
-    #else
-      GET_TEXT_F(MSG_ABOUT_TOUCH_PANEL_1)
-    #endif
-    , OPT_CENTER, font_xlarge
-  );
-  #if ALL(TOUCH_UI_DEVELOPER_MENU, FTDI_DEVELOPER_MENU)
+  #ifdef LULZBOT_LCD_MACHINE_NAME
     cmd.tag(3);
-  #endif
-  draw_text_box(cmd, FW_VERS_POS,
-  #ifdef TOUCH_UI_VERSION
-    F(TOUCH_UI_VERSION)
-  #else
-    FPSTR(getFirmwareName_str())
-  #endif
-  , OPT_CENTER, font_medium);
-  cmd.tag(0);
-  draw_text_box(cmd, FW_INFO_POS, about_str, OPT_CENTER, font_medium);
-  draw_text_box(cmd, LICENSE_POS, GET_TEXT_F(MSG_LICENSE), OPT_CENTER, font_tiny);
+    draw_text_box(cmd, BTN_POS(1,7), BTN_SIZE(4,3), F(
+          "Firmware:"
+    ), OPT_CENTER, font_xlarge);
 
-  cmd.font(font_medium);
-  #if ALL(PRINTCOUNTER, FTDI_STATISTICS_SCREEN)
-    cmd.colors(normal_btn)
-       .tag(2).button(STATS_POS, GET_TEXT_F(MSG_INFO_STATS_MENU));
+    draw_text_box(cmd, BTN_POS(1,10), BTN_SIZE(4,2), F(
+          "" LULZBOT_M115_EXTRUDER_TYPE ""
+    ), OPT_CENTER, font_xlarge);
   #endif
-  cmd.colors(action_btn)
-     .tag(1).button(BACK_POS,  GET_TEXT_F(MSG_BUTTON_DONE));
+
+  #if ENABLED(SHOW_TOOL_HEAD_ID)
+    draw_text_box(cmd, BTN_POS(1,13), BTN_SIZE(4,3), F(
+      "Tool Head:"
+    ), OPT_CENTER, font_xlarge);
+  #endif
+
+  draw_text_box(cmd, BTN_POS(1,19), BTN_SIZE(4,3), F(
+        "Version:"
+  ), OPT_CENTER, font_xlarge);
+
+  draw_text_box(cmd, BTN_POS(1,22), BTN_SIZE(4,2), F(
+    "Marlin " SHORT_BUILD_VERSION ""
+  ), OPT_CENTER, font_xlarge);
+
+
+  cmd.font(font_medium).colors(normal_btn).tag(1).button(BTN_POS(1,24), BTN_SIZE(4,3), GET_TEXT_F(MSG_INFO_PRINTER_STATS_MENU));
+
+  cmd.font(font_medium).colors(action_btn).tag(2).button(BTN_POS(1,27), BTN_SIZE(4,3), GET_TEXT_F(MSG_BUTTON_DONE));
+
 }
 
 bool AboutScreen::onTouchEnd(uint8_t tag) {
-  switch (tag) {
-    case 1: GOTO_PREVIOUS(); break;
+  switch(tag) {
+    default: return false;
     #if ALL(PRINTCOUNTER, FTDI_STATISTICS_SCREEN)
-      case 2: GOTO_SCREEN(StatisticsScreen); break;
+      case 1: GOTO_SCREEN(StatisticsScreen); break;
     #endif
+    case 2: GOTO_PREVIOUS(); return true;
     #if ALL(TOUCH_UI_DEVELOPER_MENU, FTDI_DEVELOPER_MENU)
       case 3: GOTO_SCREEN(DeveloperMenu); break;
     #endif
-    default: return false;
   }
-  return true;
 }
 
-#endif // FTDI_ABOUT_SCREEN
+#endif // EXTENSIBLE_UI

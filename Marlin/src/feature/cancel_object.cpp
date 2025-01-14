@@ -30,23 +30,20 @@
 
 CancelObject cancelable;
 
-int8_t CancelObject::object_count, // = 0
-       CancelObject::active_object = -1;
-uint32_t CancelObject::canceled; // = 0x0000
-bool CancelObject::skipping; // = false
+cancel_state_t CancelObject::state;
 
 void CancelObject::set_active_object(const int8_t obj) {
-  active_object = obj;
+  state.active_object = obj;
   if (WITHIN(obj, 0, 31)) {
-    if (obj >= object_count) object_count = obj + 1;
-    skipping = TEST(canceled, obj);
+    if (obj >= state.object_count) state.object_count = obj + 1;
+    state.skipping = TEST(state.canceled, obj);
   }
   else
-    skipping = false;
+    state.skipping = false;
 
   #if ALL(HAS_STATUS_MESSAGE, CANCEL_OBJECTS_REPORTING)
-    if (active_object >= 0)
-      ui.set_status(MString<30>(GET_TEXT_F(MSG_PRINTING_OBJECT), ' ', active_object));
+    if (state.active_object >= 0)
+      ui.set_status(MString<30>(GET_TEXT_F(MSG_PRINTING_OBJECT), ' ', state.active_object));
     else
       ui.reset_status();
   #endif
@@ -54,29 +51,29 @@ void CancelObject::set_active_object(const int8_t obj) {
 
 void CancelObject::cancel_object(const int8_t obj) {
   if (WITHIN(obj, 0, 31)) {
-    SBI(canceled, obj);
-    if (obj == active_object) skipping = true;
+    SBI(state.canceled, obj);
+    if (obj == state.active_object) state.skipping = true;
   }
 }
 
 void CancelObject::uncancel_object(const int8_t obj) {
   if (WITHIN(obj, 0, 31)) {
-    CBI(canceled, obj);
-    if (obj == active_object) skipping = false;
+    CBI(state.canceled, obj);
+    if (obj == state.active_object) state.skipping = false;
   }
 }
 
 void CancelObject::report() {
-  if (active_object >= 0)
-    SERIAL_ECHO_MSG("Active Object: ", active_object);
+  if (state.active_object >= 0)
+    SERIAL_ECHO_MSG("Active Object: ", state.active_object);
 
-  if (canceled) {
-    SERIAL_ECHO_START();
-    SERIAL_ECHOPGM("Canceled:");
-    for (int i = 0; i < object_count; i++)
-      if (TEST(canceled, i)) { SERIAL_CHAR(' '); SERIAL_ECHO(i); }
-    SERIAL_EOL();
-  }
+  if (state.canceled == 0x0000) return;
+
+  SERIAL_ECHO_START();
+  SERIAL_ECHOPGM("Canceled:");
+  for (int i = 0; i < state.object_count; i++)
+    if (TEST(state.canceled, i)) { SERIAL_CHAR(' '); SERIAL_ECHO(i); }
+  SERIAL_EOL();
 }
 
 #endif // CANCEL_OBJECTS

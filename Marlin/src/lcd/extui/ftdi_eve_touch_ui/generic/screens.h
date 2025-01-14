@@ -33,6 +33,7 @@ enum {
   MENU_SCREEN_CACHE,
   TUNE_SCREEN_CACHE,
   ALERT_BOX_CACHE,
+  FILAMENT_PROMPT_BOX_CACHE,
   SPINNER_CACHE,
   ADVANCED_SETTINGS_SCREEN_CACHE,
   MOVE_AXIS_SCREEN_CACHE,
@@ -74,13 +75,13 @@ enum {
   #if ENABLED(CASE_LIGHT_ENABLE)
     CASE_LIGHT_SCREEN_CACHE,
   #endif
-  #if ANY(LIN_ADVANCE, FILAMENT_RUNOUT_SENSOR)
+  #if ANY(LIN_ADVANCE, HAS_FILAMENT_SENSOR)
     FILAMENT_MENU_CACHE,
   #endif
   #if ENABLED(LIN_ADVANCE)
     LINEAR_ADVANCE_SCREEN_CACHE,
   #endif
-  #if ENABLED(FILAMENT_RUNOUT_SENSOR)
+  #if HAS_FILAMENT_SENSOR
     FILAMENT_RUNOUT_SCREEN_CACHE,
   #endif
   #if HAS_MEDIA
@@ -101,6 +102,7 @@ enum {
 
 #define STATUS_SCREEN_DL_SIZE        4096
 #define ALERT_BOX_DL_SIZE            3072
+#define FILAMENT_PROMPT_BOX_DL_SIZE  3072
 #define SPINNER_DL_SIZE              3072
 #define FILE_SCREEN_DL_SIZE          4160
 #define PRINTING_SCREEN_DL_SIZE      2048
@@ -118,12 +120,14 @@ enum {
 #include "about_screen.h"
 #include "kill_screen.h"
 #include "alert_dialog_box.h"
+#include "filament_prompt_dialog_box.h"
 #include "spinner_dialog_box.h"
 #include "restore_failsafe_dialog_box.h"
 #include "save_settings_dialog_box.h"
 #include "confirm_start_print_dialog_box.h"
 #include "confirm_abort_print_dialog_box.h"
 #include "confirm_user_request_alert_box.h"
+#include "filament_prompt_box.h"
 #include "touch_calibration_screen.h"
 #include "touch_registers_screen.h"
 #include "change_filament_screen.h"
@@ -140,6 +144,7 @@ enum {
 #include "endstop_state_screen.h"
 #include "display_tuning_screen.h"
 #include "media_player_screen.h"
+#include "flow_percent_screen.h"
 
 #if ENABLED(PRINTCOUNTER)
   #include "statistics_screen.h"
@@ -192,11 +197,11 @@ enum {
   #include "case_light_screen.h"
 #endif
 
-#if ANY(LIN_ADVANCE, FILAMENT_RUNOUT_SENSOR)
+#if ANY(LIN_ADVANCE, HAS_FILAMENT_SENSOR)
   #include "filament_menu.h"
 #endif
 
-#if ENABLED(FILAMENT_RUNOUT_SENSOR)
+#if HAS_FILAMENT_SENSOR
   #include "filament_runout_screen.h"
 #endif
 

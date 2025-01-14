@@ -148,7 +148,7 @@ void PCA9632_set_led_color(const LEDColor &color) {
 
 #if ENABLED(PCA9632_BUZZER)
 
-  void PCA9632_buzz(const long, const uint16_t=0) {
+  void PCA9632_buzz(const long, const uint16_t/*=0*/) {
     uint8_t data[] = PCA9632_BUZZER_DATA;
     Wire.beginTransmission(I2C_ADDRESS(PCA9632_ADDRESS));
     Wire.write(data, sizeof(data));

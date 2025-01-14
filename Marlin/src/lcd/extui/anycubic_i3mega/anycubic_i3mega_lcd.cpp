@@ -89,7 +89,7 @@ void AnycubicTFT::onSetup() {
   delay_ms(10);
 
   // Init the state of the key pins running on the TFT
-  #if ENABLED(FILAMENT_RUNOUT_SENSOR)
+  #if HAS_FILAMENT_SENSOR
     SET_INPUT_PULLUP(FIL_RUNOUT1_PIN);
   #endif
 
@@ -894,7 +894,7 @@ void AnycubicTFT::doSDCardStateCheck() {
 }
 
 void AnycubicTFT::doFilamentRunoutCheck() {
-  #if ENABLED(FILAMENT_RUNOUT_SENSOR)
+  #if HAS_FILAMENT_SENSOR
     // NOTE: getFilamentRunoutState() only returns the runout state if the job is printing
     // we want to actually check the status of the pin here, regardless of printstate
     if (READ(FIL_RUNOUT1_PIN) == FIL_RUNOUT1_STATE) {
@@ -909,7 +909,7 @@ void AnycubicTFT::doFilamentRunoutCheck() {
         SENDLINE_DBG_PGM("J15", "TFT Serial Debug: Non blocking filament runout... J15");
       }
     }
-  #endif // FILAMENT_RUNOUT_SENSOR
+  #endif // HAS_FILAMENT_SENSOR
 }
 
 void AnycubicTFT::startPrint() {
@@ -939,7 +939,7 @@ void AnycubicTFT::pausePrint() {
 
 void AnycubicTFT::resumePrint() {
   #if HAS_MEDIA
-    #if ENABLED(FILAMENT_RUNOUT_SENSOR)
+    #if HAS_FILAMENT_SENSOR
       if (READ(FIL_RUNOUT1_PIN) == FIL_RUNOUT1_STATE) {
         DEBUG_ECHOLNPGM("TFT Serial Debug: Resume Print with filament sensor still tripped... ");
 

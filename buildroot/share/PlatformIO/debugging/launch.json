@@ -20,7 +20,7 @@
             "showDevDebugOutput": false,
             "configFiles": [ "interface/stlink.cfg", "target/stm32f4x.cfg" ],
             "device": "stlink",
-            "executable": "${workspaceRoot}/.pio/build/BIGTREE_SKR_2_USB_debug/firmware.elf",
+            "executable": "${workspaceRoot}/.pio/build/STM32F407VG_btt_USB_debug/firmware.elf",
             "openOCDLaunchCommands": [ "init", "reset init" ],
             "svdFile": "${env:HOME}/.platformio/platforms/ststm32@12.1.1/misc/svd/STM32F40x.svd",
         },

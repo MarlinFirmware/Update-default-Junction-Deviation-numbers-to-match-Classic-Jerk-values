@@ -11,6 +11,3 @@ opt_enable AUTO_BED_LEVELING_BILINEAR Z_SAFE_HOMING
 opt_set MOTHERBOARD BOARD_CREALITY_V24S1_301F4
 opt_add SDCARD_EEPROM_EMULATION
 exec_test $1 $2 "Ender-3 v2 with MarlinUI" "$3"
-
-# clean up
-restore_configs

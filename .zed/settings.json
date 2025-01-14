@@ -1,0 +1,16 @@
+/**
+ * Marlin-specific settings for Zed
+ *
+ * For a full list of overridable settings, and general information on folder-specific settings,
+ * see the documentation: https://zed.dev/docs/configuring-zed#settings-files
+ */
+{
+  "languages": {
+    "C": {
+      "enable_language_server": false
+    },
+    "C++": {
+      "enable_language_server": false
+    }
+  }
+}

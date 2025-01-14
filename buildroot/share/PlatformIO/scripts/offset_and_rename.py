@@ -24,7 +24,7 @@ if pioutil.is_pio_build():
         marlin.relocate_vtab(LD_FLASH_OFFSET)
 
         # Flash size
-        maximum_flash_size = int(board.get("upload.maximum_size") / 1024)
+        maximum_flash_size = board.get("upload.maximum_size") // 1024
         marlin.replace_define('STM32_FLASH_SIZE', maximum_flash_size)
 
         # Get upload.maximum_ram_size (defined by /buildroot/share/PlatformIO/boards/VARIOUS.json)

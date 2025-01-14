@@ -95,96 +95,114 @@
 //
 // About Printer > Thermistors
 //
-void menu_info_thermistors() {
-  if (ui.use_click()) return ui.go_back();
+#if HAS_TEMP_SENSOR
+  void menu_info_thermistors() {
+    if (ui.use_click()) return ui.go_back();
 
-  START_SCREEN();
+    START_SCREEN();
 
-  #define THERM_ITEMS(LBL,HTR,WAT) \
-    STATIC_ITEM_F(F(LBL ": " THERMISTOR_NAME), SS_INVERT); \
-    PSTRING_ITEM(MSG_INFO_MIN_TEMP, STRINGIFY(HTR##_MINTEMP), SS_FULL); \
-    PSTRING_ITEM(MSG_INFO_MAX_TEMP, STRINGIFY(HTR##_MAXTEMP), SS_FULL); \
-    STATIC_ITEM(TERN(WAT, MSG_INFO_RUNAWAY_ON, MSG_INFO_RUNAWAY_OFF), SS_FULL) \
+    #define THERM_ITEM_NAME(LBL) \
+      STATIC_ITEM_F(F(LBL ": " THERMISTOR_NAME), SS_INVERT);
 
-  #if HAS_EXTRUDERS
-    #define THERMISTOR_ID TEMP_SENSOR_0
-    #include "../thermistornames.h"
-    #undef THERMISTOR_ID
-    THERM_ITEMS(STR_E0, HEATER_0, WATCH_HOTENDS);
-  #endif
+    #define THERM_ITEMS(LBL,HTR,WAT) \
+      THERM_ITEM_NAME(LBL) \
+      PSTRING_ITEM(MSG_INFO_MIN_TEMP, STRINGIFY(HTR##_MINTEMP), SS_FULL); \
+      PSTRING_ITEM(MSG_INFO_MAX_TEMP, STRINGIFY(HTR##_MAXTEMP), SS_FULL); \
+      STATIC_ITEM(TERN(WAT, MSG_INFO_RUNAWAY_ON, MSG_INFO_RUNAWAY_OFF), SS_FULL) \
 
-  #if TEMP_SENSOR_1 != 0
-    #define THERMISTOR_ID TEMP_SENSOR_1
-    #include "../thermistornames.h"
-    #undef THERMISTOR_ID
-    THERM_ITEMS(STR_E1, HEATER_1, WATCH_HOTENDS);
-  #endif
+    #if TEMP_SENSOR_0 != 0
+      #define THERMISTOR_ID TEMP_SENSOR_0
+      #include "../thermistornames.h"
+      THERM_ITEMS(STR_E0, HEATER_0, WATCH_HOTENDS);
+    #endif
 
-  #if TEMP_SENSOR_2 != 0
-    #define THERMISTOR_ID TEMP_SENSOR_2
-    #include "../thermistornames.h"
-    #undef THERMISTOR_ID
-    THERM_ITEMS(STR_E2, HEATER_2, WATCH_HOTENDS);
-  #endif
+    #if TEMP_SENSOR_1 != 0
+      #define THERMISTOR_ID TEMP_SENSOR_1
+      #include "../thermistornames.h"
+      THERM_ITEMS(STR_E1, HEATER_1, WATCH_HOTENDS);
+    #endif
 
-  #if TEMP_SENSOR_3 != 0
-    #define THERMISTOR_ID TEMP_SENSOR_3
-    #include "../thermistornames.h"
-    #undef THERMISTOR_ID
-    THERM_ITEMS(STR_E3, HEATER_3, WATCH_HOTENDS);
-  #endif
+    #if TEMP_SENSOR_2 != 0
+      #define THERMISTOR_ID TEMP_SENSOR_2
+      #include "../thermistornames.h"
+      THERM_ITEMS(STR_E2, HEATER_2, WATCH_HOTENDS);
+    #endif
 
-  #if TEMP_SENSOR_4 != 0
-    #define THERMISTOR_ID TEMP_SENSOR_4
-    #include "../thermistornames.h"
-    #undef THERMISTOR_ID
-    THERM_ITEMS(STR_E4, HEATER_4, WATCH_HOTENDS);
-  #endif
+    #if TEMP_SENSOR_3 != 0
+      #define THERMISTOR_ID TEMP_SENSOR_3
+      #include "../thermistornames.h"
+      THERM_ITEMS(STR_E3, HEATER_3, WATCH_HOTENDS);
+    #endif
 
-  #if TEMP_SENSOR_5 != 0
-    #define THERMISTOR_ID TEMP_SENSOR_5
-    #include "../thermistornames.h"
-    #undef THERMISTOR_ID
-    THERM_ITEMS(STR_E5, HEATER_5, WATCH_HOTENDS);
-  #endif
+    #if TEMP_SENSOR_4 != 0
+      #define THERMISTOR_ID TEMP_SENSOR_4
+      #include "../thermistornames.h"
+      THERM_ITEMS(STR_E4, HEATER_4, WATCH_HOTENDS);
+    #endif
 
-  #if TEMP_SENSOR_6 != 0
-    #define THERMISTOR_ID TEMP_SENSOR_6
-    #include "../thermistornames.h"
-    #undef THERMISTOR_ID
-    THERM_ITEMS(STR_E6, HEATER_6, WATCH_HOTENDS);
-  #endif
+    #if TEMP_SENSOR_5 != 0
+      #define THERMISTOR_ID TEMP_SENSOR_5
+      #include "../thermistornames.h"
+      THERM_ITEMS(STR_E5, HEATER_5, WATCH_HOTENDS);
+    #endif
 
-  #if TEMP_SENSOR_7 != 0
-    #define THERMISTOR_ID TEMP_SENSOR_7
-    #include "../thermistornames.h"
-    #undef THERMISTOR_ID
-    THERM_ITEMS(STR_E7, HEATER_7, WATCH_HOTENDS);
-  #endif
+    #if TEMP_SENSOR_6 != 0
+      #define THERMISTOR_ID TEMP_SENSOR_6
+      #include "../thermistornames.h"
+      THERM_ITEMS(STR_E6, HEATER_6, WATCH_HOTENDS);
+    #endif
 
-  #if HAS_HEATED_BED
-    #define THERMISTOR_ID TEMP_SENSOR_BED
-    #include "../thermistornames.h"
-    #undef THERMISTOR_ID
-    THERM_ITEMS("BED", BED, WATCH_BED);
-  #endif
+    #if TEMP_SENSOR_7 != 0
+      #define THERMISTOR_ID TEMP_SENSOR_7
+      #include "../thermistornames.h"
+      THERM_ITEMS(STR_E7, HEATER_7, WATCH_HOTENDS);
+    #endif
 
-  #if HAS_HEATED_CHAMBER
-    #define THERMISTOR_ID TEMP_SENSOR_CHAMBER
-    #include "../thermistornames.h"
-    #undef THERMISTOR_ID
-    THERM_ITEMS("CHAM", CHAMBER, WATCH_CHAMBER);
-  #endif
+    #if HAS_HEATED_BED
+      #define THERMISTOR_ID TEMP_SENSOR_BED
+      #include "../thermistornames.h"
+      THERM_ITEMS("BED", BED, WATCH_BED);
+    #endif
 
-  #if HAS_COOLER
-    #define THERMISTOR_ID TEMP_SENSOR_COOLER
-    #include "../thermistornames.h"
-    #undef THERMISTOR_ID
-    THERM_ITEMS("COOL", COOLER, WATCH_COOLER);
-  #endif
+    #if HAS_HEATED_CHAMBER
+      #define THERMISTOR_ID TEMP_SENSOR_CHAMBER
+      #include "../thermistornames.h"
+      THERM_ITEMS("CHAM", CHAMBER, WATCH_CHAMBER);
+    #endif
 
-  END_SCREEN();
-}
+    #if HAS_COOLER
+      #define THERMISTOR_ID TEMP_SENSOR_COOLER
+      #include "../thermistornames.h"
+      THERM_ITEMS("COOL", COOLER, WATCH_COOLER);
+    #endif
+
+    #if TEMP_SENSOR_PROBE != 0
+      #define THERMISTOR_ID TEMP_SENSOR_PROBE
+      #include "../thermistornames.h"
+      THERM_ITEM_NAME("PROBE");
+    #endif
+
+    #if TEMP_SENSOR_BOARD != 0
+      #define THERMISTOR_ID TEMP_SENSOR_BOARD
+      #include "../thermistornames.h"
+      THERM_ITEM_NAME("BOARD");
+    #endif
+
+    #if TEMP_SENSOR_SOC != 0
+      #define THERMISTOR_ID TEMP_SENSOR_SOC
+      #include "../thermistornames.h"
+      THERM_ITEM_NAME("SOC");
+    #endif
+
+    #if TEMP_SENSOR_REDUNDANT != 0
+      #define THERMISTOR_ID TEMP_SENSOR_REDUNDANT
+      #include "../thermistornames.h"
+      THERM_ITEM_NAME("REDUNDANT");
+    #endif
+
+    END_SCREEN();
+  }
+#endif // HAS_TEMP_SENSOR
 
 //
 // About Printer > Board Info
@@ -195,7 +213,7 @@ void menu_info_board() {
   START_SCREEN();
   STATIC_ITEM_F(F(BOARD_INFO_NAME), SS_DEFAULT|SS_INVERT);      // MyPrinterController
   #ifdef BOARD_WEBSITE_URL
-    STATIC_ITEM_F(F(BOARD_WEBSITE_URL), SS_LEFT);               // www.my3dprinter.com
+    STATIC_ITEM_F(F(BOARD_WEBSITE_URL), SS_CENTER);             // www.my3dprinter.com
   #endif
   PSTRING_ITEM(MSG_INFO_BAUDRATE, STRINGIFY(BAUDRATE), SS_CENTER); // Baud: 250000
   PSTRING_ITEM(MSG_INFO_PROTOCOL, PROTOCOL_VERSION, SS_CENTER);    // Protocol: 1.0
@@ -256,7 +274,7 @@ void menu_info() {
   #else
     SUBMENU(MSG_INFO_PRINTER_MENU, menu_info_printer);           // Printer Info >
     SUBMENU(MSG_INFO_BOARD_MENU, menu_info_board);               // Board Info >
-    #if HAS_EXTRUDERS
+    #if HAS_TEMP_SENSOR
       SUBMENU(MSG_INFO_THERMISTOR_MENU, menu_info_thermistors);  // Thermistors >
     #endif
   #endif

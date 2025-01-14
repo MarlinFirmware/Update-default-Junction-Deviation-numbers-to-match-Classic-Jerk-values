@@ -1,12 +1,33 @@
-#!/usr/bin/env bash
+#!/usr/bin/env python3
 
-rm -f Marlin/_Bootscreen.h Marlin/_Statusscreen.h marlin_config.json .pio/build/mc.zip
+import os, sys, subprocess
 
-if [[ $1 == '-d' || $1 == '--default' ]]; then
-  use_example_configs
-else
-  git checkout Marlin/Configuration.h 2>/dev/null
-  git checkout Marlin/Configuration_adv.h 2>/dev/null
-  git checkout Marlin/config.ini 2>/dev/null
-  git checkout Marlin/src/pins/*/pins_*.h 2>/dev/null
-fi
+files_to_remove = [
+  "Marlin/_Bootscreen.h",
+  "Marlin/_Statusscreen.h",
+  "marlin_config.json",
+  ".pio/build/mc.zip"
+]
+
+for file in files_to_remove:
+  if os.path.exists(file):
+    os.remove(file)
+
+def use_example_configs():
+  try:
+    subprocess.run(['use_example_configs'], check=True)
+  except FileNotFoundError:
+    print("use_example_configs not found, skipping.")
+  pass
+
+if len(sys.argv) > 1 and sys.argv[1] in ['-d', '--default']:
+  use_example_configs()
+else:
+  files_to_checkout = [
+    "Marlin/Configuration.h",
+    "Marlin/Configuration_adv.h",
+    "Marlin/config.ini",
+    "Marlin/src/pins/*/pins_*.h"
+  ]
+  for file in files_to_checkout:
+    subprocess.run(["git", "checkout", file], stderr=subprocess.DEVNULL)

@@ -42,7 +42,7 @@
  * version was tagged.
  */
 #ifndef STRING_DISTRIBUTION_DATE
-  #define STRING_DISTRIBUTION_DATE "2024-07-05"
+  #define STRING_DISTRIBUTION_DATE "2025-01-14"
 #endif
 
 /**
@@ -101,8 +101,8 @@
 #endif
 
 /**
- * Set the vendor info the serial USB interface, if changable
- * Currently only supported by DUE platform
+ * Set the vendor info the serial USB interface, if changeable.
+ * Currently only supported by DUE platform.
  */
 #ifndef USB_DEVICE_VENDOR_ID
   #define USB_DEVICE_VENDOR_ID            0x03EB /* ATMEL VID */

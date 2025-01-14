@@ -57,8 +57,12 @@
 #endif
 
 #if ENABLED(IIC_BL24CXX_EEPROM)
-  #define IIC_EEPROM_SDA                    PA11
-  #define IIC_EEPROM_SCL                    PA12
+  #ifndef IIC_EEPROM_SDA
+    #define IIC_EEPROM_SDA                  PA11
+  #endif
+  #ifndef IIC_EEPROM_SCL
+    #define IIC_EEPROM_SCL                  PA12
+  #endif
   #define MARLIN_EEPROM_SIZE               0x800  // 2K (24C16)
 #elif ENABLED(SDCARD_EEPROM_EMULATION)
   #define MARLIN_EEPROM_SIZE               0x800  // 2K
@@ -193,14 +197,30 @@
    *   GND | 9 10 | 5V
    *        ------
    */
-  #define EXP3_01_PIN                       PC6
-  #define EXP3_02_PIN                       PB2
-  #define EXP3_03_PIN                       PB10
-  #define EXP3_04_PIN                       PB11
-  #define EXP3_05_PIN                       PB14
-  #define EXP3_06_PIN                       PB13
-  #define EXP3_07_PIN                       PB12
-  #define EXP3_08_PIN                       PB15
+  #ifndef EXP3_01_PIN
+    #define EXP3_01_PIN                     PC6
+  #endif
+  #ifndef EXP3_02_PIN
+    #define EXP3_02_PIN                     PB2
+  #endif
+  #ifndef EXP3_03_PIN
+    #define EXP3_03_PIN                     PB10
+  #endif
+  #ifndef EXP3_04_PIN
+    #define EXP3_04_PIN                     PB11
+  #endif
+  #ifndef EXP3_05_PIN
+    #define EXP3_05_PIN                     PB14
+  #endif
+  #ifndef EXP3_06_PIN
+    #define EXP3_06_PIN                     PB13
+  #endif
+  #ifndef EXP3_07_PIN
+    #define EXP3_07_PIN                     PB12
+  #endif
+  #ifndef EXP3_08_PIN
+    #define EXP3_08_PIN                     PB15
+  #endif
 
 #elif ANY(VET6_12864_LCD, DWIN_VET6_CREALITY_LCD)
 

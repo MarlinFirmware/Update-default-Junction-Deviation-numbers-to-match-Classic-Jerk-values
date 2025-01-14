@@ -32,6 +32,7 @@
 #include "../../module/delta.h"
 #include "../../module/motion.h"
 #include "../../module/planner.h"
+#include "../../module/probe.h"
 
 #if HAS_LEVELING
   #include "../../feature/bedlevel/bedlevel.h"
@@ -39,10 +40,6 @@
 
 #if ENABLED(EXTENSIBLE_UI)
   #include "../extui/ui_api.h"
-#endif
-
-#if HAS_PROBE_XY_OFFSET
-  #include "../../module/probe.h"
 #endif
 
 void _man_probe_pt(const xy_pos_t &xy) {

@@ -59,6 +59,10 @@
   #define PE_LEDS_COMPLETED_TIME (30*60)
 #endif
 
+#if ENABLED(SOVOL_SV06_RTS)
+  #include "../../lcd/sovol_rts/sovol_rts.h"
+#endif
+
 /**
  * M1001: Execute actions for SD print completion
  */
@@ -110,6 +114,14 @@ void GcodeSuite::M1001() {
 
   // Re-select the last printed file in the UI
   TERN_(SD_REPRINT_LAST_SELECTED_FILE, ui.reselect_last_file());
+
+  #if ENABLED(SOVOL_SV06_RTS)
+    rts.sendData(100, PRINT_PROCESS_VP); delay(1);
+    rts.sendData(100, PRINT_PROCESS_ICON_VP); delay(1);
+    rts.sendData(0, PRINT_SURPLUS_TIME_HOUR_VP); delay(1);
+    rts.sendData(0, PRINT_SURPLUS_TIME_MIN_VP); delay(1);
+    rts.gotoPage(ID_Finish_L, ID_Finish_D);
+  #endif
 }
 
 #endif // HAS_MEDIA

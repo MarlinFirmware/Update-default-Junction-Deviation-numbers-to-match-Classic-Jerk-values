@@ -145,6 +145,8 @@ typedef union {
   uint16_t  uint16;
   uint32_t  uint32;
   celsius_t celsius;
+  void      *ptr;
+  FSTR_P    fstr;
 } chimera_t;
 
 extern chimera_t editable;
@@ -233,7 +235,7 @@ void _lcd_draw_homing();
   void menu_advanced_settings();
 #endif
 
-#if ENABLED(LCD_BED_LEVELING) || (HAS_LEVELING && DISABLED(SLIM_LCD_MENUS))
+#if HAS_LEVELING
   void _lcd_toggle_bed_leveling();
 #endif
 

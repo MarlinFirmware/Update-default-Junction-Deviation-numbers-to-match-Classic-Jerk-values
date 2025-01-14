@@ -159,5 +159,5 @@ private:
 
 extern DGUSDisplay dgus;
 
-/// Helper to populate a DGUS_VP for a given VP. Return false if not found.
+// Helper to populate a DGUS_VP for a given VP. Return false if not found.
 extern bool DGUS_PopulateVP(const DGUS_Addr addr, DGUS_VP * const buffer);

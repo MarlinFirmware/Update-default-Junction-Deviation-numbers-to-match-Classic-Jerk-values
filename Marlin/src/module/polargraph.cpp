@@ -37,7 +37,7 @@
 #include "../lcd/marlinui.h"
 #include "../MarlinCore.h"
 
-// Initialized by settings.load()
+// Initialized by settings.load
 float segments_per_second, polargraph_max_belt_len;
 xy_pos_t draw_area_min, draw_area_max;
 

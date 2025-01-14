@@ -5,6 +5,7 @@
 /****************************************************************************
  *   Written By Mark Pelletier  2017 - Aleph Objects, Inc.                  *
  *   Written By Marcio Teixeira 2018 - Aleph Objects, Inc.                  *
+ *   Written By Brian Kahl      2023 - FAME3D.                              *
  *                                                                          *
  *   This program is free software: you can redistribute it and/or modify   *
  *   it under the terms of the GNU General Public License as published by   *
@@ -30,15 +31,16 @@ using namespace Theme;
 using namespace ExtUI;
 
 void TemperatureScreen::onRedraw(draw_mode_t what) {
+  CommandProcessor cmd;
   widgets_t w(what);
   #if TOUCH_UI_LCD_TEMP_SCALING == 10
     w.precision(1, DEFAULT_MIDRANGE)
   #else
     w.precision(0, getTargetTemp_celsius(E0) == 0 ? DEFAULT_HIGHEST : DEFAULT_MIDRANGE)
   #endif
-   .color(temp).units(GET_TEXT_F(MSG_UNITS_C));
+   .color(temp_button).units(GET_TEXT_F(MSG_UNITS_C));
   w.heading(GET_TEXT_F(MSG_TEMPERATURE));
-  w.button(30, GET_TEXT_F(MSG_COOLDOWN));
+  //w.button(30, GET_TEXT_F(MSG_COOLDOWN));
   #ifndef NO_TOOLHEAD_HEATER_GCODE
     #if ENABLED(TOUCH_UI_COCOA_PRESS)
       w.adjuster(   2, GET_TEXT_F(MSG_NOZZLE), getTargetTemp_celsius(E0));
@@ -67,10 +69,39 @@ void TemperatureScreen::onRedraw(draw_mode_t what) {
     w.adjuster(    22, GET_TEXT_F(MSG_CHAMBER), getTargetTemp_celsius(CHAMBER));
   #endif
   #if HAS_FAN0
-    w.color(fan_speed).units(GET_TEXT_F(MSG_UNITS_PERCENT));
+    w.units(GET_TEXT_F(MSG_UNITS_PERCENT));
     w.adjuster(    10, GET_TEXT_F(MSG_FAN_SPEED), getTargetFan_percent(FAN0));
   #endif
   w.increments();
+
+  #define PREHEAT_1_POS         BTN_POS(1,(5+EXTRUDERS)), BTN_SIZE(1,1)
+  #define PREHEAT_2_POS         BTN_POS(2,(5+EXTRUDERS)), BTN_SIZE(1,1)
+  #define PREHEAT_3_POS         BTN_POS(1,(6+EXTRUDERS)), BTN_SIZE(1,1)
+  #define COOLDOWN_POS          BTN_POS(2,(6+EXTRUDERS)), BTN_SIZE(1,1)
+  #define TOOLHEAD_SWAP_POS     BTN_POS(1,(7+EXTRUDERS)), BTN_SIZE(2,1)
+
+  if (what & FOREGROUND) {
+    #define GRID_COLS 2
+    #define GRID_ROWS (8+EXTRUDERS)
+    if (!ExtUI::isOngoingPrintJob()) {
+      cmd.font(Theme::font_medium)
+          .colors(normal_btn);
+          #ifdef PREHEAT_1_COMMAND
+            cmd.tag(31).button(PREHEAT_1_POS, GET_TEXT_F(MSG_PREHEAT_1));
+          #endif
+          #ifdef PREHEAT_2_COMMAND
+            cmd.tag(32).button(PREHEAT_2_POS, GET_TEXT_F(MSG_PREHEAT_2));
+          #endif
+          #ifdef PREHEAT_3_COMMAND
+            cmd.tag(33).button(PREHEAT_3_POS, GET_TEXT_F(MSG_PREHEAT_3));
+          #endif
+          cmd.colors(cold_pull_btn)
+            .tag(30).button(COOLDOWN_POS, GET_TEXT_F(MSG_COOLDOWN));
+          #ifdef PARKING_COMMAND_GCODE
+            cmd.colors(normal_btn).tag(35).button(TOOLHEAD_SWAP_POS, GET_TEXT_F(MSG_TOOL_HEAD_SWAP));
+          #endif
+    }
+  }
 }
 
 bool TemperatureScreen::onTouchHeld(uint8_t tag) {
@@ -103,7 +134,20 @@ bool TemperatureScreen::onTouchHeld(uint8_t tag) {
     case 30:
       coolDown();
       TERN_(HAS_HEATED_CHAMBER, setTargetTemp_celsius(0, CHAMBER));
+      GOTO_SCREEN(StatusScreen);
       break;
+    #ifdef PREHEAT_1_COMMAND
+      case 31: injectCommands_P(PSTR(PREHEAT_1_COMMAND)); GOTO_SCREEN(StatusScreen); break;
+    #endif
+    #ifdef PREHEAT_2_COMMAND
+      case 32: injectCommands_P(PSTR(PREHEAT_2_COMMAND)); GOTO_SCREEN(StatusScreen); break;
+    #endif
+    #ifdef PREHEAT_3COMMAND
+      case 33: injectCommands_P(PSTR(PREHEAT_3_COMMAND)); GOTO_SCREEN(StatusScreen); break;
+    #endif
+    #ifdef PARKING_COMMAND_GCODE
+      case 35: injectCommands(F(PARKING_COMMAND_GCODE)); break;
+    #endif
     default:
       return false;
   }

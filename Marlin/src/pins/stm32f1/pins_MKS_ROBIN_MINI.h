@@ -70,6 +70,9 @@
 #ifndef FIL_RUNOUT_PIN
   #define FIL_RUNOUT_PIN                    PA4   // MT_DET
 #endif
+#ifndef FIL_RUNOUT_STATE
+  #define FIL_RUNOUT_STATE                  LOW
+#endif
 
 //
 // Probe enable
@@ -126,11 +129,6 @@
 #define POWER_LOSS_PIN                      PA2   // PW_DET
 #define PS_ON_PIN                           PA3   // PW_OFF
 
-#if HAS_TFT_LVGL_UI
-  #define MT_DET_1_PIN                      PA4   // MT_DET
-  #define MT_DET_PIN_STATE                  LOW
-#endif
-
 #define WIFI_IO0_PIN                        PC13
 
 //
@@ -153,20 +151,17 @@
 
 /**
  * Note: MKS Robin TFT screens use various TFT controllers.
- * If the screen stays white, disable 'LCD_RESET_PIN'
- * to let the bootloader init the screen.
+ * If the screen stays white, disable 'LCD_RESET_PIN' to let the bootloader init the screen.
  */
 #if HAS_FSMC_TFT
+  #define LCD_USE_DMA_FSMC
+  #define FSMC_CS_PIN                       PD7   // NE4
+  #define FSMC_RS_PIN                       PD11  // A0
+  #define TFT_CS_PIN                 FSMC_CS_PIN  // NE4
+  #define TFT_RS_PIN                 FSMC_RS_PIN  // A0
 
-  #define TFT_CS_PIN                        PD7   // NE4
-  #define TFT_RS_PIN                        PD11  // A0
   #define LCD_RESET_PIN                     PC6   // FSMC_RST
   #define LCD_BACKLIGHT_PIN                 PD13
-
-  #define FSMC_CS_PIN                 TFT_CS_PIN  // NE4
-  #define FSMC_RS_PIN                 TFT_RS_PIN  // A0
-
-  #define LCD_USE_DMA_FSMC                        // Use DMA transfers to send data to the TFT
 
   #if NEED_TOUCH_PINS
     #define TOUCH_CS_PIN                    PC2   // SPI2_NSS
@@ -174,7 +169,6 @@
     #define TOUCH_MISO_PIN                  PB14  // SPI2_MISO
     #define TOUCH_MOSI_PIN                  PB15  // SPI2_MOSI
   #endif
-
 #endif
 
 #if ENABLED(TFT_320x240)                          // TFT32/28

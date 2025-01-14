@@ -12,6 +12,3 @@ set -e
 restore_configs
 opt_set MOTHERBOARD BOARD_BTT_SKR_MINI_V1_1 SERIAL_PORT 1 SERIAL_PORT_2 -1 TEMP_SENSOR_SOC 100
 exec_test $1 $2 "BigTreeTech SKR Mini v1.1 - SOC Temperature" "$3"
-
-# clean up
-restore_configs

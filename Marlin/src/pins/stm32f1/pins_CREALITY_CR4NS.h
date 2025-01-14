@@ -33,11 +33,6 @@
   #error "CR4NS200320C13 only supports one hotend / E-stepper."
 #endif
 
-// Validate stepper driver selections.
-//#if !AXIS_DRIVER_TYPE_X(TMC2208) || !AXIS_DRIVER_TYPE_Y(TMC2208) || !AXIS_DRIVER_TYPE_Z(TMC2208) || !AXIS_DRIVER_TYPE_E0(TMC2208)
-//  #error "This board has onboard TMC2208 drivers for X, Y, Z, and E0."
-//#endif
-
 #ifndef BOARD_INFO_NAME
   #define BOARD_INFO_NAME      "CR4NS200320C13"
 #endif
@@ -47,22 +42,27 @@
 #define BOARD_WEBSITE_URL      "www.creality.com"
 
 //
+// EEPROM
+//
+#define IIC_EEPROM_SDA                      PA7
+#define IIC_EEPROM_SCL                      PA8
+
+//
 // Servos
 //
 #ifndef SERVO0_PIN
-  #define SERVO0_PIN                        PC14
+  #define SERVO0_PIN                        PC13
 #endif
-
 #ifndef Z_MIN_PROBE_PIN
-  #define Z_MIN_PROBE_PIN                   PC13  // BLTouch IN
+  #define Z_MIN_PROBE_PIN                   PC14
 #endif
 
 //
 // Limit Switches
 //
-//#ifndef Z_STOP_PIN
-//  #define Z_STOP_PIN                      PA15  // else PA7
-//#endif
+#ifndef Z_STOP_PIN
+  #define Z_STOP_PIN                        PC14
+#endif
 
 //
 // Filament Runout Sensor
@@ -76,30 +76,30 @@
 //
 #define HEATER_BED_PIN                      PB2   // HOT BED
 #define FAN1_PIN                            PC1   // extruder fan
-//#define FAN2_PIN                          PB1   // Controller fan FET
 
 //
-// Auto fans
+// Steppers
 //
-//#ifndef CONTROLLER_FAN_PIN
-//  #define CONTROLLER_FAN_PIN          FAN2_PIN
-//#endif
-
 #if HAS_TMC_UART
+
   // Reduce baud rate to improve software serial reliability
   #define TMC_BAUD_RATE 19200
 
   // Software serial
   #define X_SERIAL_TX_PIN                   PB12
-  #define X_SERIAL_RX_PIN        X_SERIAL_TX_PIN
+  #define X_DIAG_PIN                        PB10
 
   #define Y_SERIAL_TX_PIN                   PB13
-  #define Y_SERIAL_RX_PIN        Y_SERIAL_TX_PIN
+  #define Y_DIAG_PIN                        PB11
 
   #define Z_SERIAL_TX_PIN                   PB14
-  #define Z_SERIAL_RX_PIN        Z_SERIAL_TX_PIN
-
 #endif // HAS_TMC_UART
+
+//
+// SD Card
+//
+#define ONBOARD_SPI_DEVICE                     1  // SPI1
+#define ONBOARD_SD_CS_PIN                   PA4   // SDSS
 
 #if ANY(RET6_12864_LCD, HAS_DWIN_E3V2, IS_DWIN_MARLINUI)
 
@@ -118,17 +118,9 @@
   #define EXP3_03_PIN                       PA2
   #define EXP3_04_PIN                       PA3
   #define EXP3_05_PIN                       PB1
-  #define EXP3_06_PIN                       -1
+  #define EXP3_06_PIN                       PB0
   #define EXP3_07_PIN                       PA12
   #define EXP3_08_PIN                       PA11
-
-  #ifndef BEEPER_PIN
-    #define BEEPER_PIN               EXP1_06_PIN  // BEEP
-  #endif
-
-  #define BTN_ENC                    EXP1_05_PIN  // EN
-  #define BTN_EN1                    EXP1_08_PIN  // A
-  #define BTN_EN2                    EXP1_07_PIN  // B
 
 #endif
 

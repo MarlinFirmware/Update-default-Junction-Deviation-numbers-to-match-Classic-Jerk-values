@@ -532,6 +532,59 @@ MARLIN_TEST(types, Flags_32) {
   TEST_ASSERT_EQUAL(4, flags.size());
 }
 
+MARLIN_TEST(types, Flags_64) {
+  Flags<64> flags;
+
+  flags.reset();
+  TEST_ASSERT_EQUAL(0, flags.b);
+
+  flags.set(0, true);
+  flags.set(63, true);
+  TEST_ASSERT_EQUAL(9223372036854775809ULL, flags.b);
+
+  flags.clear(0);
+  flags.clear(63);
+  TEST_ASSERT_EQUAL(0, flags.b);
+
+  flags.set(0, true);
+  flags.set(63, true);
+  TEST_ASSERT_EQUAL(true, flags.test(0));
+  TEST_ASSERT_EQUAL(true, flags.test(63));
+  TEST_ASSERT_EQUAL(false, flags.test(1));
+  TEST_ASSERT_EQUAL(false, flags.test(62));
+
+  TEST_ASSERT_EQUAL(true, flags[0]);
+  TEST_ASSERT_EQUAL(true, flags[63]);
+  TEST_ASSERT_EQUAL(false, flags[1]);
+  TEST_ASSERT_EQUAL(false, flags[62]);
+
+  TEST_ASSERT_EQUAL(8, flags.size());
+}
+
+MARLIN_TEST(types, Flags_302) {
+  Flags<302> flags;
+
+  flags.reset();
+  TEST_ASSERT_EQUAL(false, (bool)flags);
+
+  flags.set(0, true);
+  flags.set(301, true);
+
+  TEST_ASSERT_EQUAL(true, (bool)flags);
+
+  TEST_ASSERT_EQUAL(true, flags.test(0));
+  TEST_ASSERT_EQUAL(true, flags.test(301));
+  TEST_ASSERT_EQUAL(false, flags.test(1));
+  TEST_ASSERT_EQUAL(false, flags.test(300));
+
+  TEST_ASSERT_EQUAL(true, flags[0]);
+  TEST_ASSERT_EQUAL(true, flags[301]);
+  TEST_ASSERT_EQUAL(false, flags[1]);
+  TEST_ASSERT_EQUAL(false, flags[300]);
+
+  TEST_ASSERT_EQUAL(38, flags.size());
+}
+
 MARLIN_TEST(types, AxisFlags_const_as_bools) {
   const AxisFlags axis_flags_const_false = {0};
   TEST_ASSERT_FALSE(axis_flags_const_false);

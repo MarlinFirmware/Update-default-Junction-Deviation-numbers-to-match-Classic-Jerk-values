@@ -38,7 +38,7 @@ void AlertDialogBox::onEntry() {
 
 void AlertDialogBox::onRedraw(draw_mode_t what) {
   if (what & FOREGROUND) {
-    drawOkayButton();
+    drawDoneButton();
   }
 }
 

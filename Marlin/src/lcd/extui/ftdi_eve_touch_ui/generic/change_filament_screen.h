@@ -40,11 +40,12 @@ class ChangeFilamentScreen : public BaseScreen, public CachedScreen<CHANGE_FILAM
     static void drawTempGradient(uint16_t x, uint16_t y, uint16_t w, uint16_t h);
     static void doPurge();
   public:
+    static void loadBitmaps();
     static uint32_t getWarmColor(uint16_t temp, uint16_t cool, uint16_t low, uint16_t med, uint16_t high);
     static void onEntry();
     static void onExit();
     static void onRedraw(draw_mode_t);
-    static bool onTouchStart(uint8_t tag);
+    //static bool onTouchStart(uint8_t tag);
     static bool onTouchEnd(uint8_t tag);
     static bool onTouchHeld(uint8_t tag);
     static void onIdle();

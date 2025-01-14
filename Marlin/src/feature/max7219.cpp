@@ -744,7 +744,6 @@ void Max7219::idle_tasks() {
   #endif
 
   #ifdef MAX7219_DEBUG_PLANNER_QUEUE
-    static int16_t last_depth = 0;
     const int16_t current_depth = BLOCK_MOD(head - tail + (BLOCK_BUFFER_SIZE)) & 0xF;
     if (current_depth != last_depth) {
       quantity16(MAX7219_DEBUG_PLANNER_QUEUE, last_depth, current_depth, &row_change_mask);

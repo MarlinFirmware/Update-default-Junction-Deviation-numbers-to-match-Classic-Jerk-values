@@ -97,7 +97,6 @@
   //#define TMC_BAUD_RATE 250000
 
   #define E0_SERIAL_TX_PIN                  PA15
-  #define E0_SERIAL_RX_PIN      E0_SERIAL_TX_PIN
 
   // Reduce baud rate to improve software serial reliability
   #ifndef TMC_BAUD_RATE

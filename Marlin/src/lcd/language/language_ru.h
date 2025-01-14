@@ -58,7 +58,7 @@ namespace LanguageNarrow_ru {
   LSTR MSG_DEBUG_MENU                       = _UxGT("Меню отладки");
   LSTR MSG_PROGRESS_BAR_TEST                = _UxGT("Тест индикатора");
   LSTR MSG_AUTO_HOME                        = _UxGT("Парковка XYZ");
-  LSTR MSG_AUTO_HOME_A                      = _UxGT("Парковка @");
+  LSTR MSG_AUTO_HOME_N                      = _UxGT("Парковка @");
   LSTR MSG_AUTO_HOME_X                      = _UxGT("Парковка X");
   LSTR MSG_AUTO_HOME_Y                      = _UxGT("Парковка Y");
   LSTR MSG_AUTO_HOME_Z                      = _UxGT("Парковка Z");
@@ -119,6 +119,7 @@ namespace LanguageNarrow_ru {
   LSTR MSG_EXTRUDE                          = _UxGT("Выдавить");
   LSTR MSG_RETRACT                          = _UxGT("Втянуть");
   LSTR MSG_MOVE_AXIS                        = _UxGT("Движение по осям");
+  LSTR MSG_PROBE_AND_LEVEL                  = _UxGT("Проба/выравнивание");
   LSTR MSG_BED_LEVELING                     = _UxGT("Выравнивание стола");
   LSTR MSG_LEVEL_BED                        = _UxGT("Выровнять стол");
   LSTR MSG_BED_TRAMMING                     = _UxGT("Выровнять углы");
@@ -150,7 +151,7 @@ namespace LanguageNarrow_ru {
   LSTR MSG_IDEX_DUPE_GAP                    = _UxGT("Дублировать X-зазор");
 
   LSTR MSG_HOTEND_OFFSET_Z                  = _UxGT("2-е сопло Z");
-  LSTR MSG_HOTEND_OFFSET_A                  = _UxGT("2-е сопло @");
+  LSTR MSG_HOTEND_OFFSET_N                  = _UxGT("2-е сопло @");
 
   LSTR MSG_UBL_DOING_G29                    = _UxGT("Выполняем G29");
   LSTR MSG_UBL_TOOLS                        = _UxGT("Инструменты UBL");
@@ -161,9 +162,6 @@ namespace LanguageNarrow_ru {
   LSTR MSG_UBL_MESH_WIZARD                  = _UxGT("Мастер сеток UBL");
   LSTR MSG_UBL_BC_INSERT2                   = _UxGT("Измерение");
   LSTR MSG_UBL_MOVING_TO_NEXT               = _UxGT("Двигаемся дальше");
-  LSTR MSG_UBL_ACTIVATE_MESH                = _UxGT("Активировать UBL");
-  LSTR MSG_UBL_DEACTIVATE_MESH              = _UxGT("Деактивировать UBL");
-  LSTR MSG_UBL_MESH_EDIT                    = _UxGT("Редактор сеток");
   LSTR MSG_UBL_EDIT_CUSTOM_MESH             = _UxGT("Править свою сетку");
   LSTR MSG_UBL_SET_TEMP_BED                 = LCD_STR_THERMOMETER _UxGT(" стола, ") LCD_STR_DEGREE _UxGT("C");
   LSTR MSG_UBL_BED_TEMP_CUSTOM              = _UxGT("Своя ") LCD_STR_THERMOMETER _UxGT(" стола,") LCD_STR_DEGREE _UxGT("C");
@@ -228,7 +226,8 @@ namespace LanguageNarrow_ru {
   LSTR MSG_UBL_7_SAVE_MESH                  = _UxGT("7.Сохранить сетку");
 
   LSTR MSG_LED_CONTROL                      = _UxGT("Настройка подсветки");
-  LSTR MSG_LEDS                             = _UxGT("Подсветка");
+  LSTR MSG_LIGHTS                           = _UxGT("Подсветка");
+  LSTR MSG_LIGHT_N                          = _UxGT("Свет #{");
   LSTR MSG_LED_PRESETS                      = _UxGT("Предустановки света");
   LSTR MSG_SET_LEDS_RED                     = _UxGT("Красный");
   LSTR MSG_SET_LEDS_ORANGE                  = _UxGT("Оранжевый");
@@ -240,7 +239,6 @@ namespace LanguageNarrow_ru {
   LSTR MSG_SET_LEDS_WHITE                   = _UxGT("Белый");
   LSTR MSG_SET_LEDS_DEFAULT                 = _UxGT("Свет по умолчанию");
   LSTR MSG_LED_CHANNEL_N                    = _UxGT("Канал {");
-  LSTR MSG_LEDS2                            = _UxGT("Свет #2");
   LSTR MSG_NEO2_PRESETS                     = _UxGT("Свет #2 предустан.");
   LSTR MSG_NEO2_BRIGHTNESS                  = _UxGT("Яркость");
   LSTR MSG_CUSTOM_LEDS                      = _UxGT("Свой цвет подсветки");
@@ -467,6 +465,8 @@ namespace LanguageNarrow_ru {
   LSTR MSG_ZPROBE_XOFFSET                   = _UxGT("Смещение X");
   LSTR MSG_ZPROBE_YOFFSET                   = _UxGT("Смещение Y");
   LSTR MSG_ZPROBE_ZOFFSET                   = _UxGT("Смещение Z");
+  LSTR MSG_ZPROBE_OFFSET_N                  = _UxGT("Смещение @");
+  LSTR MSG_BABYSTEP_PROBE_Z                 = _UxGT("Шаг Z смещения");
   LSTR MSG_MOVE_NOZZLE_TO_BED               = _UxGT("Двиг. сопло к столу");
   LSTR MSG_BABYSTEP_X                       = _UxGT("Микрошаг X");
   LSTR MSG_BABYSTEP_Y                       = _UxGT("Микрошаг Y");
@@ -721,10 +721,10 @@ namespace LanguageNarrow_ru {
   LSTR MSG_MPC_AMBIENT_XFER_COEFF_FAN       = _UxGT("Коэфф.кулера");
   LSTR MSG_MPC_AMBIENT_XFER_COEFF_FAN_E     = _UxGT("Коэфф.кулер *");
   LSTR MSG_INPUT_SHAPING                    = _UxGT("Input Shaping");
-  LSTR MSG_SHAPING_ENABLE                   = _UxGT("Включить шейпинг @");
-  LSTR MSG_SHAPING_DISABLE                  = _UxGT("Выключить шейпинг @");
-  LSTR MSG_SHAPING_FREQ                     = _UxGT("@ частота");
-  LSTR MSG_SHAPING_ZETA                     = _UxGT("@ подавление");
+  LSTR MSG_SHAPING_ENABLE_N                 = _UxGT("Включить шейпинг @");
+  LSTR MSG_SHAPING_DISABLE_N                = _UxGT("Выключить шейпинг @");
+  LSTR MSG_SHAPING_FREQ_N                   = _UxGT("@ частота");
+  LSTR MSG_SHAPING_ZETA_N                   = _UxGT("@ подавление");
   LSTR MSG_FILAMENT_EN                      = _UxGT("Филамент *");
   LSTR MSG_SEGMENTS_PER_SECOND              = _UxGT("Сегментов/сек");
   LSTR MSG_DRAW_MIN_X                       = _UxGT("Рисовать мин X");
@@ -805,8 +805,8 @@ namespace LanguageNarrow_ru {
   LSTR MSG_HOST_SHUTDOWN                    = _UxGT("Выключить хост");
 
   // did not translate as there is no local terms/slang yet
-  LSTR MSG_FIXED_TIME_MOTION                = _UxGT("Fixed-Time Motion");
-  LSTR MSG_FTM_MODE                         = _UxGT("Motion Mode:");
+  LSTR MSG_FIXED_TIME_MOTION                = _UxGT("FT Motion");
+  LSTR MSG_FTM_CMPN_MODE                    = _UxGT("@ Режим комп.:");
   LSTR MSG_FTM_ZV                           = _UxGT("ZV");
   LSTR MSG_FTM_ZVD                          = _UxGT("ZVD");
   LSTR MSG_FTM_EI                           = _UxGT("EI");

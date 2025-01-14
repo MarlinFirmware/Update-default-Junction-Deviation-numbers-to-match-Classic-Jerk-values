@@ -164,6 +164,24 @@ inline void dwinDrawBox(uint8_t mode, uint16_t color, uint16_t xStart, uint16_t 
   void dwinDrawPoint(uint16_t color, uint8_t width, uint8_t height, uint16_t x, uint16_t y);
 #endif
 
+// Draw a map of multiple points using minimal amount of point drawing commands
+//  color: point color
+//  point_width: point width   0x01-0x0F
+//  point_height: point height 0x01-0x0F
+//  x,y: upper left point
+//  map_columns: columns in theh point map. each column is a byte in the map and contains 8 points
+//  map_rows: rows in the point map
+//  map: point bitmap. 2D array of points, 1 bit per point
+#if DISABLED(TJC_DISPLAY)
+  void dwinDrawPointMap(
+    const uint16_t color,
+    const uint8_t point_width, const uint8_t point_height,
+    const uint16_t x, const uint16_t y,
+    const uint16_t map_columns, const uint16_t map_rows,
+    const uint8_t *map_data
+  );
+#endif
+
 // Move a screen area
 //  mode: 0, circle shift; 1, translation
 //  dir: 0=left, 1=right, 2=up, 3=down

@@ -17,6 +17,3 @@ restore_configs
 opt_set MOTHERBOARD BOARD_PRINTRBOARD_REVF
 opt_enable MINIPANEL
 exec_test $1 $2 "Printrboard RevF with MiniPanel and Stepper DAC (in pins file)" "$3"
-
-# clean up
-restore_configs

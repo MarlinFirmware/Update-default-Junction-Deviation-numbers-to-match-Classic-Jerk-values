@@ -77,10 +77,10 @@ class TFT {
     static void fill(uint16_t x, uint16_t y, uint16_t width, uint16_t height, uint16_t color) { queue.fill(x, y, width, height, color); }
     static void canvas(uint16_t x, uint16_t y, uint16_t width, uint16_t height) { queue.canvas(x, y, width, height); }
     static void set_background(uint16_t color) { queue.set_background(color); }
-    static void add_text(uint16_t x, uint16_t y, uint16_t color, TFT_String tft_string, uint16_t maxWidth = 0) { queue.add_text(x, y, color, tft_string.string(), maxWidth); }
-    static void add_text(uint16_t x, uint16_t y, uint16_t color, const char *string, uint16_t maxWidth = 0) { queue.add_text(x, y, color, string, maxWidth); }
+    static void add_text(uint16_t x, uint16_t y, uint16_t color, TFT_String tft_string, uint16_t maxWidth=0) { queue.add_text(x, y, color, tft_string.string(), maxWidth); }
+    static void add_text(uint16_t x, uint16_t y, uint16_t color, const char *string, uint16_t maxWidth=0) { queue.add_text(x, y, color, string, maxWidth); }
     static void add_image(int16_t x, int16_t y, MarlinImage image, uint16_t *colors) { queue.add_image(x, y, image, colors); }
-    static void add_image(int16_t x, int16_t y, MarlinImage image, uint16_t color_main = COLOR_WHITE, uint16_t color_background = COLOR_BACKGROUND, uint16_t color_shadow = COLOR_BLACK) { queue.add_image(x, y, image, color_main,  color_background, color_shadow); }
+    static void add_image(int16_t x, int16_t y, MarlinImage image, uint16_t color_main = COLOR_WHITE, uint16_t color_background = COLOR_BACKGROUND, uint16_t color_shadow = COLOR_BLACK) { queue.add_image(x, y, image, color_main, color_background, color_shadow); }
     static void add_bar(uint16_t x, uint16_t y, uint16_t width, uint16_t height, uint16_t color) { queue.add_bar(x, y, width, height, color); }
     static void add_rectangle(uint16_t x, uint16_t y, uint16_t width, uint16_t height, uint16_t color) { queue.add_rectangle(x, y, width, height, color); }
     static void draw_edit_screen_buttons();

@@ -189,7 +189,7 @@ void EasythreedUI::printButton() {
             blink_interval_ms = LED_BLINK_2;                        // Blink the indicator LED at 1 second intervals
             print_key_flag = PF_PAUSE;                              // The "Print" button now pauses the print
             card.mount();                                           // Force SD card to mount - now!
-            if (!card.isMounted) {                                  // Failed to mount?
+            if (!card.isMounted()) {                                // Failed to mount?
               blink_interval_ms = LED_OFF;                          // Turn off LED
               print_key_flag = PF_START;
               return;                                               // Bail out

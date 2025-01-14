@@ -70,7 +70,9 @@ void ControllerFan::update() {
      */
     const ena_mask_t axis_mask = TERN(CONTROLLER_FAN_USE_Z_ONLY, _BV(Z_AXIS), (ena_mask_t)~TERN0(CONTROLLER_FAN_IGNORE_Z, _BV(Z_AXIS)));
     if ( (stepper.axis_enabled.bits & axis_mask)
-      || TERN0(HAS_HEATED_BED, thermalManager.temp_bed.soft_pwm_amount > 0)
+      #if ALL(HAS_HEATED_BED, CONTROLLER_FAN_BED_HEATING)
+        || thermalManager.temp_bed.soft_pwm_amount > 0
+      #endif
       #ifdef CONTROLLER_FAN_MIN_BOARD_TEMP
         || thermalManager.wholeDegBoard() >= CONTROLLER_FAN_MIN_BOARD_TEMP
       #endif

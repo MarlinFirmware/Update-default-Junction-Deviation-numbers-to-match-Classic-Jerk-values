@@ -7,13 +7,10 @@
 set -e
 
 #
-# Build with the default configurations
+# Build with modified ArmEd configuration
 #
 restore_configs
 use_example_configs ArmEd
 opt_set X_DRIVER_TYPE TMC2130 Y_DRIVER_TYPE TMC2208
 opt_enable LASER_SYNCHRONOUS_M106_M107
 exec_test $1 $2 "ArmEd Example Configuration with mixed TMC Drivers" "$3"
-
-# clean up
-restore_configs

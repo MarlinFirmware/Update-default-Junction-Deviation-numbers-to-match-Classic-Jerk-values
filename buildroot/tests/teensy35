@@ -98,7 +98,7 @@ exec_test $1 $2 "Teensy 3.5/3.6 COREXY" "$3"
 # Enable COREXZ
 #
 restore_configs
-opt_set MOTHERBOARD BOARD_TEENSY35_36
+opt_set MOTHERBOARD BOARD_TEENSY35_36 BACKLASH_MEASUREMENT_FEEDRATE 600
 opt_enable COREXZ BACKLASH_COMPENSATION BACKLASH_GCODE CORE_BACKLASH
 exec_test $1 $2 "Teensy 3.5/3.6 COREXZ | BACKLASH" "$3"
 
@@ -106,10 +106,6 @@ exec_test $1 $2 "Teensy 3.5/3.6 COREXZ | BACKLASH" "$3"
 # Enable Dual Z with Dual Z endstops
 #
 restore_configs
-opt_set MOTHERBOARD BOARD_TEENSY35_36 Z_DRIVER_TYPE A4988 Z2_DRIVER_TYPE A4988 Z2_MIN_PIN 2
+opt_set MOTHERBOARD BOARD_TEENSY35_36 Z_DRIVER_TYPE A4988 Z2_DRIVER_TYPE A4988 Z2_MIN_PIN 2 X_MAX_PIN -1
 opt_enable Z_MULTI_ENDSTOPS
-pins_set ramps/RAMPS X_MAX_PIN -1
 exec_test $1 $2 "Dual Z with Dual Z endstops" "$3"
-
-# Clean up
-restore_configs

@@ -30,40 +30,40 @@
 #endif
 
 enum MarlinImage : uint8_t {
-  imgBootScreen = 0x00,
-  imgHotEnd,
-  imgBed,
-  imgBedHeated,
-  imgChamber,
-  imgChamberHeated,
-  imgFanIdle,
-  imgFanSlow0,
-  imgFanSlow1,
-  imgFanFast0,
-  imgFanFast1,
-  imgFeedRate,
-  imgFlowRate,
-  imgSD,
-  imgMenu,
-  imgSettings,
-  imgDirectory,
-  imgConfirm,
-  imgCancel,
-  imgIncrease,
-  imgDecrease,
-  imgBack,
-  imgUp,
-  imgDown,
-  imgLeft,
-  imgRight,
-  imgRefresh,
-  imgLeveling,
-  imgSlider,
-  imgHome,
-  imgBtn52Rounded,
-  imgBtn39Rounded,
-  imgTimeElapsed,
-  imgTimeRemaining,
+  imgBootScreen = 0x00, // BOOTSCREEN_LOGO / NoLogo
+  imgHotEnd,            // HotEnd_64x64x4
+  imgBed,               // Bed_64x64x4
+  imgBedHeated,         // Bed_Heated_64x64x4
+  imgChamber,           // Chamber_64x64x4
+  imgChamberHeated,     // Chamber_Heated_64x64x4
+  imgFanIdle,           // Fan0_64x64x4
+  imgFanSlow0,          // Fan_Slow0_64x64x4
+  imgFanSlow1,          // Fan_Slow1_64x64x4
+  imgFanFast0,          // Fan_Fast0_64x64x4
+  imgFanFast1,          // Fan_Fast1_64x64x4
+  imgFeedRate,          // Feedrate_32x32x4
+  imgFlowRate,          // Flowrate_32x32x4
+  imgSD,                // SD_64x64x4
+  imgMenu,              // Menu_64x64x4
+  imgSettings,          // Settings_64x64x4
+  imgDirectory,         // Directory_32x32x4
+  imgConfirm,           // Confirm_64x64x4
+  imgCancel,            // Cancel_64x64x4
+  imgIncrease,          // Increase_64x64x4
+  imgDecrease,          // Decrease_64x64x4
+  imgBack,              // Back_32x32x4
+  imgUp,                // Up_32x32x4
+  imgDown,              // Down_32x32x4
+  imgLeft,              // Left_32x32x4
+  imgRight,             // Right_32x32x4
+  imgRefresh,           // Refresh_32x32x4
+  imgLeveling,          // Leveling_32x32x4
+  imgSlider,            // Slider8x16x4
+  imgHome,              // Home_64x64x4
+  imgBtn52Rounded,      // BtnRounded_64x52x4
+  imgBtn39Rounded,      // BtnRounded_42x39x4
+  imgTimeElapsed,       // Time_Elapsed_32x32x4
+  imgTimeRemaining,     // Time_Remaining_32x32x4
   // Special values - must be at the end!
   imgCount,
   noImage = imgCount,
@@ -108,6 +108,7 @@ extern const tImage NoLogo;
   extern const tImage MarlinLogo240x250x16;
   extern const tImage MarlinLogo320x240x16;
   extern const tImage MarlinLogo480x320x16;
+  extern const tImage MarlinLogo576x478x16;
   extern const tImage MarlinLogo1024x600x16;
 #endif
 extern const tImage Background320x30x16;

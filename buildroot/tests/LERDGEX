@@ -12,6 +12,3 @@ set -e
 restore_configs
 opt_set MOTHERBOARD BOARD_LERDGE_X SERIAL_PORT 1
 exec_test $1 $2 "LERDGE X with Default Configuration" "$3"
-
-# clean up
-restore_configs

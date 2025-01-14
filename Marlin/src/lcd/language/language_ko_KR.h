@@ -72,6 +72,8 @@ namespace LanguageNarrow_ko_KR {
   LSTR MSG_EXTRUDE                        = _UxGT("밀어내기");
   LSTR MSG_RETRACT                        = _UxGT("당기기");
   LSTR MSG_MOVE_AXIS                      = _UxGT("축 이동");
+  LSTR MSG_PROBE_AND_LEVEL                = _UxGT("프로브 & 레벨링");
+  LSTR MSG_BABYSTEP_PROBE_Z               = _UxGT("Z 값 조정");
   LSTR MSG_BED_LEVELING                   = _UxGT("베드 레벨링");
   LSTR MSG_IDEX_MODE_MIRRORED_COPY        = _UxGT("미러 사본");
   LSTR MSG_UBL_DOING_G29                  = _UxGT("오토레벨링 하기");

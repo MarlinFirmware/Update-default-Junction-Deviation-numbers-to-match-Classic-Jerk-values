@@ -22,11 +22,23 @@
 #pragma once
 
 /**
- * Support routines for MAPLE_STM32F1
- */
-
-/**
- * Translation of routines & variables used by pinsDebug.h
+ * Pins Debugging for Maple STM32F1
+ *
+ *   - NUMBER_PINS_TOTAL
+ *   - MULTI_NAME_PAD
+ *   - getPinByIndex(index)
+ *   - printPinNameByIndex(index)
+ *   - getPinIsDigitalByIndex(index)
+ *   - digitalPinToAnalogIndex(pin)
+ *   - getValidPinMode(pin)
+ *   - isValidPin(pin)
+ *   - isAnalogPin(pin)
+ *   - digitalRead_mod(pin)
+ *   - pwm_status(pin)
+ *   - printPinPWM(pin)
+ *   - printPinPort(pin)
+ *   - printPinNumber(pin)
+ *   - printPinAnalog(pin)
  */
 
 #ifndef BOARD_NR_GPIO_PINS // Only in MAPLE_STM32F1
@@ -39,12 +51,12 @@ extern const stm32_pin_info PIN_MAP[BOARD_NR_GPIO_PINS];
 
 #define NUM_DIGITAL_PINS BOARD_NR_GPIO_PINS
 #define NUMBER_PINS_TOTAL BOARD_NR_GPIO_PINS
-#define VALID_PIN(pin) (pin >= 0 && pin < BOARD_NR_GPIO_PINS)
-#define GET_ARRAY_PIN(p) pin_t(pin_array[p].pin)
-#define digitalRead_mod(p) extDigitalRead(p)
-#define PRINT_PIN(p) do{ sprintf_P(buffer, PSTR("%3hd "), int16_t(p)); SERIAL_ECHO(buffer); }while(0)
-#define PRINT_PIN_ANALOG(p) do{ sprintf_P(buffer, PSTR(" (A%2d)  "), DIGITAL_PIN_TO_ANALOG_PIN(pin)); SERIAL_ECHO(buffer); }while(0)
-#define PRINT_ARRAY_NAME(x) do{ sprintf_P(buffer, PSTR("%-" STRINGIFY(MAX_NAME_LENGTH) "s"), pin_array[x].name); SERIAL_ECHO(buffer); }while(0)
+#define isValidPin(P) (P >= 0 && P < BOARD_NR_GPIO_PINS)
+#define getPinByIndex(x) pin_t(pin_array[x].pin)
+#define digitalRead_mod(P) extDigitalRead(P)
+#define printPinNumber(P) do{ sprintf_P(buffer, PSTR("%3hd "), int16_t(P)); SERIAL_ECHO(buffer); }while(0)
+#define printPinAnalog(P) do{ sprintf_P(buffer, PSTR(" (A%2d)  "), digitalPinToAnalogIndex(P)); SERIAL_ECHO(buffer); }while(0)
+#define printPinNameByIndex(x) do{ sprintf_P(buffer, PSTR("%-" STRINGIFY(MAX_NAME_LENGTH) "s"), pin_array[x].name); SERIAL_ECHO(buffer); }while(0)
 #define MULTI_NAME_PAD 21 // space needed to be pretty if not first name assigned to a pin
 
 // pins that will cause hang/reset/disconnect in M43 Toggle and Watch utilities
@@ -52,10 +64,10 @@ extern const stm32_pin_info PIN_MAP[BOARD_NR_GPIO_PINS];
   #define M43_NEVER_TOUCH(Q) (Q >= 9 && Q <= 12) // SERIAL/USB pins PA9(TX) PA10(RX)
 #endif
 
-int8_t get_pin_mode(const pin_t pin) { return VALID_PIN(pin) ? _GET_MODE(pin) : -1; }
+int8_t get_pin_mode(const pin_t pin) { return isValidPin(pin) ? _GET_MODE(pin) : -1; }
 
-pin_t DIGITAL_PIN_TO_ANALOG_PIN(const pin_t pin) {
-  if (!VALID_PIN(pin)) return -1;
+int8_t digitalPinToAnalogIndex(const pin_t pin) {
+  if (!isValidPin(pin)) return -1;
   pin_t adc_channel = pin_t(PIN_MAP[pin].adc_channel);
   #ifdef NUM_ANALOG_INPUTS
     if (adc_channel >= NUM_ANALOG_INPUTS) adc_channel = (pin_t)ADCx;
@@ -63,8 +75,8 @@ pin_t DIGITAL_PIN_TO_ANALOG_PIN(const pin_t pin) {
   return adc_channel;
 }
 
-bool IS_ANALOG(const pin_t pin) {
-  if (!VALID_PIN(pin)) return false;
+bool isAnalogPin(const pin_t pin) {
+  if (!isValidPin(pin)) return false;
   if (PIN_MAP[pin].adc_channel != ADCx) {
     #ifdef NUM_ANALOG_INPUTS
       if (PIN_MAP[pin].adc_channel >= NUM_ANALOG_INPUTS) return false;
@@ -74,13 +86,13 @@ bool IS_ANALOG(const pin_t pin) {
   return false;
 }
 
-bool GET_PINMODE(const pin_t pin) {
-  return VALID_PIN(pin) && !IS_INPUT(pin);
+bool getValidPinMode(const pin_t pin) {
+  return isValidPin(pin) && !IS_INPUT(pin);
 }
 
-bool GET_ARRAY_IS_DIGITAL(const int16_t array_pin) {
-  const pin_t pin = GET_ARRAY_PIN(array_pin);
-  return (!IS_ANALOG(pin)
+bool getPinIsDigitalByIndex(const int16_t index) {
+  const pin_t pin = getPinByIndex(index);
+  return (!isAnalogPin(pin)
     #ifdef NUM_ANALOG_INPUTS
       || PIN_MAP[pin].adc_channel >= NUM_ANALOG_INPUTS
     #endif
@@ -89,7 +101,7 @@ bool GET_ARRAY_IS_DIGITAL(const int16_t array_pin) {
 
 #include "../../inc/MarlinConfig.h" // Allow pins/pins.h to set density
 
-void pwm_details(const pin_t pin) {
+void printPinPWM(const pin_t pin) {
   if (PWM_PIN(pin)) {
     timer_dev * const tdev = PIN_MAP[pin].timer_device;
     const uint8_t channel = PIN_MAP[pin].timer_channel;
@@ -111,7 +123,7 @@ void pwm_details(const pin_t pin) {
 
 bool pwm_status(const pin_t pin) { return PWM_PIN(pin); }
 
-void print_port(const pin_t pin) {
+void printPinPort(const pin_t pin) {
   const char port = 'A' + char(pin >> 4); // pin div 16
   const int16_t gbit = PIN_MAP[pin].gpio_bit;
   char buffer[8];

@@ -46,7 +46,7 @@
   #include "../../../feature/pause.h"
 #endif
 
-#if ENABLED(FILAMENT_RUNOUT_SENSOR)
+#if HAS_FILAMENT_SENSOR
   #include "../../../feature/runout.h"
 #endif
 
@@ -1377,10 +1377,10 @@ void JyersDWIN::menuItemHandler(const uint8_t menu, const uint8_t item, bool dra
       static bool use_probe = false;
 
       #if HAS_BED_PROBE
-        const float probe_x_min = _MAX(0 + corner_pos, X_MIN_POS + probe.offset.x, X_MIN_POS + PROBING_MARGIN) - probe.offset.x,
-                    probe_x_max = _MIN((X_BED_SIZE + X_MIN_POS) - corner_pos, X_MAX_POS + probe.offset.x, X_MAX_POS - PROBING_MARGIN) - probe.offset.x,
-                    probe_y_min = _MAX(0 + corner_pos, Y_MIN_POS + probe.offset.y, Y_MIN_POS + PROBING_MARGIN) - probe.offset.y,
-                    probe_y_max = _MIN((Y_BED_SIZE + Y_MIN_POS) - corner_pos, Y_MAX_POS + probe.offset.y, Y_MAX_POS - PROBING_MARGIN) - probe.offset.y;
+        const float probe_x_min = _MAX(0 + corner_pos, X_MIN_POS + probe.offset.x, X_MIN_POS + (PROBING_MARGIN_LEFT)) - probe.offset.x,
+                    probe_x_max = _MIN((X_BED_SIZE + X_MIN_POS) - corner_pos, X_MAX_POS + probe.offset.x, X_MAX_POS - (PROBING_MARGIN_RIGHT)) - probe.offset.x,
+                    probe_y_min = _MAX(0 + corner_pos, Y_MIN_POS + probe.offset.y, Y_MIN_POS + (PROBING_MARGIN_FRONT)) - probe.offset.y,
+                    probe_y_max = _MIN((Y_BED_SIZE + Y_MIN_POS) - corner_pos, Y_MAX_POS + probe.offset.y, Y_MAX_POS - (PROBING_MARGIN_BACK)) - probe.offset.y;
       #endif
 
       switch (item) {
@@ -2857,7 +2857,7 @@ void JyersDWIN::menuItemHandler(const uint8_t menu, const uint8_t item, bool dra
       #define ADVANCED_LOAD (ADVANCED_LA + ENABLED(ADVANCED_PAUSE_FEATURE))
       #define ADVANCED_UNLOAD (ADVANCED_LOAD + ENABLED(ADVANCED_PAUSE_FEATURE))
       #define ADVANCED_COLD_EXTRUDE  (ADVANCED_UNLOAD + ENABLED(PREVENT_COLD_EXTRUSION))
-      #define ADVANCED_FILSENSORENABLED (ADVANCED_COLD_EXTRUDE + ENABLED(FILAMENT_RUNOUT_SENSOR))
+      #define ADVANCED_FILSENSORENABLED (ADVANCED_COLD_EXTRUDE + ENABLED(HAS_FILAMENT_SENSOR))
       #define ADVANCED_FILSENSORDISTANCE (ADVANCED_FILSENSORENABLED + ENABLED(HAS_FILAMENT_RUNOUT_DISTANCE))
       #define ADVANCED_POWER_LOSS (ADVANCED_FILSENSORDISTANCE + ENABLED(POWER_LOSS_RECOVERY))
       #define ADVANCED_TOTAL ADVANCED_POWER_LOSS
@@ -2953,7 +2953,7 @@ void JyersDWIN::menuItemHandler(const uint8_t menu, const uint8_t item, bool dra
             break;
         #endif
 
-        #if ENABLED(FILAMENT_RUNOUT_SENSOR)
+        #if HAS_FILAMENT_SENSOR
           case ADVANCED_FILSENSORENABLED:
             if (draw) {
               drawMenuItem(row, ICON_Extruder, GET_TEXT_F(MSG_RUNOUT_SENSOR));
@@ -2975,7 +2975,7 @@ void JyersDWIN::menuItemHandler(const uint8_t menu, const uint8_t item, bool dra
                 modifyValue(runout.runout_distance(), 0, 999, 10);
               break;
           #endif
-        #endif // FILAMENT_RUNOUT_SENSOR
+        #endif // HAS_FILAMENT_SENSOR
 
         #if ENABLED(POWER_LOSS_RECOVERY)
           case ADVANCED_POWER_LOSS:
@@ -3830,7 +3830,7 @@ void JyersDWIN::menuItemHandler(const uint8_t menu, const uint8_t item, bool dra
       #define TUNE_LA (TUNE_ZDOWN + ENABLED(LIN_ADVANCE))
       #define TUNE_CHANGEFIL (TUNE_LA + ENABLED(FILAMENT_LOAD_UNLOAD_GCODES))
       #define TUNE_FWRETRACT (TUNE_CHANGEFIL + ENABLED(FWRETRACT))
-      #define TUNE_FILSENSORENABLED (TUNE_FWRETRACT + ENABLED(FILAMENT_RUNOUT_SENSOR))
+      #define TUNE_FILSENSORENABLED (TUNE_FWRETRACT + ENABLED(HAS_FILAMENT_SENSOR))
       #define TUNE_BACKLIGHT_OFF (TUNE_FILSENSORENABLED + 1)
       #define TUNE_BACKLIGHT (TUNE_BACKLIGHT_OFF + 1)
       #define TUNE_TOTAL TUNE_BACKLIGHT
@@ -3950,7 +3950,7 @@ void JyersDWIN::menuItemHandler(const uint8_t menu, const uint8_t item, bool dra
             break;
         #endif
 
-        #if ENABLED(FILAMENT_RUNOUT_SENSOR)
+        #if HAS_FILAMENT_SENSOR
           case TUNE_FILSENSORENABLED:
             if (draw) {
               drawMenuItem(row, ICON_Extruder, GET_TEXT_F(MSG_RUNOUT_SENSOR));
@@ -4140,7 +4140,7 @@ FSTR_P JyersDWIN::getMenuTitle(const uint8_t menu) {
     case ID_Move:           return GET_TEXT_F(MSG_MOVE_AXIS);
     case ID_ManualLevel:    return GET_TEXT_F(MSG_BED_TRAMMING_MANUAL);
     #if HAS_ZOFFSET_ITEM
-      case ID_ZOffset:      return GET_TEXT_F(MSG_ZPROBE_ZOFFSET);
+      case ID_ZOffset:      return liveadjust ? GET_TEXT_F(MSG_BABYSTEP_PROBE_Z) : GET_TEXT_F(MSG_ZPROBE_ZOFFSET);
     #endif
     #if HAS_PREHEAT
       case ID_Preheat:      return F("Preheat");
@@ -4326,7 +4326,7 @@ void JyersDWIN::popupHandler(const PopupID popupid, const bool option/*=false*/)
     case Popup_FilLoad:       drawPopup(option ? F("Unloading Filament") : F("Loading Filament"), PWID, F(""), Proc_Wait, ICON_BLTouch); break;
     case Popup_FilChange:     drawPopup(F("Filament Change"), F("Please wait for prompt."), F(""), Proc_Wait, ICON_BLTouch); break;
     case Popup_TempWarn:      drawPopup(option ? F("Nozzle temp too low!") : F("Nozzle temp too high!"), F(""), F(""), Proc_Wait, option ? ICON_TempTooLow : ICON_TempTooHigh); break;
-    #if ENABLED(FILAMENT_RUNOUT_SENSOR)
+    #if HAS_FILAMENT_SENSOR
       case Popup_Runout:      drawPopup(F("Filament Runout"), F(""), F(""), Proc_Wait, ICON_BLTouch); break;
     #endif
     #if ANY(PIDTEMP, PIDTEMPBED)
@@ -4953,7 +4953,7 @@ void JyersDWIN::stateUpdate() {
       }
     }
   #endif
-  #if ENABLED(FILAMENT_RUNOUT_SENSOR)
+  #if HAS_FILAMENT_SENSOR
     static bool ranout = false;
     if (runout.filament_ran_out != ranout) {
       ranout = runout.filament_ran_out;

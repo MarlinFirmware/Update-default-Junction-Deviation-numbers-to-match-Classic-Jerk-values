@@ -137,25 +137,12 @@
   //#define E1_HARDWARE_SERIAL MSerial1
 
   #define X_SERIAL_TX_PIN                   PE3
-  #define X_SERIAL_RX_PIN                   PE3
-
   #define Y_SERIAL_TX_PIN                   PE4
-  #define Y_SERIAL_RX_PIN                   PE4
-
   #define Z_SERIAL_TX_PIN                   PB3
-  #define Z_SERIAL_RX_PIN                   PB3
-
   #define E0_SERIAL_TX_PIN                  PB7
-  #define E0_SERIAL_RX_PIN                  PB7
-
   #define E1_SERIAL_TX_PIN                  PD15
-  #define E1_SERIAL_RX_PIN                  PD15
-
   #define E2_SERIAL_TX_PIN                  PD11
-  #define E2_SERIAL_RX_PIN                  PD11
-
   #define E3_SERIAL_TX_PIN                  PD8
-  #define E3_SERIAL_RX_PIN                  PD8
 
   // Reduce baud rate to improve software serial reliability
   #ifndef TMC_BAUD_RATE

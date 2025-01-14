@@ -87,6 +87,7 @@ namespace LanguageNarrow_vi {
   LSTR MSG_EXTRUDE                        = _UxGT("Ép đùn");                               // Extrude
   LSTR MSG_RETRACT                        = _UxGT("Rút lại");                              // Retract
   LSTR MSG_MOVE_AXIS                      = _UxGT("Di chuyển trục");                       // Move axis
+  LSTR MSG_PROBE_AND_LEVEL                = _UxGT("Chạm và san lấp");                      // Probe and Level
   LSTR MSG_BED_LEVELING                   = _UxGT("San Lấp Bàn");                          // Bed Leveling
   LSTR MSG_LEVEL_BED                      = _UxGT("Làm bằng mặt bàn");                     // Level bed
   LSTR MSG_BED_TRAMMING                   = _UxGT("Làm bằng góc bàn");                     // Level corners
@@ -112,13 +113,10 @@ namespace LanguageNarrow_vi {
   LSTR MSG_UBL_BC_INSERT2                 = _UxGT("Đo");                                   // Measure
   LSTR MSG_UBL_BC_REMOVE                  = _UxGT("Tháo và đo bàn");                       // Remove & measure bed
   LSTR MSG_UBL_MOVING_TO_NEXT             = _UxGT("Chuyển sang tiếp theo");                // Moving to next
-  LSTR MSG_UBL_ACTIVATE_MESH              = _UxGT("Bật UBL");
-  LSTR MSG_UBL_DEACTIVATE_MESH            = _UxGT("Tắt UBL");
   LSTR MSG_UBL_SET_TEMP_BED               = _UxGT("Nhiệt độ bàn");                         // Bed Temp
   LSTR MSG_UBL_BED_TEMP_CUSTOM            = _UxGT("Bed Temp");
   LSTR MSG_UBL_SET_TEMP_HOTEND            = _UxGT("Nhiệt độ đầu phun");                    // Hotend Temp
   LSTR MSG_UBL_HOTEND_TEMP_CUSTOM         = _UxGT("Hotend Temp");
-  LSTR MSG_UBL_MESH_EDIT                  = _UxGT("Chỉnh sửa lưới");                       // Mesh Edit
   LSTR MSG_UBL_EDIT_CUSTOM_MESH           = _UxGT("Chỉnh sửa lưới tự chọn");               // Edit Custom Mesh
   LSTR MSG_UBL_FINE_TUNE_MESH             = _UxGT("Chỉnh lưới chính xác");                 // Fine tuning mesh
   LSTR MSG_UBL_DONE_EDITING_MESH          = _UxGT("Chỉnh sửa xong lưới");                  // Done Editing Mesh
@@ -172,7 +170,8 @@ namespace LanguageNarrow_vi {
   LSTR MSG_UBL_7_SAVE_MESH                = _UxGT("7.Lưu lưới bàn");
 
   LSTR MSG_LED_CONTROL                    = _UxGT("Điều khiển LED");                       // LED Control
-  LSTR MSG_LEDS                           = _UxGT("Đèn");                                  // Lights
+  LSTR MSG_LIGHTS                         = _UxGT("Đèn");                                  // Lights
+  LSTR MSG_LIGHT_N                        = _UxGT("Đèn #{");                               // Light #{
   LSTR MSG_LED_PRESETS                    = _UxGT("Đèn định sẵn");                         // Light Presets
   LSTR MSG_SET_LEDS_RED                   = _UxGT("Đỏ");                                   // Red
   LSTR MSG_SET_LEDS_ORANGE                = _UxGT("Cam");                                  // Orange
@@ -322,8 +321,12 @@ namespace LanguageNarrow_vi {
   LSTR MSG_BLTOUCH_STOW                   = _UxGT("Cất BLTouch");                         // Stow BLTouch
   LSTR MSG_MANUAL_DEPLOY                  = _UxGT("Đem Đầu Dò-Z");                        // Deploy Z-Probe
   LSTR MSG_MANUAL_STOW                    = _UxGT("Cất Đầu Dò-Z");                        // Stow Z-Probe
-  LSTR MSG_HOME_FIRST                     = _UxGT("Về nhà %s Trước");
+  LSTR MSG_HOME_FIRST                     = _UxGT("Về nhà %s Trước");                     // Home %s first
+  LSTR MSG_ZPROBE_XOFFSET                 = _UxGT("Đầu Dò Bù Đắp X");                     // Probe X Offset
+  LSTR MSG_ZPROBE_YOFFSET                 = _UxGT("Đầu Dò Bù Đắp Y");                     // Probe Y Offset
   LSTR MSG_ZPROBE_ZOFFSET                 = _UxGT("Đầu Dò Bù Đắp Z");                     // Probe Z Offset
+  LSTR MSG_ZPROBE_OFFSET_N                = _UxGT("Đầu Dò Bù Đắp @");                     // Probe @ Offset
+  LSTR MSG_BABYSTEP_PROBE_Z               = _UxGT("Điều chỉnh Z từng");                   // Babystep Probe Z
   LSTR MSG_BABYSTEP_X                     = _UxGT("Nhít X");                              // Babystep X
   LSTR MSG_BABYSTEP_Y                     = _UxGT("Nhít Y");
   LSTR MSG_BABYSTEP_Z                     = _UxGT("Nhít Z");

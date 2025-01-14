@@ -111,20 +111,17 @@ void FilesScreen::drawFileButton(int x, int y, int w, int h, const char *filenam
   cmd.cmd(COLOR_RGB(is_highlighted ? fg_action : bg_color));
   cmd.font(font_medium).rectangle(bx, by, bw, bh);
   cmd.cmd(COLOR_RGB(is_highlighted ? normal_btn.rgb : bg_text_enabled));
-  #if ENABLED(SCROLL_LONG_FILENAMES)
-    if (is_highlighted) {
-      cmd.cmd(SAVE_CONTEXT());
-      cmd.cmd(SCISSOR_XY(x,y));
-      cmd.cmd(SCISSOR_SIZE(w,h));
-      cmd.cmd(MACRO(0));
-      cmd.text(bx, by, bw, bh, filename, OPT_CENTERY | OPT_NOFIT);
-    } else
-  #endif
-  draw_text_with_ellipsis(cmd, bx,by, bw - (is_dir ? 20 : 0), bh, filename, OPT_CENTERY, font_medium);
-  if (is_dir && !is_highlighted) cmd.text(bx, by, bw, bh, F("> "),  OPT_CENTERY | OPT_RIGHTX);
-  #if ENABLED(SCROLL_LONG_FILENAMES)
-    if (is_highlighted) cmd.cmd(RESTORE_CONTEXT());
-  #endif
+  if (TERN0(SCROLL_LONG_FILENAMES, is_highlighted)) {
+    cmd.cmd(SAVE_CONTEXT());
+    cmd.cmd(SCISSOR_XY(x,y));
+    cmd.cmd(SCISSOR_SIZE(w,h));
+    cmd.cmd(MACRO(0));
+    cmd.text(bx, by, bw, bh, filename, OPT_CENTERY | OPT_NOFIT);
+  }
+  else
+    draw_text_with_ellipsis(cmd, bx, by, bw - (is_dir ? 20 : 0), bh, filename, OPT_CENTERY, font_medium);
+  if (is_dir && !is_highlighted) cmd.text(bx, by, bw, bh, F("> "), OPT_CENTERY | OPT_RIGHTX);
+  if (TERN0(SCROLL_LONG_FILENAMES, is_highlighted)) cmd.cmd(RESTORE_CONTEXT());
 }
 
 void FilesScreen::drawFileList() {
@@ -136,11 +133,9 @@ void FilesScreen::drawFileList() {
 
   uint16_t fileIndex = mydata.cur_page * FILES_PER_PAGE;
   for (uint8_t i = 0; i < FILES_PER_PAGE; i++, fileIndex++) {
-    if (files.seek(fileIndex)) {
-      drawFileButton(files.filename(), getTagForLine(i), files.isDir(), false);
-      mydata.flags.is_empty = false;
-    } else
-      break;
+    if (!files.seek(fileIndex)) break;
+    drawFileButton(files.filename(), getTagForLine(i), files.isDir(), false);
+    mydata.flags.is_empty = false;
   }
 }
 

@@ -25,6 +25,8 @@
 #include "../inc/MarlinConfigPre.h"
 #include "../core/utility.h"
 
+#pragma GCC diagnostic ignored "-Wimplicit-fallthrough"
+
 constexpr char DIGIT(const uint8_t n) { return '0' + n; }
 
 template <typename T1, typename T2>

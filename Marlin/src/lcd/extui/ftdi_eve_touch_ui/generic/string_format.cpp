@@ -91,7 +91,7 @@ void format_temp_and_material(char *str, const_celsius_float_t t1, const char *m
 void format_position(char *str, float p, uint8_t decimals) {
   dtostrf(p, 4 + decimals, decimals, str);
   strcat_P(str, PSTR(" "));
-  strcat_P(str, GET_TEXT(MSG_UNITS_MM));
+  //strcat_P(str, GET_TEXT(MSG_UNITS_MM));
 }
 
 /**

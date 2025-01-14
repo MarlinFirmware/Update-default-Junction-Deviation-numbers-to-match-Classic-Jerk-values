@@ -294,7 +294,7 @@ void setProBarRate() {
     lv_label_set_text(bar1ValueText, public_buf_l);
     lv_obj_align(bar1ValueText, bar1, LV_ALIGN_CENTER, 0, 0);
 
-    if (marlin_state == MF_SD_COMPLETE) {
+    if (marlin_state == MarlinState::MF_SD_COMPLETE) {
       if (once_flag == 0) {
         stop_print_time();
 
@@ -309,7 +309,7 @@ void setProBarRate() {
           if (gCfgItems.finish_power_off) {
             gcode.process_subcommands_now(F("M1001"));
             queue.inject(F("M81"));
-            marlin_state = MF_RUNNING;
+            marlin_state = MarlinState::MF_RUNNING;
           }
         #endif
       }

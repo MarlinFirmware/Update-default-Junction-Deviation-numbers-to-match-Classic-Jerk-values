@@ -69,13 +69,13 @@ extern DefaultSerial3 MSerial1;
   #endif
 #endif
 
-#ifdef MMU2_SERIAL_PORT
-  #if WITHIN(MMU2_SERIAL_PORT, 0, 1)
-    #define MMU2_SERIAL MSERIAL(SERIAL_PORT)
-  #elif MMU2_SERIAL_PORT == -1
-    #define MMU2_SERIAL MSerialUSB
+#ifdef MMU_SERIAL_PORT
+  #if WITHIN(MMU_SERIAL_PORT, 0, 1)
+    #define MMU_SERIAL MSERIAL(SERIAL_PORT)
+  #elif MMU_SERIAL_PORT == -1
+    #define MMU_SERIAL MSerialUSB
   #else
-    #error "MMU2_SERIAL_PORT must be -1 (Native USB only)."
+    #error "MMU_SERIAL_PORT must be -1 (Native USB only)."
   #endif
 #endif
 

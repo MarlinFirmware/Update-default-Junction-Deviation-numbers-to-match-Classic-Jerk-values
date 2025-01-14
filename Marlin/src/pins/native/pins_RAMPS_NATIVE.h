@@ -604,6 +604,7 @@
       #define BTN_ENC                         32
       #define LCD_SDSS                      SDSS
       #define KILL_PIN                        41
+      #undef LCD_PINS_EN                          // not used, causes false pin conflict report
 
     #elif ENABLED(LCD_I2C_VIKI)
 

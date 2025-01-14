@@ -175,16 +175,16 @@ const PinInfo pin_array[] PROGMEM = {
 
 bool pin_is_protected(const pin_t pin);
 
-static void print_input_or_output(const bool isout) {
+static void printPinIOState(const bool isout) {
   SERIAL_ECHO(isout ? F("Output ") : F("Input  "));
 }
 
-static void print_pin_state(const bool state) {
+static void printPinState(const bool state) {
   SERIAL_ECHO(state ? F("HIGH") : F("LOW"));
 }
 
 // pretty report with PWM info
-inline void report_pin_state_extended(const pin_t pin, const bool ignore, const bool extended=false, FSTR_P const start_string=nullptr) {
+inline void printPinStateExt(const pin_t pin, const bool ignore, const bool extended=false, FSTR_P const start_string=nullptr) {
   char buffer[MAX_NAME_LENGTH + 1];   // for the sprintf statements
   bool found = false, multi_name_pin = false;
 
@@ -192,13 +192,13 @@ inline void report_pin_state_extended(const pin_t pin, const bool ignore, const 
     #if AVR_AT90USB1286_FAMILY
       // Use FastIO for pins Teensy doesn't expose
       if (pin == 46) {
-        print_input_or_output(IS_OUTPUT(46));
-        print_pin_state(READ(46));
+        printPinIOState(IS_OUTPUT(46));
+        printPinState(READ(46));
         return false;
       }
       else if (pin == 47) {
-        print_input_or_output(IS_OUTPUT(47));
-        print_pin_state(READ(47));
+        printPinIOState(IS_OUTPUT(47));
+        printPinState(READ(47));
         return false;
       }
     #endif
@@ -206,46 +206,46 @@ inline void report_pin_state_extended(const pin_t pin, const bool ignore, const 
   };
 
   for (uint8_t x = 0; x < COUNT(pin_array); ++x)  {    // scan entire array and report all instances of this pin
-    if (GET_ARRAY_PIN(x) == pin) {
+    if (getPinByIndex(x) == pin) {
       if (!found) {    // report digital and analog pin number only on the first time through
         if (start_string) SERIAL_ECHO(start_string);
         SERIAL_ECHOPGM("PIN: ");
-        PRINT_PIN(pin);
-        print_port(pin);
-        if (int8_t(DIGITAL_PIN_TO_ANALOG_PIN(pin)) >= 0) PRINT_PIN_ANALOG(pin); // analog pin number
+        printPinNumber(pin);
+        printPinPort(pin);
+        if (int8_t(digitalPinToAnalogIndex(pin)) >= 0) printPinAnalog(pin); // analog pin number
         else SERIAL_ECHO_SP(8);                                                 // add padding if not an analog pin
       }
       else {
         SERIAL_CHAR('.');
         SERIAL_ECHO_SP(MULTI_NAME_PAD + (start_string ? strlen_P(FTOP(start_string)) : 0));  // add padding if not the first instance found
       }
-      PRINT_ARRAY_NAME(x);
+      printPinNameByIndex(x);
       if (extended) {
         if (pin_is_protected(pin) && !ignore)
           SERIAL_ECHOPGM("protected ");
         else {
           if (alt_pin_echo(pin)) {
-            if (!GET_ARRAY_IS_DIGITAL(x)) {
-              sprintf_P(buffer, PSTR("Analog in = %5ld"), (long)analogRead(DIGITAL_PIN_TO_ANALOG_PIN(pin)));
+            if (!getPinIsDigitalByIndex(x)) {
+              sprintf_P(buffer, PSTR("Analog in = %5ld"), (long)analogRead(digitalPinToAnalogIndex(pin)));
               SERIAL_ECHO(buffer);
             }
             else {
-              if (!GET_PINMODE(pin)) {
+              if (!getValidPinMode(pin)) {
                 //pinMode(pin, INPUT_PULLUP);  // make sure input isn't floating - stopped doing this
                                                // because this could interfere with inductive/capacitive
                                                // sensors (high impedance voltage divider) and with Pt100 amplifier
-                print_input_or_output(false);
-                print_pin_state(digitalRead_mod(pin));
+                printPinIOState(false);
+                printPinState(digitalRead_mod(pin));
               }
               else if (pwm_status(pin)) {
                 // do nothing
               }
               else {
-                print_input_or_output(true);
-                print_pin_state(digitalRead_mod(pin));
+                printPinIOState(true);
+                printPinState(digitalRead_mod(pin));
               }
             }
-            if (!multi_name_pin && extended) pwm_details(pin);  // report PWM capabilities only on the first pass & only if doing an extended report
+            if (!multi_name_pin && extended) printPinPWM(pin);  // report PWM capabilities only on the first pass & only if doing an extended report
           }
         }
       }
@@ -258,9 +258,9 @@ inline void report_pin_state_extended(const pin_t pin, const bool ignore, const 
   if (!found) {
     if (start_string) SERIAL_ECHO(start_string);
     SERIAL_ECHOPGM("PIN: ");
-    PRINT_PIN(pin);
-    print_port(pin);
-    if (int8_t(DIGITAL_PIN_TO_ANALOG_PIN(pin)) >= 0) PRINT_PIN_ANALOG(pin); // analog pin number
+    printPinNumber(pin);
+    printPinPort(pin);
+    if (int8_t(digitalPinToAnalogIndex(pin)) >= 0) printPinAnalog(pin); // analog pin number
     else SERIAL_ECHO_SP(8);                                                 // add padding if not an analog pin
     SERIAL_ECHOPGM("<unused/unknown>");
     if (extended) {
@@ -269,27 +269,27 @@ inline void report_pin_state_extended(const pin_t pin, const bool ignore, const 
         if (pwm_status(pin)) {
           // do nothing
         }
-        else if (GET_PINMODE(pin)) {
+        else if (getValidPinMode(pin)) {
           SERIAL_ECHO_SP(MAX_NAME_LENGTH - 16);
-          print_input_or_output(true);
-          print_pin_state(digitalRead_mod(pin));
+          printPinIOState(true);
+          printPinState(digitalRead_mod(pin));
         }
         else {
-          if (IS_ANALOG(pin)) {
-            sprintf_P(buffer, PSTR("   Analog in = %5ld"), (long)analogRead(DIGITAL_PIN_TO_ANALOG_PIN(pin)));
+          if (isAnalogPin(pin)) {
+            sprintf_P(buffer, PSTR("   Analog in = %5ld"), (long)analogRead(digitalPinToAnalogIndex(pin)));
             SERIAL_ECHO(buffer);
             SERIAL_ECHOPGM("   ");
           }
           else
           SERIAL_ECHO_SP(MAX_NAME_LENGTH - 16);   // add padding if not an analog pin
 
-          print_input_or_output(false);
-          print_pin_state(digitalRead_mod(pin));
+          printPinIOState(false);
+          printPinState(digitalRead_mod(pin));
         }
         //if (!pwm_status(pin)) SERIAL_CHAR(' ');    // add padding if it's not a PWM pin
         if (extended) {
           SERIAL_ECHO_SP(MAX_NAME_LENGTH - 16);
-          pwm_details(pin);  // report PWM capabilities only if doing an extended report
+          printPinPWM(pin);  // report PWM capabilities only if doing an extended report
         }
       }
     }

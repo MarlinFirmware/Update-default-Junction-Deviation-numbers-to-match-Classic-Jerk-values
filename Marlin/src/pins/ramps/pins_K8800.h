@@ -23,7 +23,7 @@
 
 /**
  * Velleman K8800 (Vertex)
- * Schematic: https://www.velleman.eu/downloads/files/vertex-delta/schematics/K8800-schematic-V1.4.pdf
+ * Schematic: https://cdn.velleman.eu/downloads/files/vertex-delta/schematics/K8800-schematic-V1.4.pdf
  * ATmega2560, ATmega1280
  */
 

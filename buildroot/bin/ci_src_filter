@@ -3,12 +3,10 @@
 # exit on first failure
 set -e
 
-SED=$(which gsed sed | head -n1)
 FN="platformio.ini"
 
 if [[ $1 == "-n" ]]; then
-  "${SED}" -i "s/default_src_filter/org_src_filter/" $FN
-  "${SED}" -i "/org_src_filter/ s/^/default_src_filter = +<src\/*>\n/" $FN
+  awk '/default_src_filter/ { sub("default_src_filter", "org_src_filter"); print "default_src_filter = +<src/*>"; } 1' $FN > $FN~ && mv $FN~ $FN
 else
   git checkout $FN 2>/dev/null
 fi

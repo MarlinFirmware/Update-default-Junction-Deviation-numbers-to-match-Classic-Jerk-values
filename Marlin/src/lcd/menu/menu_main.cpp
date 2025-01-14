@@ -50,7 +50,7 @@
   #define MACHINE_CAN_PAUSE 1
 #endif
 
-#if ENABLED(MMU2_MENUS)
+#if ENABLED(MMU_MENUS)
   #include "menu_mmu2.h"
 #endif
 
@@ -72,6 +72,10 @@ void menu_motion();
 void menu_temperature();
 void menu_configuration();
 
+#if ANY(HAS_LEVELING, HAS_BED_PROBE, ASSISTED_TRAMMING_WIZARD, LCD_BED_TRAMMING)
+  void menu_probe_level();
+#endif
+
 #if HAS_POWER_MONITOR
   void menu_power_monitor();
 #endif
@@ -88,8 +92,12 @@ void menu_configuration();
   void menu_info();
 #endif
 
-#if ANY(LED_CONTROL_MENU, CASE_LIGHT_MENU)
+#if ENABLED(LED_CONTROL_MENU)
   void menu_led();
+#elif ALL(CASE_LIGHT_MENU, CASELIGHT_USES_BRIGHTNESS)
+  void menu_case_light();
+#elif ENABLED(CASE_LIGHT_MENU)
+  #include "../../feature/caselight.h"
 #endif
 
 #if HAS_CUTTER
@@ -329,6 +337,10 @@ void menu_main() {
     #endif
 
     SUBMENU(MSG_MOTION, menu_motion);
+
+    #if ANY(HAS_LEVELING, HAS_BED_PROBE, ASSISTED_TRAMMING_WIZARD, LCD_BED_TRAMMING)
+      SUBMENU(MSG_PROBE_AND_LEVEL, menu_probe_level);
+    #endif
   }
 
   #if HAS_CUTTER
@@ -351,8 +363,10 @@ void menu_main() {
     SUBMENU(MSG_MIXER, menu_mixer);
   #endif
 
-  #if ENABLED(MMU2_MENUS)
-    if (!busy) SUBMENU(MSG_MMU2_MENU, menu_mmu2);
+  #if ENABLED(MMU_MENUS)
+    // MMU3 can show print stats which can be useful during
+    // the print, so MMU menus are required for MMU3.
+    if (TERN1(HAS_PRUSA_MMU2, !busy)) SUBMENU(MSG_MMU2_MENU, menu_mmu2);
   #endif
 
   SUBMENU(MSG_CONFIGURATION, menu_configuration);
@@ -371,8 +385,12 @@ void menu_main() {
     SUBMENU(MSG_INFO_MENU, menu_info);
   #endif
 
-  #if ANY(LED_CONTROL_MENU, CASE_LIGHT_MENU)
-    SUBMENU(MSG_LEDS, menu_led);
+  #if ENABLED(LED_CONTROL_MENU)
+    SUBMENU(MSG_LIGHTS, menu_led);
+  #elif ALL(CASE_LIGHT_MENU, CASELIGHT_USES_BRIGHTNESS)
+    SUBMENU(MSG_CASE_LIGHT, menu_case_light);
+  #elif ENABLED(CASE_LIGHT_MENU)
+    EDIT_ITEM(bool, MSG_CASE_LIGHT, &caselight.on, caselight.update_enabled);
   #endif
 
   //

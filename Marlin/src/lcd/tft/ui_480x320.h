@@ -29,7 +29,7 @@
 
 #define MENU_ITEM_ICON_X            5
 #define MENU_ITEM_ICON_Y            5
-#define MENU_ITEM_ICON_SPACE        42
+#define MENU_ITEM_ICON_SPACE        (5 + 32 + 5)
 
 #define MENU_ITEM_HEIGHT            43
 #define MENU_LINE_HEIGHT            (MENU_ITEM_HEIGHT + 2)
@@ -60,11 +60,6 @@
     #define BOOTSCREEN_LOGO_H       TFT_HEIGHT
     #define BOOTSCREEN_SITE_URL_Y   (TFT_HEIGHT - 36)
   #endif
-#endif
-
-#if !defined(BOOTSCREEN_LOGO_X) && !defined(BOOTSCREEN_LOGO_Y)
-  #define BOOTSCREEN_LOGO_X         (TFT_WIDTH - BOOTSCREEN_LOGO_W) / 2
-  #define BOOTSCREEN_LOGO_Y         (TFT_HEIGHT - BOOTSCREEN_LOGO_H) / 2
 #endif
 
 #if !defined(NAVIGATION_PAGE_UP_X) && !defined(NAVIGATION_PAGE_UP_Y) && !defined(NAVIGATION_PAGE_DOWN_X) && !defined(NAVIGATION_PAGE_DOWN_Y) && !defined(NAVIGATION_BACK_X) && !defined(NAVIGATION_BACK_Y)

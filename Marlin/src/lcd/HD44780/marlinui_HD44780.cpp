@@ -833,8 +833,6 @@ void MarlinUI::draw_status_message(const bool blink) {
 #if HAS_PRINT_PROGRESS
 
   #define TPOFFSET (LCD_WIDTH - 1)
-  static uint8_t timepos = TPOFFSET - 6;
-  static char buffer[8];
 
   #if ENABLED(SHOW_PROGRESS_PERCENT)
     static lcd_uint_t pc = 0, pr = 2;
@@ -853,8 +851,9 @@ void MarlinUI::draw_status_message(const bool blink) {
   #if ENABLED(SHOW_REMAINING_TIME)
     void MarlinUI::drawRemain() {
       if (printJobOngoing()) {
+        char buffer[8];
         const duration_t remaint = get_remaining_time();
-        timepos = TPOFFSET - remaint.toDigital(buffer);
+        const uint8_t timepos = TPOFFSET - remaint.toDigital(buffer);
         IF_DISABLED(LCD_INFO_SCREEN_STYLE, lcd_put_lchar(timepos - 1, 2, 0x20));
         lcd_put_lchar(TERN(LCD_INFO_SCREEN_STYLE, 11, timepos), 2, 'R');
         lcd_put_u8str(buffer);
@@ -866,7 +865,8 @@ void MarlinUI::draw_status_message(const bool blink) {
     void MarlinUI::drawInter() {
       const duration_t interactt = interaction_time;
       if (printingIsActive() && interactt.value) {
-        timepos = TPOFFSET - interactt.toDigital(buffer);
+        char buffer[8];
+        const uint8_t timepos = TPOFFSET - interactt.toDigital(buffer);
         IF_DISABLED(LCD_INFO_SCREEN_STYLE, lcd_put_lchar(timepos - 1, 2, 0x20));
         lcd_put_lchar(TERN(LCD_INFO_SCREEN_STYLE, 11, timepos), 2, 'C');
         lcd_put_u8str(buffer);
@@ -877,8 +877,9 @@ void MarlinUI::draw_status_message(const bool blink) {
   #if ENABLED(SHOW_ELAPSED_TIME)
     void MarlinUI::drawElapsed() {
       if (printJobOngoing()) {
+        char buffer[8];
         const duration_t elapsedt = print_job_timer.duration();
-        timepos = TPOFFSET - elapsedt.toDigital(buffer);
+        const uint8_t timepos = TPOFFSET - elapsedt.toDigital(buffer);
         IF_DISABLED(LCD_INFO_SCREEN_STYLE, lcd_put_lchar(timepos - 1, 2, 0x20));
         lcd_put_lchar(TERN(LCD_INFO_SCREEN_STYLE, 11, timepos), 2, 'E');
         lcd_put_u8str(buffer);
@@ -1344,7 +1345,7 @@ void MarlinUI::draw_status_screen() {
     void MenuItem_sdbase::draw(const bool sel, const uint8_t row, FSTR_P const, CardReader &theCard, const bool isDir) {
       lcd_put_lchar(0, row, sel ? LCD_STR_ARROW_RIGHT[0] : ' ');
       uint8_t n = LCD_WIDTH - 2;
-      n -= lcd_put_u8str_max(ui.scrolled_filename(theCard, n, row, sel), n);
+      n -= lcd_put_u8str_max(ui.scrolled_filename(theCard, n, sel), n);
       for (; n; --n) lcd_put_u8str(F(" "));
       lcd_put_lchar(isDir ? LCD_STR_FOLDER[0] : ' ');
     }

@@ -27,11 +27,13 @@
 
 using namespace FTDI;
 using namespace ExtUI;
+using namespace Theme;
 
 void FeedratePercentScreen::onRedraw(draw_mode_t what) {
   widgets_t w(what);
   w.precision(0).units(GET_TEXT_F(MSG_UNITS_PERCENT));
 
+  w.color(feedrate);
   w.heading(GET_TEXT_F(MSG_PRINT_SPEED));
   w.adjuster(4,  GET_TEXT_F(MSG_SPEED), getFeedrate_percent());
   w.increments();

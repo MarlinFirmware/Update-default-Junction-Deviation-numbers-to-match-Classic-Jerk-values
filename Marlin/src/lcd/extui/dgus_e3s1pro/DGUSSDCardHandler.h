@@ -22,7 +22,7 @@
 #pragma once
 
 #include <inttypes.h>
-#include "../../../sd/cardreader.h"
+#include "../../../sd/SdFatConfig.h"
 
 #define DGUS_E3S1PRO_BASIC_SDCARD_MAX_FILES      20
 #define DGUS_E3S1PRO_BASIC_SDCARD_FILES_PER_PAGE  5

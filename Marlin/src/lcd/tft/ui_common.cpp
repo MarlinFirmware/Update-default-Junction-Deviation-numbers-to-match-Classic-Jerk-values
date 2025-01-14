@@ -222,7 +222,9 @@ void menu_line(const uint8_t row, uint16_t color) {
   text_line(MENU_TOP_LINE_Y + cursor.y * MENU_LINE_HEIGHT, color);
 }
 
-void menu_item(const uint8_t row, bool sel ) {
+uint16_t menu_item(const uint8_t row, const bool sel) {
+  const uint16_t lineColor = sel ? COLOR_SELECTION_BG : COLOR_BACKGROUND;
+
   #if ENABLED(TOUCH_SCREEN)
     if (row == 0) {
       touch.clear();
@@ -230,11 +232,13 @@ void menu_item(const uint8_t row, bool sel ) {
     }
   #endif
 
-  menu_line(row, sel ? COLOR_SELECTION_BG : COLOR_BACKGROUND);
+  menu_line(row, lineColor);
   #if ENABLED(TOUCH_SCREEN)
     const TouchControlType tct = TERN(SINGLE_TOUCH_NAVIGATION, true, sel) ? MENU_CLICK : MENU_ITEM;
     touch.add_control(tct, 0, MENU_TOP_LINE_Y + row * MENU_LINE_HEIGHT, TFT_WIDTH, MENU_ITEM_HEIGHT, encoderTopLine + row);
   #endif
+
+  return lineColor;
 }
 
 void add_control(uint16_t x, uint16_t y, TouchControlType control_type, intptr_t data, MarlinImage image, bool is_enabled, uint16_t color_enabled, uint16_t color_disabled) {
@@ -319,42 +323,67 @@ void lcd_put_int(const int i) {
 
 // Draw a generic menu item with pre_char (if selected) and post_char
 void MenuItemBase::_draw(const bool sel, const uint8_t row, FSTR_P const ftpl, const char pre_char, const char post_char) {
-  menu_item(row, sel);
+  const uint16_t lineColor = menu_item(row, sel);
 
   const char *string = FTOP(ftpl);
+
+  #ifndef MENU_ITEM_BACK_LINE_SHIFT
+    #define MENU_ITEM_BACK_LINE_SHIFT 0
+  #endif
+
+  int8_t line_shift = 0;
+  uint16_t color = COLOR_MENU_TEXT;
+
+  // Determine an image to show in the left column
   MarlinImage image = noImage;
-  switch (*string) {
-    case LCD_STR_REFRESH[0]: image = imgRefresh; break;
-    case LCD_STR_FOLDER[0]: image = imgDirectory; break;
+  if (pre_char == LCD_STR_UPLEVEL[0]) {
+    image = imgLeft;
+    color = COLOR_MENU_BACK_TEXT;
+  }
+  else {
+    switch (*string) {
+      case LCD_STR_REFRESH[0]: image = imgRefresh; break;
+      case LCD_STR_FOLDER[0]: image = imgDirectory; break;
+    }
+    if (image != noImage) {
+      line_shift = MENU_ITEM_ICON_SPACE;
+      string++;
+      if (*string == ' ') string++;
+    }
   }
 
-  uint8_t offset = MENU_TEXT_X;
+  // For narrower screens text-only items align fully left
+  // For wider screens text aligns on the post-icon column
+  uint8_t text_x = (TFT_WIDTH >= 480) ? MENU_ITEM_ICON_SPACE : MENU_TEXT_X;
   if (image != noImage) {
-    string++;
-    offset = MENU_ITEM_ICON_SPACE;
-    tft.add_image(MENU_ITEM_ICON_X, MENU_ITEM_ICON_Y, image, COLOR_MENU_TEXT, sel ? COLOR_SELECTION_BG : COLOR_BACKGROUND);
+    text_x = MENU_ITEM_ICON_SPACE;
+    tft.add_image(MENU_ITEM_ICON_X + line_shift, MENU_ITEM_ICON_Y, image, color, lineColor);
   }
 
+  // Add the text content from ftpl
   tft_string.set(string, itemIndex, itemStringC, itemStringF);
+  tft.add_text(text_x + line_shift, MENU_TEXT_Y, color, tft_string);
 
-  tft.add_text(offset, MENU_TEXT_Y, COLOR_MENU_TEXT, tft_string);
+  if (post_char == LCD_STR_ARROW_RIGHT[0])
+    tft.add_image(MENU_ITEM_SUBMENU_ICON_X, MENU_ITEM_ICON_Y, imgRight, color, lineColor);
 }
 
 // Draw a menu item with a (potentially) editable value
 void MenuEditItemBase::draw(const bool sel, const uint8_t row, FSTR_P const ftpl, const char * const inStr, const bool pgm) {
-  menu_item(row, sel);
+  (void)menu_item(row, sel);
 
+  constexpr uint8_t text_x = (TFT_WIDTH >= 480) ? MENU_ITEM_ICON_SPACE : MENU_TEXT_X;
   tft_string.set(ftpl, itemIndex, itemStringC, itemStringF);
-  tft.add_text(MENU_TEXT_X, MENU_TEXT_Y, COLOR_MENU_TEXT, tft_string);
+  tft.add_text(text_x, MENU_TEXT_Y, COLOR_MENU_EDIT_TEXT, tft_string);
   if (inStr) {
     tft_string.set(inStr);
-    tft.add_text(TFT_WIDTH - MENU_TEXT_X - tft_string.width(), MENU_TEXT_Y, COLOR_MENU_VALUE, tft_string);
+    tft.add_text(MENU_EDIT_ITEM_RIGHT_X - tft_string.width(), MENU_TEXT_Y, COLOR_MENU_VALUE, tft_string);
   }
 }
 
 // Draw a static item with no left-right margin required. Centered by default.
 void MenuItem_static::draw(const uint8_t row, FSTR_P const ftpl, const uint8_t style/*=SS_DEFAULT*/, const char *vstr/*=nullptr*/) {
-  menu_item(row);
+  (void)menu_item(row);
 
   if (ftpl)
     tft_string.set(ftpl, itemIndex, itemStringC, itemStringF);
@@ -364,7 +393,7 @@ void MenuItem_static::draw(const uint8_t row, FSTR_P const ftpl, const uint8_t s
   const bool center = bool(style & SS_CENTER), full = bool(style & SS_FULL);
   if (!full || !vstr) {
     if (vstr) tft_string.add(vstr);
-    tft.add_text(center ? tft_string.center(TFT_WIDTH) : 0, MENU_TEXT_Y, COLOR_MENU_TEXT, tft_string);
+    tft.add_text(center ? tft_string.center(TFT_WIDTH) : 0, MENU_TEXT_Y, COLOR_MENU_STATIC_TEXT, tft_string);
     return;
   }
 
@@ -372,21 +401,23 @@ void MenuItem_static::draw(const uint8_t row, FSTR_P const ftpl, const uint8_t s
   if (*vstr == ':') { tft_string.add(':'); vstr++; }
 
   // Left-justified label
-  tft.add_text(0, MENU_TEXT_Y, COLOR_MENU_TEXT, tft_string);
+  tft.add_text(0, MENU_TEXT_Y, COLOR_MENU_STATIC_TEXT, tft_string);
 
   // Right-justified value, after spaces
   while (*vstr == ' ') vstr++;
   tft_string.set(vstr);
-  tft.add_text(TFT_WIDTH - 1 - tft_string.width(), MENU_TEXT_Y, COLOR_MENU_TEXT, tft_string);
+  tft.add_text(TFT_WIDTH - 1 - tft_string.width(), MENU_TEXT_Y, COLOR_MENU_STATIC_TEXT, tft_string);
 }
 
 #if HAS_MEDIA
 
   void MenuItem_sdbase::draw(const bool sel, const uint8_t row, FSTR_P const, CardReader &theCard, const bool isDir) {
-    menu_item(row, sel);
-    if (isDir) tft.add_image(MENU_ITEM_ICON_X, MENU_ITEM_ICON_Y, imgDirectory, COLOR_MENU_TEXT, sel ? COLOR_SELECTION_BG : COLOR_BACKGROUND);
-    uint8_t maxlen = (MENU_ITEM_HEIGHT) - (MENU_TEXT_Y) + 1;
-    tft.add_text(MENU_ITEM_ICON_SPACE, MENU_TEXT_Y, COLOR_MENU_TEXT, ui.scrolled_filename(theCard, maxlen, row, sel));
+    const uint16_t lineColor = menu_item(row, sel);
+    constexpr uint8_t line_shift = (TFT_WIDTH >= 480) ? MENU_ITEM_ICON_SPACE : 0;
+    if (isDir) tft.add_image(MENU_ITEM_ICON_X + line_shift, MENU_ITEM_ICON_Y, imgDirectory, COLOR_MENU_TEXT, lineColor);
+    const char * const filename = ui.scrolled_filename(theCard, LCD_WIDTH - 1, sel);
+    //SERIAL_ECHOLNPGM("Drawing filename: ", filename);
+    tft.add_text(MENU_ITEM_ICON_SPACE + line_shift, MENU_TEXT_Y, COLOR_MENU_TEXT, filename);
   }
 
 #endif

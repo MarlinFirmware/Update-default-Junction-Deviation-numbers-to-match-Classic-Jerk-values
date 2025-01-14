@@ -60,29 +60,38 @@ void safe_delay(millis_t ms) {
   #include "../feature/bedlevel/bedlevel.h"
 
   void log_machine_info() {
-    SERIAL_ECHOLNPGM("Machine Type: "
-      TERN_(DELTA,         "Delta")
-      TERN_(IS_SCARA,      "SCARA")
-      TERN_(IS_CORE,       "Core")
-      TERN_(MARKFORGED_XY, "MarkForgedXY")
-      TERN_(MARKFORGED_YX, "MarkForgedYX")
-      TERN_(IS_CARTESIAN,  "Cartesian")
+    SERIAL_ECHOLNPGM("Machine Type:"
+      TERN_(DELTA,                 " Delta")
+      TERN_(IS_SCARA,              " SCARA")
+      TERN_(AXEL_TPARA,            " TPARA")
+      TERN_(IS_CORE,               " Core")
+      TERN_(BELTPRINTER,           " Belt Printer")
+      TERN_(MARKFORGED_XY,         " MarkForgedXY")
+      TERN_(MARKFORGED_YX,         " MarkForgedYX")
+      TERN_(POLAR,                 " Polar")
+      TERN_(POLARGRAPH,            " Polargraph")
+      TERN_(ARTICULATED_ROBOT_ARM, " Robot Arm")
+      TERN_(FOAMCUTTER_XYUV,       " Foam Cutter")
+      TERN_(IS_CARTESIAN,          " Cartesian")
     );
 
     SERIAL_ECHOLNPGM("Probe: "
-      TERN_(PROBE_MANUALLY, "PROBE_MANUALLY")
-      TERN_(NOZZLE_AS_PROBE, "NOZZLE_AS_PROBE")
-      TERN_(FIX_MOUNTED_PROBE, "FIX_MOUNTED_PROBE")
-      TERN_(HAS_Z_SERVO_PROBE, TERN(BLTOUCH, "BLTOUCH", "SERVO PROBE"))
-      TERN_(BD_SENSOR, "BD_SENSOR")
-      TERN_(TOUCH_MI_PROBE, "TOUCH_MI_PROBE")
-      TERN_(Z_PROBE_SLED, "Z_PROBE_SLED")
-      TERN_(Z_PROBE_ALLEN_KEY, "Z_PROBE_ALLEN_KEY")
-      TERN_(SOLENOID_PROBE, "SOLENOID_PROBE")
-      TERN_(MAGLEV4, "MAGLEV4")
-      TERN_(BIQU_MICROPROBE_V1, "BIQU_MICROPROBE_V1")
-      TERN_(BIQU_MICROPROBE_V2, "BIQU_MICROPROBE_V2")
-      IF_DISABLED(PROBE_SELECTED, "NONE")
+      TERN_(PROBE_MANUALLY,        "PROBE_MANUALLY")
+      TERN_(NOZZLE_AS_PROBE,       "NOZZLE_AS_PROBE")
+      TERN_(FIX_MOUNTED_PROBE,     "FIX_MOUNTED_PROBE")
+      TERN_(HAS_Z_SERVO_PROBE,     TERN(BLTOUCH, "BLTOUCH", "SERVO PROBE"))
+      TERN_(BD_SENSOR,             "BD_SENSOR")
+      TERN_(TOUCH_MI_PROBE,        "TOUCH_MI_PROBE")
+      TERN_(Z_PROBE_ALLEN_KEY,     "Z_PROBE_ALLEN_KEY")
+      TERN_(Z_PROBE_SLED,          "Z_PROBE_SLED")
+      TERN_(RACK_AND_PINION_PROBE, "RACK_AND_PINION_PROBE")
+      TERN_(SOLENOID_PROBE,        "SOLENOID_PROBE")
+      TERN_(SENSORLESS_PROBING,    "SENSORLESS_PROBING")
+      TERN_(MAGLEV4,               "MAGLEV4")
+      TERN_(MAG_MOUNTED_PROBE,     "MAG_MOUNTED_PROBE")
+      TERN_(BIQU_MICROPROBE_V1,    "BIQU_MICROPROBE_V1")
+      TERN_(BIQU_MICROPROBE_V2,    "BIQU_MICROPROBE_V2")
+      IF_DISABLED(PROBE_SELECTED,  "NONE")
     );
 
     #if HAS_BED_PROBE

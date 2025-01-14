@@ -66,6 +66,8 @@ namespace LanguageNarrow_fi {
   LSTR MSG_EXTRUDE                        = _UxGT("Pursota");
   LSTR MSG_RETRACT                        = _UxGT("Vedä takaisin");
   LSTR MSG_MOVE_AXIS                      = _UxGT("Liikuta akseleita");
+  LSTR MSG_PROBE_AND_LEVEL                = _UxGT("Tutki ja tasoita");
+  LSTR MSG_BABYSTEP_PROBE_Z               = _UxGT("Säädä Z askeltamalla");
   LSTR MSG_MOVE_X                         = _UxGT("Liikuta X");
   LSTR MSG_MOVE_Y                         = _UxGT("Liikuta Y");
   LSTR MSG_MOVE_Z                         = _UxGT("Liikuta Z");

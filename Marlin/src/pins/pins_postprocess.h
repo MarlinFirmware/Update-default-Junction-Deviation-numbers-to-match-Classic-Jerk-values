@@ -307,74 +307,167 @@
   #define E7_CS_PIN -1
 #endif
 
+// If only TX is defined, use the same pin for RX
+#if HAS_TMC_UART
+  #if !defined(X_SERIAL_RX_PIN) && PIN_EXISTS(X_SERIAL_TX)
+    #define X_SERIAL_RX_PIN      X_SERIAL_TX_PIN
+  #endif
+  #if !defined(X2_SERIAL_RX_PIN) && PIN_EXISTS(X2_SERIAL_TX)
+    #define X2_SERIAL_RX_PIN    X2_SERIAL_TX_PIN
+  #endif
+  #if !defined(Y_SERIAL_RX_PIN) && PIN_EXISTS(Y_SERIAL_TX)
+    #define Y_SERIAL_RX_PIN      Y_SERIAL_TX_PIN
+  #endif
+  #if !defined(Y2_SERIAL_RX_PIN) && PIN_EXISTS(Y2_SERIAL_TX)
+    #define Y2_SERIAL_RX_PIN    Y2_SERIAL_TX_PIN
+  #endif
+  #if !defined(Z_SERIAL_RX_PIN) && PIN_EXISTS(Z_SERIAL_TX)
+    #define Z_SERIAL_RX_PIN      Z_SERIAL_TX_PIN
+  #endif
+  #if !defined(Z2_SERIAL_RX_PIN) && PIN_EXISTS(Z2_SERIAL_TX)
+    #define Z2_SERIAL_RX_PIN    Z2_SERIAL_TX_PIN
+  #endif
+  #if !defined(Z3_SERIAL_RX_PIN) && PIN_EXISTS(Z3_SERIAL_TX)
+    #define Z3_SERIAL_RX_PIN    Z3_SERIAL_TX_PIN
+  #endif
+  #if !defined(Z4_SERIAL_RX_PIN) && PIN_EXISTS(Z4_SERIAL_TX)
+    #define Z4_SERIAL_RX_PIN    Z4_SERIAL_TX_PIN
+  #endif
+  #if !defined(I_SERIAL_RX_PIN) && PIN_EXISTS(I_SERIAL_TX)
+    #define I_SERIAL_RX_PIN      I_SERIAL_TX_PIN
+  #endif
+  #if !defined(J_SERIAL_RX_PIN) && PIN_EXISTS(J_SERIAL_TX)
+    #define J_SERIAL_RX_PIN      J_SERIAL_TX_PIN
+  #endif
+  #if !defined(K_SERIAL_RX_PIN) && PIN_EXISTS(K_SERIAL_TX)
+    #define K_SERIAL_RX_PIN      K_SERIAL_TX_PIN
+  #endif
+  #if !defined(U_SERIAL_RX_PIN) && PIN_EXISTS(U_SERIAL_TX)
+    #define U_SERIAL_RX_PIN      U_SERIAL_TX_PIN
+  #endif
+  #if !defined(V_SERIAL_RX_PIN) && PIN_EXISTS(V_SERIAL_TX)
+    #define V_SERIAL_RX_PIN      V_SERIAL_TX_PIN
+  #endif
+  #if !defined(W_SERIAL_RX_PIN) && PIN_EXISTS(W_SERIAL_TX)
+    #define W_SERIAL_RX_PIN      W_SERIAL_TX_PIN
+  #endif
+  #if !defined(EX_SERIAL_RX_PIN) && PIN_EXISTS(EX_SERIAL_TX)
+    #define EX_SERIAL_RX_PIN    EX_SERIAL_TX_PIN
+  #endif
+  #if !defined(E0_SERIAL_RX_PIN) && PIN_EXISTS(E0_SERIAL_TX)
+    #define E0_SERIAL_RX_PIN    E0_SERIAL_TX_PIN
+  #endif
+  #if !defined(E1_SERIAL_RX_PIN) && PIN_EXISTS(E1_SERIAL_TX)
+    #define E1_SERIAL_RX_PIN    E1_SERIAL_TX_PIN
+  #endif
+  #if !defined(E2_SERIAL_RX_PIN) && PIN_EXISTS(E2_SERIAL_TX)
+    #define E2_SERIAL_RX_PIN    E2_SERIAL_TX_PIN
+  #endif
+  #if !defined(E3_SERIAL_RX_PIN) && PIN_EXISTS(E3_SERIAL_TX)
+    #define E3_SERIAL_RX_PIN    E3_SERIAL_TX_PIN
+  #endif
+  #if !defined(E4_SERIAL_RX_PIN) && PIN_EXISTS(E4_SERIAL_TX)
+    #define E4_SERIAL_RX_PIN    E4_SERIAL_TX_PIN
+  #endif
+  #if !defined(E5_SERIAL_RX_PIN) && PIN_EXISTS(E5_SERIAL_TX)
+    #define E5_SERIAL_RX_PIN    E5_SERIAL_TX_PIN
+  #endif
+  #if !defined(E6_SERIAL_RX_PIN) && PIN_EXISTS(E6_SERIAL_TX)
+    #define E6_SERIAL_RX_PIN    E6_SERIAL_TX_PIN
+  #endif
+  #if !defined(E7_SERIAL_RX_PIN) && PIN_EXISTS(E7_SERIAL_TX)
+    #define E7_SERIAL_RX_PIN    E7_SERIAL_TX_PIN
+  #endif
+#endif
+
 //
 // Destroy stepper driver RX and TX pins when set to -1
+// Some RX depend on TX, so RX needs to be un-defined before TX
+// or it breaks "PIN_EXISTS(NAME_OF_UNDEF)".
 //
-#if !PIN_EXISTS(Z2_SERIAL_TX)
-  #undef Z2_SERIAL_TX_PIN
-#endif
-#if !PIN_EXISTS(Z2_SERIAL_RX)
-  #undef Z2_SERIAL_RX_PIN
-#endif
-#if !PIN_EXISTS(Z3_SERIAL_TX)
-  #undef Z3_SERIAL_TX_PIN
-#endif
-#if !PIN_EXISTS(Z3_SERIAL_RX)
-  #undef Z3_SERIAL_RX_PIN
-#endif
-#if !PIN_EXISTS(Z4_SERIAL_TX)
-  #undef Z4_SERIAL_TX_PIN
-#endif
-#if !PIN_EXISTS(Z4_SERIAL_RX)
-  #undef Z4_SERIAL_RX_PIN
-#endif
-#if !PIN_EXISTS(X2_SERIAL_TX)
-  #undef X2_SERIAL_TX_PIN
-#endif
-#if !PIN_EXISTS(X2_SERIAL_RX)
-  #undef X2_SERIAL_RX_PIN
-#endif
-#if !PIN_EXISTS(Y2_SERIAL_TX)
-  #undef Y2_SERIAL_TX_PIN
-#endif
-#if !PIN_EXISTS(Y2_SERIAL_RX)
-  #undef Y2_SERIAL_RX_PIN
-#endif
-#if !PIN_EXISTS(I_SERIAL_TX)
-  #undef I_SERIAL_TX_PIN
-#endif
-#if !PIN_EXISTS(I_SERIAL_RX)
-  #undef I_SERIAL_RX_PIN
-#endif
-#if !PIN_EXISTS(J_SERIAL_TX)
-  #undef J_SERIAL_TX_PIN
-#endif
-#if !PIN_EXISTS(J_SERIAL_RX)
-  #undef J_SERIAL_RX_PIN
-#endif
-#if !PIN_EXISTS(K_SERIAL_TX)
-  #undef K_SERIAL_TX_PIN
-#endif
-#if !PIN_EXISTS(K_SERIAL_RX)
-  #undef K_SERIAL_RX_PIN
-#endif
-#if !PIN_EXISTS(U_SERIAL_TX)
-  #undef U_SERIAL_TX_PIN
-#endif
-#if !PIN_EXISTS(U_SERIAL_RX)
-  #undef U_SERIAL_RX_PIN
-#endif
-#if !PIN_EXISTS(V_SERIAL_TX)
-  #undef V_SERIAL_TX_PIN
-#endif
-#if !PIN_EXISTS(V_SERIAL_RX)
-  #undef V_SERIAL_RX_PIN
+#if !PIN_EXISTS(W_SERIAL_RX)
+  #undef W_SERIAL_RX_PIN
 #endif
 #if !PIN_EXISTS(W_SERIAL_TX)
   #undef W_SERIAL_TX_PIN
 #endif
-#if !PIN_EXISTS(W_SERIAL_RX)
-  #undef W_SERIAL_RX_PIN
+#if !PIN_EXISTS(V_SERIAL_RX)
+  #undef V_SERIAL_RX_PIN
+#endif
+#if !PIN_EXISTS(V_SERIAL_TX)
+  #undef V_SERIAL_TX_PIN
+#endif
+#if !PIN_EXISTS(U_SERIAL_RX)
+  #undef U_SERIAL_RX_PIN
+#endif
+#if !PIN_EXISTS(U_SERIAL_TX)
+  #undef U_SERIAL_TX_PIN
+#endif
+#if !PIN_EXISTS(K_SERIAL_RX)
+  #undef K_SERIAL_RX_PIN
+#endif
+#if !PIN_EXISTS(K_SERIAL_TX)
+  #undef K_SERIAL_TX_PIN
+#endif
+#if !PIN_EXISTS(J_SERIAL_RX)
+  #undef J_SERIAL_RX_PIN
+#endif
+#if !PIN_EXISTS(J_SERIAL_TX)
+  #undef J_SERIAL_TX_PIN
+#endif
+#if !PIN_EXISTS(I_SERIAL_RX)
+  #undef I_SERIAL_RX_PIN
+#endif
+#if !PIN_EXISTS(I_SERIAL_TX)
+  #undef I_SERIAL_TX_PIN
+#endif
+#if !PIN_EXISTS(Z4_SERIAL_RX)
+  #undef Z4_SERIAL_RX_PIN
+#endif
+#if !PIN_EXISTS(Z4_SERIAL_TX)
+  #undef Z4_SERIAL_TX_PIN
+#endif
+#if !PIN_EXISTS(Z3_SERIAL_RX)
+  #undef Z3_SERIAL_RX_PIN
+#endif
+#if !PIN_EXISTS(Z3_SERIAL_TX)
+  #undef Z3_SERIAL_TX_PIN
+#endif
+#if !PIN_EXISTS(Z2_SERIAL_RX)
+  #undef Z2_SERIAL_RX_PIN
+#endif
+#if !PIN_EXISTS(Z2_SERIAL_TX)
+  #undef Z2_SERIAL_TX_PIN
+#endif
+#if !PIN_EXISTS(Y2_SERIAL_RX)
+  #undef Y2_SERIAL_RX_PIN
+#endif
+#if !PIN_EXISTS(Y2_SERIAL_TX)
+  #undef Y2_SERIAL_TX_PIN
+#endif
+#if !PIN_EXISTS(X2_SERIAL_RX)
+  #undef X2_SERIAL_RX_PIN
+#endif
+#if !PIN_EXISTS(X2_SERIAL_TX)
+  #undef X2_SERIAL_TX_PIN
+#endif
+#if !PIN_EXISTS(Z_SERIAL_RX)
+  #undef Z_SERIAL_RX_PIN
+#endif
+#if !PIN_EXISTS(Z_SERIAL_TX)
+  #undef Z_SERIAL_TX_PIN
+#endif
+#if !PIN_EXISTS(Y_SERIAL_RX)
+  #undef Y_SERIAL_RX_PIN
+#endif
+#if !PIN_EXISTS(Y_SERIAL_TX)
+  #undef Y_SERIAL_TX_PIN
+#endif
+#if !PIN_EXISTS(X_SERIAL_RX)
+  #undef X_SERIAL_RX_PIN
+#endif
+#if !PIN_EXISTS(X_SERIAL_TX)
+  #undef X_SERIAL_TX_PIN
 #endif
 
 #ifndef FAN0_PIN
@@ -456,9 +549,13 @@
   #define TEMP_BED_PIN -1
 #endif
 
-// Use ATEMP if TEMP_SOC_PIN is not defined
-#if !defined(TEMP_SOC_PIN) && defined(ATEMP)
-  #define TEMP_SOC_PIN ATEMP
+// Get TEMP_SOC_PIN from the platform, if not defined
+#ifndef TEMP_SOC_PIN
+  #ifdef ATEMP
+    #define TEMP_SOC_PIN ATEMP
+  #elif defined(HAL_ADC_MCU_TEMP_DUMMY_PIN)
+    #define TEMP_SOC_PIN HAL_ADC_MCU_TEMP_DUMMY_PIN
+  #endif
 #endif
 
 #ifndef SD_DETECT_PIN
@@ -722,7 +819,7 @@
 #endif
 
 // X2 auto-assignment will use up an E stepper, but not if it's chained
-#if HAS_X2_STEPPER && !defined(X2_STEP_PIN) && !PIN_EXISTS(X2_CS_PIN)
+#if HAS_X2_STEPPER && !defined(X2_STEP_PIN) && !PIN_EXISTS(X2_CS)
   #define Y2_E_INDEX INCREMENT(X2_E_INDEX)
 #else
   #define Y2_E_INDEX X2_E_INDEX
@@ -810,7 +907,7 @@
 #endif
 
 // Y2 auto-assignment will use up an E stepper, but not if it's chained
-#if HAS_Y2_STEPPER && !defined(Y2_STEP_PIN) && !PIN_EXISTS(Y2_CS_PIN)
+#if HAS_Y2_STEPPER && !defined(Y2_STEP_PIN) && !PIN_EXISTS(Y2_CS)
   #define Z2_E_INDEX INCREMENT(Y2_E_INDEX)
 #else
   #define Z2_E_INDEX Y2_E_INDEX
@@ -895,7 +992,7 @@
 #endif
 
 // Z2 auto-assignment will use up an E stepper, but not if it's chained
-#if NUM_Z_STEPPERS >= 2 && !defined(Z2_STEP_PIN) && !PIN_EXISTS(Z2_CS_PIN)
+#if NUM_Z_STEPPERS >= 2 && !defined(Z2_STEP_PIN) && !PIN_EXISTS(Z2_CS)
   #define Z3_E_INDEX INCREMENT(Z2_E_INDEX)
 #else
   #define Z3_E_INDEX Z2_E_INDEX
@@ -980,7 +1077,7 @@
 #endif
 
 // Z3 auto-assignment will use up an E stepper, but not if it's chained
-#if NUM_Z_STEPPERS >= 3 && !defined(Z3_STEP_PIN) && !PIN_EXISTS(Z3_CS_PIN)
+#if NUM_Z_STEPPERS >= 3 && !defined(Z3_STEP_PIN) && !PIN_EXISTS(Z3_CS)
   #define Z4_E_INDEX INCREMENT(Z3_E_INDEX)
 #else
   #define Z4_E_INDEX Z3_E_INDEX
@@ -1065,7 +1162,7 @@
 #endif
 
 // Z4 auto-assignment will use up an E stepper, but not if it's chained
-#if NUM_Z_STEPPERS >= 4 && !defined(Z4_STEP_PIN) && !PIN_EXISTS(Z4_CS_PIN)
+#if NUM_Z_STEPPERS >= 4 && !defined(Z4_STEP_PIN) && !PIN_EXISTS(Z4_CS)
   #define I_E_INDEX INCREMENT(Z4_E_INDEX)
 #else
   #define I_E_INDEX Z4_E_INDEX
@@ -1150,7 +1247,7 @@
 #endif
 
 // I auto-assignment will use up an E stepper, but not if it's chained
-#if HAS_I_AXIS && !defined(I_STEP_PIN) && !PIN_EXISTS(I_CS_PIN)
+#if HAS_I_AXIS && !defined(I_STEP_PIN) && !PIN_EXISTS(I_CS)
   #define J_E_INDEX INCREMENT(I_E_INDEX)
 #else
   #define J_E_INDEX I_E_INDEX
@@ -1235,7 +1332,7 @@
 #endif
 
 // J auto-assignment will use up an E stepper, but not if it's chained
-#if HAS_J_AXIS && !defined(J_STEP_PIN) && !PIN_EXISTS(J_CS_PIN)
+#if HAS_J_AXIS && !defined(J_STEP_PIN) && !PIN_EXISTS(J_CS)
   #define K_E_INDEX INCREMENT(J_E_INDEX)
 #else
   #define K_E_INDEX J_E_INDEX
@@ -1320,7 +1417,7 @@
 #endif
 
 // K auto-assignment will use up an E stepper, but not if it's chained
-#if HAS_K_AXIS && !defined(K_STEP_PIN) && !PIN_EXISTS(K_CS_PIN)
+#if HAS_K_AXIS && !defined(K_STEP_PIN) && !PIN_EXISTS(K_CS)
   #define U_E_INDEX INCREMENT(K_E_INDEX)
 #else
   #define U_E_INDEX K_E_INDEX
@@ -1405,7 +1502,7 @@
 #endif
 
 // U auto-assignment will use up an E stepper, but not if it's chained
-#if HAS_U_AXIS && !defined(U_STEP_PIN) && !PIN_EXISTS(U_CS_PIN)
+#if HAS_U_AXIS && !defined(U_STEP_PIN) && !PIN_EXISTS(U_CS)
   #define V_E_INDEX INCREMENT(U_E_INDEX)
 #else
   #define V_E_INDEX U_E_INDEX
@@ -1490,7 +1587,7 @@
 #endif
 
 // V auto-assignment will use up an E stepper, but not if it's chained
-#if HAS_V_AXIS && !defined(V_STEP_PIN) && !PIN_EXISTS(V_CS_PIN)
+#if HAS_V_AXIS && !defined(V_STEP_PIN) && !PIN_EXISTS(V_CS)
   #define W_E_INDEX INCREMENT(V_E_INDEX)
 #else
   #define W_E_INDEX V_E_INDEX

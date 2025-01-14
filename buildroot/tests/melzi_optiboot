@@ -11,6 +11,3 @@ set -e
 #
 use_example_configs Creality/Ender-2
 exec_test $1 $2 "Ender-2" "$3"
-
-# clean up
-restore_configs

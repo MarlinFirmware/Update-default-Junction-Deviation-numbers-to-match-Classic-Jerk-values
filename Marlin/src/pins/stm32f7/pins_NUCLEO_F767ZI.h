@@ -130,16 +130,9 @@
 
 #if HAS_TMC_UART
   #define X_SERIAL_TX_PIN                   PB9
-  #define X_SERIAL_RX_PIN        X_SERIAL_TX_PIN
-
   #define Y_SERIAL_TX_PIN                   PE3
-  #define Y_SERIAL_RX_PIN        Y_SERIAL_TX_PIN
-
   #define Z_SERIAL_TX_PIN                   PE12
-  #define Z_SERIAL_RX_PIN        Z_SERIAL_TX_PIN
-
   #define E0_SERIAL_TX_PIN                  PG9
-  #define E0_SERIAL_RX_PIN      E0_SERIAL_TX_PIN
 #endif
 
 //

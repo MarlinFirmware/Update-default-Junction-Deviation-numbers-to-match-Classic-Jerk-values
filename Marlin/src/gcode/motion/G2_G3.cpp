@@ -29,12 +29,6 @@
 #include "../../module/planner.h"
 #include "../../module/temperature.h"
 
-#if ENABLED(DELTA)
-  #include "../../module/delta.h"
-#elif ENABLED(SCARA)
-  #include "../../module/scara.h"
-#endif
-
 #if N_ARC_CORRECTION < 1
   #undef N_ARC_CORRECTION
   #define N_ARC_CORRECTION 1

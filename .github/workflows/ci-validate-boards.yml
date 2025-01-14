@@ -1,0 +1,48 @@
+#
+# ci-validate-boards.yml
+# Validate boards.h to make sure it's all set up correctly
+#
+
+name: CI - Validate boards.h
+
+# We can do the on: section as two items, one for pull requests and one for pushes...
+on:
+  pull_request:
+    branches:
+    - bugfix-2.1.x
+    paths:
+    - 'Marlin/src/core/boards.h'
+  push:
+    branches:
+    - bugfix-2.1.x
+    paths:
+    - 'Marlin/src/core/boards.h'
+
+jobs:
+  validate_pins_files:
+    name: Validate boards.h
+    if: github.repository == 'MarlinFirmware/Marlin'
+
+    runs-on: ubuntu-22.04
+
+    steps:
+    - name: Check out the PR
+      uses: actions/checkout@v4
+
+    - name: Cache pip
+      uses: actions/cache@v4
+      with:
+        path: ~/.cache/pip
+        key: ${{ runner.os }}-pip-${{ hashFiles('**/requirements.txt') }}
+        restore-keys: |
+          ${{ runner.os }}-pip-
+
+    - name: Select Python 3.9
+      uses: actions/setup-python@v5
+      with:
+        python-version: '3.9'
+        architecture: 'x64'
+
+    - name: Validate core/boards.h
+      run: |
+        make validate-boards -j

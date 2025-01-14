@@ -58,7 +58,7 @@ extern "C"{
 #define PINS_COUNT           79
 #define NUM_DIGITAL_PINS     66
 #define NUM_ANALOG_INPUTS    12
-#define analogInputToDigitalPin(p)  ((p < 12) ? (p) + 54 : -1)
+#define analogInputToDigitalPin(p)  pin_t((p < 12) ? (p) + 54 : -1)
 
 #define digitalPinToPort(P)        ( g_APinDescription[P].pPort )
 #define digitalPinToBitMask(P)     ( g_APinDescription[P].ulPin )

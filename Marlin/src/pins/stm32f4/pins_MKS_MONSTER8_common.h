@@ -75,6 +75,16 @@
 #endif
 
 //
+// Filament Runout Sensor
+//
+#ifndef FIL_RUNOUT_PIN
+  #define FIL_RUNOUT_PIN                    PC5   // Y+
+#endif
+#ifndef FIL_RUNOUT2_PIN
+  #define FIL_RUNOUT2_PIN                   PB12  // Z+
+#endif
+
+//
 // Steppers
 //
 #define X_ENABLE_PIN                        PC15  // Driver0
@@ -158,28 +168,13 @@
   // No Hardware serial for steppers
   //
   #define X_SERIAL_TX_PIN                   PE6
-  #define X_SERIAL_RX_PIN        X_SERIAL_TX_PIN
-
   #define Y_SERIAL_TX_PIN                   PE3
-  #define Y_SERIAL_RX_PIN        Y_SERIAL_TX_PIN
-
   #define Z_SERIAL_TX_PIN                   PB7
-  #define Z_SERIAL_RX_PIN        Z_SERIAL_TX_PIN
-
   #define E0_SERIAL_TX_PIN                  PB3
-  #define E0_SERIAL_RX_PIN      E0_SERIAL_TX_PIN
-
   #define E1_SERIAL_TX_PIN                  PD4
-  #define E1_SERIAL_RX_PIN      E1_SERIAL_TX_PIN
-
   #define E2_SERIAL_TX_PIN                  PD0
-  #define E2_SERIAL_RX_PIN      E2_SERIAL_TX_PIN
-
   #define E3_SERIAL_TX_PIN                  PD15
-  #define E3_SERIAL_RX_PIN      E3_SERIAL_TX_PIN
-
   #define E4_SERIAL_TX_PIN                  PD11
-  #define E4_SERIAL_RX_PIN      E4_SERIAL_TX_PIN
 
   // Reduce baud rate to improve software serial reliability
   #ifndef TMC_BAUD_RATE

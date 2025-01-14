@@ -124,33 +124,26 @@
   //#define E3_HARDWARE_SERIAL Serial1
 
   #define X_SERIAL_TX_PIN                     -1  // 59
-  #define X_SERIAL_RX_PIN                     -1  // 63
+  //#define X_SERIAL_RX_PIN                   -1  // 63
   #define X2_SERIAL_TX_PIN                    -1
-  #define X2_SERIAL_RX_PIN                    -1
 
   #define Y_SERIAL_TX_PIN                     -1  // 64
-  #define Y_SERIAL_RX_PIN                     -1  // 40
+  //#define Y_SERIAL_RX_PIN                   -1  // 40
   #define Y2_SERIAL_TX_PIN                    -1
-  #define Y2_SERIAL_RX_PIN                    -1
 
   #define Z_SERIAL_TX_PIN                     -1  // 44
-  #define Z_SERIAL_RX_PIN                     -1  // 42
+  //#define Z_SERIAL_RX_PIN                   -1  // 42
   #define Z2_SERIAL_TX_PIN                    -1
-  #define Z2_SERIAL_RX_PIN                    -1
 
   #define E0_SERIAL_TX_PIN                    -1  // 66
-  #define E0_SERIAL_RX_PIN                    -1  // 65
+  //#define E0_SERIAL_RX_PIN                  -1  // 65
   #define E1_SERIAL_TX_PIN                    -1
-  #define E1_SERIAL_RX_PIN                    -1
   #define E2_SERIAL_TX_PIN                    -1
-  #define E2_SERIAL_RX_PIN                    -1
   #define E3_SERIAL_TX_PIN                    -1
-  #define E3_SERIAL_RX_PIN                    -1
   #define E4_SERIAL_TX_PIN                    -1
-  #define E4_SERIAL_RX_PIN                    -1
-  #define E5_SERIAL_RX_PIN                    -1
-  #define E6_SERIAL_RX_PIN                    -1
-  #define E7_SERIAL_RX_PIN                    -1
+  #define E5_SERIAL_TX_PIN                    -1
+  #define E6_SERIAL_TX_PIN                    -1
+  #define E7_SERIAL_TX_PIN                    -1
 #endif
 
 //
@@ -430,6 +423,7 @@
       #define BTN_ENC                         32
       #define LCD_SDSS               EXP2_04_PIN
       //#define KILL_PIN                      41
+      #undef LCD_PINS_EN                          // not used, causes false pin conflict report
 
     #elif ENABLED(LCD_I2C_VIKI)
 

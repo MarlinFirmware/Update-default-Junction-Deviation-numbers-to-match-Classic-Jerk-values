@@ -8,6 +8,7 @@ set -e
 
 use_example_configs Opulo/Lumen_REV3
 opt_disable TMC_DEBUG
+opt_set RS485_SERIAL_PORT 2 RS485_BUS_BUFFER_SIZE 128
 exec_test $1 $2 "Opulo Lumen REV3 Pick-and-Place" "$3"
 
 # cleanup

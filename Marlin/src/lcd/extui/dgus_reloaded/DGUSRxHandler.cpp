@@ -804,13 +804,13 @@ void DGUSRxHandler::pidSetTemp(DGUS_VP &vp, void *data_ptr) {
     return;
   }
 
-  uint16_t temp = BE16_P(data_ptr);
+  celsius_t temp = BE16_P(data_ptr);
 
   switch (screen.pid_heater) {
     default: return;
     #if HAS_HEATED_BED
       case DGUS_Data::Heater::BED:
-        LIMIT(temp, BED_MINTEMP, BED_MAX_TARGET);
+        LIMIT(temp, celsius_t(BED_MINTEMP), celsius_t(BED_MAX_TARGET));
         break;
     #endif
     #if HAS_HOTEND

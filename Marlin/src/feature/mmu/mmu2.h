@@ -21,6 +21,10 @@
  */
 #pragma once
 
+/**
+ * mmu2.h - Support for Průša MMU2 and MMU2S
+ */
+
 #include "../../inc/MarlinConfig.h"
 
 #if HAS_FILAMENT_SENSOR
@@ -70,7 +74,7 @@ private:
   static bool get_response();
   static void manage_response(const bool move_axes, const bool turn_off_nozzle);
 
-  static void execute_extruder_sequence(const E_Step * sequence, int steps);
+  static void execute_extruder_sequence(const E_Step * const sequence, const uint8_t steps);
   static void ramming_sequence();
   static void load_to_nozzle_sequence();
 
@@ -85,7 +89,7 @@ private:
     FORCE_INLINE static bool load_to_gears() { return true; }
   #endif
 
-  #if ENABLED(MMU_EXTRUDER_SENSOR)
+  #if ENABLED(MMU2_EXTRUDER_SENSOR)
     #define MMU_LOAD_FEEDRATE 19.02f // (mm/s)
     static void mmu_continue_loading();
   #endif

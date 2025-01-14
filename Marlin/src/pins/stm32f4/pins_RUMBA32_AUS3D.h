@@ -24,7 +24,7 @@
 /**
  * Pin assignments for the RUMBA32
  *
- * https://aus3d.com.au/rumba32
+ * https://aus3d.com.au/products/rumba32-control-board
  * https://github.com/Aus3D/RUMBA32
  */
 

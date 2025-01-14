@@ -53,12 +53,14 @@ def run_preprocessor(env, fn=None):
 # Find a compiler, considering the OS
 #
 def search_compiler(env):
+    global nocache
 
     from pathlib import Path, PurePath
 
     ENV_BUILD_PATH = Path(env['PROJECT_BUILD_DIR'], env['PIOENV'])
     GCC_PATH_CACHE = ENV_BUILD_PATH / ".gcc_path"
 
+    gccpath = None
     try:
         gccpath = env.GetProjectOption('custom_gcc')
         blab("Getting compiler from env")
@@ -71,24 +73,40 @@ def search_compiler(env):
         blab("Getting g++ path from cache")
         return GCC_PATH_CACHE.read_text()
 
-    # Use any item in $PATH corresponding to a platformio toolchain bin folder
     path_separator = ':'
     gcc_exe = '*g++'
     if env['PLATFORM'] == 'win32':
         path_separator = ';'
         gcc_exe += ".exe"
 
+    envpath = map(Path, env['ENV']['PATH'].split(path_separator))
+
     # Search for the compiler in PATH
-    for ppath in map(Path, env['ENV']['PATH'].split(path_separator)):
+    for ppath in envpath:
+        # Use any item in $PATH corresponding to a platformio toolchain bin folder
         if ppath.match(env['PROJECT_PACKAGES_DIR'] + "/**/bin"):
             for gpath in ppath.glob(gcc_exe):
-                gccpath = str(gpath.resolve())
-                # Cache the g++ path to no search always
-                if not nocache and ENV_BUILD_PATH.exists():
-                    blab("Caching g++ for current env")
-                    GCC_PATH_CACHE.write_text(gccpath)
-                return gccpath
+                # Skip '*-elf-g++' (crosstool-NG) except for xtensa32
+                if not gpath.stem.endswith('-elf-g++') or "xtensa32" in str(gpath):
+                    gccpath = str(gpath.resolve())
+                    break
 
-    gccpath = env.get('CXX')
-    blab("Couldn't find a compiler! Fallback to %s" % gccpath)
+    if not gccpath:
+        for ppath in envpath:
+            for gpath in ppath.glob(gcc_exe):
+                # Skip macOS Clang
+                if not (gpath == 'usr/bin/g++' and env['PLATFORM'] == 'darwin'):
+                    gccpath = str(gpath.resolve())
+                    break
+
+    if not gccpath:
+        gccpath = env.get('CXX')
+        blab("Couldn't find a compiler! Fallback to '%s'" % gccpath)
+        nocache = 1
+
+    # Cache the g++ path to speed up the next build
+    if not nocache and gccpath and ENV_BUILD_PATH.exists():
+        blab("Caching g++ for current env")
+        GCC_PATH_CACHE.write_text(gccpath)
+
     return gccpath

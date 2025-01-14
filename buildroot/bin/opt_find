@@ -23,8 +23,8 @@ esac
 
 while [[ $# > 0 ]]; do
   DID=0
-  for FN in Configuration Configuration_adv; do
-    FOUND=$( grep -HEn "^\s*${COMM}#define\s+[A-Z0-9_]*${1}" "Marlin/$FN.h" 2>/dev/null )
+  for FN in Marlin/Configuration.h Marlin/Configuration_adv.h; do
+    FOUND=$( grep -HEn "^\s*${COMM}#define\s+[A-Z0-9_]*${1}" $FN 2>/dev/null )
     [[ -n "$FOUND" ]] && { echo "$FOUND" ; DID=1 ; }
   done
   ((DID)) || { echo "ERROR: ${MYNAME} - No ${TYPE}match for ${1}" ; exit 9; }

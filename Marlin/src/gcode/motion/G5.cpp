@@ -45,25 +45,24 @@
  * G5: Cubic B-spline
  */
 void GcodeSuite::G5() {
-  if (MOTION_CONDITIONS) {
+  if (!MOTION_CONDITIONS) return;
 
-    #if ENABLED(CNC_WORKSPACE_PLANES)
-      if (workspace_plane != PLANE_XY) {
-        SERIAL_ERROR_MSG(STR_ERR_BAD_PLANE_MODE);
-        return;
-      }
-    #endif
+  #if ENABLED(CNC_WORKSPACE_PLANES)
+    if (workspace_plane != PLANE_XY) {
+      SERIAL_ERROR_MSG(STR_ERR_BAD_PLANE_MODE);
+      return;
+    }
+  #endif
 
-    get_destination_from_command();
+  get_destination_from_command();
 
-    const xy_pos_t offsets[2] = {
-      { parser.linearval('I'), parser.linearval('J') },
-      { parser.linearval('P'), parser.linearval('Q') }
-    };
+  const xy_pos_t offsets[2] = {
+    { parser.linearval('I'), parser.linearval('J') },
+    { parser.linearval('P'), parser.linearval('Q') }
+  };
 
-    cubic_b_spline(current_position, destination, offsets, MMS_SCALED(feedrate_mm_s), active_extruder);
-    current_position = destination;
-  }
+  cubic_b_spline(current_position, destination, offsets, MMS_SCALED(feedrate_mm_s), active_extruder);
+  current_position = destination;
 }
 
 #endif // BEZIER_CURVE_SUPPORT

@@ -22,10 +22,15 @@
 
 #include "../../../inc/MarlinConfigPre.h"
 
-#if HAS_PRUSA_MMU2
+#if HAS_PRUSA_MMU2 || HAS_PRUSA_MMU3
 
 #include "../../gcode.h"
-#include "../../../feature/mmu/mmu2.h"
+
+#if HAS_PRUSA_MMU3
+  #include "../../../feature/mmu3/mmu3.h"
+#elif HAS_PRUSA_MMU2
+  #include "../../../feature/mmu/mmu2.h"
+#endif
 
 /**
  * M403: Set filament type for MMU2
@@ -37,13 +42,17 @@
  *  2   PVA
  */
 void GcodeSuite::M403() {
-  int8_t index = parser.intval('E', -1),
-         type = parser.intval('F', -1);
+  const int8_t index = parser.intval('E', -1),
+                type = parser.intval('F', -1);
 
   if (WITHIN(index, 0, EXTRUDERS - 1) && WITHIN(type, 0, 2))
-    mmu2.set_filament_type(index, type);
+    #if HAS_PRUSA_MMU3
+      mmu3.set_filament_type(index, type);
+    #else
+      mmu2.set_filament_type(index, type);
+    #endif
   else
     SERIAL_ECHO_MSG("M403 - bad arguments.");
 }
 
-#endif // HAS_PRUSA_MMU2
+#endif // HAS_PRUSA_MMU2 || HAS_PRUSA_MMU3

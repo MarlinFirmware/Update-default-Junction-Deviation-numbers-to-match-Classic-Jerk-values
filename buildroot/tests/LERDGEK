@@ -13,6 +13,3 @@ restore_configs
 opt_set MOTHERBOARD BOARD_LERDGE_K SERIAL_PORT 1
 opt_enable TFT_GENERIC TFT_INTERFACE_FSMC TFT_COLOR_UI COMPACT_MARLIN_BOOT_LOGO
 exec_test $1 $2 "LERDGE K with Generic FSMC TFT with ColorUI" "$3"
-
-# clean up
-restore_configs

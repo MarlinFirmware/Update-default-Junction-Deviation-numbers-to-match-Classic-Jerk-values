@@ -114,7 +114,7 @@ void menu_advanced_settings();
   #endif
   #define STOP_ITEM(A,I,M,L) TERN(HAS_##A##I##_##M##_STATE, _STOP_ITEM, _IF_1_ELSE)(STRINGIFY(A) STRINGIFY(I) S1_SPACE(I) " " L, A##I##_##M)
   #define STOP_MINMAX(A,I) STOP_ITEM(A,I,MIN,"Min") STOP_ITEM(A,I,MAX,"Max")
-  #define FIL_ITEM(N) PSTRING_ITEM_N_P(N-1, MSG_FILAMENT_EN, (READ(FIL_RUNOUT##N##_PIN) != FIL_RUNOUT##N##_STATE) ? PSTR("PRESENT") : PSTR("out"), SS_FULL);
+  #define FIL_ITEM(N) PSTRING_ITEM_N_P(N-1, MSG_FILAMENT_EN, FILAMENT_IS_OUT(N) ? PSTR("out") : PSTR("PRESENT"), SS_FULL);
 
   static void screen_endstop_test() {
     if (ui.use_click()) {
@@ -138,7 +138,7 @@ void menu_advanced_settings();
     #if HAS_BED_PROBE && !HAS_DELTA_SENSORLESS_PROBING
       __STOP_ITEM(GET_TEXT_F(MSG_Z_PROBE), Z_MIN_PROBE);
     #endif
-    #if ENABLED(FILAMENT_RUNOUT_SENSOR)
+    #if HAS_FILAMENT_SENSOR
       REPEAT_1(NUM_RUNOUT_SENSORS, FIL_ITEM)
     #endif
 
@@ -241,12 +241,12 @@ void menu_advanced_settings();
     START_MENU();
     BACK_ITEM(MSG_CONFIGURATION);
     #if ENABLED(DUAL_X_CARRIAGE)
-      EDIT_ITEM_FAST_N(float42_52, X_AXIS, MSG_HOTEND_OFFSET_A, &hotend_offset[1].x, float(X2_HOME_POS - 25), float(X2_HOME_POS + 25), _recalc_offsets);
+      EDIT_ITEM_FAST_N(float42_52, X_AXIS, MSG_HOTEND_OFFSET_N, &hotend_offset[1].x, float(X2_HOME_POS - 25), float(X2_HOME_POS + 25), _recalc_offsets);
     #else
-      EDIT_ITEM_FAST_N(float42_52, X_AXIS, MSG_HOTEND_OFFSET_A, &hotend_offset[1].x, -99.0f, 99.0f, _recalc_offsets);
+      EDIT_ITEM_FAST_N(float42_52, X_AXIS, MSG_HOTEND_OFFSET_N, &hotend_offset[1].x, -99.0f, 99.0f, _recalc_offsets);
     #endif
-    EDIT_ITEM_FAST_N(float42_52, Y_AXIS, MSG_HOTEND_OFFSET_A, &hotend_offset[1].y, -99.0f, 99.0f, _recalc_offsets);
-    EDIT_ITEM_FAST_N(float42_52, Z_AXIS, MSG_HOTEND_OFFSET_A, &hotend_offset[1].z, -10.0f, 10.0f, _recalc_offsets);
+    EDIT_ITEM_FAST_N(float42_52, Y_AXIS, MSG_HOTEND_OFFSET_N, &hotend_offset[1].y, -99.0f, 99.0f, _recalc_offsets);
+    EDIT_ITEM_FAST_N(float42_52, Z_AXIS, MSG_HOTEND_OFFSET_N, &hotend_offset[1].z, -10.0f, 10.0f, _recalc_offsets);
     #if ENABLED(EEPROM_SETTINGS)
       ACTION_ITEM(MSG_STORE_EEPROM, ui.store_settings);
     #endif
@@ -342,7 +342,7 @@ void menu_advanced_settings();
     START_MENU();
     BACK_ITEM(MSG_CONFIGURATION);
     GCODES_ITEM(MSG_TOUCHMI_INIT, F("M851 Z0\nG28\nG1 F200 Z0"));
-    SUBMENU(MSG_ZPROBE_ZOFFSET, lcd_babystep_zoffset);
+    SUBMENU(MSG_BABYSTEP_PROBE_Z, lcd_babystep_zoffset);
     GCODES_ITEM(MSG_TOUCHMI_SAVE, F("M500\nG1 F200 Z10"));
     GCODES_ITEM(MSG_TOUCHMI_ZTEST, F("G28\nG1 F200 Z0"));
     END_MENU();
@@ -395,7 +395,40 @@ void menu_advanced_settings();
     END_MENU();
   }
 
-#endif
+#endif // FWRETRACT
+
+#if ENABLED(EDITABLE_HOMING_FEEDRATE)
+
+  #include "../../module/motion.h"
+  #include "../../module/planner.h"
+  #include "../../gcode/parser.h"
+
+  // Edit homing feedrates in inches- or degrees- or mm-per-minute
+  void menu_homing_feedrate() {
+    START_MENU();
+    BACK_ITEM(MSG_HOMING_FEEDRATE);
+
+    #if ENABLED(MENUS_ALLOW_INCH_UNITS)
+      #define _EDIT_HOMING_FR(A) do{ \
+        const float minfr = MMS_TO_MMM(planner.settings.min_feedrate_mm_s); \
+        const float maxfr = MMS_TO_MMM(planner.settings.max_feedrate_mm_s[_AXIS(A)]); \
+        editable.decimal = A##_AXIS_UNIT(homing_feedrate_mm_m.A); \
+        EDIT_ITEM_FAST_N(float5, _AXIS(A), MSG_HOMING_FEEDRATE_N, &editable.decimal, \
+          A##_AXIS_UNIT(minfr), A##_AXIS_UNIT(maxfr), []{ \
+          homing_feedrate_mm_m.A = parser.axis_value_to_mm(_AXIS(A), editable.decimal); \
+        }); \
+      }while(0);
+    #else
+      #define _EDIT_HOMING_FR(A) \
+        EDIT_ITEM_FAST_N(float5, _AXIS(A), MSG_HOMING_FEEDRATE_N, &homing_feedrate_mm_m.A, MMS_TO_MMM(planner.settings.min_feedrate_mm_s), MMS_TO_MMM(planner.settings.max_feedrate_mm_s[_AXIS(A)]));
+    #endif
+
+    MAIN_AXIS_MAP(_EDIT_HOMING_FR);
+
+    END_MENU();
+  }
+
+#endif // EDITABLE_HOMING_FEEDRATE
 
 #if HAS_PREHEAT && DISABLED(SLIM_LCD_MENUS)
 
@@ -424,7 +457,7 @@ void menu_advanced_settings();
     END_MENU();
   }
 
-#endif
+#endif // HAS_PREHEAT && !SLIM_LCD_MENUS
 
 #if ENABLED(CUSTOM_MENU_CONFIG)
 
@@ -562,12 +595,6 @@ void menu_configuration() {
 
   SUBMENU(MSG_ADVANCED_SETTINGS, menu_advanced_settings);
 
-  #if ENABLED(BABYSTEP_ZPROBE_OFFSET)
-    SUBMENU(MSG_ZPROBE_ZOFFSET, lcd_babystep_zoffset);
-  #elif HAS_BED_PROBE
-    EDIT_ITEM(LCD_Z_OFFSET_TYPE, MSG_ZPROBE_ZOFFSET, &probe.offset.z, PROBE_OFFSET_ZMIN, PROBE_OFFSET_ZMAX);
-  #endif
-
   //
   // Set Fan Controller speed
   //
@@ -627,6 +654,10 @@ void menu_configuration() {
     #elif HAS_DISPLAY_SLEEP
       EDIT_ITEM(uint8, MSG_SCREEN_TIMEOUT, &ui.sleep_timeout_minutes, ui.sleep_timeout_min, ui.sleep_timeout_max, ui.refresh_screen_timeout);
     #endif
+  #endif
+
+  #if ENABLED(EDITABLE_HOMING_FEEDRATE)
+    SUBMENU(MSG_HOMING_FEEDRATE, menu_homing_feedrate);
   #endif
 
   #if ENABLED(FWRETRACT)

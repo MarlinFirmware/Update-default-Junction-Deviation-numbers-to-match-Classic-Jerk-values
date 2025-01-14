@@ -337,7 +337,7 @@ void TFT_SPI::transmitDMA(uint32_t memoryIncrease, uint16_t *data, uint16_t coun
     SET_BIT(SPIx.Instance->CR2, SPI_CR2_TXDMAEN);   // Enable Tx DMA Request
   #endif
 
-  TERN_(TFT_SHARED_IO, while (isBusy()) { /* nada */ });
+  TERN_(TFT_SHARED_IO, while (isBusy()));
 }
 
 void TFT_SPI::transmit(uint32_t memoryIncrease, uint16_t *data, uint16_t count) {

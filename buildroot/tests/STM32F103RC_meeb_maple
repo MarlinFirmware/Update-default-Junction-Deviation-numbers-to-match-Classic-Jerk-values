@@ -13,6 +13,3 @@ restore_configs
 opt_set MOTHERBOARD BOARD_CCROBOT_MEEB_3DP SERIAL_PORT 1 SERIAL_PORT_2 -1 \
         X_DRIVER_TYPE TMC2208 Y_DRIVER_TYPE TMC2208 Z_DRIVER_TYPE TMC2208 E0_DRIVER_TYPE TMC2208
 exec_test $1 $2 "MEEB_3DP - Basic Config with TMC2208 SW Serial" "$3"
-
-# clean up
-restore_configs

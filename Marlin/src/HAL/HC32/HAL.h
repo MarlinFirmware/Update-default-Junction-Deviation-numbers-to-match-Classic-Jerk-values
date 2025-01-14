@@ -30,7 +30,6 @@
 
 #include "../../inc/MarlinConfig.h"
 
-#include "../../core/macros.h"
 #include "../shared/Marduino.h"
 #include "../shared/math_32bit.h"
 #include "../shared/HAL_SPI.h"
@@ -38,8 +37,6 @@
 #include "fastio.h"
 #include "timers.h"
 #include "MarlinSerial.h"
-
-#include <stdint.h>
 
 //
 // Serial Ports
@@ -114,22 +111,19 @@
 // Misc. Functions
 //
 #ifndef analogInputToDigitalPin
-#define analogInputToDigitalPin(p) (p)
+  #define analogInputToDigitalPin(p) pin_t(p)
 #endif
 
-#define CRITICAL_SECTION_START        \
-  uint32_t primask = __get_PRIMASK(); \
-  (void)__iCliRetVal()
+#define CRITICAL_SECTION_START()        \
+  const bool irqon = !__get_PRIMASK();  \
+  __disable_irq();                      \
+  __DSB();
+#define CRITICAL_SECTION_END()          \
+  __DSB();                              \
+  if (irqon) __enable_irq();
 
-#define CRITICAL_SECTION_END \
-  if (!primask)              \
-  (void)__iSeiRetVal()
-
-// Disable interrupts
-#define cli() noInterrupts()
-
-// Enable interrupts
-#define sei() interrupts()
+#define cli() __disable_irq()
+#define sei() __enable_irq()
 
 // bss_end alias
 #define __bss_end __bss_end__

@@ -290,6 +290,3 @@ exec_test $1 $2 "MEGA2560 RAMPS | 128x64 LIGHTWEIGHT_UI | progress rotation" "$3
 opt_disable REPRAP_DISCOUNT_FULL_GRAPHIC_SMART_CONTROLLER
 opt_enable REPRAP_DISCOUNT_SMART_CONTROLLER
 exec_test $1 $2 "MEGA2560 RAMPS | HD44780 | progress rotation" "$3"
-
-# clean up
-restore_configs

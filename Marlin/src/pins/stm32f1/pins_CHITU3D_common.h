@@ -137,10 +137,9 @@
   #define TFT_RESET_PIN                     PF11
   #define TFT_BACKLIGHT_PIN                 PD13
 
-  #define LCD_USE_DMA_FSMC                        // Use DMA transfers to send data to the TFT
+  #define LCD_USE_DMA_FSMC
   #define FSMC_CS_PIN                       PD7
   #define FSMC_RS_PIN                       PD11
-
   #define TFT_CS_PIN                 FSMC_CS_PIN
   #define TFT_RS_PIN                 FSMC_RS_PIN
 #endif

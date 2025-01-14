@@ -9,7 +9,6 @@
 # so at every release be sure to create a dev- tag and publish it to origin.
 #
 
-SED=$(which gsed sed | head -n1)
 SELF=`basename "$0"`
 DRYRUN=0
 
@@ -36,10 +35,10 @@ TMPF="$TMPDIR/tmp.txt"
 SCRF="$TMPDIR/update-$DEST.sh"
 
 git checkout bugfix-2.1.x
-git log --pretty="[%h] %s" dev-$TAG1..$TAG2 | grep -v '\[cron\]' | $SED '1!G;h;$!d' >"$LOGB"
+git log --pretty="[%h] %s" dev-$TAG1..$TAG2 | grep -v '\[cron\]' | sed '1!G;h;$!d' >"$LOGB"
 
 git checkout $DEST
-git log --pretty="[%h] %s" $TAG1..$TAG2 | $SED '1!G;h;$!d' >"$LOG2" || { echo "Can't find tag dev-$TAG1" ; exit 1 ; }
+git log --pretty="[%h] %s" $TAG1..$TAG2 | sed '1!G;h;$!d' >"$LOG2" || { echo "Can't find tag dev-$TAG1" ; exit 1 ; }
 
 # Go through commit text from DEST removing all matches from the bugfix log
 
@@ -57,7 +56,7 @@ cat "$LOG2" | while read line; do
     #echo "... $PATT"
     [[ -n "$PATT" ]] && { grep -vE "$PATT" "$LOGB" >"$TMPF" ; cp "$TMPF" "$LOGB" ; }
   else
-    PATT=$( $SED -E 's/^\[[0-9a-f]{10}\]( . )?(.+)$/\2/' <<<"$line" )
+    PATT=$( sed -E 's/^\[[0-9a-f]{10}\]( . )?(.+)$/\2/' <<<"$line" )
     [[ -n "$PATT" ]] && { grep -v "$PATT" "$LOGB" >"$TMPF" ; cp "$TMPF" "$LOGB" ; }
   fi
 done

@@ -11,6 +11,3 @@ set -e
 #
 use_example_configs "Creality/Ender-3/FYSETC Cheetah 1.2/BLTouch"
 exec_test $1 $2 "Ender-3 with Cheetah 1.2 | BLTouch" "$3"
-
-# clean up
-restore_configs

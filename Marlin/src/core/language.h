@@ -162,8 +162,8 @@
 #define STR_SOFT_MIN                        "  Min: "
 #define STR_SOFT_MAX                        "  Max: "
 
-#define STR_SAVED_POS                       "Position saved"
-#define STR_RESTORING_POS                   "Restoring position"
+#define STR_SAVED_POSITION                  "Saved position #"
+#define STR_RESTORING_POSITION              "Restoring position #"
 #define STR_INVALID_POS_SLOT                "Invalid slot. Total: "
 #define STR_DONE                            "Done."
 
@@ -191,6 +191,7 @@
 #define STR_ERR_HOTEND_TOO_COLD             "Hotend too cold"
 #define STR_ERR_EEPROM_WRITE                "Error writing to EEPROM!"
 #define STR_ERR_EEPROM_CORRUPT              "EEPROM Corrupt"
+#define STR_EEPROM_INITIALIZED              "EEPROM Initialized"
 
 #define STR_FILAMENT_CHANGE_HEAT_LCD        "Press button to heat nozzle"
 #define STR_FILAMENT_CHANGE_INSERT_LCD      "Insert filament and press button"
@@ -290,6 +291,7 @@
 #define STR_MAX_ACCELERATION                "Max Acceleration (units/s2)"
 #define STR_MAX_FEEDRATES                   "Max feedrates (units/s)"
 #define STR_ACCELERATION_P_R_T              "Acceleration (units/s2) (P<print-accel> R<retract-accel> T<travel-accel>)"
+#define STR_HOMING_FEEDRATE                 "Homing Feedrate"
 #define STR_TOOL_CHANGING                   "Tool-changing"
 #define STR_HOTEND_OFFSETS                  "Hotend offsets"
 #define STR_SERVO_ANGLES                    "Servo Angles"
@@ -322,6 +324,38 @@
 #define STR_TEMPERATURE_UNITS               "Temperature Units"
 #define STR_USER_THERMISTORS                "User thermistors"
 #define STR_DELAYED_POWEROFF                "Delayed poweroff"
+#define STR_STORED_MACROS                   "Stored macros"
+
+//
+// General axis names
+//
+#if HAS_X_AXIS
+  #define AXIS1_NAME 'X'
+#endif
+#if HAS_Y_AXIS
+  #define AXIS2_NAME 'Y'
+#endif
+#if HAS_Z_AXIS
+  #define AXIS3_NAME 'Z'
+#endif
+#define STR_X "X"
+#define STR_Y "Y"
+#define STR_Z "Z"
+#define STR_E "E"
+#if IS_KINEMATIC
+  #define STR_A "A"
+  #define STR_B "B"
+  #define STR_C "C"
+#else
+  #define STR_A STR_X
+  #define STR_B STR_Y
+  #define STR_C STR_Z
+#endif
+#define STR_X2 STR_A "2"
+#define STR_Y2 STR_B "2"
+#define STR_Z2 STR_C "2"
+#define STR_Z3 STR_C "3"
+#define STR_Z4 STR_C "4"
 
 //
 // Endstop Names used by Endstops::report_states
@@ -354,28 +388,7 @@
 #define STR_Z_PROBE                         "z_probe"
 #define STR_PROBE_EN                        "probe_en"
 #define STR_FILAMENT                        "filament"
-
 #define STR_CALIBRATION                     "calibration"
-
-// General axis names
-#define STR_X "X"
-#define STR_Y "Y"
-#define STR_Z "Z"
-#define STR_E "E"
-#if IS_KINEMATIC
-  #define STR_A "A"
-  #define STR_B "B"
-  #define STR_C "C"
-#else
-  #define STR_A "X"
-  #define STR_B "Y"
-  #define STR_C "Z"
-#endif
-#define STR_X2 "X2"
-#define STR_Y2 "Y2"
-#define STR_Z2 "Z2"
-#define STR_Z3 "Z3"
-#define STR_Z4 "Z4"
 
 // Extra Axis and Endstop Names
 #if HAS_I_AXIS

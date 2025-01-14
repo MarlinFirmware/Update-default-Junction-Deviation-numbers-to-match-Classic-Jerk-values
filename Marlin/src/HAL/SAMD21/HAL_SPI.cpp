@@ -108,7 +108,6 @@
     SPI.beginTransaction(spiConfig);
     SPI.transfer(buf, nbyte);
     SPI.endTransaction();
-
   }
 
   /**

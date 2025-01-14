@@ -53,13 +53,13 @@ static void lcd_cancel_object_confirm() {
 }
 
 void menu_cancelobject() {
-  const int8_t ao = cancelable.active_object;
+  const int8_t ao = cancelable.state.active_object;
 
   START_MENU();
   BACK_ITEM(MSG_MAIN_MENU);
 
   // Draw cancelable items in a loop
-  for (int8_t i = -1; i < cancelable.object_count; i++) {
+  for (int8_t i = -1; i < cancelable.state.object_count; i++) {
     if (i == ao) continue;                                          // Active is drawn on -1 index
     const int8_t j = i < 0 ? ao : i;                                // Active or index item
     if (!cancelable.is_canceled(j)) {                               // Not canceled already?

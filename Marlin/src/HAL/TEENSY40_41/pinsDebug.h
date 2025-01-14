@@ -22,23 +22,39 @@
 #pragma once
 
 /**
- * HAL Pins Debugging for Teensy 4.0 (IMXRT1062DVL6A) / 4.1 (IMXRT1062DVJ6A)
+ * Pins Debugging for Teensy 4.0 (IMXRT1062DVL6A) / 4.1 (IMXRT1062DVJ6A)
+ *
+ *   - NUMBER_PINS_TOTAL
+ *   - MULTI_NAME_PAD
+ *   - getPinByIndex(index)
+ *   - printPinNameByIndex(index)
+ *   - getPinIsDigitalByIndex(index)
+ *   - digitalPinToAnalogIndex(pin)
+ *   - getValidPinMode(pin)
+ *   - isValidPin(pin)
+ *   - isAnalogPin(pin)
+ *   - digitalRead_mod(pin)
+ *   - pwm_status(pin)
+ *   - printPinPWM(pin)
+ *   - printPinPort(pin)
+ *   - printPinNumber(pin)
+ *   - printPinAnalog(pin)
  */
 
 #warning "PINS_DEBUGGING is not fully supported for Teensy 4.0 / 4.1 so 'M43' may cause hangs."
 
 #define NUMBER_PINS_TOTAL NUM_DIGITAL_PINS
 
-#define digitalRead_mod(p) extDigitalRead(p)  // AVR digitalRead disabled PWM before it read the pin
-#define PRINT_ARRAY_NAME(x) do{ sprintf_P(buffer, PSTR("%-" STRINGIFY(MAX_NAME_LENGTH) "s"), pin_array[x].name); SERIAL_ECHO(buffer); }while(0)
-#define PRINT_PIN(p) do{ sprintf_P(buffer, PSTR("%02d"), p); SERIAL_ECHO(buffer); }while(0)
-#define PRINT_PIN_ANALOG(p) do{ sprintf_P(buffer, PSTR(" (A%2d)  "), DIGITAL_PIN_TO_ANALOG_PIN(pin)); SERIAL_ECHO(buffer); }while(0)
-#define GET_ARRAY_PIN(p) pin_array[p].pin
-#define GET_ARRAY_IS_DIGITAL(p) pin_array[p].is_digital
-#define VALID_PIN(pin) (pin >= 0 && pin < int8_t(NUMBER_PINS_TOTAL))
-#define DIGITAL_PIN_TO_ANALOG_PIN(p) int(p - analogInputToDigitalPin(0))
-#define IS_ANALOG(P) ((P) >= analogInputToDigitalPin(0) && (P) <= analogInputToDigitalPin(13)) || ((P) >= analogInputToDigitalPin(14) && (P) <= analogInputToDigitalPin(17))
-#define GET_PINMODE(PIN) (VALID_PIN(pin) && IS_OUTPUT(pin))
+#define getPinByIndex(x) pin_array[x].pin
+#define printPinNameByIndex(x) do{ sprintf_P(buffer, PSTR("%-" STRINGIFY(MAX_NAME_LENGTH) "s"), pin_array[x].name); SERIAL_ECHO(buffer); }while(0)
+#define getPinIsDigitalByIndex(x) pin_array[x].is_digital
+#define digitalPinToAnalogIndex(P) int(P - analogInputToDigitalPin(0))
+#define getValidPinMode(P) (isValidPin(P) && IS_OUTPUT(P))
+#define isValidPin(P) (P >= 0 && P < pin_t(NUMBER_PINS_TOTAL))
+#define isAnalogPin(P) (pin_t(P) >= analogInputToDigitalPin(0) && pin_t(P) <= analogInputToDigitalPin(13)) || (pin_t(P) >= analogInputToDigitalPin(14) && pin_t(P) <= analogInputToDigitalPin(17))
+#define digitalRead_mod(P) extDigitalRead(P)  // AVR digitalRead disabled PWM before it read the pin
+#define printPinNumber(P) do{ sprintf_P(buffer, PSTR("%02d"), P); SERIAL_ECHO(buffer); }while(0)
+#define printPinAnalog(P) do{ sprintf_P(buffer, PSTR(" (A%2d)  "), digitalPinToAnalogIndex(P)); SERIAL_ECHO(buffer); }while(0)
 #define MULTI_NAME_PAD 16 // space needed to be pretty if not first name assigned to a pin
 
 struct pwm_pin_info_struct {
@@ -118,7 +134,7 @@ const struct pwm_pin_info_struct pwm_pin_info[] = {
   #endif
 };
 
-void print_analog_pin(char buffer[], const pin_t pin) {
+void printAnalogPin(char buffer[], const pin_t pin) {
   if (pin <= 23)      sprintf_P(buffer, PSTR("(A%2d)  "), int(pin - 14));
   else if (pin <= 41) sprintf_P(buffer, PSTR("(A%2d)  "), int(pin - 24));
 }
@@ -149,6 +165,6 @@ bool pwm_status(const pin_t pin) {
   return (*(portConfigRegister(pin)) == info->muxval);
 }
 
-void pwm_details(const pin_t) { /* TODO */ }
+void printPinPWM(const pin_t) { /* TODO */ }
 
-void print_port(const pin_t) {}
+void printPinPort(const pin_t) {}

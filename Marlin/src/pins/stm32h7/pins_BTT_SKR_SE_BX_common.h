@@ -159,28 +159,18 @@
   //#define E7_HARDWARE_SERIAL Serial1
 
   #define X_SERIAL_TX_PIN                   PG10
-  #define X_SERIAL_RX_PIN        X_SERIAL_TX_PIN
-
   #define Y_SERIAL_TX_PIN                   PD4
-  #define Y_SERIAL_RX_PIN        Y_SERIAL_TX_PIN
-
   #ifdef BX_SWAP_ZM_E1M
     #define Z_SERIAL_TX_PIN                 PC8
-    #define Z_SERIAL_RX_PIN      Z_SERIAL_TX_PIN
   #else
     #define Z_SERIAL_TX_PIN                 PD5
-    #define Z_SERIAL_RX_PIN      Z_SERIAL_TX_PIN
   #endif
 
   #define E0_SERIAL_TX_PIN                  PI8
-  #define E0_SERIAL_RX_PIN      E0_SERIAL_TX_PIN
-
   #ifdef BX_SWAP_ZM_E1M
     #define E1_SERIAL_TX_PIN                PD5
-    #define E1_SERIAL_RX_PIN    E1_SERIAL_TX_PIN
   #else
     #define E1_SERIAL_TX_PIN                PC8
-    #define E1_SERIAL_RX_PIN    E1_SERIAL_TX_PIN
   #endif
 
   // Reduce baud rate to improve software serial reliability

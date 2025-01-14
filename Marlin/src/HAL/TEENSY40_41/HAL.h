@@ -61,6 +61,8 @@
 #undef PSTR
 #define PSTR(str) ({static const char *data = (str); &data[0];})
 
+#define HAL_CAN_SET_PWM_FREQ
+
 // ------------------------
 // Serial ports
 // ------------------------
@@ -133,7 +135,7 @@ typedef int8_t pin_t;
 // ------------------------
 
 #ifndef analogInputToDigitalPin
-  #define analogInputToDigitalPin(p) ((p < 12U) ? (p) + 54U : -1)
+  #define analogInputToDigitalPin(p) pin_t((p < 12U) ? (p) + 54U : -1)
 #endif
 
 #define HAL_ADC_VREF_MV   3300
@@ -221,11 +223,15 @@ public:
 
   /**
    * Set the PWM duty cycle for the pin to the given value.
-   * No option to invert the duty cycle [default = false]
-   * No option to change the scale of the provided value to enable finer PWM duty control [default = 255]
+   * Optionally invert the duty cycle [default = false]
+   * Optionally change the scale of the provided value to enable finer PWM duty control [default = 255]
    */
-  static void set_pwm_duty(const pin_t pin, const uint16_t v, const uint16_t=255, const bool=false) {
-    analogWrite(pin, v);
-  }
+  static void set_pwm_duty(const pin_t pin, const uint16_t v, const uint16_t v_size=255, const bool invert=false);
 
+  /**
+   * Set the PWM output frequency. This may affect multiple pins, though
+   * Teensy 4.x provides many timers affecting only a single pin.
+   * See: https://www.pjrc.com/teensy/td_pulse.html
+   */
+  static void set_pwm_frequency(const pin_t pin, const uint16_t f_desired);
 };

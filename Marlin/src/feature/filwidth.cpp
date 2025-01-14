@@ -28,7 +28,7 @@
 
 FilamentWidthSensor filwidth;
 
-bool FilamentWidthSensor::enabled; // = false;                          // (M405-M406) Filament Width Sensor ON/OFF.
+bool FilamentWidthSensor::enabled; // = false                           // (M405-M406) Filament Width Sensor ON/OFF.
 uint32_t FilamentWidthSensor::accum; // = 0                             // ADC accumulator
 uint16_t FilamentWidthSensor::raw; // = 0                               // Measured filament diameter - one extruder only
 float FilamentWidthSensor::nominal_mm = DEFAULT_NOMINAL_FILAMENT_DIA,   // (M104) Nominal filament width

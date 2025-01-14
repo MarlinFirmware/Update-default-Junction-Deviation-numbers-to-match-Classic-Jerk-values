@@ -507,7 +507,7 @@ void _ubl_map_screen_homing() {
  * UBL Homing before LCD map
  */
 void _ubl_goto_map_screen() {
-  if (planner.movesplanned()) return;     // The ACTION_ITEM will do nothing
+  if (planner.has_blocks_queued()) return; // The ACTION_ITEM will do nothing
   if (!all_axes_trusted()) {
     set_all_unhomed();
     queue.inject_P(G28_STR);
@@ -632,10 +632,11 @@ void _menu_ubl_tools() {
  * UBL System submenu
  *
  * << Motion
- *  - Manually Build Mesh >>
- *  - Activate UBL >>
- *  - Deactivate UBL >>
+ *  - Activate / Deactivate UBL
+ *  - Edit Fade Height
  *  - Step-By-Step UBL >>
+ *  - Mesh Wizard >>
+ *  - Mesh Edit >>
  *  - Mesh Storage >>
  *  - Output Map >>
  *  - UBL Tools >>
@@ -644,21 +645,24 @@ void _menu_ubl_tools() {
 void _lcd_ubl_level_bed() {
   START_MENU();
   BACK_ITEM(MSG_MOTION);
-  if (planner.leveling_active)
-    GCODES_ITEM(MSG_UBL_DEACTIVATE_MESH, F("G29D"));
-  else
-    GCODES_ITEM(MSG_UBL_ACTIVATE_MESH, F("G29A"));
+
+  bool show_state = planner.leveling_active;
+  EDIT_ITEM(bool, MSG_BED_LEVELING, &show_state, _lcd_toggle_bed_leveling);
+
   #if ENABLED(ENABLE_LEVELING_FADE_HEIGHT)
     editable.decimal = planner.z_fade_height;
     EDIT_ITEM_FAST(float3, MSG_Z_FADE_HEIGHT, &editable.decimal, 0, 100, []{ set_z_fade_height(editable.decimal); });
   #endif
+
   #if ENABLED(G26_MESH_VALIDATION)
     SUBMENU(MSG_UBL_STEP_BY_STEP_MENU, _lcd_ubl_step_by_step);
   #endif
+
   #if ENABLED(UBL_MESH_WIZARD)
     SUBMENU(MSG_UBL_MESH_WIZARD, _menu_ubl_mesh_wizard);
   #endif
-  ACTION_ITEM(MSG_UBL_MESH_EDIT, _ubl_goto_map_screen);
+
+  ACTION_ITEM(MSG_MESH_EDITOR, _ubl_goto_map_screen);
   SUBMENU(MSG_UBL_STORAGE_MESH_MENU, _lcd_ubl_storage_mesh);
   SUBMENU(MSG_UBL_OUTPUT_MAP, _lcd_ubl_output_map);
   SUBMENU(MSG_UBL_TOOLS, _menu_ubl_tools);

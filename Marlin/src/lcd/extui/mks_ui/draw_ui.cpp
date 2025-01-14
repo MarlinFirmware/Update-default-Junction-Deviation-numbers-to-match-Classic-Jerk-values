@@ -92,35 +92,24 @@ lv_point_t line_points[4][2] = {
   {{PARA_UI_POS_X, PARA_UI_POS_Y*3 + PARA_UI_SIZE_Y}, {TFT_WIDTH, PARA_UI_POS_Y*3 + PARA_UI_SIZE_Y}},
   {{PARA_UI_POS_X, PARA_UI_POS_Y*4 + PARA_UI_SIZE_Y}, {TFT_WIDTH, PARA_UI_POS_Y*4 + PARA_UI_SIZE_Y}}
 };
+enum CfgLang : uint8_t {
+  LANG_en      = LANG_ENGLISH,
+  LANG_zh_CN   = LANG_SIMPLE_CHINESE,
+  LANG_zh_TW   = LANG_COMPLEX_CHINESE,
+  LANG_jp_kana = LANG_JAPAN,
+  LANG_de      = LANG_GERMAN,
+  LANG_fr      = LANG_FRENCH,
+  LANG_ru      = LANG_RUSSIAN,
+  LANG_ko_KR   = LANG_KOREAN,
+  LANG_tr      = LANG_TURKISH,
+  LANG_es      = LANG_SPANISH,
+  LANG_el      = LANG_GREEK,
+  LANG_it      = LANG_ITALY,
+  LANG_pt      = LANG_PORTUGUESE
+};
 void gCfgItems_init() {
   gCfgItems.multiple_language = MULTI_LANGUAGE_ENABLE;
-  #if 1 // LCD_LANGUAGE == en
-    gCfgItems.language = LANG_ENGLISH;
-  #elif LCD_LANGUAGE == zh_CN
-    gCfgItems.language = LANG_SIMPLE_CHINESE;
-  #elif LCD_LANGUAGE == zh_TW
-    gCfgItems.language = LANG_COMPLEX_CHINESE;
-  #elif LCD_LANGUAGE == jp_kana
-    gCfgItems.language = LANG_JAPAN;
-  #elif LCD_LANGUAGE == de
-    gCfgItems.language = LANG_GERMAN;
-  #elif LCD_LANGUAGE == fr
-    gCfgItems.language = LANG_FRENCH;
-  #elif LCD_LANGUAGE == ru
-    gCfgItems.language = LANG_RUSSIAN;
-  #elif LCD_LANGUAGE == ko_KR
-    gCfgItems.language = LANG_KOREAN;
-  #elif LCD_LANGUAGE == tr
-    gCfgItems.language = LANG_TURKISH;
-  #elif LCD_LANGUAGE == es
-    gCfgItems.language = LANG_SPANISH;
-  #elif LCD_LANGUAGE == el
-    gCfgItems.language = LANG_GREEK;
-  #elif LCD_LANGUAGE == it
-    gCfgItems.language = LANG_ITALY;
-  #elif LCD_LANGUAGE == pt
-    gCfgItems.language = LANG_PORTUGUESE;
-  #endif
+  gCfgItems.language = CAT(LANG_, LCD_LANGUAGE);
   gCfgItems.leveling_mode     = 0;
   gCfgItems.from_flash_pic    = false;
   gCfgItems.curFilesize       = 0;
@@ -766,7 +755,7 @@ void GUI_RefreshPage() {
         disp_print_time();
         disp_fan_Zpos();
       }
-      if (printing_rate_update_flag || marlin_state == MF_SD_COMPLETE) {
+      if (printing_rate_update_flag || marlin_state == MarlinState::MF_SD_COMPLETE) {
         printing_rate_update_flag = false;
         if (!gcode_preview_over) setProBarRate();
       }

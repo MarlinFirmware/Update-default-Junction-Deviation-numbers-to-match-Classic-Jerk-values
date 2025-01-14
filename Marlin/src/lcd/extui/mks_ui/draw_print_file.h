@@ -19,6 +19,8 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  *
  */
+#include "../../../sd/SdFatConfig.h"
+
 #pragma once
 
 #ifdef __cplusplus
@@ -33,15 +35,15 @@ typedef struct {
 extern DIR_OFFSET dir_offset[10];
 
 #define FILE_NUM 6
-#define SHORT_NAME_LEN 13
+
 #define NAME_CUT_LEN 23
 
 #define MAX_DIR_LEVEL  10
 
 typedef struct {
-  char file_name[FILE_NUM][SHORT_NAME_LEN * MAX_DIR_LEVEL + 1];
-  char curDirPath[SHORT_NAME_LEN * MAX_DIR_LEVEL + 1];
-  char long_name[FILE_NUM][SHORT_NAME_LEN * 2 + 1];
+  char file_name[FILE_NUM][FILENAME_LENGTH * MAX_DIR_LEVEL + 1];
+  char long_name[FILE_NUM][TERN(LONG_FILENAME_WRITE_SUPPORT, LONG_FILENAME_LENGTH, FILENAME_LENGTH * 2) + 1];
+  char curDirPath[FILENAME_LENGTH * MAX_DIR_LEVEL + 1];
   bool IsFolder[FILE_NUM];
   char Sd_file_cnt;
   char sd_file_index;

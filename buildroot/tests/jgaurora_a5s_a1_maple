@@ -11,6 +11,3 @@ set -e
 #
 use_example_configs JGAurora/A5S
 exec_test $1 $2 "JGAurora/A5S Configuration" "$3"
-
-# clean up
-restore_configs

@@ -31,7 +31,7 @@ using namespace Theme;
 void CaseLightScreen::onRedraw(draw_mode_t what) {
   widgets_t w(what);
   w.heading(   GET_TEXT_F(MSG_CASE_LIGHT));
-  w.toggle( 2, GET_TEXT_F(MSG_LEDS), getCaseLightState());
+  w.toggle( 2, GET_TEXT_F(MSG_LIGHTS), getCaseLightState());
   #if DISABLED(CASE_LIGHT_NO_BRIGHTNESS)
   w.precision(0).units(GET_TEXT_F(MSG_UNITS_PERCENT))
                 .adjuster(10, GET_TEXT_F(MSG_CASE_LIGHT_BRIGHTNESS), getCaseLightBrightness_percent());

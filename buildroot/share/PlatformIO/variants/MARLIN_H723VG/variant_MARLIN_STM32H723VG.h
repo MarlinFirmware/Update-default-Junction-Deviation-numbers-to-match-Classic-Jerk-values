@@ -228,16 +228,16 @@
 #endif
 
 // Extra HAL modules
-#if !defined(HAL_DAC_MODULE_DISABLED)
+#ifndef HAL_DAC_MODULE_DISABLED
   #define HAL_DAC_MODULE_ENABLED
 #endif
-#if !defined(HAL_ETH_MODULE_DISABLED)
+#ifndef HAL_ETH_MODULE_DISABLED
   #define HAL_ETH_MODULE_ENABLED
 #endif
-#if !defined(HAL_OSPI_MODULE_DISABLED)
+#ifndef HAL_OSPI_MODULE_DISABLED
   #define HAL_OSPI_MODULE_ENABLED
 #endif
-#if !defined(HAL_SD_MODULE_DISABLED)
+#ifndef HAL_SD_MODULE_DISABLED
   #define HAL_SD_MODULE_ENABLED
 #endif
 

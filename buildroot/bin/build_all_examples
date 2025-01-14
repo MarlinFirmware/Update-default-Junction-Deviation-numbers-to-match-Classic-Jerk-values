@@ -2,31 +2,50 @@
 #
 # Usage:
 #
-#  build_all_examples [-b|--branch=<branch>] - Branch to fetch from Configurations repo
+#  build_all_examples [-a|--archive]         - Copy the binary to the export location
+#                     [-B|--base]            - Base path of configurations, overriding -b
+#                     [-b|--branch=<branch>] - Branch to fetch from Configurations repo (import-2.1.x)
 #                     [-c|--continue]        - Continue the paused build
-#                     [-d|--debug]           - Print extra debug output
-#                     [-i|--ini]             - Archive ini/json/yml files in the temp config folder
+#                     [-d|-v|--debug]        - Print extra debug output (after)
+#                     [-e|--export=N]        - Set CONFIG_EXPORT and export to the export location
+#                     [-f|--nofail]          - Don't stop on a failed build
+#                     [-h|--help]            - Print usage and exit
 #                     [-l|--limit=#]         - Limit the number of builds in this run
-#                     [-n|--nobuild]         - Don't actually build anything.
+#                     [-m|--many]            - Build all the environments for each example
+#                     [-n|--nobuild]         - Don't actually build anything
+#                     [-o|--output]          - Redirect export / archiving to another location
+#                                              (By default export to origin config folders)
+#                     [-p|--purge]           - Purge the status file and start over
 #                     [-r|--resume=<path>]   - Start at some config in the filesystem order
-#                     [-s|--skip]            - Do the thing
-#
-# build_all_examples [...] branch [resume-from]
+#                     [-s|--skip]            - Continue the paused build, skipping one
 #
 
 HERE=`dirname $0`
+PATH="$HERE:$PATH"
 
-. "$HERE/mfutil"
+. mfutil
 
 GITREPO=https://github.com/MarlinFirmware/Configurations.git
 STAT_FILE=./.pio/.buildall
 
-usage() { echo "
-Usage: $SELF [-b|--branch=<branch>] [-d|--debug] [-i|--ini] [-r|--resume=<path>]
-       $SELF [-b|--branch=<branch>] [-d|--debug] [-i|--ini] [-c|--continue]
-       $SELF [-b|--branch=<branch>] [-d|--debug] [-i|--ini] [-s|--skip]
-       $SELF [-b|--branch=<branch>] [-d|--debug] [-n|--nobuild]
-       $SELF [...] branch [resume-point]
+usage() { echo "Usage:
+
+build_all_examples [-a|--archive]         - Copy the binary to the export location
+                   [-B|--base]            - Base path of configurations, overriding -b
+                   [-b|--branch=<branch>] - Branch to fetch from Configurations repo (import-2.1.x)
+                   [-c|--continue]        - Continue the paused build
+                   [-d|-v|--debug]        - Print extra debug output (after)
+                   [-e|--export=N]        - Set CONFIG_EXPORT and export to the export location
+                   [-f|--nofail]          - Don't stop on a failed build
+                   [-h|--help]            - Print usage and exit
+                   [-l|--limit=#]         - Limit the number of builds in this run
+                   [-m|--many]            - Build all the environments for each example
+                   [-n|--nobuild]         - Don't actually build anything
+                   [-o|--output]          - Redirect export / archiving to another location
+                                            (By default export to origin config folders)
+                   [-p|--purge]           - Purge the status file and start over
+                   [-r|--resume=<path>]   - Start at some config in the filesystem order
+                   [-s|--skip]            - Continue the paused build, skipping one
 "
 }
 
@@ -36,50 +55,62 @@ unset FIRST_CONF
 EXIT_USAGE=
 LIMIT=1000
 
-while getopts 'b:cdhil:nqr:sv-:' OFLAG; do
+while getopts 'aB:b:cde:fhl:mno:pr:sv-:' OFLAG; do
   case "${OFLAG}" in
-    b) BRANCH=$OPTARG       ; bugout "Branch: $BRANCH" ;;
-    r) FIRST_CONF="$OPTARG" ; bugout "Resume: $FIRST_CONF" ;;
-    c) CONTINUE=1           ; bugout "Continue" ;;
-    s) CONTSKIP=1           ; bugout "Continue, skipping" ;;
-    i) COPY_INI=1           ; bugout "Archive INI/JSON/YML files" ;;
+    a) ARCHIVE=1                ; bugout "Archiving" ;;
+    B) CBASE=${OPTARG%/}        ; bugout "Base: $CBASE" ;;
+    b) BRANCH=$OPTARG           ; bugout "Branch: $BRANCH" ;;
+    c) CONTINUE=1               ; bugout "Continue" ;;
+  d|v) DEBUG=1                  ; bugout "Debug ON" ;;
+    e) CEXPORT=$OPTARG          ; bugout "Export $CEXPORT" ;;
+    f) NOFAIL=1                 ; bugout "Continue on Fail" ;;
     h) EXIT_USAGE=1 ; break ;;
-    l) LIMIT=$OPTARG        ; bugout "Limit to $LIMIT build(s)" ;;
-  d|v) DEBUG=1              ; bugout "Debug ON" ;;
-    n) DRYRUN=1             ; bugout "Dry Run" ;;
-    -) IFS="=" read -r ONAM OVAL <<< "$OPTARG"
+    l) LIMIT=$OPTARG            ; bugout "Limit to $LIMIT build(s)" ;;
+    m) MANY=1                   ; bugout "Many Envs" ;;
+    n) DRYRUN=1                 ; bugout "Dry Run" ;;
+    o) OUTBASE="${OPTARG%/}"    ; bugout "Archive to $OUTBASE" ;;
+    p) PURGE=1                  ; bugout "Purge stat file" ;;
+    r) ISRES=1 ; FIRST_CONF=$OPTARG ; bugout "Resume: $FIRST_CONF" ;;
+    s) CONTSKIP=1               ; bugout "Continue, skipping" ;;
+    -) ONAM="${OPTARG%%=*}" ; OVAL="${OPTARG#*=}"
        case "$ONAM" in
-       branch) BRANCH=$OVAL       ; bugout "Branch: $BRANCH" ;;
-       resume) FIRST_CONF="$OVAL" ; bugout "Resume: $FIRST_CONF" ;;
-     continue) CONTINUE=1   ; bugout "Continue" ;;
-         skip) CONTSKIP=2   ; bugout "Continue, skipping" ;;
-        limit) LIMIT=$OVAL  ; bugout "Limit to $LIMIT build(s)" ;;
-          ini) COPY_INI=1   ; bugout "Archive INI/JSON/YML files" ;;
+      archive) ARCHIVE=1        ; bugout "Archiving" ;;
+         base) CBASE=${OVAL%/}  ; bugout "Base: $CBASE" ;;
+       branch) BRANCH=$OVAL     ; bugout "Branch: $BRANCH" ;;
+         many) MANY=1           ; bugout "Many Envs" ;;
+       nofail) NOFAIL=1         ; bugout "Continue on Fail" ;;
+       resume) ISRES=1 ; FIRST_CONF=$OVAL ; bugout "Resume: $FIRST_CONF" ;;
+     continue) CONTINUE=1       ; bugout "Continue" ;;
+         skip) CONTSKIP=1       ; bugout "Continue, skipping" ;;
+       export) CEXPORT=$OVAL    ; bugout "Export $EXPORT" ;;
+       output) OUTBASE="${OVAL%/}" ; bugout "Archive to $OUTBASE" ;;
+        limit) LIMIT=$OVAL      ; bugout "Limit to $LIMIT build(s)" ;;
          help) [[ -z "$OVAL" ]] || perror "option can't take value $OVAL" $ONAM ; EXIT_USAGE=1 ;;
-        debug) DEBUG=1      ; bugout "Debug ON" ;;
-      nobuild) DRYRUN=1     ; bugout "Dry Run" ;;
+        debug) DEBUG=1          ; bugout "Debug ON" ;;
+      nobuild) DRYRUN=1         ; bugout "Dry Run" ;;
+        purge) PURGE=1          ; bugout "Purge stat file" ;;
             *) EXIT_USAGE=2 ; echo "$SELF: unrecognized option \`--$ONAM'" ; break ;;
        esac
        ;;
     *) EXIT_USAGE=2 ; break ;;
   esac
 done
-
-# Extra arguments count as BRANCH, FIRST_CONF
 shift $((OPTIND - 1))
-[[ $# > 0 ]] && { BRANCH=$1 ; shift 1 ; bugout "BRANCH=$BRANCH" ; }
-[[ $# > 0 ]] && { FIRST_CONF=$1 ; shift 1 ; bugout "FIRST_CONF=$FIRST_CONF" ; }
-[[ $# > 0 ]] && { EXIT_USAGE=2 ; echo "too many arguments" ; }
 
+# Check for mixed continue, skip, resume arguments. Only one should be used.
+((CONTINUE + CONTSKIP + ISRES + PURGE > 1)) && { echo "Don't mix -c, -p, -s, and -r options" ; echo ; EXIT_USAGE=2 ; }
+
+# Exit with helpful usage information
 ((EXIT_USAGE)) && { usage ; let EXIT_USAGE-- ; exit $EXIT_USAGE ; }
 
-echo "This script downloads each Configuration and attempts to build it."
-echo "On failure the last-built configs will be left in your working copy."
+echo
+echo "This script downloads all example configs and attempts to build them."
+echo "On failure the last-built configs are left in your working copy."
 echo "Restore your configs with 'git checkout -f' or 'git reset --hard HEAD'."
+echo
 
-if [[ -f "$STAT_FILE" ]]; then
-  IFS='*' read BRANCH FIRST_CONF <"$STAT_FILE"
-fi
+[[ -n $PURGE ]] && rm -f "$STAT_FILE"
+[[ -z $FIRST_CONF && -f "$STAT_FILE" ]] && IFS='*' read BRANCH FIRST_CONF <"$STAT_FILE"
 
 # If -c is given start from the last attempted build
 if ((CONTINUE)); then
@@ -97,77 +128,93 @@ elif ((CONTSKIP)); then
 fi
 
 # Check if the current repository has unmerged changes
-if [[ $SKIP_CONF ]]; then
+if ((SKIP_CONF)); then
   echo "Skipping $FIRST_CONF"
-elif [[ $FIRST_CONF ]]; then
+elif [[ -n $FIRST_CONF ]]; then
   echo "Resuming from $FIRST_CONF"
 else
   git diff --quiet || { echo "The working copy is modified. Commit or stash changes before proceeding."; exit ; }
 fi
 
-# Create a temporary folder inside .pio
-TMP=./.pio/build-$BRANCH
-[[ -d "$TMP" ]] || mkdir -p $TMP
-
-# Download Configurations into the temporary folder
-if [[ ! -e "$TMP/README.md" ]]; then
-  echo "Fetching Configurations from GitHub to $TMP"
-  git clone --depth=1 --single-branch --branch "$BRANCH" $GITREPO "$TMP" || { echo "Failed to clone the configuration repository"; exit ; }
+# Check for the given base path
+if [[ -n $CBASE ]]; then
+  CBASE="${CBASE/#\~/$HOME}"
+  [[ -d "$CBASE" ]] || { echo "Given base -B $CBASE not found." ; exit ; }
 else
-  echo "Using cached Configurations at $TMP"
+  # Make a Configurations temporary folder if needed
+  CBASE=./.pio/build-$BRANCH
+  [[ -d "$CBASE" ]] || mkdir -p "$CBASE"
+  # Download the specified Configurations branch if needed
+  if [[ ! -e "$CBASE/README.md" ]]; then
+    echo "Fetching Configurations from GitHub to $CBASE"
+    git clone --depth=1 --single-branch --branch "$BRANCH" $GITREPO "$CBASE" || { echo "Failed to clone the configuration repository"; exit ; }
+  fi
 fi
 
-echo -e "Start build...\n====================="
+# Build
+echo -e "=====================\nProceed with builds...\n====================="
 shopt -s nullglob
-IFS='
-'
-CONF_TREE=$( ls -d "$TMP"/config/examples/*/ "$TMP"/config/examples/*/*/ "$TMP"/config/examples/*/*/*/ "$TMP"/config/examples/*/*/*/*/ | grep -vE ".+\.(\w+)$" )
-for CONF in $CONF_TREE ; do
+
+export PAUSE=1
+
+# Get a list of all folders that contain a file matching "Configuration*.h"
+find -ds "$CBASE"/config/examples -type d -name 'Configuration.h' -o -name 'Configuration_adv.h' -print0 | while IFS= read -r -d $'\0' CONF; do
+
+  # Remove the file name and slash from the end of the path
+  CONF=${CONF%/*}
 
   # Get a config's directory name
-  DIR=$( echo $CONF | "$SED" "s|$TMP/config/examples/||" )
+  DIR=${CONF#$CBASE/config/examples/}
 
   # If looking for a config, skip others
-  [[ $FIRST_CONF ]] && [[ $FIRST_CONF != $DIR && "$FIRST_CONF/" != $DIR ]] && continue
+  [[ $FIRST_CONF ]] && [[ $FIRST_CONF != $DIR && "$FIRST_CONF/" != $DIR ]] && { ((DEBUG)) && echo "[SKIP] $DIR" ; continue ; }
   # Once found, stop looking
   unset FIRST_CONF
 
   # If skipping, don't build the found one
   [[ $SKIP_CONF ]] && { unset SKIP_CONF ; continue ; }
 
-  # ...if skipping, don't build this one
-  compgen -G "${CONF}Con*.h" > /dev/null || continue
+  # Either Configuration.h or Configuration_adv.h must exist
+  [[ -f "$CONF"/Configuration.h || -f "$CONF"/Configuration_adv.h ]] || { echo "[NONE] $DIR" ; continue ; }
+
+  # Command arguments for 'build_example'
+  CARGS=("-b" "$CBASE" "-c" "$DIR")
+
+  # Exporting? Add -e argument
+  ((CEXPORT)) && CARGS+=("-e" "$CEXPORT")
+
+  # Build many environments? Add -m argument
+  ((MANY)) && CARGS+=("-m")
+
+  # Continue on fail? Add -f argument
+  ((NOFAIL)) && CARGS+=("-f")
+
+  # Archive the build? Add -a argument
+  ((ARCHIVE)) && CARGS+=("-a")
+
+  # Redirecting the export/archive output? Add -o argument
+  [[ -n $OUTBASE ]] && CARGS+=("-o" "$OUTBASE")
 
   # Build or print build command for --nobuild
-  if [[ $DRYRUN ]]; then
-    echo -e "\033[0;32m[DRYRUN] build_example internal \"$TMP\" \"$DIR\"\033[0m"
+  if ((DRYRUN)); then
+    echo -e "\033[0;32m[DRYRUN] build_example ${CARGS[@]}\033[0m"
   else
     # Remember where we are in case of failure
     echo "${BRANCH}*${DIR}" >"$STAT_FILE"
-    # Build folder is unknown so delete all report files
-    if [[ $COPY_INI ]]; then
-      IFIND='find ./.pio/build/ -name "config.ini" -o -name "schema.json" -o -name "schema.yml"'
-      $IFIND -exec rm "{}" \;
-    fi
-    ((DEBUG)) && echo "\"$HERE/build_example\" internal \"$TMP\" \"$DIR\""
-    "$HERE/build_example" internal "$TMP" "$DIR" || { echo "Failed to build $DIR"; exit ; }
-    # Build folder is unknown so copy all report files
-    [[ $COPY_INI ]] && $IFIND -exec cp "{}" "$CONF" \;
+    ((DEBUG)) && echo "build_example ${CARGS[@]}"
+    # Invoke build_example
+    build_example "${CARGS[@]}" || { echo "Failed to build $DIR" ; exit ; }
   fi
 
-  ((--LIMIT)) || { echo "Limit reached" ; PAUSE=1 ; break ; }
+  echo
+  ((--LIMIT)) || { echo "Specified limit reached" ; break ; }
+  echo
+
+  export PAUSE=0
 
 done
 
-# Delete the build state if not paused early
-[[ $PAUSE ]] || rm "$STAT_FILE"
+echo "Exiting"
 
-# Delete the temp folder if not preserving generated INI files
-if [[ -e "$TMP/config/examples" ]]; then
-  if [[ $COPY_INI ]]; then
-    OPEN=$( which gnome-open xdg-open open | head -n1 )
-    $OPEN "$TMP"
-  elif [[ ! $PAUSE ]]; then
-    rm -rf "$TMP"
-  fi
-fi
+# Delete the build state if not paused early
+((PAUSE)) || rm -f "$STAT_FILE"

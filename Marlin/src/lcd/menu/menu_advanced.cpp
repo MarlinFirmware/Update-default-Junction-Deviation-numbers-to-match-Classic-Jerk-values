@@ -154,9 +154,12 @@ void menu_backlash();
 
     #if HAS_FILAMENT_RUNOUT_DISTANCE
       editable.decimal = runout.runout_distance();
-      EDIT_ITEM_FAST(float3, MSG_RUNOUT_DISTANCE_MM, &editable.decimal, 1, 999,
-        []{ runout.set_runout_distance(editable.decimal); }, true
-      );
+      auto set_runout_distance = []{ runout.set_runout_distance(editable.decimal); };
+      #if ENABLED(FILAMENT_MOTION_SENSOR)
+        EDIT_ITEM_FAST(float31, MSG_RUNOUT_DISTANCE_MM, &editable.decimal, 0.1, 10, set_runout_distance, true);
+      #else
+        EDIT_ITEM_FAST(float3, MSG_RUNOUT_DISTANCE_MM, &editable.decimal, 1, 999, set_runout_distance, true);
+      #endif
     #endif
 
     END_MENU();
@@ -559,20 +562,20 @@ void menu_backlash();
       BACK_ITEM(MSG_ADVANCED_SETTINGS);
 
       // M593 F Frequency and D Damping ratio
-      #define SHAPING_MENU_FOR_AXIS(AXIS) \
-        editable.decimal = stepper.get_shaping_frequency(AXIS); \
+      #define SHAPING_MENU_FOR_AXIS(A) \
+        editable.decimal = stepper.get_shaping_frequency(_AXIS(A)); \
         if (editable.decimal) { \
-          ACTION_ITEM_N(AXIS, MSG_SHAPING_DISABLE, []{ stepper.set_shaping_frequency(AXIS, 0.0f); ui.refresh(); }); \
-          EDIT_ITEM_FAST_N(TERN(EDIT_SHAPING_FREQ_INT, float3, float41), AXIS, MSG_SHAPING_FREQ, &editable.decimal, min_frequency, 200.0f, []{ stepper.set_shaping_frequency(AXIS, editable.decimal); }); \
-          editable.decimal = stepper.get_shaping_damping_ratio(AXIS); \
-          EDIT_ITEM_FAST_N(float42_52, AXIS, MSG_SHAPING_ZETA, &editable.decimal, 0.0f, 1.0f, []{ stepper.set_shaping_damping_ratio(AXIS, editable.decimal); }); \
+          ACTION_ITEM_N(_AXIS(A), MSG_SHAPING_DISABLE_N, []{ stepper.set_shaping_frequency(_AXIS(A), 0.0f); ui.refresh(); }); \
+          EDIT_ITEM_FAST_N(TERN(EDIT_SHAPING_FREQ_INT, float3, float41), _AXIS(A), MSG_SHAPING_FREQ_N, &editable.decimal, min_frequency, 200.0f, []{ stepper.set_shaping_frequency(_AXIS(A), editable.decimal); }); \
+          editable.decimal = stepper.get_shaping_damping_ratio(_AXIS(A)); \
+          EDIT_ITEM_FAST_N(float42_52, _AXIS(A), MSG_SHAPING_ZETA_N, &editable.decimal, 0.0f, 1.0f, []{ stepper.set_shaping_damping_ratio(_AXIS(A), editable.decimal); }); \
         } \
         else \
-          ACTION_ITEM_N(AXIS, MSG_SHAPING_ENABLE, []{ stepper.set_shaping_frequency(AXIS, (SHAPING_FREQ_X) ?: (SHAPING_MIN_FREQ)); ui.refresh(); });
+          ACTION_ITEM_N(_AXIS(A), MSG_SHAPING_ENABLE_N, []{ stepper.set_shaping_frequency(_AXIS(A), (SHAPING_FREQ_##A) ?: (SHAPING_MIN_FREQ)); ui.refresh(); });
 
-      TERN_(INPUT_SHAPING_X, SHAPING_MENU_FOR_AXIS(X_AXIS))
-      TERN_(INPUT_SHAPING_Y, SHAPING_MENU_FOR_AXIS(Y_AXIS))
-      TERN_(INPUT_SHAPING_Z, SHAPING_MENU_FOR_AXIS(Z_AXIS))
+      TERN_(INPUT_SHAPING_X, SHAPING_MENU_FOR_AXIS(X))
+      TERN_(INPUT_SHAPING_Y, SHAPING_MENU_FOR_AXIS(Y))
+      TERN_(INPUT_SHAPING_Z, SHAPING_MENU_FOR_AXIS(Z))
 
       END_MENU();
     }
@@ -606,29 +609,6 @@ void menu_backlash();
       END_MENU();
     }
 
-  #endif
-
-  // M851 - Z Probe Offsets
-  #if HAS_BED_PROBE
-    void menu_probe_offsets() {
-      START_MENU();
-      BACK_ITEM(MSG_ADVANCED_SETTINGS);
-      #if HAS_PROBE_XY_OFFSET
-        EDIT_ITEM(float31sign, MSG_ZPROBE_XOFFSET, &probe.offset.x, PROBE_OFFSET_XMIN, PROBE_OFFSET_XMAX);
-        EDIT_ITEM(float31sign, MSG_ZPROBE_YOFFSET, &probe.offset.y, PROBE_OFFSET_YMIN, PROBE_OFFSET_YMAX);
-      #endif
-      EDIT_ITEM(LCD_Z_OFFSET_TYPE, MSG_ZPROBE_ZOFFSET, &probe.offset.z, PROBE_OFFSET_ZMIN, PROBE_OFFSET_ZMAX);
-
-      #if ENABLED(PROBE_OFFSET_WIZARD)
-        SUBMENU(MSG_PROBE_WIZARD, goto_probe_offset_wizard);
-      #endif
-
-      #if ENABLED(X_AXIS_TWIST_COMPENSATION)
-        SUBMENU(MSG_XATC, xatc_wizard_continue);
-      #endif
-
-      END_MENU();
-    }
   #endif
 
 #endif // !SLIM_LCD_MENUS
@@ -700,7 +680,7 @@ void menu_advanced_settings() {
 
     // M593 - Acceleration items
     #if ENABLED(SHAPING_MENU)
-      if (!is_busy) SUBMENU(MSG_INPUT_SHAPING, menu_advanced_input_shaping);
+      SUBMENU(MSG_INPUT_SHAPING, menu_advanced_input_shaping);
     #endif
 
     #if ENABLED(CLASSIC_JERK)
@@ -710,11 +690,6 @@ void menu_advanced_settings() {
       EDIT_ITEM(float43, MSG_JUNCTION_DEVIATION, &planner.junction_deviation_mm, 0.001f, 0.3f
         OPTARG(HAS_LINEAR_E_JERK, planner.recalculate_max_e_jerk)
       );
-    #endif
-
-    // M851 - Z Probe Offsets
-    #if HAS_BED_PROBE
-      if (!is_busy) SUBMENU(MSG_ZPROBE_OFFSETS, menu_probe_offsets);
     #endif
 
   #endif // !SLIM_LCD_MENUS

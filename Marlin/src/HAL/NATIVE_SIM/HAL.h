@@ -87,11 +87,11 @@ extern MSerialT serial_stream_3;
   #endif
 #endif
 
-#ifdef MMU2_SERIAL_PORT
-  #if WITHIN(MMU2_SERIAL_PORT, 0, 3)
-    #define MMU2_SERIAL MSERIAL(MMU2_SERIAL_PORT)
+#ifdef MMU_SERIAL_PORT
+  #if WITHIN(MMU_SERIAL_PORT, 0, 3)
+    #define MMU_SERIAL MSERIAL(MMU_SERIAL_PORT)
   #else
-    #error "MMU2_SERIAL_PORT must be from 0 to 3. Please update your configuration."
+    #error "MMU_SERIAL_PORT must be from 0 to 3. Please update your configuration."
   #endif
 #endif
 

@@ -137,15 +137,14 @@
 // TFT with FSMC interface
 //
 #if HAS_FSMC_TFT
-  #define TFT_RESET_PIN                     PF15
-  #define TFT_BACKLIGHT_PIN                 PF11
-
-  #define LCD_USE_DMA_FSMC                        // Use DMA transfers to send data to the TFT
+  #define LCD_USE_DMA_FSMC
   #define FSMC_CS_PIN                       PD7   // NE4
   #define FSMC_RS_PIN                       PG0   // A0
-
   #define TFT_CS_PIN                 FSMC_CS_PIN
   #define TFT_RS_PIN                 FSMC_RS_PIN
+
+  #define TFT_RESET_PIN                     PF15
+  #define TFT_BACKLIGHT_PIN                 PF11
 
   #define TOUCH_BUTTONS_HW_SPI
   #define TOUCH_BUTTONS_HW_SPI_DEVICE          1

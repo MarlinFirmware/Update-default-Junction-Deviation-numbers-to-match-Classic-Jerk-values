@@ -49,7 +49,7 @@
 // Enable EEPROM Emulation for this board, so that we don't overwrite factory data
 #if NO_EEPROM_SELECTED
   //#define I2C_EEPROM                            // AT24C64
-  //#define FLASH_EEPROM_EMULATION
+  #define FLASH_EEPROM_EMULATION
 #endif
 
 #if ENABLED(I2C_EEPROM)
@@ -112,14 +112,13 @@
 // TFT with FSMC interface
 //
 #if HAS_FSMC_TFT
-  #define LCD_BACKLIGHT_PIN                 PF11
+  #define LCD_USE_DMA_FSMC
   #define FSMC_CS_PIN                       PD7
   #define FSMC_RS_PIN                       PG0
-
-  #define LCD_USE_DMA_FSMC                        // Use DMA transfers to send data to the TFT
-
   #define TFT_CS_PIN                 FSMC_CS_PIN
   #define TFT_RS_PIN                 FSMC_RS_PIN
+
+  #define LCD_BACKLIGHT_PIN                 PF11
 #endif
 
 //

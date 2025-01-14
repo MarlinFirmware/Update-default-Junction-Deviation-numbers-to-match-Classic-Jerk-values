@@ -61,7 +61,9 @@ void GcodeSuite::M360() {
   PGMSTR(X_STR,    "X");
   PGMSTR(Y_STR,    "Y");
   PGMSTR(Z_STR,    "Z");
-  PGMSTR(JERK_STR, "Jerk");
+  #if ANY(CLASSIC_JERK, HAS_LINEAR_E_JERK)
+    PGMSTR(JERK_STR, "Jerk");
+  #endif
 
   //
   // Basics and Enabled items

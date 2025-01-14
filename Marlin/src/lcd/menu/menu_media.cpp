@@ -94,7 +94,7 @@ class MenuItem_sdfolder : public MenuItem_sdbase {
     static void action(FSTR_P const, CardReader &theCard) {
       card.cd(theCard.filename);
       encoderTopLine = 0;
-      ui.encoderPosition = 2 * (ENCODER_STEPS_PER_MENU_ITEM);
+      ui.encoderPosition = (card.get_num_items() ? 2 : 1) * (ENCODER_STEPS_PER_MENU_ITEM);
       ui.screen_changed = true;
       TERN_(HAS_MARLINUI_U8GLIB, ui.drawing_screen = false);
       ui.refresh();

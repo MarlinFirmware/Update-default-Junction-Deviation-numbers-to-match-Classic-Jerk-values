@@ -99,6 +99,7 @@ namespace LanguageNarrow_gl {
   LSTR MSG_EXTRUDE                        = _UxGT("Extruír");
   LSTR MSG_RETRACT                        = _UxGT("Retraer");
   LSTR MSG_MOVE_AXIS                      = _UxGT("Mover eixe");
+  LSTR MSG_PROBE_AND_LEVEL                = _UxGT("Probar e Nivelar");
   LSTR MSG_BED_LEVELING                   = _UxGT("Nivelando Cama");
   LSTR MSG_LEVEL_BED                      = _UxGT("Nivelar Cama");
   LSTR MSG_BED_TRAMMING                   = _UxGT("Nivelar Cantos");
@@ -121,7 +122,7 @@ namespace LanguageNarrow_gl {
   LSTR MSG_IDEX_MODE_MIRRORED_COPY        = _UxGT("Copia Espello");
   LSTR MSG_IDEX_MODE_FULL_CTRL            = _UxGT("Control Total");
   LSTR MSG_HOTEND_OFFSET_Z                = _UxGT("2º Bico Z");
-  LSTR MSG_HOTEND_OFFSET_A                = _UxGT("2º Bico @");
+  LSTR MSG_HOTEND_OFFSET_N                = _UxGT("2º Bico @");
   LSTR MSG_UBL_DOING_G29                  = _UxGT("Executando G29");
   LSTR MSG_UBL_TOOLS                      = _UxGT("Ferramentas UBL");
   LSTR MSG_LCD_TILTING_MESH               = _UxGT("Punto de inclinación");
@@ -130,13 +131,10 @@ namespace LanguageNarrow_gl {
   LSTR MSG_UBL_BC_INSERT2                 = _UxGT("Medir");
   LSTR MSG_UBL_BC_REMOVE                  = _UxGT("Quitar e Medir Cama");
   LSTR MSG_UBL_MOVING_TO_NEXT             = _UxGT("Mover ao Seguinte");
-  LSTR MSG_UBL_ACTIVATE_MESH              = _UxGT("Activar UBL");
-  LSTR MSG_UBL_DEACTIVATE_MESH            = _UxGT("Desactivar UBL");
   LSTR MSG_UBL_SET_TEMP_BED               = _UxGT("Temp Cama");
   LSTR MSG_UBL_BED_TEMP_CUSTOM            = _UxGT("Temp Cama");
   LSTR MSG_UBL_SET_TEMP_HOTEND            = _UxGT("Temp Bico");
   LSTR MSG_UBL_HOTEND_TEMP_CUSTOM         = _UxGT("Temp Bico");
-  LSTR MSG_UBL_MESH_EDIT                  = _UxGT("Editar Malla");
   LSTR MSG_UBL_EDIT_CUSTOM_MESH           = _UxGT("Edit. Malla Person.");
   LSTR MSG_UBL_FINE_TUNE_MESH             = _UxGT("Axuste Fino da Malla");
   LSTR MSG_UBL_DONE_EDITING_MESH          = _UxGT("Fin Edición da Malla");
@@ -197,7 +195,8 @@ namespace LanguageNarrow_gl {
   LSTR MSG_UBL_7_SAVE_MESH                = _UxGT("7. Gardar Malla Cama");
 
   LSTR MSG_LED_CONTROL                    = _UxGT("Control LED");
-  LSTR MSG_LEDS                           = _UxGT("Luces");
+  LSTR MSG_LIGHTS                         = _UxGT("Luces");
+  LSTR MSG_LIGHT_N                        = _UxGT("Luce #{");
   LSTR MSG_LED_PRESETS                    = _UxGT("Axustes Luz");
   LSTR MSG_SET_LEDS_RED                   = _UxGT("Vermello");
   LSTR MSG_SET_LEDS_ORANGE                = _UxGT("Laranxa");
@@ -411,7 +410,9 @@ namespace LanguageNarrow_gl {
   LSTR MSG_ZPROBE_OFFSETS                 = _UxGT("Desfases Sonda");
   LSTR MSG_ZPROBE_XOFFSET                 = _UxGT("Desfase Sonda X");
   LSTR MSG_ZPROBE_YOFFSET                 = _UxGT("Desfase Sonda Y");
-  LSTR MSG_ZPROBE_ZOFFSET                 = _UxGT("Desfase Z");
+  LSTR MSG_ZPROBE_ZOFFSET                 = _UxGT("Desfase Sonda Z");
+  LSTR MSG_ZPROBE_OFFSET_N                = _UxGT("Desfase Sonda @");
+  LSTR MSG_BABYSTEP_PROBE_Z               = _UxGT("Micropaso Sonda-Z");
   LSTR MSG_BABYSTEP_X                     = _UxGT("Micropaso X");
   LSTR MSG_BABYSTEP_Y                     = _UxGT("Micropaso Y");
   LSTR MSG_BABYSTEP_Z                     = _UxGT("Micropaso Z");

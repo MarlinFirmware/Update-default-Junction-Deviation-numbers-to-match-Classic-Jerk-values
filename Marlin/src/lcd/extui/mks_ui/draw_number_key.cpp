@@ -68,9 +68,9 @@ enum {
 
 static void disp_key_value() {
   char *temp;
-  TERN_(HAS_TRINAMIC_CONFIG, float milliamps);
 
   switch (value) {
+    default: break;
     case PrintAcceleration:
       dtostrf(planner.settings.acceleration, 1, 1, public_buf_m);
       break;
@@ -223,6 +223,7 @@ static void disp_key_value() {
 
 static void set_value_confirm() {
   switch (value) {
+    default: break;
     case PrintAcceleration:   planner.settings.acceleration = atof(key_value); break;
     case RetractAcceleration: planner.settings.retract_acceleration = atof(key_value); break;
     case TravelAcceleration:  planner.settings.travel_acceleration = atof(key_value); break;

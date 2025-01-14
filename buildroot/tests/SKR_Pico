@@ -1,0 +1,18 @@
+#!/usr/bin/env bash
+#
+# Build tests for BTT SKR Pico
+#
+
+# exit on first failure
+set -e
+
+#
+# Build with the default configurations
+#
+restore_configs
+opt_set MOTHERBOARD BOARD_BTT_SKR_PICO NUM_SERVOS 1
+opt_enable Z_PROBE_SERVO_NR Z_SERVO_ANGLES Z_SAFE_HOMING M114_DETAIL
+exec_test $1 $2 "Default Configuration" "$3"
+
+# clean up
+restore_configs

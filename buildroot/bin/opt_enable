@@ -1,15 +1,21 @@
-#!/usr/bin/env bash
+#!/usr/bin/env python
 
-# exit on first failure
-set -e
+import sys, os, config
 
-SED=$(which gsed sed | head -n1)
+def main():
+    args = sys.argv[1:]
 
-for opt in "$@" ; do
-  DID=0 ; FOUND=0
-  for FN in Configuration Configuration_adv; do
-    "${SED}" -i "/^\(\s*\)\/\/\(\s*\)\(#define\s\+${opt}\b\)\( \?\)/{s//\1\2\3\4\4\4/;h};\${x;/./{x;q0};x;q9}" Marlin/$FN.h && DID=1
-    ((DID||FOUND)) || { grep -E "^\s*#define\s+${opt}\b" Marlin/$FN.h >/dev/null && FOUND=1 ; }
-  done
-  ((DID||FOUND)) || (echo "ERROR: $(basename $0) Can't find ${opt}" >&2 && exit 9)
-done
+    for name in args:
+        changed = False
+
+        for file in config.FILES:
+            if os.path.exists(file):
+                if config.enable(file, name):
+                    changed = True
+
+        if not changed:
+            print(f"ERROR: Can't find {name}")
+            exit(1)
+
+if __name__ == "__main__":
+    main()

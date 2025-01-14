@@ -571,7 +571,7 @@ void reset_stepper_drivers();    // Called by settings.load / settings.reset
 
   #define TOOL_ESTEPPER(T) ((T) >> 1)
 
-#elif HAS_PRUSA_MMU2  // One multiplexed stepper driver
+#elif HAS_PRUSA_MMU2 || HAS_PRUSA_MMU3 // One multiplexed stepper driver
 
   #define E_STEP_WRITE(E,V) E0_STEP_WRITE(V)
   #define    FWD_E_DIR(E)   E0_DIR_WRITE(HIGH)

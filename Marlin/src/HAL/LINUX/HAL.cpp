@@ -52,7 +52,7 @@ uint8_t MarlinHAL::active_ch = 0;
 
 uint16_t MarlinHAL::adc_value() {
   const pin_t pin = analogInputToDigitalPin(active_ch);
-  if (!VALID_PIN(pin)) return 0;
+  if (!isValidPin(pin)) return 0;
   return uint16_t((Gpio::get(pin) >> 2) & 0x3FF); // return 10bit value as Marlin expects
 }
 

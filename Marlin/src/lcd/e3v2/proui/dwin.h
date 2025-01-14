@@ -372,6 +372,9 @@ void drawMaxAccelMenu();
 #if ENABLED(INDIVIDUAL_AXIS_HOMING_SUBMENU)
   void drawHomingMenu();
 #endif
+#if ENABLED(EDITABLE_HOMING_FEEDRATE)
+  void drawHomingFRMenu();
+#endif
 #if ENABLED(FWRETRACT)
   void drawFWRetractMenu();
 #endif

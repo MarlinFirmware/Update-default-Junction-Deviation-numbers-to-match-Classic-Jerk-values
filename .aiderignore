@@ -1,0 +1,21 @@
+# Build artifacts
+buildroot/
+*.o
+*.a
+*.so
+*.dylib
+*.dll
+*.exe
+
+# Web assets
+*.min.js
+*.min.css
+
+# Generated files
+__pycache__/
+*.pyc
+.DS_Store
+
+# IDE files
+.vscode/
+.idea/

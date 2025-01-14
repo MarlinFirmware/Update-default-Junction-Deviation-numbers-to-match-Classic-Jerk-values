@@ -153,6 +153,9 @@ uint8_t TouchButtons::read_buttons() {
     next_sleep_ms = ui.sleep_timeout_minutes ? millis() + MIN_TO_MS(ui.sleep_timeout_minutes) : 0;
   }
 
+  bool MarlinUI::display_is_asleep() {
+    return touchBt.isSleeping();
+  }
   void MarlinUI::sleep_display(const bool sleep/*=true*/) {
     if (!sleep) touchBt.wakeUp();
   }

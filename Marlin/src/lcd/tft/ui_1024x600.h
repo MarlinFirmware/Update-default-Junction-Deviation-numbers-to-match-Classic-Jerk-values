@@ -24,12 +24,20 @@
 
 // -------------------------------- Core Parameters --------------------------------
 
-#define MENU_TEXT_X                 16
+#define MENU_TEXT_X                 (5 + 32 + 5 + 6)
 #define MENU_TEXT_Y                 tft_string.vcenter(MENU_ITEM_HEIGHT)
 
 #define MENU_ITEM_ICON_X            5
 #define MENU_ITEM_ICON_Y            5
-#define MENU_ITEM_ICON_SPACE        42
+#define MENU_ITEM_ICON_SPACE        (5 + 32 + 5)
+
+#ifndef MENU_ITEM_SUBMENU_ICON_X
+  #define MENU_ITEM_SUBMENU_ICON_X  (TFT_WIDTH - 32 - 32)
+#endif
+
+#ifndef MENU_ITEM_BACK_LINE_SHIFT
+  #define MENU_ITEM_BACK_LINE_SHIFT -32
+#endif
 
 #define MENU_ITEM_HEIGHT            43
 #define MENU_LINE_HEIGHT            (MENU_ITEM_HEIGHT + 2)
@@ -50,27 +58,29 @@
 // MarlinUI::show_bootscreen()
 #ifndef BOOTSCREEN_LOGO
   #if ENABLED(BOOT_MARLIN_LOGO_SMALL)
-    #define BOOTSCREEN_LOGO         MarlinLogo195x59x16
-    #define BOOTSCREEN_LOGO_W       195
-    #define BOOTSCREEN_LOGO_H       59
-    #define BOOTSCREEN_SITE_URL_Y   (TFT_HEIGHT - 70)
+    #define BOOTSCREEN_LOGO       MarlinLogo195x59x16
+    #define BOOTSCREEN_LOGO_W     195
+    #define BOOTSCREEN_LOGO_H      59
+    #define BOOTSCREEN_SITE_URL_Y (TFT_HEIGHT - 70)
+  #elif ENABLED(BOOT_MARLIN_LOGO_HUGE)
+    #define BOOTSCREEN_LOGO       MarlinLogo1024x600x16
+    #define BOOTSCREEN_LOGO_W     TFT_WIDTH
+    #define BOOTSCREEN_LOGO_H     TFT_HEIGHT
+    #define BOOTSCREEN_SITE_URL_Y (TFT_HEIGHT - 40)
+  #elif ENABLED(BOOT_MARLIN_LOGO_ROUND)
+    #define BOOTSCREEN_LOGO       MarlinLogo576x478x16
+    #define BOOTSCREEN_LOGO_W     576
+    #define BOOTSCREEN_LOGO_H     478
+    #define BOOTSCREEN_LOGO_Y     ((TFT_HEIGHT - BOOTSCREEN_LOGO_H) / 2 - 10)
+    #define BOOTSCREEN_SITE_URL_Y (TFT_HEIGHT - 50)
   #else
-    #if ENABLED(BOOT_MARLIN_LOGO_HUGE)
-      #define BOOTSCREEN_LOGO       MarlinLogo1024x600x16
-      #define BOOTSCREEN_LOGO_W     TFT_WIDTH
-      #define BOOTSCREEN_LOGO_H     TFT_HEIGHT
-    #else
-      #define BOOTSCREEN_LOGO       MarlinLogo480x320x16
-      #define BOOTSCREEN_LOGO_W     480
-      #define BOOTSCREEN_LOGO_H     320
-    #endif
-    #define BOOTSCREEN_SITE_URL_Y   (TFT_HEIGHT - 90)
+    #define BOOTSCREEN_LOGO       MarlinLogo480x320x16
+    #define BOOTSCREEN_LOGO_W     480
+    #define BOOTSCREEN_LOGO_H     320
   #endif
-#endif
-
-#if !defined(BOOTSCREEN_LOGO_X) && !defined(BOOTSCREEN_LOGO_Y)
-  #define BOOTSCREEN_LOGO_X         (TFT_WIDTH - BOOTSCREEN_LOGO_W) / 2
-  #define BOOTSCREEN_LOGO_Y         (TFT_HEIGHT - BOOTSCREEN_LOGO_H) / 2
+  #ifndef BOOTSCREEN_SITE_URL_Y
+    #define BOOTSCREEN_SITE_URL_Y (TFT_HEIGHT - 90)
+  #endif
 #endif
 
 #if !defined(NAVIGATION_PAGE_UP_X) && !defined(NAVIGATION_PAGE_UP_Y) && !defined(NAVIGATION_PAGE_DOWN_X) && !defined(NAVIGATION_PAGE_DOWN_Y) && !defined(NAVIGATION_BACK_X) && !defined(NAVIGATION_BACK_Y)

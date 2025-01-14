@@ -30,7 +30,7 @@ XATC xatc;
 
 bool XATC::enabled;
 float XATC::spacing, XATC::start;
-xatc_array_t XATC::z_offset; // Initialized by settings.load()
+xatc_array_t XATC::z_offset; // Initialized by settings.load
 
 void XATC::reset() {
   constexpr float xzo[] = XATC_Z_OFFSETS;

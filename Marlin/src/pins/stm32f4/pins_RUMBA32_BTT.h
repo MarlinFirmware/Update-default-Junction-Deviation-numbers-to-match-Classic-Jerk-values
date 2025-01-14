@@ -48,20 +48,9 @@
   // TMC2208/TMC2209 Software Serial
   //
   #define X_SERIAL_TX_PIN                   PC14  // BTT Rumba32 only uses 1 pin for UART
-  #define X_SERIAL_RX_PIN        X_SERIAL_TX_PIN
-
   #define Y_SERIAL_TX_PIN                   PE4
-  #define Y_SERIAL_RX_PIN        Y_SERIAL_TX_PIN
-
   #define Z_SERIAL_TX_PIN                   PE0
-  #define Z_SERIAL_RX_PIN        Z_SERIAL_TX_PIN
-
   #define E0_SERIAL_TX_PIN                  PC13
-  #define E0_SERIAL_RX_PIN      E0_SERIAL_TX_PIN
-
   #define E1_SERIAL_TX_PIN                  PD5
-  #define E1_SERIAL_RX_PIN      E1_SERIAL_TX_PIN
-
   #define E2_SERIAL_TX_PIN                  PD1
-  #define E2_SERIAL_RX_PIN      E2_SERIAL_TX_PIN
 #endif

@@ -81,11 +81,11 @@ extern DefaultSerial4 MSerial3;
   #endif
 #endif
 
-#ifdef MMU2_SERIAL_PORT
-  #if WITHIN(MMU2_SERIAL_PORT, 0, 3)
-    #define MMU2_SERIAL MSERIAL(MMU2_SERIAL_PORT)
+#ifdef MMU_SERIAL_PORT
+  #if WITHIN(MMU_SERIAL_PORT, 0, 3)
+    #define MMU_SERIAL MSERIAL(MMU_SERIAL_PORT)
   #else
-    #error "MMU2_SERIAL_PORT must be from 0 to 3."
+    #error "MMU_SERIAL_PORT must be from 0 to 3."
   #endif
 #endif
 
@@ -127,7 +127,7 @@ typedef Servo hal_servo_t;
 #define HAL_ADC_RESOLUTION  10
 
 #ifndef analogInputToDigitalPin
-  #define analogInputToDigitalPin(p) ((p < 12U) ? (p) + 54U : -1)
+  #define analogInputToDigitalPin(p) pin_t((p < 12U) ? (p) + 54U : -1)
 #endif
 
 //

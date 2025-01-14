@@ -1,43 +1,290 @@
 #!/usr/bin/env bash
 #
-# build_example
+# Usage:
 #
-# Usage: build_example internal config-home config-folder
+#  build_example  -b|--base=<path>    - Configurations root folder (e.g., ./.pio/build-BRANCH)
+#                 -c|--config=<rel>   - Sub-path of the configs to build (within config/examples)
+#                [-n|--index=N]       - Which environment to build, by index (Based on pins.h comments)
+#                [-m|--many]          - Build all the board's environments listed in pins.h
+#                [-e|--export=N]      - Use CONFIG_EXPORT N to export the config to the export location
+#                [-a|--archive]       - Archive the build (to the export location)
+#                [-o|--output]        - Redirect export / archiving to another location
+#                                       (By default export to origin config folder)
+#                [-f|--nofail]        - Don't stop on a failed build
+#                [-w|--nowarn]        - Suppress warnings with extra config options
+#                [-r|--reveal]        - Reveal the config/export folder after the build
+#                [-h|--help]          - Print usage and exit
+#                [--allow]            - Allow this script to run standalone
 #
+
+usage() { echo "Usage:
+
+build_example  -b|--base=<path>    - Configurations root folder (e.g., ./.pio/build-BRANCH)
+               -c|--config=<rel>   - Sub-path of the configs to build (within config/examples)
+              [-n|--index=N]       - Which environment to build, by index (Based on pins.h comments)
+              [-m|--many]          - Build all the board's environments listed in pins.h
+              [-e|--export=N]      - Use CONFIG_EXPORT N to export the config to the export location
+              [-a|--archive]       - Archive the build (to the export location)
+              [-o|--output]        - Redirect export / archiving to another location
+                                     (By default export to origin config folder)
+              [-f|--nofail]        - Don't stop on a failed build
+              [-w|--nowarn]        - Suppress warnings with extra config options
+              [-r|--reveal]        - Reveal the config/export folder after the build
+              [-h|--help]          - Print usage and exit
+              [--allow]            - Allow this script to run standalone
+"
+}
 
 HERE=`dirname $0`
+PATH="$HERE:$PATH"
 
-. "$HERE/mfutil"
+. mfutil
 
-# Require 'internal' as the first argument
-[[ "$1" == "internal" ]] || { echo "Don't call this script directly, use build_all_examples instead." ; exit 1 ; }
+annc() { echo -e "\033[0;32m$1\033[0m" ; }
+alrt() { echo -e "\033[0;31m$1\033[0m" ; }
 
-echo "Testing $3:"
+# Get arguments
+BUILD=./.pio/build
+CLEANER=
+ALLOW=
+ARCHIVE=
+BASE=
+CONFIG=
+REVEAL=
+EXPNUM=
+NOFAIL=
+OUTBASE=
+BUILDINDEX=1
+MANY=
 
-SUB=$2/config/examples/$3
-[[ -d "$SUB" ]] || { echo "$SUB is not a good path" ; exit 1 ; }
+while getopts 'ab:c:e:fhmn:o:r-:' OFLAG; do
+  case "${OFLAG}" in
+    a) ARCHIVE=1 ;;
+    b) BASE="${OPTARG%/}" ;;
+    c) CONFIG="${OPTARG%/}" ;;
+    e) EXPNUM="$OPTARG" ;;
+    f) NOFAIL=1 ;;
+    h) EXIT_USAGE=1 ; break ;;
+    m) MANY=1 ;;
+    n) BUILDINDEX="$OPTARG" ;;
+    o) OUTBASE="${OPTARG%/}" ;;
+    r) REVEAL=1 ;;
+    -) ONAM="${OPTARG%%=*}" ; OVAL="${OPTARG#*=}"
+       case "$ONAM" in
+        archive) ARCHIVE=1 ;;
+          allow) ALLOW=1 ;;
+           base) BASE="${OVAL%/}" ;;
+         config) CONFIG="${OVAL%/}" ;;
+           many) MANY=1 ;;
+          index) BUILDINDEX="$OVAL" ;;
+         export) EXPNUM="$OVAL" ;;
+         output) OUTBASE="${OVAL%/}" ;;
+           help) EXIT_USAGE=1 ; break ;;
+         nofail) NOFAIL=1 ;;
+         reveal) REVEAL=1 ;;
+              *) EXIT_USAGE=2 ; echo "$SELF: unrecognized option \`--$ONAM'" ; break ;;
+       esac
+       ;;
+    *) EXIT_USAGE=2 ; break ;;
+  esac
+done
+shift $((OPTIND - 1))
 
-compgen -G "${SUB}Con*.h" > /dev/null || { echo "No configuration files found in $SUB" ; exit 1 ; }
+# Must be called from another script (or with --allow)
+[[ $ALLOW || $SHLVL -gt 2 ]] || { echo "Don't call this script directly, use build_all_examples instead." ; exit 1 ; }
 
+# Exit with helpful usage information
+((EXIT_USAGE)) && { usage ; let EXIT_USAGE-- ; exit $EXIT_USAGE ; }
+
+# -b|--base and -c|--config are required
+[[ -z $BASE ]] && { echo "-b|--base is required" ; exit 1 ; }
+[[ -z $CONFIG ]] && { echo "-c|--config is required" ; exit 1 ; }
+
+# Expand ~ to $HOME in provided arguments
+BASE=${BASE/#\~/$HOME}
+CONFIG=${CONFIG/#\~/$HOME}
+
+# Make sure the examples exist
+SUB1="$BASE/config/examples"
+[[ -d "$SUB1" ]] || { echo "-b|--base $BASE doesn't contain config/examples" ; exit 1 ; }
+
+# Make sure the specific config folder exists
+SUB="$SUB1/$CONFIG"
+[[ -d "$SUB" ]] || { echo "-c|--config $CONFIG doesn't exist" ; exit 1 ; }
+
+# ...and contains Configuration.h or Configuration_adv.h
+[[ -f "$SUB"/Configuration.h  || -f "$SUB"/Configuration_adv.h ]] || { echo "No configuration files found in $SUB" ; exit 1 ; }
+
+# Get the location for exports and archives
+if [[ -n $OUTBASE ]]; then
+  ARCSUB="${OUTBASE/#\~/$HOME}/$CONFIG"
+  mkdir -p "$ARCSUB"
+else
+  ARCSUB="$SUB"
+fi
+
+# Delete any config files from previous builds
+rm -f Marlin/_Bootscreen.h Marlin/_Statusscreen.h
+
+# Copy configurations into the Marlin folder
 echo "Getting configuration files from $SUB"
-cp "$2/config/default"/*.h    Marlin/
-cp "$SUB"/Configuration.h     Marlin/ 2>/dev/null
-cp "$SUB"/Configuration_adv.h Marlin/ 2>/dev/null
-cp "$SUB"/_Bootscreen.h       Marlin/ 2>/dev/null
-cp "$SUB"/_Statusscreen.h     Marlin/ 2>/dev/null
+cp "$BASE"/config/default/*.h Marlin/
+cp "$SUB"/*.h Marlin/
+
+rm -f Marlin/Config.h Marlin/Config-export.h
 
 set -e
 
-# Strip #error lines from Configuration.h
-IFS=$'\n'; set -f
-$SED -i~ -e "20,30{/#error/d}" Marlin/Configuration.h
-rm Marlin/Configuration.h~
-unset IFS; set +f
+# Strip #error lines from Configuration.h using
+awk 'NR < 20 || NR > 30 || !/#error/' Marlin/Configuration.h > Marlin/Configuration.h~
+mv Marlin/Configuration.h~ Marlin/Configuration.h
+
+# Hide several warnings when not exporting
+[[ -z $EXPNUM ]] && CLEANER=1
 
 # Suppress fatal warnings
-echo -e "\n#define NO_CONTROLLER_CUSTOM_WIRING_WARNING" >> Marlin/Configuration.h
+if ((CLEANER)); then
+  opt_add NO_CONTROLLER_CUSTOM_WIRING_WARNING
+  opt_add NO_AUTO_ASSIGN_WARNING
+  opt_add NO_CREALITY_DRIVER_WARNING
+  opt_add DIAG_JUMPERS_REMOVED
+  opt_add DIAG_PINS_REMOVED
+  opt_add NO_MK3_FAN_PINS_WARNING
+  opt_add NO_USER_FEEDBACK_WARNING
+  opt_add NO_Z_SAFE_HOMING_WARNING
+  opt_add NO_LCD_CONTRAST_WARNING
+  opt_add NO_MICROPROBE_WARNING
+  opt_add NO_CONFIGURATION_EMBEDDING_WARNING
+  opt_add NO_HOMING_CURRENT_WARNING
+fi
 
-echo "Building the firmware now..."
-"$HERE/mftest" -s -a -n1 || { echo "Failed"; exit 1; }
+# Possible exported file names (in the build folder)
+ENAME=("-name" "marlin_config.json" \
+  "-o" "-name" "config.ini" \
+  "-o" "-name" "schema.json" \
+  "-o" "-name" "schema.yml")
 
-echo "Success"
+# Possible built firmware names (in the build folder)
+BNAME=("-name" "firmware*.hex" \
+  "-o" "-name" "firmware*.bin" \
+  "-o" "-name" "project*.bin" \
+  "-o" "-name" "Robin*.bin" \
+  "-o" "-name" "main_*.bin" \
+  "-o" "-name" "MarlinSimulator*")
+
+mkdir -p "$BUILD"
+
+# If EXPNUM is set then apply to the config before build
+if [[ $EXPNUM ]]; then
+  opt_set CONFIG_EXPORT $EXPNUM
+  # Clean up old exports
+  find "$BUILD" -type f \( "${ENAME[@]}" \) -exec rm "{}" \;
+fi
+
+((ARCHIVE)) && find "$BUILD" -type f \( "${BNAME[@]}" \) -exec rm "{}" \;
+
+echo "Building example $CONFIG..."
+
+# If doing many builds get a list of all environment names,
+# which also gives us the number of environments.
+if ((MANY)); then
+  ENVLIST=$(mfenvs) # BOARD_NAME_STRING (1234): [ env1 env2 env3 ... ]
+  ENVLIST=${ENVLIST##*: [ }
+  ENVARRAY=(${ENVLIST% ]})
+  ENVCOUNT=${#ENVARRAY[*]}
+  ((ENVCOUNT)) || { alrt "mfenvs failed for this board." ; exit 1 ; }
+  echo "Found $ENVCOUNT environment(s): ${ENVARRAY[*]}"
+fi
+
+# Run one or more builds based on --many
+# Build all from BUILDINDEX onward (usually 1) meaning ALL.
+# MANY with a BUILDINDEX may be useful for continuing an interrupted build.
+
+while ((1)); do
+  set +e
+
+  echo "Building example $CONFIG ($BUILDINDEX)..."
+
+  # Run a build and record the error number
+  mftest -s -a -n$BUILDINDEX ; ERR=$?
+
+  # "Index out of range" can fail without an error
+  ((MANY)) && ((ERR == 66)) && ERR=0 && break  # "index out of range"
+
+  set -e
+
+  if [[ $ERR -gt 0 ]]; then
+
+    alrt "Failed ($ERR)"
+
+    # Error? For --nofail simply log. Otherwise return the error.
+    if [[ -n $NOFAIL ]]; then
+      date +"%F %T [FAIL] $CONFIG ($BUILDINDEX)" >>./.pio/error-log.txt
+    else
+      exit $ERR
+    fi
+
+  else
+
+    annc "Success"
+
+    # Copy exports back to the configs
+    if [[ -n $EXPNUM ]]; then
+      annc "Exporting $EXPNUM"
+      [[ -f Marlin/Config-export.h ]] && { cp Marlin/Config-export.h "$ARCSUB"/Config.h ; }
+      find "$BUILD" -type f \( "${ENAME[@]}" \) -exec cp "{}" "$ARCSUB" \;
+    fi
+
+    # When building many, create sub-folders for each build env name
+    if [[ -n $MANY && $ENVCOUNT -gt 1 ]]; then
+      ENV=${ENVARRAY[BUILDINDEX-1]}
+      ARCENVSUB="$ARCSUB/$ENV"
+    else
+      ARCENVSUB="$ARCSUB"
+    fi
+
+    # Copy potential firmware files into the config folder
+    # TODO: Consider firmware that needs an STM32F4_UPDATE folder.
+    #       Currently only BOARD_CREALITY_F401RE env:STM32F401RE_creality
+    if ((ARCHIVE)); then
+      annc "Archiving"
+      find "$BUILD" -type f \( "${BNAME[@]}" \) -exec sh -c '
+        ARCDIR="$1" ; CONFIG="$2" ; FILE="$3" ; shift 3
+        NAME=${FILE##*/} ; SHRT=${NAME%.*} ; DIR=${FILE%/*}
+        ZIPX=
+        if [[ $CONFIG == *Simulator* ]]; then
+          case $(uname | tr '[:upper:]' '[:lower:]') in
+            darwin) SUB="macOS" ; ZIPX="-X" ;;
+            *linux) SUB="Linux" ;;
+              win*) SUB="Windows" ;;
+             msys*) SUB="Windows" ;;
+           cygwin*) SUB="Windows" ;;
+            mingw*) SUB="Windows" ;;
+                 *) SUB='Unix' ;;
+          esac
+          ARCH=$(uname -m | tr '[:lower:]' '[:upper:]')
+          ARCDIR="$ARCDIR/$SUB-$ARCH"
+        fi
+        mkdir -p "$ARCDIR"
+        rm -f "$ARCDIR"/*.zip "$ARCDIR"/*.sha256.txt
+        cd "$DIR"
+        SHASUM=$(sha256sum "$NAME" | cut -d" " -f1)
+        echo "$CONFIG\n$SHASUM" > "$ARCDIR/$NAME.sha256.txt"
+        zip $ZIPX "$ARCDIR/$SHRT.zip" "$NAME" && rm "$NAME"
+        cd - >/dev/null
+      ' sh "$ARCENVSUB" "$CONFIG" {} +
+    fi
+
+    # Reveal the configs after the build, if requested
+    ((REVEAL)) && { annc "Revealing $ARCENVSUB" ; open "$ARCENVSUB" ; }
+
+  fi
+
+  ((MANY)) || break # Only one build if not --many
+
+  # Set up for the next build, if there is one
+  ((++BUILDINDEX > ENVCOUNT)) && break
+
+done
+
+exit 0

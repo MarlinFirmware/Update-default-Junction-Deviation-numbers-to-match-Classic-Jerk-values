@@ -1,0 +1,23 @@
+#!/usr/bin/env bash
+#
+# Build tests for STM32F407VGT6 BigTreeTech BTT002 V1.0
+#
+
+# exit on first failure
+set -e
+
+#
+# Build with the default configurations
+#
+restore_configs
+opt_set MOTHERBOARD BOARD_BTT_BTT002_V1_0 \
+        SERIAL_PORT 1 \
+        X_DRIVER_TYPE TMC2209 Y_DRIVER_TYPE TMC2130
+opt_enable SENSORLESS_HOMING X_STALL_SENSITIVITY Y_STALL_SENSITIVITY SPI_ENDSTOPS
+exec_test $1 $2 "BigTreeTech BTT002 Default Configuration plus TMC steppers" "$3"
+
+#
+# A test with Probe Temperature Compensation enabled
+#
+use_example_configs Prusa/MK3S-BigTreeTech-BTT002
+exec_test $1 $2 "BigTreeTech BTT002 with Prusa MK3S and related options" "$3"

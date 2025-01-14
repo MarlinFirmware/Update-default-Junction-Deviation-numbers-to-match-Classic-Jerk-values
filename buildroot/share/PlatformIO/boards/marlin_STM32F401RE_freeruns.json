@@ -16,7 +16,7 @@
     ],
     "ldscript": "ldscript.ld",
     "mcu": "stm32f401ret6",
-    "variant": "MARLIN_STM32F401RE_FREERUNS"
+    "variant": "MARLIN_F401RE_FREERUNS"
   },
   "debug": {
     "jlink_device": "STM32F401RE",

@@ -601,7 +601,6 @@ FORCE_INLINE void _draw_axis_value(const AxisEnum axis, const char *value, const
 #if HAS_PRINT_PROGRESS   // UNTESTED!!!
 
   #define TPOFFSET (LCD_WIDTH - 1)
-  static uint8_t timepos = TPOFFSET - 6;
 
   #if ENABLED(SHOW_PROGRESS_PERCENT)
     void MarlinUI::drawPercent() {
@@ -619,7 +618,7 @@ FORCE_INLINE void _draw_axis_value(const AxisEnum axis, const char *value, const
       if (printJobOngoing()) {
         const duration_t remaint = ui.get_remaining_time();
         char buffer[10];
-        timepos = TPOFFSET - remaint.toDigital(buffer);
+        const uint8_t timepos = TPOFFSET - remaint.toDigital(buffer);
         lcd_moveto(timepos, 1);
         lcd.write('R');
         lcd.print(buffer);
@@ -631,7 +630,7 @@ FORCE_INLINE void _draw_axis_value(const AxisEnum axis, const char *value, const
       const duration_t interactt = ui.interaction_time;
       if (printingIsActive() && interactt.value) {
         char buffer[10];
-        timepos = TPOFFSET - interactt.toDigital(buffer);
+        const uint8_t timepos = TPOFFSET - interactt.toDigital(buffer);
         lcd_moveto(timepos, 1);
         lcd.write('C');
         lcd.print(buffer);
@@ -643,7 +642,7 @@ FORCE_INLINE void _draw_axis_value(const AxisEnum axis, const char *value, const
       if (printJobOngoing()) {
         const duration_t elapsedt = print_job_timer.duration();
         char buffer[10];
-        timepos = TPOFFSET - elapsedt.toDigital(buffer);
+        const uint8_t timepos = TPOFFSET - elapsedt.toDigital(buffer);
         lcd_moveto(timepos, 1);
         lcd.write('E');
         lcd.print(buffer);
@@ -1088,7 +1087,7 @@ void MarlinUI::draw_status_screen() {
       lcd_moveto(0, row);
       lcd.write(sel ? LCD_STR_ARROW_RIGHT[0] : ' ');
       uint8_t n = LCD_WIDTH - 2;
-      n -= lcd_put_u8str_max(ui.scrolled_filename(theCard, n, row, sel), n);
+      n -= lcd_put_u8str_max(ui.scrolled_filename(theCard, n, sel), n);
       for (; n; --n) lcd.write(' ');
       lcd.write(isDir ? LCD_STR_FOLDER[0] : ' ');
       lcd.print_line();

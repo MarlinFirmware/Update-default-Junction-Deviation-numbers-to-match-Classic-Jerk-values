@@ -21,6 +21,26 @@
  */
 #pragma once
 
+/**
+ * Pins Debugging for STM32
+ *
+ *   - NUMBER_PINS_TOTAL
+ *   - MULTI_NAME_PAD
+ *   - getPinByIndex(index)
+ *   - printPinNameByIndex(index)
+ *   - getPinIsDigitalByIndex(index)
+ *   - digitalPinToAnalogIndex(pin)
+ *   - getValidPinMode(pin)
+ *   - isValidPin(pin)
+ *   - isAnalogPin(pin)
+ *   - digitalRead_mod(pin)
+ *   - pwm_status(pin)
+ *   - printPinPWM(pin)
+ *   - printPinPort(pin)
+ *   - printPinNumber(pin)
+ *   - printPinAnalog(pin)
+ */
+
 #include <Arduino.h>
 
 #ifndef NUM_DIGITAL_PINS
@@ -34,11 +54,11 @@
  *  that a CPU has.
  *
  *  VARIABLES:
- *     Ard_num - Arduino pin number - defined by the platform. It is used by digitalRead and
- *               digitalWrite commands and by M42.
- *             - does not contain port/pin info
- *             - is not in port/pin order
- *             - typically a variant will only assign Ard_num to port/pins that are actually used
+ *     A - Arduino pin number - defined by the platform. It is used by digitalRead and
+ *         digitalWrite commands and by M42.
+ *       - does not contain port/pin info
+ *       - is not in port/pin order
+ *       - typically a variant will only assign Ard_num to port/pins that are actually used
  *     Index - M43 counter - only used to get Ard_num
  *     x - a parameter/argument used to search the pin_array to try to find a signal name
  *         associated with a Ard_num
@@ -98,15 +118,11 @@ const XrefInfo pin_xref[] PROGMEM = {
 #define MODE_PIN_ALT    2 // Alternate function mode
 #define MODE_PIN_ANALOG 3 // Analog mode
 
-#define PIN_NUM(P) (P & 0x000F)
-#define PIN_NUM_ALPHA_LEFT(P) (((P & 0x000F) < 10) ? ('0' + (P & 0x000F)) : '1')
-#define PIN_NUM_ALPHA_RIGHT(P) (((P & 0x000F) > 9)  ? ('0' + (P & 0x000F) - 10) : 0 )
-#define PORT_NUM(P) ((P  >> 4) & 0x0007)
-#define PORT_ALPHA(P) ('A' + (P >> 4))
-
-/**
- * Translation of routines & variables used by pinsDebug.h
- */
+#define PIN_NUM(P) ((P) & 0x000F)
+#define PIN_NUM_ALPHA_LEFT(P) ((((P) & 0x000F) < 10) ? ('0' + ((P) & 0x000F)) : '1')
+#define PIN_NUM_ALPHA_RIGHT(P) ((((P) & 0x000F) > 9)  ? ('0' + ((P) & 0x000F) - 10) : 0 )
+#define PORT_NUM(P) (((P)  >> 4) & 0x0007)
+#define PORT_ALPHA(P) ('A' + ((P) >> 4))
 
 #if NUM_ANALOG_FIRST >= NUM_DIGITAL_PINS
   #define HAS_HIGH_ANALOG_PINS 1
@@ -115,42 +131,42 @@ const XrefInfo pin_xref[] PROGMEM = {
   #define NUM_ANALOG_LAST ((NUM_ANALOG_FIRST) + (NUM_ANALOG_INPUTS) - 1)
 #endif
 #define NUMBER_PINS_TOTAL ((NUM_DIGITAL_PINS) + TERN0(HAS_HIGH_ANALOG_PINS, NUM_ANALOG_INPUTS))
-#define VALID_PIN(P) (WITHIN(P, 0, (NUM_DIGITAL_PINS) - 1) || TERN0(HAS_HIGH_ANALOG_PINS, WITHIN(P, NUM_ANALOG_FIRST, NUM_ANALOG_LAST)))
-#define digitalRead_mod(Ard_num) extDigitalRead(Ard_num)  // must use Arduino pin numbers when doing reads
-#define PRINT_PIN(Q)
-#define PRINT_PIN_ANALOG(p) do{ sprintf_P(buffer, PSTR(" (A%2d)  "), DIGITAL_PIN_TO_ANALOG_PIN(pin)); SERIAL_ECHO(buffer); }while(0)
-#define DIGITAL_PIN_TO_ANALOG_PIN(ANUM) -1  // will report analog pin number in the print port routine
+#define isValidPin(P) (WITHIN(P, 0, (NUM_DIGITAL_PINS) - 1) || TERN0(HAS_HIGH_ANALOG_PINS, WITHIN(P, NUM_ANALOG_FIRST, NUM_ANALOG_LAST)))
+#define digitalRead_mod(A) extDigitalRead(A)  // must use Arduino pin numbers when doing reads
+#define printPinNumber(Q)
+#define printPinAnalog(P) do{ sprintf_P(buffer, PSTR(" (A%2d)  "), digitalPinToAnalogIndex(P)); SERIAL_ECHO(buffer); }while(0)
+#define digitalPinToAnalogIndex(P) -1  // will report analog pin number in the print port routine
 
 // x is a variable used to search pin_array
-#define GET_ARRAY_IS_DIGITAL(x) ((bool) pin_array[x].is_digital)
-#define GET_ARRAY_PIN(x) ((pin_t) pin_array[x].pin)
-#define PRINT_ARRAY_NAME(x) do{ sprintf_P(buffer, PSTR("%-" STRINGIFY(MAX_NAME_LENGTH) "s"), pin_array[x].name); SERIAL_ECHO(buffer); }while(0)
+#define getPinIsDigitalByIndex(x) ((bool) pin_array[x].is_digital)
+#define getPinByIndex(x) ((pin_t) pin_array[x].pin)
+#define printPinNameByIndex(x) do{ sprintf_P(buffer, PSTR("%-" STRINGIFY(MAX_NAME_LENGTH) "s"), pin_array[x].name); SERIAL_ECHO(buffer); }while(0)
 #define MULTI_NAME_PAD 33 // space needed to be pretty if not first name assigned to a pin
 
 //
 // Pin Mapping for M43
 //
-#define GET_PIN_MAP_PIN_M43(Index) pin_xref[Index].Ard_num
+#define GET_PIN_MAP_PIN_M43(x) pin_xref[x].Ard_num
 
 #ifndef M43_NEVER_TOUCH
-  #define _M43_NEVER_TOUCH(Index) (Index >= 9 && Index <= 12) // SERIAL/USB pins: PA9(TX) PA10(RX) PA11(USB_DM) PA12(USB_DP)
+  #define _M43_NEVER_TOUCH(x) WITHIN(x, 9, 12) // SERIAL/USB pins: PA9(TX) PA10(RX) PA11(USB_DM) PA12(USB_DP)
   #ifdef KILL_PIN
-    #define M43_NEVER_TOUCH(Index) m43_never_touch(Index)
+    #define M43_NEVER_TOUCH(x) m43_never_touch(x)
 
-    bool m43_never_touch(const pin_t Index) {
+    bool m43_never_touch(const pin_t index) {
       static pin_t M43_kill_index = -1;
       if (M43_kill_index < 0)
         for (M43_kill_index = 0; M43_kill_index < NUMBER_PINS_TOTAL; M43_kill_index++)
           if (KILL_PIN == GET_PIN_MAP_PIN_M43(M43_kill_index)) break;
-      return _M43_NEVER_TOUCH(Index) || Index == M43_kill_index; // KILL_PIN and SERIAL/USB
+      return _M43_NEVER_TOUCH(index) || index == M43_kill_index; // KILL_PIN and SERIAL/USB
     }
   #else
-    #define M43_NEVER_TOUCH(Index) _M43_NEVER_TOUCH(Index)
+    #define M43_NEVER_TOUCH(index) _M43_NEVER_TOUCH(index)
   #endif
 #endif
 
-uint8_t get_pin_mode(const pin_t Ard_num) {
-  const PinName dp = digitalPinToPinName(Ard_num);
+uint8_t get_pin_mode(const pin_t pin) {
+  const PinName dp = digitalPinToPinName(pin);
   uint32_t ll_pin  = STM_LL_GPIO_PIN(dp);
   GPIO_TypeDef *port = get_GPIO_Port(STM_PORT(dp));
   uint32_t mode = LL_GPIO_GetPinMode(port, ll_pin);
@@ -164,41 +180,41 @@ uint8_t get_pin_mode(const pin_t Ard_num) {
   }
 }
 
-bool GET_PINMODE(const pin_t Ard_num) {
-  const uint8_t pin_mode = get_pin_mode(Ard_num);
+bool getValidPinMode(const pin_t pin) {
+  const uint8_t pin_mode = get_pin_mode(pin);
   return pin_mode == MODE_PIN_OUTPUT || pin_mode == MODE_PIN_ALT;  // assume all alt definitions are PWM
 }
 
-int8_t digital_pin_to_analog_pin(const pin_t Ard_num) {
-  if (WITHIN(Ard_num, NUM_ANALOG_FIRST, NUM_ANALOG_LAST))
-    return Ard_num - NUM_ANALOG_FIRST;
+int8_t digital_pin_to_analog_pin(const pin_t pin) {
+  if (WITHIN(pin, NUM_ANALOG_FIRST, NUM_ANALOG_LAST))
+    return pin - NUM_ANALOG_FIRST;
 
-  const uint32_t ind = digitalPinToAnalogInput(Ard_num);
+  const int8_t ind = digitalPinToAnalogIndex(pin);
   return (ind < NUM_ANALOG_INPUTS) ? ind : -1;
 }
 
-bool IS_ANALOG(const pin_t Ard_num) {
-  return get_pin_mode(Ard_num) == MODE_PIN_ANALOG;
+bool isAnalogPin(const pin_t pin) {
+  return get_pin_mode(pin) == MODE_PIN_ANALOG;
 }
 
-bool is_digital(const pin_t Ard_num) {
-  const uint8_t pin_mode = get_pin_mode(pin_array[Ard_num].pin);
+bool is_digital(const pin_t pin) {
+  const uint8_t pin_mode = get_pin_mode(pin_array[pin].pin);
   return pin_mode == MODE_PIN_INPUT || pin_mode == MODE_PIN_OUTPUT;
 }
 
-void print_port(const pin_t Ard_num) {
+void printPinPort(const pin_t pin) {
   char buffer[16];
-  pin_t Index;
-  for (Index = 0; Index < NUMBER_PINS_TOTAL; Index++)
-    if (Ard_num == GET_PIN_MAP_PIN_M43(Index)) break;
+  pin_t index;
+  for (index = 0; index < NUMBER_PINS_TOTAL; index++)
+    if (pin == GET_PIN_MAP_PIN_M43(index)) break;
 
-  const char * ppa = pin_xref[Index].Port_pin_alpha;
+  const char * ppa = pin_xref[index].Port_pin_alpha;
   sprintf_P(buffer, PSTR("%s"), ppa);
   SERIAL_ECHO(buffer);
   if (ppa[3] == '\0') SERIAL_CHAR(' ');
 
   // print analog pin number
-  const int8_t Port_pin = digital_pin_to_analog_pin(Ard_num);
+  const int8_t Port_pin = digital_pin_to_analog_pin(pin);
   if (Port_pin >= 0) {
     sprintf_P(buffer, PSTR(" (A%d) "), Port_pin);
     SERIAL_ECHO(buffer);
@@ -208,8 +224,8 @@ void print_port(const pin_t Ard_num) {
     SERIAL_ECHO_SP(7);
 
   // Print number to be used with M42
-  int calc_p = Ard_num;
-  if (Ard_num > NUM_DIGITAL_PINS) {
+  int calc_p = pin;
+  if (pin > NUM_DIGITAL_PINS) {
     calc_p -= NUM_ANALOG_FIRST;
     if (calc_p > 7) calc_p += 8;
   }
@@ -222,15 +238,15 @@ void print_port(const pin_t Ard_num) {
   }
 }
 
-bool pwm_status(const pin_t Ard_num) {
-  return get_pin_mode(Ard_num) == MODE_PIN_ALT;
+bool pwm_status(const pin_t pin) {
+  return get_pin_mode(pin) == MODE_PIN_ALT;
 }
 
-void pwm_details(const pin_t Ard_num) {
+void printPinPWM(const pin_t pin) {
   #ifndef STM32F1xx
-    if (pwm_status(Ard_num)) {
+    if (pwm_status(pin)) {
       uint32_t alt_all = 0;
-      const PinName dp = digitalPinToPinName(Ard_num);
+      const PinName dp = digitalPinToPinName(pin);
       pin_t pin_number = uint8_t(PIN_NUM(dp));
       const bool over_7 = pin_number >= 8;
       const uint8_t ind = over_7 ? 1 : 0;
@@ -285,4 +301,4 @@ void pwm_details(const pin_t Ard_num) {
   #else
     // TODO: F1 doesn't support changing pins function, so we need to check the function of the PIN and if it's enabled
   #endif
-} // pwm_details
+} // printPinPWM

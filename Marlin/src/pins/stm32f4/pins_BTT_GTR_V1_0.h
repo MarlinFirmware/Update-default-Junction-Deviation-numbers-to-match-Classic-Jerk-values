@@ -255,38 +255,17 @@
   //#define E7_HARDWARE_SERIAL Serial1  // M5 MOTOR 5
 
   #define X_SERIAL_TX_PIN                   PC14
-  #define X_SERIAL_RX_PIN        X_SERIAL_TX_PIN
-
   #define Y_SERIAL_TX_PIN                   PE1
-  #define Y_SERIAL_RX_PIN        Y_SERIAL_TX_PIN
-
   #define Z_SERIAL_TX_PIN                   PB5
-  #define Z_SERIAL_RX_PIN        Z_SERIAL_TX_PIN
-
   #define E0_SERIAL_TX_PIN                  PG10
-  #define E0_SERIAL_RX_PIN      E0_SERIAL_TX_PIN
-
   #define E1_SERIAL_TX_PIN                  PD4
-  #define E1_SERIAL_RX_PIN      E1_SERIAL_TX_PIN
-
   #define E2_SERIAL_TX_PIN                  PC12
-  #define E2_SERIAL_RX_PIN      E2_SERIAL_TX_PIN
-
   #if ENABLED(M5_EXTENDER)
     #define E3_SERIAL_TX_PIN                PG4
-    #define E3_SERIAL_RX_PIN    E3_SERIAL_TX_PIN
-
     #define E4_SERIAL_TX_PIN                PE15
-    #define E4_SERIAL_RX_PIN    E4_SERIAL_TX_PIN
-
     #define E5_SERIAL_TX_PIN                PE7
-    #define E5_SERIAL_RX_PIN    E5_SERIAL_TX_PIN
-
     #define E6_SERIAL_TX_PIN                PF15
-    #define E6_SERIAL_RX_PIN    E6_SERIAL_TX_PIN
-
     #define E7_SERIAL_TX_PIN                PH14
-    #define E7_SERIAL_RX_PIN    E7_SERIAL_TX_PIN
   #endif
 
   // Reduce baud rate to improve software serial reliability

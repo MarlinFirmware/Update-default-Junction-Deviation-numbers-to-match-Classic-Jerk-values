@@ -38,9 +38,9 @@
 
 #if HAS_TMC_UART
 
-  /**
-   * TMC2208/TMC2209 stepper drivers
-   */
+  //
+  // TMC2208/TMC2209 stepper drivers
+  //
 
   #define X_SERIAL_TX_PIN                   PA11
   #define X_SERIAL_RX_PIN                   PA12

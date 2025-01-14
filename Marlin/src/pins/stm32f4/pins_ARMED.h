@@ -206,21 +206,10 @@
 #if HAS_TMC_UART
   // TMC2208/TMC2209 stepper drivers
   #define X_SERIAL_TX_PIN               EXT0_PIN
-  #define X_SERIAL_RX_PIN               EXT0_PIN
-
   #define Y_SERIAL_TX_PIN               EXT1_PIN
-  #define Y_SERIAL_RX_PIN               EXT1_PIN
-
   #define Z_SERIAL_TX_PIN               EXT2_PIN
-  #define Z_SERIAL_RX_PIN               EXT2_PIN
-
   #define E0_SERIAL_TX_PIN              EXT3_PIN
-  #define E0_SERIAL_RX_PIN              EXT3_PIN
-
-  #define E1_SERIAL_RX_PIN              EXT4_PIN
   #define E1_SERIAL_TX_PIN              EXT4_PIN
-
-  #define Z2_SERIAL_RX_PIN              EXT4_PIN
   #define Z2_SERIAL_TX_PIN              EXT4_PIN
 
   #ifndef TMC_BAUD_RATE

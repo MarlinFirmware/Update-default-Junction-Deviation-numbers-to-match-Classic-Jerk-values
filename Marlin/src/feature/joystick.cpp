@@ -123,7 +123,7 @@ Joystick joystick;
 
   void Joystick::inject_jog_moves() {
     // Recursion barrier
-    static bool injecting_now; // = false;
+    static bool injecting_now; // = false
     if (injecting_now) return;
 
     #if ENABLED(NO_MOTION_BEFORE_HOMING)

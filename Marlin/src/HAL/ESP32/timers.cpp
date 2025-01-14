@@ -90,7 +90,7 @@ void HAL_timer_start(const uint8_t timer_num, const uint32_t frequency) {
   config.counter_en  = TIMER_PAUSE;
   config.alarm_en    = TIMER_ALARM_EN;
   config.intr_type   = TIMER_INTR_LEVEL;
-  config.auto_reload = true;
+  config.auto_reload = TIMER_AUTORELOAD_EN;
 
   // Select and initialize the timer
   timer_init(timer.group, timer.idx, &config);

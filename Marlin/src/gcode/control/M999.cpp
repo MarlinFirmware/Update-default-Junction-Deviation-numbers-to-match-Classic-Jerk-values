@@ -36,7 +36,7 @@
  * existing command buffer.
  */
 void GcodeSuite::M999() {
-  marlin_state = MF_RUNNING;
+  marlin_state = MarlinState::MF_RUNNING;
   ui.reset_alert_level();
 
   if (parser.boolval('S')) return;

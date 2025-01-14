@@ -50,7 +50,7 @@
 static Flags<_Nbr_16timers> DisablePending; // ISR should disable the timer at the next timer reset
 
 // ------------------------
-/// Interrupt handler for the TC0 channel 1.
+// Interrupt handler for the TC0 channel 1.
 // ------------------------
 void Servo_Handler(const timer16_Sequence_t, Tc*, const uint8_t);
 

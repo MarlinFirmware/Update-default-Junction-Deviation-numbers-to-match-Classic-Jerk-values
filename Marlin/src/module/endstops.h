@@ -31,13 +31,11 @@
 #define _ES_ENUM(A,M) A##_##M
 #define ES_ENUM(A,M) _ES_ENUM(A,M)
 
-#define _ES_ITEM(N) N,
+#define _ES_ITEM(N) , N
 #define ES_ITEM(K,N) TERN(K,_ES_ITEM,_IF_1_ELSE)(N)
 
 #define _ESN_ITEM(K,A,M) ES_ITEM(K,ES_ENUM(A,M))
 #define ES_MINMAX(A) ES_ITEM(HAS_##A##_MIN_STATE, ES_ENUM(A,MIN)) ES_ITEM(HAS_##A##_MAX_STATE, ES_ENUM(A,MAX))
-
-#define HAS_CURRENT_HOME(N) ((N##_CURRENT_HOME > 0) && (N##_CURRENT_HOME != N##_CURRENT))
 
 /**
  * Basic Endstop Flag Bits:
@@ -57,7 +55,9 @@
  * - Z_MIN_PROBE is an alias to Z_MIN when the Z_MIN_PIN is being used as the probe pin.
  * - When homing with the probe Z_ENDSTOP is a Z_MIN_PROBE alias, otherwise a Z_MIN/MAX alias.
  */
-enum EndstopEnum : char {
+enum EndstopEnum : int8_t {
+  _ES_START_ = -1
+
   // Common XYZ (ABC) endstops.
   ES_MINMAX(X) ES_MINMAX(Y) ES_MINMAX(Z)
   ES_MINMAX(I) ES_MINMAX(J) ES_MINMAX(K)
@@ -70,12 +70,18 @@ enum EndstopEnum : char {
   ES_ITEM(HAS_CALIBRATION_STATE, CALIBRATION)
 
   // Bed Probe state is distinct or shared with Z_MIN (i.e., when the probe is the only Z endstop)
-  ES_ITEM(HAS_Z_PROBE_STATE, Z_MIN_PROBE IF_DISABLED(USE_Z_MIN_PROBE, = Z_MIN))
+  #if HAS_Z_PROBE_STATE && USE_Z_MIN_PROBE
+    , Z_MIN_PROBE
+  #endif
 
-  // The total number of states
-  NUM_ENDSTOP_STATES
+  // The total number of distinct states
+  , NUM_ENDSTOP_STATES
 
   // Endstop aliases
+  #if HAS_Z_PROBE_STATE && !USE_Z_MIN_PROBE
+    , Z_MIN_PROBE = Z_MIN
+  #endif
+
   #if HAS_X_STATE
     , X_ENDSTOP = TERN(X_HOME_TO_MAX, X_MAX, X_MIN)
   #endif
@@ -88,7 +94,6 @@ enum EndstopEnum : char {
   #if HAS_Y2_STATE
     , Y2_ENDSTOP = TERN(Y_HOME_TO_MAX, Y2_MAX, Y2_MIN)
   #endif
-
   #if HOMING_Z_WITH_PROBE
     , Z_ENDSTOP = Z_MIN_PROBE // "Z" endstop alias when homing with the probe
   #elif HAS_Z_STATE
@@ -280,11 +285,6 @@ class Endstops {
       static tmc_spi_homing_t tmc_spi_homing;
       static void clear_endstop_state();
       static bool tmc_spi_homing_check();
-    #endif
-  public:
-    // Basic functions for Sensorless Homing
-    #if USE_SENSORLESS
-      static void set_z_sensorless_current(const bool onoff);
     #endif
 };
 

@@ -24,9 +24,16 @@
 #include "../inc/MarlinConfig.h"
 #include "../module/probe.h"
 
-#if !WITHIN(TRAMMING_SCREW_THREAD, 30, 51) || TRAMMING_SCREW_THREAD % 10 > 1
-  #error "TRAMMING_SCREW_THREAD must be equal to 30, 31, 40, 41, 50, or 51."
-#endif
+enum TrammingThread : uint8_t {
+   M3_CW = 30, M3_CCW = 31,
+   M4_CW = 40, M4_CCW = 41,
+   M5_CW = 50, M5_CCW = 51
+};
+
+static_assert(
+  TRAMMING_SCREW_THREAD < 60 && TRAMMING_SCREW_THREAD % 10 < 2,
+  "TRAMMING_SCREW_THREAD must be M3_CW, M3_CCW, M4_CW, M4_CCW, M5_CW, or M5_CCW."
+);
 
 constexpr xy_pos_t tramming_points[] = TRAMMING_POINT_XY;
 

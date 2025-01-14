@@ -1,0 +1,65 @@
+{
+  "build": {
+    "core": "stm32",
+    "cpu": "cortex-m4",
+    "extra_flags": "-DSTM32F401xx",
+    "f_cpu": "84000000L",
+    "hwids": [
+      [
+        "0x1EAF",
+        "0x0003"
+      ],
+      [
+        "0x0483",
+        "0x3748"
+      ]
+    ],
+    "ldscript": "ldscript.ld",
+    "mcu": "stm32f401ret6",
+    "variant": "MARLIN_F401RE_CREALITY"
+  },
+  "debug": {
+    "jlink_device": "STM32F401RE",
+    "openocd_target": "stm32f4x",
+    "svd_path": "STM32F40x.svd",
+    "tools": {
+      "stlink": {
+        "server": {
+          "arguments": [
+            "-f",
+            "scripts/interface/stlink.cfg",
+            "-c",
+            "transport select hla_swd",
+            "-f",
+            "scripts/target/stm32f4x.cfg",
+            "-c",
+            "reset_config none"
+          ],
+          "executable": "bin/openocd",
+          "package": "tool-openocd"
+        }
+      }
+    }
+  },
+  "frameworks": [
+    "arduino",
+    "stm32cube"
+  ],
+  "name": "STM32F401RE (64k RAM. 512k Flash)",
+  "upload": {
+    "disable_flushing": false,
+    "maximum_ram_size": 65536,
+    "maximum_size": 514288,
+    "protocol": "stlink",
+    "protocols": [
+      "stlink",
+      "dfu",
+      "jlink"
+    ],
+    "require_upload_port": true,
+    "use_1200bps_touch": false,
+    "wait_for_upload_port": false
+  },
+  "url": "https://www.st.com/en/microcontrollers-microprocessors/stm32f401re.html",
+  "vendor": "Generic"
+}

@@ -5,6 +5,7 @@
 /****************************************************************************
  *   Written By Mark Pelletier  2017 - Aleph Objects, Inc.                  *
  *   Written By Marcio Teixeira 2018 - Aleph Objects, Inc.                  *
+ *   Written By Brian Kahl      2023 - FAME3D.                              *
  *                                                                          *
  *   This program is free software: you can redistribute it and/or modify   *
  *   it under the terms of the GNU General Public License as published by   *
@@ -33,22 +34,20 @@ using namespace Theme;
 constexpr static ChangeFilamentScreenData &mydata = screen_data.ChangeFilamentScreen;
 
 #ifdef TOUCH_UI_PORTRAIT
-  #define GRID_COLS 2
-  #define GRID_ROWS 11
-  #define E_TEMP_POS           BTN_POS(2,7),  BTN_SIZE(1,1)
-  #define E_TEMP_LBL_POS       BTN_POS(1,7),  BTN_SIZE(1,1)
-  #define UNLD_LABL_POS        BTN_POS(1,8),  BTN_SIZE(1,1)
-  #define LOAD_LABL_POS        BTN_POS(2,8),  BTN_SIZE(1,1)
-  #define UNLD_MOMN_POS        BTN_POS(1,9),  BTN_SIZE(1,1)
-  #define LOAD_MOMN_POS        BTN_POS(2,9),  BTN_SIZE(1,1)
-  #define UNLD_CONT_POS        BTN_POS(1,10), BTN_SIZE(1,1)
-  #define LOAD_CONT_POS        BTN_POS(2,10), BTN_SIZE(1,1)
-  #define BACK_POS             BTN_POS(1,11), BTN_SIZE(2,1)
+  #define GRID_COLS 4
+  #define GRID_ROWS 10
+  #define E0_TEMP_POS          BTN_POS(1,2),  BTN_SIZE(2,1)
+  #define E1_TEMP_POS          BTN_POS(3,2),  BTN_SIZE(2,1)
+  #define UNLD_LABL_POS        BTN_POS(3,7),  BTN_SIZE(2,2)
+  #define LOAD_LABL_POS        BTN_POS(1,7),  BTN_SIZE(2,2)
+  #define FILAMENT_SWAP_POS    BTN_POS(1,9),  BTN_SIZE(4,1)
+  #define BACK_POS             BTN_POS(1,10), BTN_SIZE(4,1)
 #else
   #define GRID_COLS 4
   #define GRID_ROWS 6
-  #define E_TEMP_POS           BTN_POS(3,2),  BTN_SIZE(2,1)
-  #define E_TEMP_LBL_POS       BTN_POS(3,1),  BTN_SIZE(2,1)
+  #define E0_TEMP_POS          BTN_POS(2,2),  BTN_SIZE(1,1)
+  #define E1_TEMP_POS          BTN_POS(3,2),  BTN_SIZE(1,1)
+  #define FILAMENT_SWAP_POS    BTN_POS(1,9),  BTN_SIZE(4,1)
   #define UNLD_LABL_POS        BTN_POS(3,3),  BTN_SIZE(1,1)
   #define LOAD_LABL_POS        BTN_POS(4,3),  BTN_SIZE(1,1)
   #define UNLD_MOMN_POS        BTN_POS(3,4),  BTN_SIZE(1,1)
@@ -57,22 +56,34 @@ constexpr static ChangeFilamentScreenData &mydata = screen_data.ChangeFilamentSc
   #define LOAD_CONT_POS        BTN_POS(4,5),  BTN_SIZE(1,1)
   #define BACK_POS             BTN_POS(3,6),  BTN_SIZE(2,1)
 #endif
-#define REMOVAL_TEMP_LBL_POS   BTN_POS(1,3),  BTN_SIZE(2,1)
-#define GRADIENT_POS           BTN_POS(1,4),  BTN_SIZE(1,3)
-#define LOW_TEMP_POS           BTN_POS(2,6),  BTN_SIZE(1,1)
-#define MED_TEMP_POS           BTN_POS(2,5),  BTN_SIZE(1,1)
-#define HIG_TEMP_POS           BTN_POS(2,4),  BTN_SIZE(1,1)
-#define HEATING_LBL_POS        BTN_POS(1,6),  BTN_SIZE(1,1)
-#define CAUTION_LBL_POS        BTN_POS(1,4),  BTN_SIZE(1,1)
-#define HOT_LBL_POS            BTN_POS(1,6),  BTN_SIZE(1,1)
-#define E_SEL_LBL_POS          BTN_POS(1,1),  BTN_SIZE(2,1)
-#define E1_SEL_POS             BTN_POS(1,2),  BTN_SIZE(1,1)
-#define E2_SEL_POS             BTN_POS(2,2),  BTN_SIZE(1,1)
+#define GROUP_1_POS            BTN_POS(1,3),  BTN_SIZE(4,1)
+#define GROUP_1_LABL_POS       BTN_POS(1,3),  BTN_SIZE(3,1)
+#define GROUP_1_TEMP_POS       BTN_POS(4,3),  BTN_SIZE(1,1)
+#define GROUP_2_POS            BTN_POS(1,4),  BTN_SIZE(4,1)
+#define GROUP_2_LABL_POS       BTN_POS(1,4),  BTN_SIZE(3,1)
+#define GROUP_2_TEMP_POS       BTN_POS(4,4),  BTN_SIZE(1,1)
+#define GROUP_3_POS            BTN_POS(1,5),  BTN_SIZE(4,1)
+#define GROUP_3_LABL_POS       BTN_POS(1,5),  BTN_SIZE(3,1)
+#define GROUP_3_TEMP_POS       BTN_POS(4,5),  BTN_SIZE(1,1)
+#define GROUP_4_POS            BTN_POS(1,6),  BTN_SIZE(4,1)
+#define GROUP_4_LABL_POS       BTN_POS(1,6),  BTN_SIZE(3,1)
+#define GROUP_4_TEMP_POS       BTN_POS(4,6),  BTN_SIZE(1,1)
+#define E1_SEL_POS             BTN_POS(1,1),  BTN_SIZE(2,1)
+#define E2_SEL_POS             BTN_POS(3,1),  BTN_SIZE(2,1)
 
 #define COOL_TEMP  40
 #define LOW_TEMP  180
-#define MED_TEMP  200
-#define HIGH_TEMP 220
+#define MED_TEMP  220
+#define HIGH_TEMP 240
+#define GROUP_1_TEMP  180
+#define GROUP_2_TEMP  200
+#define GROUP_3_TEMP  220
+#define GROUP_4_TEMP  240
+
+#define _ICON_POS(x,y,w,h) x, y, w/3, h
+#define _TEXT_POS(x,y,w,h) x + w/3, y, w - w/3, h
+#define ICON_POS(pos) _ICON_POS(pos)
+#define TEXT_POS(pos) _TEXT_POS(pos)
 
 /****************** COLOR SCALE ***********************/
 
@@ -144,95 +155,161 @@ void ChangeFilamentScreen::onRedraw(draw_mode_t what) {
        .cmd(CLEAR(true,true,true))
        .cmd(COLOR_RGB(bg_text_enabled))
        .tag(0)
-       .font(TERN(TOUCH_UI_PORTRAIT, font_large, font_medium))
-       .text(E_SEL_LBL_POS, GET_TEXT_F(MSG_EXTRUDER_SELECTION))
-       .text(E_TEMP_LBL_POS, GET_TEXT_F(MSG_CURRENT_TEMPERATURE))
-       .text(REMOVAL_TEMP_LBL_POS, GET_TEXT_F(MSG_REMOVAL_TEMPERATURE));
-    drawTempGradient(GRADIENT_POS);
+       .font(TERN(TOUCH_UI_PORTRAIT, font_large, font_medium));
   }
 
   if (what & FOREGROUND) {
-    char str[15];
+    char e0_str[20], e1_str[20];
     const extruder_t e = getExtruder();
 
-    if (isHeaterIdle(e))
-      format_temp_and_idle(str, getActualTemp_celsius(e));
+    if (isHeaterIdle(H0))
+      format_temp_and_idle(e0_str, getActualTemp_celsius(H0));
     else
-      format_temp_and_temp(str, getActualTemp_celsius(e), getTargetTemp_celsius(e));
+      format_temp_and_temp(e0_str, getActualTemp_celsius(H0), getTargetTemp_celsius(H0));
 
-    const rgb_t tcol = getWarmColor(getActualTemp_celsius(e), COOL_TEMP, LOW_TEMP, MED_TEMP, HIGH_TEMP);
-    cmd.cmd(COLOR_RGB(tcol))
-       .tag(15)
-       .rectangle(E_TEMP_POS)
-       .cmd(COLOR_RGB(tcol.luminance() > 128 ? 0x000000 : 0xFFFFFF))
+    #if HAS_MULTI_EXTRUDER
+      if (isHeaterIdle(H1))
+        format_temp_and_idle(e1_str, getActualTemp_celsius(H1));
+      else
+        format_temp_and_temp(e1_str, getActualTemp_celsius(H1), getTargetTemp_celsius(H1));
+    #else
+      strcpy_P(e1_str, PSTR("N/A"));
+    #endif
+
+
+    if (getTargetTemp_celsius(H0) > 0) {
+      cmd.cmd(COLOR_RGB(temp_button));
+    }
+    else {
+      cmd.cmd(COLOR_RGB(gray_color_1));
+    }
+    cmd.tag(15)
+       .rectangle(E0_TEMP_POS)
        .font(font_medium)
-       .text(E_TEMP_POS, str)
+       .colors(normal_btn)
+       .text(TEXT_POS(E0_TEMP_POS), e0_str)
        .colors(normal_btn);
 
-    const bool t_ok = getActualTemp_celsius(e) > getSoftenTemp() - 10;
-
-    if (mydata.t_tag && !t_ok)
-      cmd.text(HEATING_LBL_POS, GET_TEXT_F(MSG_HEATING));
-    else if (getActualTemp_celsius(e) > 100) {
-      cmd.cmd(COLOR_RGB(0xFF0000))
-         .text(CAUTION_LBL_POS, GET_TEXT_F(MSG_CAUTION))
-         .colors(normal_btn)
-         .text(HOT_LBL_POS, GET_TEXT_F(MSG_HOT));
+    if DISABLED(HAS_MULTI_HOTEND) {
+      cmd.font(font_small).cmd(COLOR_RGB(gray_color_1));
     }
+    else if (getTargetTemp_celsius(H1) > 0) {
+      cmd.font(font_medium).cmd(COLOR_RGB(temp_button));
+    }
+    else {
+      cmd.font(font_medium).cmd(COLOR_RGB(gray_color_1));
+    }
+    cmd.tag(15)
+       .rectangle(E1_TEMP_POS)
+       .colors(normal_btn)
+       .text(TEXT_POS(E1_TEMP_POS), e1_str)
+       .colors(normal_btn);
+
+    cmd.tag(5)
+       .cmd (BITMAP_SOURCE(Extruder_Icon_Info))
+       .cmd (BITMAP_LAYOUT(Extruder_Icon_Info))
+       .cmd (BITMAP_SIZE  (Extruder_Icon_Info))
+       .icon(ICON_POS(E0_TEMP_POS), Extruder_Icon_Info, icon_scale)
+       .icon(ICON_POS(E1_TEMP_POS), Extruder_Icon_Info, icon_scale);
+
+    const bool t_ok = getActualTemp_celsius(e) > getSoftenTemp() - 30;
 
     #define TOG_STYLE(A) colors(A ? action_btn : normal_btn)
 
     const bool tog2  = mydata.t_tag == 2;
     const bool tog3  = mydata.t_tag == 3;
     const bool tog4  = mydata.t_tag == 4;
+    const bool tog5  = mydata.t_tag == 5;
     const bool tog10 = mydata.e_tag == 10;
     #if HAS_MULTI_HOTEND
       const bool tog11 = mydata.e_tag == 11;
     #endif
 
     cmd.TOG_STYLE(tog10)
-       .tag(10).button (E1_SEL_POS, F("1"))
+       .tag(10).font(font_large).button (E1_SEL_POS, F("Extruder 1"))
     #if HOTENDS < 2
-       .enabled(false)
+       .tag(0).fgcolor(gray_color_1)
     #else
-       .TOG_STYLE(tog11)
+       .TOG_STYLE(tog11).tag(11)
     #endif
-       .tag(11).button (E2_SEL_POS, F("2"));
+       .button (E2_SEL_POS, F("Extruder 2"));
 
     if (!t_ok) reset_menu_timeout();
 
     const bool tog7 = mydata.repeat_tag == 7;
     const bool tog8 = mydata.repeat_tag == 8;
 
+    cmd.colors(normal_btn)
+       .font(font_medium)
+       .tag(0)
+       .button(GROUP_1_POS, F(""), OPT_FLAT)
+       .button(GROUP_2_POS, F(""), OPT_FLAT)
+       .button(GROUP_3_POS, F(""), OPT_FLAT)
+       .button(GROUP_4_POS, F(""), OPT_FLAT);
     {
       char str[30];
-      format_temp(str, LOW_TEMP);
-      cmd.tag(2) .TOG_STYLE(tog2).button (LOW_TEMP_POS, str);
+      format_temp(str, GROUP_1_TEMP);
+      cmd.tag(2) .TOG_STYLE(tog2).button (GROUP_1_TEMP_POS,  F( STRINGIFY(GROUP_1_TEMP)));
 
-      format_temp(str, MED_TEMP);
-      cmd.tag(3) .TOG_STYLE(tog3).button (MED_TEMP_POS, str);
+      format_temp(str, GROUP_2_TEMP);
+      cmd.tag(3) .TOG_STYLE(tog3).button (GROUP_2_TEMP_POS, F( STRINGIFY(GROUP_2_TEMP)));
 
-      format_temp(str, HIGH_TEMP);
-      cmd.tag(4) .TOG_STYLE(tog4).button (HIG_TEMP_POS, str);
+      format_temp(str, GROUP_3_TEMP);
+      cmd.tag(4) .TOG_STYLE(tog4).button (GROUP_3_TEMP_POS, F( STRINGIFY(GROUP_3_TEMP)));
+
+      format_temp(str, GROUP_4_TEMP);
+      cmd.tag(5) .TOG_STYLE(tog5).button (GROUP_4_TEMP_POS, F( STRINGIFY(GROUP_4_TEMP)));
     }
 
+    cmd.colors(normal_btn)
+       .font(font_medium)
+       .tag(0)
+       .text(GROUP_1_LABL_POS, F("PLA, PVA, PVB"))
+       .text(GROUP_2_LABL_POS, F("TPU, Flexibles"))
+       .text(GROUP_3_LABL_POS, F("ABS, PETg, ASA"))
+       .text(GROUP_4_LABL_POS, F("Nylon, PC"));
+
     cmd.cmd(COLOR_RGB(t_ok ? bg_text_enabled : bg_text_disabled))
-       .tag(0)                              .text   (UNLD_LABL_POS, GET_TEXT_F(MSG_UNLOAD_FILAMENT))
-                                            .text   (LOAD_LABL_POS, GET_TEXT_F(MSG_LOAD_FILAMENT))
        .colors(normal_btn)
-       .tag(5)                .enabled(t_ok).button (UNLD_MOMN_POS, GET_TEXT_F(MSG_MOMENTARY))
-       .tag(6)                .enabled(t_ok).button (LOAD_MOMN_POS, GET_TEXT_F(MSG_MOMENTARY))
-       .tag(7).TOG_STYLE(tog7).enabled(t_ok).button (UNLD_CONT_POS, GET_TEXT_F(MSG_CONTINUOUS))
-       .tag(8).TOG_STYLE(tog8).enabled(t_ok).button (LOAD_CONT_POS, GET_TEXT_F(MSG_CONTINUOUS))
-       .tag(1).colors(action_btn)           .button (BACK_POS, GET_TEXT_F(MSG_BUTTON_DONE));
+       .font(font_xlarge)
+       .tag(7).TOG_STYLE(tog7).enabled(t_ok).button (UNLD_LABL_POS, GET_TEXT_F(MSG_UNLOAD))
+       .tag(8).TOG_STYLE(tog8).enabled(t_ok).button (LOAD_LABL_POS, GET_TEXT_F(MSG_LOAD))
+       .font(font_medium)
+       .tag(1).colors(action_btn).button (BACK_POS, GET_TEXT_F(MSG_BUTTON_DONE));
+
+       if (ExtUI::isPrintingPaused()) {
+        cmd.colors(normal_btn)
+           .font(font_medium)
+           .tag(16).colors(normal_btn).button(FILAMENT_SWAP_POS, GET_TEXT_F(MSG_RESUME_PRINT));
+       }
+       else {
+        #ifdef PARKING_COMMAND_GCODE
+        cmd.colors(normal_btn)
+           .font(font_medium)
+           .tag(17).colors(normal_btn).button(FILAMENT_SWAP_POS, GET_TEXT_F(MSG_FILAMENT_SWAP));
+        #endif
+       }
   }
+}
+
+void ChangeFilamentScreen::loadBitmaps() {
+  // Load the bitmaps for the status screen
+  using namespace Theme;
+  constexpr uint32_t base = ftdi_memory_map::RAM_G;
+  CLCD::mem_write_xbm(base + Extruder_Icon_Info.RAMG_offset, Extruder_Icon, sizeof(Extruder_Icon));
+
+  // Load fonts for internationalization
+  #if ENABLED(TOUCH_UI_USE_UTF8)
+    load_utf8_data(base + UTF8_FONT_OFFSET);
+  #endif
 }
 
 uint8_t ChangeFilamentScreen::getSoftenTemp() {
   switch (mydata.t_tag) {
-    case 2:  return LOW_TEMP;
-    case 3:  return MED_TEMP;
-    case 4:  return HIGH_TEMP;
+    case 2:  return GROUP_1_TEMP;
+    case 3:  return GROUP_2_TEMP;
+    case 4:  return GROUP_3_TEMP;
+    case 5:  return GROUP_4_TEMP;
     default: return EXTRUDE_MINTEMP;
   }
 }
@@ -257,19 +334,6 @@ void ChangeFilamentScreen::doPurge() {
   #endif
 }
 
-bool ChangeFilamentScreen::onTouchStart(uint8_t tag) {
-  // Make the Momentary and Continuous buttons slightly more responsive
-  switch (tag) {
-    case 5: case 6: case 7: case 8:
-      #if FILAMENT_UNLOAD_PURGE_LENGTH > 0
-        if (tag == 5 || tag == 7) doPurge();
-      #endif
-      return ChangeFilamentScreen::onTouchHeld(tag);
-    default:
-      return false;
-  }
-}
-
 bool ChangeFilamentScreen::onTouchEnd(uint8_t tag) {
   using namespace ExtUI;
   switch (tag) {
@@ -277,6 +341,7 @@ bool ChangeFilamentScreen::onTouchEnd(uint8_t tag) {
     case 2:
     case 3:
     case 4:
+    case 5:
       // Change temperature
       mydata.t_tag = tag;
       setTargetTemp_celsius(getSoftenTemp(), getExtruder());
@@ -290,8 +355,8 @@ bool ChangeFilamentScreen::onTouchEnd(uint8_t tag) {
     case 10:
     case 11:
       // Change extruder
-      mydata.e_tag      = tag;
-      mydata.t_tag      = 0;
+      mydata.e_tag = tag;
+      mydata.t_tag = 0;
       mydata.repeat_tag = 0;
       #if FILAMENT_UNLOAD_PURGE_LENGTH > 0
         mydata.need_purge = true;
@@ -299,6 +364,14 @@ bool ChangeFilamentScreen::onTouchEnd(uint8_t tag) {
       setActiveTool(getExtruder(), true);
       break;
     case 15: GOTO_SCREEN(TemperatureScreen); break;
+    case 16:
+      if (ExtUI::isPrintingPaused()) {
+        injectCommands(F("M117 Print Resumed")); resumePrint(); GOTO_SCREEN(StatusScreen);
+      }
+      break;
+    #ifdef PARKING_COMMAND_GCODE
+      case 17: injectCommands(F(PARKING_COMMAND_GCODE)); break;
+    #endif
   }
   return true;
 }
@@ -309,7 +382,7 @@ bool ChangeFilamentScreen::onTouchHeld(uint8_t tag) {
   #define UI_INCREMENT_AXIS(axis) UI_INCREMENT(AxisPosition_mm, axis);
   #define UI_DECREMENT_AXIS(axis) UI_DECREMENT(AxisPosition_mm, axis);
   switch (tag) {
-    case 5: case 7: UI_DECREMENT_AXIS(getExtruder()); break;
+    case 7: UI_DECREMENT_AXIS(getExtruder()); break;
     case 6: case 8: UI_INCREMENT_AXIS(getExtruder()); break;
     default: return false;
   }

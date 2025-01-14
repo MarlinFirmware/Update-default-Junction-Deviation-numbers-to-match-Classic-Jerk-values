@@ -4,11 +4,9 @@
 #
 
 # Check dependencies
-which curl 1>/dev/null 2>&1 || { echo "curl not found! Please install it."; exit ; }
-which git 1>/dev/null 2>&1 || { echo "git not found! Please install it."; exit ; }
-
-SED=$(which gsed sed | head -n1)
-[[ -z "$SED" ]] && { echo "No sed found, please install sed" ; exit 1 ; }
+which curl &>/dev/null || { echo "curl not found! Please install it."; exit 1 ; }
+which git  &>/dev/null || { echo "git not found! Please install it."; exit 1 ; }
+which sed  &>/dev/null || { echo "sed not found! Please install it."; exit 1 ; }
 
 OPEN=$( which gnome-open xdg-open open | head -n1 )
 

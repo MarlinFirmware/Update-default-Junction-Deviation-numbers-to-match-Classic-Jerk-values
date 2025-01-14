@@ -146,9 +146,9 @@ public:
     transfer_timeout = millis() + TIMEOUT;
     switch (static_cast<FileTransfer>(packet_type)) {
       case FileTransfer::QUERY:
-        SERIAL_ECHOPGM("PFT:version:", VERSION_MAJOR, ".", VERSION_MINOR, ".", VERSION_PATCH);
+        SERIAL_ECHO(F("PFT:version:"), VERSION_MAJOR, C('.'), VERSION_MINOR, C('.'), VERSION_PATCH);
         #if ENABLED(BINARY_STREAM_COMPRESSION)
-          SERIAL_ECHOLNPGM(":compression:heatshrink,", HEATSHRINK_STATIC_WINDOW_BITS, ",", HEATSHRINK_STATIC_LOOKAHEAD_BITS);
+          SERIAL_ECHOLN(F(":compression:heatshrink,"), HEATSHRINK_STATIC_WINDOW_BITS, C(','), HEATSHRINK_STATIC_LOOKAHEAD_BITS);
         #else
           SERIAL_ECHOLNPGM(":compression:none");
         #endif
@@ -322,7 +322,7 @@ public:
             if (packet.header.checksum == packet.header_checksum) {
               // The SYNC control packet is a special case in that it doesn't require the stream sync to be correct
               if (static_cast<Protocol>(packet.header.protocol()) == Protocol::CONTROL && static_cast<ProtocolControl>(packet.header.type()) == ProtocolControl::SYNC) {
-                  SERIAL_ECHOLNPGM("ss", sync, ",", buffer_size, ",", VERSION_MAJOR, ".", VERSION_MINOR, ".", VERSION_PATCH);
+                  SERIAL_ECHOLN(F("ss"), sync, C(','), buffer_size, C(','), VERSION_MAJOR, C('.'), VERSION_MINOR, C('.'), VERSION_PATCH);
                   stream_state = StreamState::PACKET_RESET;
                   break;
               }

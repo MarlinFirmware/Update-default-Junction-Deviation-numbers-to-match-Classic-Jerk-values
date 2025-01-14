@@ -140,7 +140,7 @@
   #define TFT_RS_PIN                        PD13
 
   #if HAS_FSMC_TFT
-    #define LCD_USE_DMA_FSMC                      // Use DMA transfers to send data to the TFT
+    #define LCD_USE_DMA_FSMC
     #define FSMC_CS_PIN               TFT_CS_PIN
     #define FSMC_RS_PIN               TFT_RS_PIN
     #define TFT_INTERFACE_FSMC_8BIT

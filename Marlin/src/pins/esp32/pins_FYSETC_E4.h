@@ -40,18 +40,15 @@
 
 #if HAS_TMC_UART
   //
-  // TMC2209 stepper drivers
-  //
-
-  //
-  // Hardware serial 1
+  // TMC2208/TMC2209 stepper drivers
   //
   #define X_HARDWARE_SERIAL              Serial1
   #define Y_HARDWARE_SERIAL              Serial1
   #define Z_HARDWARE_SERIAL              Serial1
   #define E0_HARDWARE_SERIAL             Serial1
-
-  #define TMC_BAUD_RATE 115200
+  #ifndef TMC_BAUD_RATE
+    #define TMC_BAUD_RATE                 115200
+  #endif
 #endif
 
 /**

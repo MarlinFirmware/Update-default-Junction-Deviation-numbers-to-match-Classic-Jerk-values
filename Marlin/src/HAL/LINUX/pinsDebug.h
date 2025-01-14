@@ -19,30 +19,50 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  *
  */
+#pragma once
 
 /**
- * Support routines for X86_64
- */
-
-/**
- * Translation of routines & variables used by pinsDebug.h
+ * Pins Debugging for Linux Native
+ *
+ *   - NUMBER_PINS_TOTAL
+ *   - MULTI_NAME_PAD
+ *   - getPinByIndex(index)
+ *   - printPinNameByIndex(index)
+ *   - getPinIsDigitalByIndex(index)
+ *   - digitalPinToAnalogIndex(pin)
+ *   - getValidPinMode(pin)
+ *   - isValidPin(pin)
+ *   - isAnalogPin(pin)
+ *   - digitalRead_mod(pin)
+ *   - pwm_status(pin)
+ *   - printPinPWM(pin)
+ *   - printPinPort(pin)
+ *   - printPinNumber(pin)
+ *   - printPinAnalog(pin)
  */
 
 #define NUMBER_PINS_TOTAL   NUM_DIGITAL_PINS
-#define IS_ANALOG(P)        (DIGITAL_PIN_TO_ANALOG_PIN(P) >= 0 ? 1 : 0)
-#define digitalRead_mod(p)  digitalRead(p)
-#define GET_ARRAY_PIN(p)    pin_array[p].pin
-#define PRINT_ARRAY_NAME(x) do{ sprintf_P(buffer, PSTR("%-" STRINGIFY(MAX_NAME_LENGTH) "s"), pin_array[x].name); SERIAL_ECHO(buffer); }while(0)
-#define PRINT_PIN(p)        do{ sprintf_P(buffer, PSTR("%3d "), p); SERIAL_ECHO(buffer); }while(0)
-#define PRINT_PIN_ANALOG(p) do{ sprintf_P(buffer, PSTR(" (A%2d)  "), DIGITAL_PIN_TO_ANALOG_PIN(pin)); SERIAL_ECHO(buffer); }while(0)
 #define MULTI_NAME_PAD      16 // space needed to be pretty if not first name assigned to a pin
 
+#define getPinByIndex(x) pin_array[x].pin
+
+#define printPinNameByIndex(x) do{ sprintf_P(buffer, PSTR("%-" STRINGIFY(MAX_NAME_LENGTH) "s"), pin_array[x].name); SERIAL_ECHO(buffer); }while(0)
+
 // active ADC function/mode/code values for PINSEL registers
-constexpr int8_t ADC_pin_mode(pin_t pin) { return -1; }
+constexpr int8_t ADC_pin_mode(const pin_t) { return -1; }
 
-int8_t get_pin_mode(const pin_t pin) { return VALID_PIN(pin) ? 0 : -1; }
+// The pin and index are the same on this platform
+bool getPinIsDigitalByIndex(const pin_t pin) {
+  return (!isAnalogPin(pin) || get_pin_mode(pin) != ADC_pin_mode(pin));
+}
 
-bool GET_PINMODE(const pin_t pin) {
+#define isAnalogPin(P) (digitalPinToAnalogIndex(P) >= 0)
+
+#define digitalRead_mod(P) digitalRead(P)
+
+int8_t get_pin_mode(const pin_t pin) { return isValidPin(pin) ? 0 : -1; }
+
+bool getValidPinMode(const pin_t pin) {
   const int8_t pin_mode = get_pin_mode(pin);
   if (pin_mode == -1 || pin_mode == ADC_pin_mode(pin)) // Invalid pin or active analog pin
     return false;
@@ -50,11 +70,11 @@ bool GET_PINMODE(const pin_t pin) {
   return (Gpio::getMode(pin) != 0); // Input/output state
 }
 
-bool GET_ARRAY_IS_DIGITAL(const pin_t pin) {
-  return (!IS_ANALOG(pin) || get_pin_mode(pin) != ADC_pin_mode(pin));
-}
-
-void pwm_details(const pin_t pin) {}
+void printPinPWM(const pin_t) {}
 bool pwm_status(const pin_t) { return false; }
 
-void print_port(const pin_t) {}
+void printPinPort(const pin_t) {}
+
+#define printPinNumber(P) do{ sprintf_P(buffer, PSTR("%3d "), P); SERIAL_ECHO(buffer); }while(0)
+
+#define printPinAnalog(P) do{ sprintf_P(buffer, PSTR(" (A%2d)  "), digitalPinToAnalogIndex(P)); SERIAL_ECHO(buffer); }while(0)

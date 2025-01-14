@@ -63,19 +63,21 @@ inline void toggle_pins() {
 
   for (uint8_t i = start; i <= end; ++i) {
     pin_t pin = GET_PIN_MAP_PIN_M43(i);
-    if (!VALID_PIN(pin)) continue;
+    if (!isValidPin(pin)) continue;
     if (M43_NEVER_TOUCH(i) || (!ignore_protection && pin_is_protected(pin))) {
-      report_pin_state_extended(pin, ignore_protection, true, F("Untouched "));
+      printPinStateExt(pin, ignore_protection, true, F("Untouched "));
       SERIAL_EOL();
     }
     else {
       hal.watchdog_refresh();
-      report_pin_state_extended(pin, ignore_protection, true, F("Pulsing   "));
-      #ifdef __STM32F1__
-        const auto prior_mode = _GET_MODE(i);
-      #else
-        const bool prior_mode = GET_PINMODE(pin);
-      #endif
+      printPinStateExt(pin, ignore_protection, true, F("Pulsing   "));
+      const auto prior_mode = (
+        #ifdef __STM32F1__
+          _GET_MODE(i)
+        #else
+          getValidPinMode(pin)
+        #endif
+      );
       #if AVR_AT90USB1286_FAMILY // Teensy IDEs don't know about these pins so must use FASTIO
         if (pin == TEENSY_E2) {
           SET_OUTPUT(TEENSY_E2);
@@ -326,14 +328,14 @@ void GcodeSuite::M43() {
     bool can_watch = false;
     for (uint8_t i = first_pin; i <= last_pin; ++i) {
       pin_t pin = GET_PIN_MAP_PIN_M43(i);
-      if (!VALID_PIN(pin)) continue;
+      if (!isValidPin(pin)) continue;
       if (M43_NEVER_TOUCH(i) || (!ignore_protection && pin_is_protected(pin))) continue;
       can_watch = true;
       pinMode(pin, INPUT_PULLUP);
       delay(1);
       /*
-      if (IS_ANALOG(pin))
-        pin_state[pin - first_pin] = analogRead(DIGITAL_PIN_TO_ANALOG_PIN(pin)); // int16_t pin_state[...]
+      if (isAnalogPin(pin))
+        pin_state[pin - first_pin] = analogRead(digitalPinToAnalogIndex(pin)); // int16_t pin_state[...]
       else
       //*/
         pin_state[i - first_pin] = extDigitalRead(pin);
@@ -369,17 +371,17 @@ void GcodeSuite::M43() {
     for (;;) {
       for (uint8_t i = first_pin; i <= last_pin; ++i) {
         const pin_t pin = GET_PIN_MAP_PIN_M43(i);
-        if (!VALID_PIN(pin)) continue;
+        if (!isValidPin(pin)) continue;
         if (M43_NEVER_TOUCH(i) || (!ignore_protection && pin_is_protected(pin))) continue;
         const byte val =
           /*
-          IS_ANALOG(pin)
-            ? analogRead(DIGITAL_PIN_TO_ANALOG_PIN(pin)) : // int16_t val
+          isAnalogPin(pin)
+            ? analogRead(digitalPinToAnalogIndex(pin)) : // int16_t val
             :
           //*/
             extDigitalRead(pin);
         if (val != pin_state[i - first_pin]) {
-          report_pin_state_extended(pin, ignore_protection, true);
+          printPinStateExt(pin, ignore_protection, true);
           pin_state[i - first_pin] = val;
         }
       }
@@ -398,7 +400,7 @@ void GcodeSuite::M43() {
     // Report current state of selected pin(s)
     for (uint8_t i = first_pin; i <= last_pin; ++i) {
       const pin_t pin = GET_PIN_MAP_PIN_M43(i);
-      if (VALID_PIN(pin)) report_pin_state_extended(pin, ignore_protection, true);
+      if (isValidPin(pin)) printPinStateExt(pin, ignore_protection, true);
     }
   }
 }

@@ -160,6 +160,7 @@
     #define BTN_ENC                           41  // F3       JP2-4
 
     #define SDSS                              38  // F0       B-THERM connector - use SD card on Panelolu2
+    #undef LCD_PINS_EN                            // not used, causes false pin conflict report
 
   #else
 

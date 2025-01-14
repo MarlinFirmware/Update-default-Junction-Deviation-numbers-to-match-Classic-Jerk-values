@@ -101,7 +101,7 @@ void GCodeQueue::RingBuffer::commit_command(const bool skip_ok
   commands[index_w].skip_ok = skip_ok;
   TERN_(HAS_MULTI_SERIAL, commands[index_w].port = serial_ind);
   TERN_(POWER_LOSS_RECOVERY, recovery.commit_sdpos(index_w));
-  advance_pos(index_w, 1);
+  advance_w();
 }
 
 /**
@@ -702,7 +702,7 @@ void GCodeQueue::advance() {
   #endif // HAS_MEDIA
 
   // The queue may be reset by a command handler or by code invoked by idle() within a handler
-  ring_buffer.advance_pos(ring_buffer.index_r, -1);
+  ring_buffer.advance_r();
 }
 
 #if ENABLED(BUFFER_MONITORING)

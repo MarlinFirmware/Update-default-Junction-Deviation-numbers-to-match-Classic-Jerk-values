@@ -27,7 +27,10 @@
 #include "../gcode.h"
 #include "../../feature/bedlevel/bedlevel.h"
 #include "../../module/planner.h"
-#include "../../module/probe.h"
+
+#if ENABLED(MARLIN_DEV_MODE)
+  #include "../../module/probe.h"
+#endif
 
 #if ENABLED(EEPROM_SETTINGS)
   #include "../../module/settings.h"

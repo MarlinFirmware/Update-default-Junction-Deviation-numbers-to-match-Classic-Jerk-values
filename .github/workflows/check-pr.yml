@@ -18,7 +18,7 @@ jobs:
     name: PR Bad Target
     if: github.repository == 'MarlinFirmware/Marlin'
 
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
 
     steps:
     - uses: superbrothers/close-pull-request@v3
