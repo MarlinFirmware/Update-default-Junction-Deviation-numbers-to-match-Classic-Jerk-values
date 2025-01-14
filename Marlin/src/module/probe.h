@@ -46,7 +46,7 @@
 #endif
 
 #if ENABLED(BD_SENSOR)
-  #define PROBE_READ() bdp_state
+  #define PROBE_READ() bdl.read_endstop()
 #elif USE_Z_MIN_PROBE
   #define PROBE_READ() READ(Z_MIN_PROBE_PIN)
 #else

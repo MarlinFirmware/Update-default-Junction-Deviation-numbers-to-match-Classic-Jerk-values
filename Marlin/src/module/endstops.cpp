@@ -78,9 +78,9 @@ volatile Endstops::endstop_mask_t Endstops::hit_state;
 Endstops::endstop_mask_t Endstops::live_state = 0;
 
 #if ENABLED(BD_SENSOR)
-  bool Endstops::bdp_state; // = false
+  #include "../feature/bedlevel/bdl/bdl.h"
   #if HOMING_Z_WITH_PROBE
-    #define READ_ENDSTOP(P) ((P == TERN(Z_MIN_PROBE_USES_Z_MIN_ENDSTOP_PIN, Z_MIN_PIN, Z_MIN_PROBE_PIN)) ? bdp_state : READ(P))
+    #define READ_ENDSTOP(P) ((P == TERN(Z_MIN_PROBE_USES_Z_MIN_ENDSTOP_PIN, Z_MIN_PIN, Z_MIN_PROBE_PIN)) ? bdl.read_endstop() : READ(P))
   #else
     #define READ_ENDSTOP(P) READ(P)
   #endif

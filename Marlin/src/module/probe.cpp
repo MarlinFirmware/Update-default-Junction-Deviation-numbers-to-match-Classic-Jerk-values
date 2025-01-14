@@ -991,11 +991,8 @@ float Probe::probe_at_point(
   float measured_z;
 
   #if ENABLED(BD_SENSOR)
-
     safe_delay(4);
-
-    measured_z = current_position.z - bdl.read(); // Difference between Z-home-relative Z and sensor reading
-
+    measured_z = current_position.z - bdl.bd_read(); // Difference between Z-home-relative Z and sensor reading
   #else // !BD_SENSOR
 
     #if ENABLED(BLTOUCH)
