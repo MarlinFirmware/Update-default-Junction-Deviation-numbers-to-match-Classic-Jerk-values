@@ -921,10 +921,11 @@ namespace LanguageNarrow_en {
 
   LSTR MSG_SOUND                          = _UxGT("Sound");
 
-  LSTR MSG_TOP_LEFT                       = _UxGT("Top Left");
-  LSTR MSG_BOTTOM_LEFT                    = _UxGT("Bottom Left");
-  LSTR MSG_TOP_RIGHT                      = _UxGT("Top Right");
-  LSTR MSG_BOTTOM_RIGHT                   = _UxGT("Bottom Right");
+  LSTR MSG_TOP_LEFT                       = _UxGT("Touch Top Left");
+  LSTR MSG_BOTTOM_LEFT                    = _UxGT("Touch Bottom Left");
+  LSTR MSG_TOP_RIGHT                      = _UxGT("Touch Top Right");
+  LSTR MSG_BOTTOM_RIGHT                   = _UxGT("Touch Bottom Right");
+  LSTR MSG_TOUCH_CALIBRATION              = _UxGT("Touch Calibration");
   LSTR MSG_CALIBRATION_COMPLETED          = _UxGT("Calibration Completed");
   LSTR MSG_CALIBRATION_FAILED             = _UxGT("Calibration Failed");
 
