@@ -347,7 +347,7 @@
       #define SWITCHING_TOOLHEAD_RETRACT_FEEDRATE 2400  // (mm/min) Extruder retract feedrate
     #endif
   #elif ENABLED(ELECTROMAGNETIC_SWITCHING_TOOLHEAD)
-    #define SWITCHING_TOOLHEAD_Z_HOP          2         // (mm) Z raise for switching
+    #define SWITCHING_TOOLHEAD_Z_HOP          3         // (mm) Z raise for switching
   #endif
 #endif
 
