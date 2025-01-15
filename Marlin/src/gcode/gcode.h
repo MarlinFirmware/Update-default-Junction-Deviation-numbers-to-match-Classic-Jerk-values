@@ -44,7 +44,7 @@
  * G3   - CCW ARC
  * G4   - Dwell S<seconds> or P<milliseconds>
  * G5   - Cubic B-spline with XYZE destination and IJPQ offsets
- * G10  - Retract filament according to settings of M207 (Requires FWRETRACT)
+ * G10  - Set coordinate system (Requires CNC_COORDINATE_SYSTEMS) and tool table (Requires DEFAULT_TOOL_CENTERPOINT_CONTROL). Retract filament according to settings of M207 (Requires FWRETRACT)
  * G11  - Retract recover filament according to settings of M208 (Requires FWRETRACT)
  * G12  - Clean tool (Requires NOZZLE_CLEAN_FEATURE)
  * G17  - Select Plane XY (Requires CNC_WORKSPACE_PLANES)
@@ -64,6 +64,8 @@
  * G35  - Read bed corners to help adjust bed screws: T<screw_thread> (Requires ASSISTED_TRAMMING)
  * G38  - Probe in any direction using the Z_MIN_PROBE (Requires G38_PROBE_TARGET)
  * G42  - Coordinated move to a mesh point (Requires MESH_BED_LEVELING, AUTO_BED_LEVELING_BLINEAR, or AUTO_BED_LEVELING_UBL)
+ * G43  - Tool length compensation, tool centerpoint control (Requires DEFAULT_TOOL_CENTERPOINT_CONTROL)
+ * G49  - Cancel tool length compensation (Cancel tool length compensation (Requires DEFAULT_TOOL_CENTERPOINT_CONTROL) 
  * G60  - Save current position. (Requires SAVED_POSITIONS)
  * G61  - Apply/restore saved coordinates. (Requires SAVED_POSITIONS)
  * G76  - Calibrate first layer temperature offsets. (Requires PTC_PROBE and PTC_BED)
@@ -531,8 +533,11 @@ private:
     static void G6();
   #endif
 
-  #if ENABLED(FWRETRACT)
+#if ANY(FWRETRACT, CNC_COORDINATE_SYSTEMS, HAS_TOOL_LENGTH_COMPENSATION)
     static void G10();
+  #endif
+
+  #if ENABLED(FWRETRACT)
     static void G11();
   #endif
 
@@ -604,6 +609,11 @@ private:
 
   #if HAS_MESH
     static void G42();
+  #endif
+
+  #if HAS_TOOL_LENGTH_COMPENSATION
+    static void G43();
+    static void G49();  
   #endif
 
   #if ENABLED(CNC_COORDINATE_SYSTEMS)

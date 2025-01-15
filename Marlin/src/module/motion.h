@@ -57,9 +57,16 @@ extern xyze_pos_t current_position,  // High-level current tool position
 // Scratch space for a cartesian result
 extern xyz_pos_t cartes;
 
+#if HAS_TOOL_LENGTH_COMPENSATION
+  extern bool simple_tool_length_compensation;
+#endif
+
 // Until kinematics.cpp is created, declare this here
 #if IS_KINEMATIC
   extern abce_pos_t delta;
+  #if HAS_TOOL_CENTERPOINT_CONTROL
+    extern bool tool_centerpoint_control;
+  #endif
 #endif
 
 #if HAS_ABL_NOT_UBL
