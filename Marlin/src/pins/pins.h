@@ -845,6 +845,8 @@
   #include "stm32f4/pins_XTLW_CLIMBER_8TH.h"        // STM32F4                              env:XTLW_CLIMBER_8TH
 #elif MB(FLY_RRF_E3_V1)
   #include "stm32f4/pins_FLY_RRF_E3_V1.h"           // STM32F4                              env:FLY_RRF_E3_V1
+#elif MB(LDO_LEVIATHAN_V1_2)
+  #include "stm32f4/pins_LDO_LEVIATHAN_V1_2.h"      // STM32F4                              env:LDO_LEVIATHAN_V1_2
 
 //
 // Other ARM Cortex-M4
