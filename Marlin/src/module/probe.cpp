@@ -272,6 +272,10 @@ xyz_pos_t Probe::offset; // Initialized by settings.load
   typedef struct { float fr_mm_min; xyz_pos_t where; } mag_probe_move_t;
 
   inline void run_deploy_moves() {
+    #ifdef MAG_MOUNTED_PRE_DEPLOY
+      constexpr mag_probe_move_t pre_deploy = MAG_MOUNTED_PRE_DEPLOY;
+      do_blocking_move_to(pre_deploy.where, MMM_TO_MMS(pre_deploy.fr_mm_min));
+    #endif    
     #if HAS_MAG_MOUNTED_SERVO_PROBE
       servo[MAG_MOUNTED_PROBE_SERVO_NR].move(servo_angles[MAG_MOUNTED_PROBE_SERVO_NR][0]);
     #endif
@@ -301,6 +305,10 @@ xyz_pos_t Probe::offset; // Initialized by settings.load
   }
 
   inline void run_stow_moves() {
+    #ifdef MAG_MOUNTED_PRE_STOW
+      constexpr mag_probe_move_t pre_stow = MAG_MOUNTED_PRE_STOW;
+      do_blocking_move_to(pre_stow.where, MMM_TO_MMS(pre_stow.fr_mm_min));
+    #endif
     #if HAS_MAG_MOUNTED_SERVO_PROBE
       servo[MAG_MOUNTED_PROBE_SERVO_NR].move(servo_angles[MAG_MOUNTED_PROBE_SERVO_NR][0]);
     #endif
@@ -553,7 +561,7 @@ bool Probe::set_deployed(const bool deploy, const bool no_return/*=false*/) {
   #if ENABLED(PROBE_TRIGGERED_WHEN_STOWED_TEST)
 
     // Only deploy/stow if needed
-    if (PROBE_TRIGGERED() == deploy) {
+    if (PROBE_TRIGGERED() == deploy || !deploy) {
       if (!deploy) endstops.enable_z_probe(false); // Switch off triggered when stowed probes early
                                                    // otherwise an Allen-Key probe can't be stowed.
       probe_specific_action(deploy);
