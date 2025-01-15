@@ -32,7 +32,7 @@
 
 #if ENABLED(ACCELEROMETER_ADXL345)
 
-#include "acc_ADXL345.h"
+#include "acc_adxl345.h"
 
 #include "../../MarlinCore.h"
 #include "../../HAL/shared/Delay.h"
