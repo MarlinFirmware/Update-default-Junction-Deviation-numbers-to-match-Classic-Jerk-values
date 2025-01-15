@@ -1436,11 +1436,57 @@ void tool_change(const uint8_t new_tool, bool no_move/*=false*/) {
     TERN_(HAS_FANMUX, fanmux_switch(active_extruder));
 
     if (ENABLED(EVENT_GCODE_TOOLCHANGE_ALWAYS_RUN) || !no_move) {
+      #if ANY(TC_GCODE_USE_GLOBAL_X, TC_GCODE_USE_GLOBAL_Y, TC_GCODE_USE_GLOBAL_Z,\
+              EVENT_GCODE_PARK_T0, EVENT_GCODE_PARK_T1, EVENT_GCODE_PARK_T2, EVENT_GCODE_PARK_T3,\
+              EVENT_GCODE_PARK_T4, EVENT_GCODE_PARK_T5, EVENT_GCODE_PARK_T6, EVENT_GCODE_PARK_T7)
+        xyz_pos_t old_workspace_offset;
+      #endif
+
+      #if ANY(EVENT_GCODE_PARK_T0, EVENT_GCODE_PARK_T1, EVENT_GCODE_PARK_T2, EVENT_GCODE_PARK_T3,\
+              EVENT_GCODE_PARK_T4, EVENT_GCODE_PARK_T5, EVENT_GCODE_PARK_T6, EVENT_GCODE_PARK_T7)
+        old_workspace_offset = workspace_offset;
+        const xyz_pos_t &ho = hotend_offset[new_tool];
+        TERN_(TC_GCODE_USE_GLOBAL_X, workspace_offset.x -= ho.x);
+        TERN_(TC_GCODE_USE_GLOBAL_Y, workspace_offset.y -= ho.y);
+        TERN_(TC_GCODE_USE_GLOBAL_Z, workspace_offset.z -= ho.z);
+      #endif
+
+      switch (old_tool) {
+        default: break;
+        #ifdef EVENT_GCODE_PARK_T0
+          case 0: gcode.process_subcommands_now(F(EVENT_GCODE_PARK_T0)); break;
+        #endif
+        #ifdef EVENT_GCODE_PARK_T1
+          case 1: gcode.process_subcommands_now(F(EVENT_GCODE_PARK_T1)); break;
+        #endif
+        #ifdef EVENT_GCODE_PARK_T2
+          case 2: gcode.process_subcommands_now(F(EVENT_GCODE_PARK_T2)); break;
+        #endif
+        #ifdef EVENT_GCODE_PARK_T3
+          case 3: gcode.process_subcommands_now(F(EVENT_GCODE_PARK_T3)); break;
+        #endif
+        #ifdef EVENT_GCODE_PARK_T4
+          case 4: gcode.process_subcommands_now(F(EVENT_GCODE_PARK_T4)); break;
+        #endif
+        #ifdef EVENT_GCODE_PARK_T5
+          case 5: gcode.process_subcommands_now(F(EVENT_GCODE_PARK_T5)); break;
+        #endif
+        #ifdef EVENT_GCODE_PARK_T6
+          case 6: gcode.process_subcommands_now(F(EVENT_GCODE_PARK_T6)); break;
+        #endif
+        #ifdef EVENT_GCODE_PARK_T7
+          case 7: gcode.process_subcommands_now(F(EVENT_GCODE_PARK_T7)); break;
+        #endif
+      }
+
+      #if ANY(EVENT_GCODE_PARK_T0, EVENT_GCODE_PARK_T1, EVENT_GCODE_PARK_T2, EVENT_GCODE_PARK_T3,\
+              EVENT_GCODE_PARK_T4, EVENT_GCODE_PARK_T5, EVENT_GCODE_PARK_T6, EVENT_GCODE_PARK_T7)
+        workspace_offset = old_workspace_offset;
+      #endif
 
       #if ANY(TC_GCODE_USE_GLOBAL_X, TC_GCODE_USE_GLOBAL_Y, TC_GCODE_USE_GLOBAL_Z)
         // G0/G1/G2/G3/G5 moves are relative to the active tool.
         // Shift the workspace to make custom moves relative to T0.
-        xyz_pos_t old_workspace_offset;
         if (new_tool > 0) {
           old_workspace_offset = workspace_offset;
           const xyz_pos_t &he = hotend_offset[new_tool];
