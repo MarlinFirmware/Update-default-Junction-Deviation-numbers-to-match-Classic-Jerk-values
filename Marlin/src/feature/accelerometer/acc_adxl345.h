@@ -90,13 +90,13 @@ class ADXL345 {
   public:
     void begin();
     void end();
-    void readMeasurementXYZ(ADXL345_measurementXYZ_t * acceleration);
-    void readMeasurementX(ADXL345_measurement_t * acceleration);
-    void readMeasurementY(ADXL345_measurement_t * acceleration);
-    void readMeasurementZ(ADXL345_measurement_t * acceleration);
-    void setDataRate(uint8_t dataRate); // 0->0.1Hz ... 15->3200Hz
-    void writeRegister(uint8_t registerAddress, uint8_t data);
-    void readRegister(uint8_t registerAddress, int numBytes, uint8_t * buffer);
+    void readMeasurementXYZ(ADXL345_measurementXYZ_t * const acceleration);
+    void readMeasurementX(ADXL345_measurement_t * const acceleration);
+    void readMeasurementY(ADXL345_measurement_t * const acceleration);
+    void readMeasurementZ(ADXL345_measurement_t * const acceleration);
+    void setDataRate(const uint8_t dataRate); // 0->0.1Hz ... 15->3200Hz
+    void writeRegister(const uint8_t registerAddress, const uint8_t data);
+    void readRegister(const uint8_t registerAddress, const int numBytes, uint8_t * const buffer);
   private:
     void select(const bool select);
 };

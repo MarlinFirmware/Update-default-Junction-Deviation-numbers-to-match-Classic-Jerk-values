@@ -1281,6 +1281,17 @@ private:
     static void M951();
   #endif
 
+  #if ENABLED(ACCELEROMETER_ADXL345)
+    static void M955();
+    static void M955_report(const bool forReplay=true);
+    static void M956();
+    static void M958();
+    static void M974();
+    static void M975();
+    static void M976();
+    static void M977();
+  #endif
+
   #if ENABLED(TOUCH_SCREEN_CALIBRATION)
     static void M995();
   #endif
