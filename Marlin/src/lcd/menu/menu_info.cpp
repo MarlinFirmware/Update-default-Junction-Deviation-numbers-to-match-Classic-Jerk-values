@@ -264,6 +264,18 @@ void menu_info_board() {
 #endif
 
 //
+// "Build Date" submenu
+//
+#if ENABLED(BUILDDATE_MENU_ITEM)
+  void menu_info_build() {
+    if (ui.use_click()) return ui.go_back();
+    START_SCREEN();
+    STATIC_ITEM_F(F(__DATE__ " " __TIME__));                         // YYYY-MM-DD HH:MM
+    END_SCREEN();
+  }
+#endif
+
+//
 // "About Printer" submenu
 //
 void menu_info() {
@@ -304,6 +316,10 @@ void menu_info() {
       #endif
     );
   }
+  #endif
+
+  #if ENABLED(BUILDDATE_MENU_ITEM)
+    SUBMENU(MSG_INFO_BUILD, menu_info_build);               // Printer Stats >
   #endif
 
   END_MENU();
