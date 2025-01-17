@@ -102,38 +102,6 @@ namespace ExtUI {
     set_lcd_error(error, component);
   }
 
-  #if HAS_PID_HEATING
-
-    void onPIDTuning(const pidresult_t rst) {
-      // Called for temperature PID tuning result
-      //SERIAL_ECHOLNPGM("OnPIDTuning:", rst);
-      switch (rst) {
-        case PID_STARTED:
-        case PID_BED_STARTED:
-        case PID_CHAMBER_STARTED:
-          set_lcd_error(GET_TEXT_F(MSG_PID_AUTOTUNE));
-          break;
-        case PID_BAD_HEATER_ID:
-          set_lcd_error(GET_TEXT_F(MSG_PID_BAD_HEATER_ID));
-          break;
-        case PID_TEMP_TOO_HIGH:
-          set_lcd_error(GET_TEXT_F(MSG_PID_TEMP_TOO_HIGH));
-          break;
-        case PID_TUNING_TIMEOUT:
-          set_lcd_error(GET_TEXT_F(MSG_PID_TIMEOUT));
-          break;
-        case PID_DONE:
-          set_lcd_error(GET_TEXT_F(MSG_PID_AUTOTUNE_DONE));
-          break;
-      }
-    }
-
-    void onStartM303(const int count, const heater_id_t hid, const celsius_t temp) {
-      // Called by M303 to update the UI
-    }
-
-  #endif
-
   void onPrintTimerStarted() { write_to_lcd(F("{SYS:BUILD}")); }
   void onPrintTimerPaused() {}
   void onPrintTimerStopped() { write_to_lcd(F("{TQ:100}")); }
@@ -207,9 +175,47 @@ namespace ExtUI {
     }
   #endif
 
+  #if HAS_PID_HEATING
+
+    void onPIDTuning(const pidresult_t rst) {
+      // Called for temperature PID tuning result
+      //SERIAL_ECHOLNPGM("OnPIDTuning:", rst);
+      switch (rst) {
+        case PID_STARTED:
+        case PID_BED_STARTED:
+        case PID_CHAMBER_STARTED:
+          set_lcd_error(GET_TEXT_F(MSG_PID_AUTOTUNE));
+          break;
+        case PID_BAD_HEATER_ID:
+          set_lcd_error(GET_TEXT_F(MSG_PID_BAD_HEATER_ID));
+          break;
+        case PID_TEMP_TOO_HIGH:
+          set_lcd_error(GET_TEXT_F(MSG_PID_TEMP_TOO_HIGH));
+          break;
+        case PID_TUNING_TIMEOUT:
+          set_lcd_error(GET_TEXT_F(MSG_PID_TIMEOUT));
+          break;
+        case PID_DONE:
+          set_lcd_error(GET_TEXT_F(MSG_PID_AUTOTUNE_DONE));
+          break;
+      }
+    }
+
+    void onStartM303(const int count, const heater_id_t hid, const celsius_t temp) {
+      // Called by M303 to update the UI
+    }
+
+  #endif // HAS_PID_HEATING
+
   #if ENABLED(MPC_AUTOTUNE)
     void onMPCTuning(const mpcresult_t rst) {
-      // Called for temperature PID tuning result
+      // Called for temperature MPC tuning result
+      switch (rst) {
+        case MPC_STARTED:     break;
+        case MPC_TEMP_ERROR:  break;
+        case MPC_INTERRUPTED: break;
+        case MPC_DONE:        break;
+      }
     }
   #endif
 

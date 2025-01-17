@@ -203,6 +203,10 @@ public:
     TERN_(HAS_MARLINUI_MENU, currentScreen = status_screen);
   }
 
+  #if ENABLED(REVERSIBLE_ENCODER)
+    static bool reverse_encoder;  // Flag to reverse the encoder direction
+  #endif
+
   static void init();
 
   static void reinit_lcd() { TERN_(REINIT_NOISY_LCD, init_lcd()); }
@@ -851,20 +855,26 @@ public:
 
     #define ENCODERBASE (TERN(REVERSE_ENCODER_DIRECTION, -1, +1))
 
-    #if ANY(REVERSE_MENU_DIRECTION, REVERSE_SELECT_DIRECTION)
+    #if ANY(REVERSE_MENU_DIRECTION, REVERSE_SELECT_DIRECTION, REVERSIBLE_ENCODER)
       static int8_t encoderDirection;
     #else
       static constexpr int8_t encoderDirection = ENCODERBASE;
     #endif
 
     FORCE_INLINE static void encoder_direction_normal() {
-      #if ANY(REVERSE_MENU_DIRECTION, REVERSE_SELECT_DIRECTION)
+      #if ANY(REVERSE_MENU_DIRECTION, REVERSE_SELECT_DIRECTION, REVERSIBLE_ENCODER)
         encoderDirection = ENCODERBASE;
       #endif
     }
 
     FORCE_INLINE static void encoder_direction_menus() {
-      TERN_(REVERSE_MENU_DIRECTION, encoderDirection = -(ENCODERBASE));
+      constexpr int8_t dir = TERN(REVERSE_MENU_DIRECTION, -(ENCODERBASE), ENCODERBASE);
+      #if ENABLED(REVERSIBLE_ENCODER)
+        encoderDirection = reverse_encoder ? -dir : dir;
+      #elif ENABLED(REVERSE_MENU_DIRECTION)
+        encoderDirection = dir;
+      #endif
+      UNUSED(dir);
     }
 
     FORCE_INLINE static void encoder_direction_select() {
