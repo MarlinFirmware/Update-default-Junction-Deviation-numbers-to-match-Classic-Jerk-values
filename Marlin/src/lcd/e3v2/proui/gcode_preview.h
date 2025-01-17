@@ -39,3 +39,19 @@ private:
 };
 
 extern Preview preview;
+
+typedef struct {
+  char name[13] = "";   // 8.3 + null
+  uint32_t thumbstart;
+  int thumbsize, thumbheight, thumbwidth;
+  float time,
+  filament,
+  layer,
+  width, height, length;
+
+  void setname(const char * const fn);
+  void clear();
+
+} fileprop_t;
+
+extern fileprop_t fileprop;

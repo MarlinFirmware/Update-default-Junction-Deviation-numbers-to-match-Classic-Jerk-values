@@ -37,16 +37,18 @@ enum MeshLevelingState : char {
 
 class mesh_bed_leveling {
 public:
-  static float z_offset,
-               z_values[GRID_MAX_POINTS_X][GRID_MAX_POINTS_Y],
-               index_to_xpos[GRID_MAX_POINTS_X],
+  static float z_offset;
+  static float z_values[GRID_MAX_POINTS_X][GRID_MAX_POINTS_Y];
+  static float index_to_xpos[GRID_MAX_POINTS_X],
                index_to_ypos[GRID_MAX_POINTS_Y];
 
   mesh_bed_leveling();
 
-  static void report_mesh();
-
   static void reset();
+
+  static void initialize();
+
+  static void report_mesh();
 
   FORCE_INLINE static bool has_mesh() {
     GRID_LOOP(x, y) if (z_values[x][y]) return true;
@@ -70,7 +72,7 @@ public:
   }
 
   static float get_mesh_x(const uint8_t i) { return index_to_xpos[i]; }
-  static float get_mesh_y(const uint8_t i) { return index_to_ypos[i]; }
+  static float get_mesh_y(const uint8_t j) { return index_to_ypos[j]; }
 
   static uint8_t cell_index_x(const_float_t x) {
     int8_t cx = (x - (MESH_MIN_X)) * RECIPROCAL(MESH_X_DIST);

@@ -34,7 +34,6 @@
 
 #include "../../../core/types.h"
 #include "../../marlinui.h"
-#include "dwin.h"
 #include "dwin_popup.h"
 #include "../../../feature/bedlevel/bedlevel.h"
 #include "meshviewer.h"
