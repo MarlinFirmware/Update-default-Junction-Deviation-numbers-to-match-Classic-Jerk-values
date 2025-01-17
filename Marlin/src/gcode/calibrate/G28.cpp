@@ -530,6 +530,18 @@ void GcodeSuite::G28() {
 
     #endif // DUAL_X_CARRIAGE
 
+    #if HAS_BED_PROBE
+      // Perform precise homing using the same probing procedure as bed leveling
+      if (parser.seen_test('P')) {
+          xy_pos_t xyPos = { current_position.x, current_position.y };
+          float probedZHeight = probe.probe_at_point(xyPos, PROBE_PT_RAISE, 0, false);
+          DEBUG_ECHOLNPGM("Probed ZHeight (correction amount): ", probedZHeight);
+
+          current_position.z -= probedZHeight;
+          sync_plan_position();
+      }
+    #endif
+
     endstops.not_homing();
 
     // Clear endstop state for polled stallGuard endstops
