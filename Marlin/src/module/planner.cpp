@@ -1171,51 +1171,6 @@ void Planner::recalculate(const_float_t safe_exit_speed_sqr) {
 }
 
 /**
- * Apply fan speeds
- */
-#if HAS_FAN
-
-  void Planner::sync_fan_speeds(uint8_t (&fan_speed)[FAN_COUNT]) {
-
-    #if ENABLED(FAN_SOFT_PWM)
-      #define _FAN_SET(F) thermalManager.soft_pwm_amount_fan[F] = CALC_FAN_SPEED(fan_speed[F]);
-    #else
-      #define _FAN_SET(F) hal.set_pwm_duty(pin_t(FAN##F##_PIN), CALC_FAN_SPEED(fan_speed[F]));
-    #endif
-    #define FAN_SET(F) do{ kickstart_fan(fan_speed, ms, F); _FAN_SET(F); }while(0)
-
-    const millis_t ms = millis();
-    TERN_(HAS_FAN0, FAN_SET(0)); TERN_(HAS_FAN1, FAN_SET(1));
-    TERN_(HAS_FAN2, FAN_SET(2)); TERN_(HAS_FAN3, FAN_SET(3));
-    TERN_(HAS_FAN4, FAN_SET(4)); TERN_(HAS_FAN5, FAN_SET(5));
-    TERN_(HAS_FAN6, FAN_SET(6)); TERN_(HAS_FAN7, FAN_SET(7));
-  }
-
-  #if FAN_KICKSTART_TIME
-
-    void Planner::kickstart_fan(uint8_t (&fan_speed)[FAN_COUNT], const millis_t &ms, const uint8_t f) {
-      static millis_t fan_kick_end[FAN_COUNT] = { 0 };
-      #if ENABLED(FAN_KICKSTART_LINEAR)
-        static uint8_t set_fan_speed[FAN_COUNT] = { 0 };
-      #endif
-      if (fan_speed[f] > FAN_OFF_PWM) {
-        const bool first_kick = fan_kick_end[f] == 0 && TERN1(FAN_KICKSTART_LINEAR, fan_speed[f] > set_fan_speed[f]);
-        if (first_kick)
-          fan_kick_end[f] = ms + (FAN_KICKSTART_TIME) TERN_(FAN_KICKSTART_LINEAR, * (fan_speed[f] - set_fan_speed[f]) / 255);
-        if (first_kick || PENDING(ms, fan_kick_end[f])) {
-          fan_speed[f] = FAN_KICKSTART_POWER;
-          return;
-        }
-      }
-      fan_kick_end[f] = 0;
-      TERN_(FAN_KICKSTART_LINEAR, set_fan_speed[f] = fan_speed[f]);
-    }
-
-  #endif
-
-#endif // HAS_FAN
-
-/**
  * Maintain fans, paste extruder pressure, spindle/laser power
  */
 void Planner::check_axes_activity() {
@@ -1224,9 +1179,7 @@ void Planner::check_axes_activity() {
     xyze_bool_t axis_active = { false };
   #endif
 
-  #if HAS_FAN && DISABLED(LASER_SYNCHRONOUS_M106_M107)
-    #define HAS_TAIL_FAN_SPEED 1
-    static uint8_t tail_fan_speed[FAN_COUNT] = ARRAY_N_1(FAN_COUNT, 13);
+  #if HAS_TAIL_FAN_SPEED
     bool fans_need_update = false;
   #endif
 
@@ -1247,10 +1200,11 @@ void Planner::check_axes_activity() {
 
     #if HAS_TAIL_FAN_SPEED
       FANS_LOOP(i) {
-        const uint8_t spd = thermalManager.scaledFanSpeed(i, block->fan_speed[i]);
-        if (tail_fan_speed[i] != spd) {
+        Fan &fan = fans[i];
+        const uint8_t spd = fan.scaled_speed(block->fan_speed[i]);
+        if (fan.tail_speed != spd) {
+          fan.tail_speed = spd;
           fans_need_update = true;
-          tail_fan_speed[i] = spd;
         }
       }
     #endif
@@ -1284,10 +1238,11 @@ void Planner::check_axes_activity() {
 
     #if HAS_TAIL_FAN_SPEED
       FANS_LOOP(i) {
-        const uint8_t spd = thermalManager.scaledFanSpeed(i);
-        if (tail_fan_speed[i] != spd) {
+        Fan &fan = fans[i];
+        const uint8_t spd = fan.scaled_speed();
+        if (fan.tail_speed != spd) {
           fans_need_update = true;
-          tail_fan_speed[i] = spd;
+          fan.tail_speed = spd;
         }
       }
     #endif
@@ -1320,7 +1275,7 @@ void Planner::check_axes_activity() {
   // Update Fan speeds
   // Only if synchronous M106/M107 is disabled
   //
-  TERN_(HAS_TAIL_FAN_SPEED, if (fans_need_update) sync_fan_speeds(tail_fan_speed));
+  TERN_(HAS_TAIL_FAN_SPEED, if (fans_need_update) Fan::sync_speeds());
 
   TERN_(AUTOTEMP, autotemp_task());
 
@@ -2095,7 +2050,7 @@ bool Planner::_populate_block(
   TERN_(MIXING_EXTRUDER, mixer.populate_block(block->b_color));
 
   #if HAS_FAN
-    FANS_LOOP(i) block->fan_speed[i] = thermalManager.fan_speed[i];
+    FANS_LOOP(i) block->fan_speed[i] = fans[i].speed;
   #endif
 
   #if ENABLED(BARICUDA)
@@ -2793,7 +2748,7 @@ void Planner::buffer_sync_block(const BlockFlagBit sync_flag/*=BLOCK_BIT_SYNC_PO
   #endif
 
   #if ENABLED(LASER_SYNCHRONOUS_M106_M107)
-    FANS_LOOP(i) block->fan_speed[i] = thermalManager.fan_speed[i];
+    FANS_LOOP(i) block->fan_speed[i] = fans[i].speed;
   #endif
 
   /**
@@ -3073,7 +3028,7 @@ bool Planner::buffer_line(const xyze_pos_t &cart, const_feedRate_t fr_mm_s
     block->flag.reset(BLOCK_BIT_PAGE);
 
     #if HAS_FAN
-      FANS_LOOP(i) block->fan_speed[i] = thermalManager.fan_speed[i];
+      FANS_LOOP(i) block->fan_speed[i] = fans[i].speed;
     #endif
 
     E_TERN_(block->extruder = extruder);
