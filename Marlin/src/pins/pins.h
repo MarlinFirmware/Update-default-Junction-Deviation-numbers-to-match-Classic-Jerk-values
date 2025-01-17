@@ -845,6 +845,14 @@
   #include "stm32f4/pins_XTLW_CLIMBER_8TH.h"        // STM32F4                              env:XTLW_CLIMBER_8TH
 #elif MB(FLY_RRF_E3_V1)
   #include "stm32f4/pins_FLY_RRF_E3_V1.h"           // STM32F4                              env:FLY_RRF_E3_V1
+#elif MB(ZNP_ROBIN_NANO_V1_3)
+  #include "stm32f4/pins_MKS_ROBIN_NANO_V1_3_F4.h"  // STM32F4                              env:znp_robin_nano_v1_3
+#elif MB(MKS_NEPTUNE_X)
+  #include "stm32f4/pins_MKS_NEPTUNE_X.h"           // STM32F4                              env:mks_neptune_x
+#elif MB(ZNP_ROBIN_NANO)
+  #include "stm32f1/pins_MKS_ROBIN_NANO.h"          // STM32F1                              env:znp_robin_nano35
+#elif MB(MKS_NEPTUNE_3)
+  #include "stm32f4/pins_MKS_NEPTUNE_3.h"           // STM32F4                              env:mks_neptune_3
 
 //
 // Other ARM Cortex-M4
