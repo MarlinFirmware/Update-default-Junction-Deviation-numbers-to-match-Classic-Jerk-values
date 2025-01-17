@@ -1689,6 +1689,11 @@
   #endif
 #endif
 
+#if HAS_LVGL
+  #define LVGL_H_BUFFER_LINES 10    // Number of vertical lines for LVGL buffer size. The minimum value is 10.
+  //#define LVGL_DOUBLE_BUFFERING   // Draw into an off-screen buffer for cleaner screen updates.
+#endif
+
 // LCD Print Progress options. Multiple times may be displayed in turn.
 #if HAS_DISPLAY && ANY(HAS_MEDIA, SET_PROGRESS_MANUALLY)
   #define SHOW_PROGRESS_PERCENT           // Show print progress percentage (doesn't affect progress bar)
