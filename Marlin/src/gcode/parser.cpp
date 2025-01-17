@@ -106,6 +106,68 @@ void GCodeParser::reset() {
 
 #endif
 
+// Create Variable Declaration
+//#if ENABLED(GCODE_VARIABLES)
+// Pass the data being stored
+//  char* GCodeParser::input_var(char* &src); //{
+//    if (*src == 'L') src;     // Skip the leading Letter
+//    int * const out = src;     // Start of the string
+//    char *dst = src;            // Prepare to unescape and terminate
+//    for (;;) {
+//      char c = *src++;          // Get the next char
+//      switch (c) {
+//        case '\\': c = *src++; break; // Get the escaped char
+//        case '"' : c = '\0'; break;   // Convert bare quote to nul
+//      }
+//      if (!(*dst++ = c)) break; // Copy and break on nul
+//    }
+//    return out;
+//  }
+//
+//#endif
+
+//Enable Math Functions and assigning values to variables in GCode
+//#if ENABLED(GCODE_MATH_STRINGS)
+//
+//  // Pass the address after the first quote (if any)
+//  char* GCodeParser::math_string(char* &src) {
+//    if (*src == '{') ++src;     // Skip the leading quote
+//    char * const out = src;     // Start of the string
+//    char *dst = src;            // Prepare to unescape and terminate
+//    for (;;) {
+//      char c = *src++;          // Get the next char
+//      switch (c) {
+//        case '\\': c = *src++; break; // Get the escaped char
+//        case '"' : c = '\0'; break;   // Convert bare quote to nul
+//      }
+//      if (!(*dst++ = c)) break; // Copy and break on nul
+//    }
+//    return out;
+//  }
+//
+//#endif
+
+//Enable Logic Branching and Looping in GCode
+//#if ENABLED(GCODE_LOGIC_STRINGS)
+//
+//  // Pass the address after the first quote (if any)
+//  char* GCodeParser::logic_string(char* &src) {
+//    if (*src == '"') ++src;     // Skip the leading quote
+//    char * const out = src;     // Start of the string
+//    char *dst = src;            // Prepare to unescape and terminate
+//    for (;;) {
+//      char c = *src++;          // Get the next char
+//      switch (c) {
+//        case '\\': c = *src++; break; // Get the escaped char
+//        case '"' : c = '\0'; break;   // Convert bare quote to nul
+//      }
+//      if (!(*dst++ = c)) break; // Copy and break on nul
+//    }
+//    return out;
+//  }
+//
+//#endif
+
 /**
  * Populate the command line state (command_letter, codenum, subcode, and string_arg)
  * by parsing a single line of G-Code. 58 bytes of SRAM are used to speed up seen/value.
@@ -171,7 +233,9 @@ void GCodeParser::parse(char *p) {
    * With Motion Modes enabled any axis letter can come first.
    */
   switch (letter) {
-    case 'G': case 'M': case 'T': TERN_(MARLIN_DEV_MODE, case 'D':) {
+    TERN_(MARLIN_DEV_MODE, case 'D':)
+    TERN_(GCODE_VARIABLES, case 'L':)
+    case 'G': case 'M': case 'T': {
       // Skip spaces to get the numeric part
       while (*p == ' ') p++;
 
@@ -283,6 +347,14 @@ void GCodeParser::parse(char *p) {
     default: break;
   }
 
+  #if ENABLED(GCODE_VARIABLES)
+    // Only use string_arg for these L variables
+    if (letter == 'L') switch (codenum) {
+      case 100 ... 115: var_arg = input_var(p); return;
+      default: break;
+    }
+  #endif
+
   #if ENABLED(DEBUG_GCODE_PARSER)
     const bool debug = codenum == 800;
   #endif
@@ -298,7 +370,13 @@ void GCodeParser::parse(char *p) {
   #if ENABLED(GCODE_QUOTED_STRINGS)
     bool quoted_string_arg = false;
   #endif
+
+  #if ENABLED(GCODE_VARIABLES)
+    bool used_var_arg = false;
+  #endif
+
   string_arg = nullptr;
+  var_arg = nullptr;
   while (const char param = uppercase(*p++)) {  // Get the next parameter. A NUL ends the loop
 
     // Special handling for M32 [P] !/path/to/file.g#
@@ -317,6 +395,13 @@ void GCodeParser::parse(char *p) {
       }
     #endif
 
+    #if ENABLED(GCODE_VARIABLES)
+      if (!used_var_arg && param == 'L') {
+        used_var_arg = true;
+        var_arg = input_var(p);
+      }
+    #endif
+
     #if ENABLED(FASTER_GCODE_PARSER)
       // Arguments MUST be uppercase for fast G-Code parsing
       #define PARAM_OK(P) WITHIN((P), 'A', 'Z')
@@ -328,13 +413,27 @@ void GCodeParser::parse(char *p) {
 
       while (*p == ' ') p++;                    // Skip spaces between parameters & values
 
+      bool has_val = false;
+
       #if ENABLED(GCODE_QUOTED_STRINGS)
-        const bool is_str = (*p == '"'), has_val = is_str || valid_float(p);
+        const bool is_str = (*p == '"');
+        has_val = is_str || valid_float(p);
         char * const valptr = has_val ? is_str ? unescape_string(p) : p : nullptr;
       #else
-        const bool has_val = valid_float(p);
+        has_val = valid_float(p);
         #if ENABLED(FASTER_GCODE_PARSER)
           char * const valptr = has_val ? p : nullptr;
+        #endif
+      #endif
+
+      #if ENABLED(GCODE_VARIABLES)
+        const bool is_var = (*p == 'L');
+        has_val = is_int || valid_float(p + 1);
+        char * const varptr = has_val ? is_var ? input_var(p) : p + 1 : nullptr;
+      #else
+        has_val = valid_float(p);
+        #if ENABLED(FASTER_GCODE_PARSER)
+          char * const varptr = has_val ? p : nullptr;
         #endif
       #endif
 

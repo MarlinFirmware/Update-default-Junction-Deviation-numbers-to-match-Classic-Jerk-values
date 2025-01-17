@@ -345,6 +345,9 @@
  *** "T" Codes ***
  *
  * T0-T3 - Select an extruder (tool) by index: "T<n> F<units/min>"
+ *
+ *** 'L' Codes ***
+ # L100-L115 - Definable variables
  */
 
 #include "../inc/MarlinConfig.h"

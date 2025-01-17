@@ -29,6 +29,10 @@
 
 #include "../inc/MarlinConfig.h"
 
+#if ENABLED(GCODE_VARIABLES)
+  #include "variables/variables.h"
+#endif
+
 //#define DEBUG_GCODE_PARSER
 #if ENABLED(DEBUG_GCODE_PARSER)
   #include "../libs/hex_print.h"
@@ -83,7 +87,8 @@ public:
   // Command line state
   static char *command_ptr,               // The command, so it can be echoed
               *string_arg,                // string of command line
-              command_letter;             // G, M, or T
+              command_letter;             // G, M, L, or T
+
   static uint16_t codenum;                // 123
   #if USE_GCODE_SUBCODES
     static uint8_t subcode;               // .1
@@ -232,6 +237,18 @@ public:
   #else
     FORCE_INLINE static char* unescape_string(char* &src) { return src; }
   #endif
+
+  //#if ENABLED(GCODE_MATHS_STRINGS)
+  //  static char* math_string(char* &src);
+  //#else
+  //  FORCE_INLINE static char* math_string(char* &src) { return src; }
+  //#endif
+
+  //#if ENABLED(GCODE_LOGIC_STRINGS)
+  //  static char* logic_string(char* &src);
+  //#else
+  //  FORCE_INLINE static char* logic_string(char* &src) { return src; }
+  //#endif
 
   // Populate all fields by parsing a single line of G-Code
   // This uses 54 bytes of SRAM to speed up seen/value
