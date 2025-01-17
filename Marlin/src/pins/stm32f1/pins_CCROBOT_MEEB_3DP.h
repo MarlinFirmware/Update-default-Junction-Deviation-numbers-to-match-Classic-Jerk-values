@@ -147,14 +147,7 @@
 //
 
 #if ENABLED(CR10_STOCKDISPLAY)
-  #define BEEPER_PIN                 EXP1_01_PIN
-  #define BTN_EN1                    EXP1_03_PIN
-  #define BTN_EN2                    EXP1_05_PIN
-  #define BTN_ENC                    EXP1_02_PIN
-
-  #define LCD_PINS_RS                EXP1_07_PIN  // CS -- SOFT SPI for ENDER3 LCD
-  #define LCD_PINS_D4                EXP1_06_PIN  // SCLK
-  #define LCD_PINS_EN                EXP1_08_PIN  // DATA MOSI
+  // Migrated to pins/lcd
 #endif
 
 // Alter timing for graphical display

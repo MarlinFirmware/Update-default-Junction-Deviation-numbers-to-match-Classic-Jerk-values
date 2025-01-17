@@ -150,80 +150,70 @@
 //
 // Display
 //
-#if HAS_WIRED_LCD
+#if ENABLED(CR10_STOCKDISPLAY)
 
-  #if ENABLED(CR10_STOCKDISPLAY)
+  // Migrated to pins/lcd
+  #define EXP1_01_PIN                   _EXP2_03
+  #define EXP1_02_PIN                   _EXP2_04
+  #define EXP1_03_PIN                   _EXP2_07
+  #define EXP1_05_PIN                   _EXP2_05
+  #define EXP1_06_PIN                   _EXP2_08
+  #define EXP1_07_PIN                   _EXP2_09
+  #define EXP1_08_PIN                   _EXP2_10
 
-    // Re-Arm can support Creality stock display without SD card reader and single cable on EXP3.
-    // Re-Arm J3 pins 1 (p1.31) & 2 (P3.26) are not used. Stock cable will need to have one
-    // 10-pin IDC connector trimmed or replaced with a 12-pin IDC connector to fit J3.
-    // Requires REVERSE_ENCODER_DIRECTION in Configuration.h
+#elif HAS_WIRED_LCD
 
-    #define BEEPER_PIN                  _EXP2_03
+  #define BTN_EN1                       _EXP2_02
+  #define BTN_EN2                       _EXP2_04
+  #define BTN_ENC                       _EXP2_03
 
-    #define BTN_EN1                     _EXP2_07
-    #define BTN_EN2                     _EXP2_05
-    #define BTN_ENC                     _EXP2_04
+  #define SD_DETECT_PIN                 _EXP2_01
+  #define KILL_PIN                      _EXP1_10
+  #define LCD_PINS_RS                   _EXP2_07
+  #define LCD_SDSS                      _EXP2_07
+  #define LCD_BACKLIGHT_PIN             _EXP2_07
+  #define LCD_PINS_EN                   _EXP2_10
+  #define LCD_PINS_D4                   _EXP2_09
 
-    #define LCD_PINS_RS                 _EXP2_09
-    #define LCD_PINS_EN                 _EXP2_10
-    #define LCD_PINS_D4                 _EXP2_08
+  #define DOGLCD_A0                     _EXP2_08
+
+  #if IS_RRW_KEYPAD
+    #define SHIFT_OUT_PIN               _EXP2_10
+    #define SHIFT_CLK_PIN               _EXP2_09
+    #define SHIFT_LD_PIN                _EXP2_01
+  #elif !IS_NEWPANEL
+    //#define SHIFT_OUT_PIN             _EXP2_03
+    //#define SHIFT_CLK_PIN             _EXP2_02
+    //#define SHIFT_LD_PIN              _EXP2_04
+    //#define SHIFT_EN_PIN              _EXP1_10
+  #endif
+
+  #if ANY(VIKI2, miniVIKI)
+    #define BEEPER_PIN                     P1_30
+    #define DOGLCD_CS                      P0_26
+    #define DOGLCD_SCK                SD_SCK_PIN
+    #define DOGLCD_MOSI              SD_MOSI_PIN
+
+    #define STAT_LED_BLUE_PIN              P0_26
+    #define STAT_LED_RED_PIN               P1_21
 
   #else
+    #if IS_ULTIPANEL
+      #define LCD_PINS_D5                  P1_17
+      #define LCD_PINS_D6                  P1_14
+      #define LCD_PINS_D7                  P1_10
+    #endif
+    #define BEEPER_PIN                     P1_30
+    #define DOGLCD_CS                   _EXP2_07
 
-    #define BTN_EN1                     _EXP2_02
-    #define BTN_EN2                     _EXP2_04
-    #define BTN_ENC                     _EXP2_03
-
-    #define SD_DETECT_PIN               _EXP2_01
-    #define KILL_PIN                    _EXP1_10
-    #define LCD_PINS_RS                 _EXP2_07
-    #define LCD_SDSS                    _EXP2_07
-    #define LCD_BACKLIGHT_PIN           _EXP2_07
-    #define LCD_PINS_EN                 _EXP2_10
-    #define LCD_PINS_D4                 _EXP2_09
-
-    #define DOGLCD_A0                   _EXP2_08
-
-    #if IS_RRW_KEYPAD
-      #define SHIFT_OUT_PIN             _EXP2_10
-      #define SHIFT_CLK_PIN             _EXP2_09
-      #define SHIFT_LD_PIN              _EXP2_01
-    #elif !IS_NEWPANEL
-      //#define SHIFT_OUT_PIN           _EXP2_03
-      //#define SHIFT_CLK_PIN           _EXP2_02
-      //#define SHIFT_LD_PIN            _EXP2_04
-      //#define SHIFT_EN_PIN            _EXP1_10
+    #if ENABLED(REPRAP_DISCOUNT_FULL_GRAPHIC_SMART_CONTROLLER)
+      #define BTN_ENC_EN           LCD_PINS_D7  // Detect the presence of the encoder
     #endif
 
-    #if ANY(VIKI2, miniVIKI)
-      #define BEEPER_PIN                   P1_30
-      #define DOGLCD_CS                    P0_26
-      #define DOGLCD_SCK              SD_SCK_PIN
-      #define DOGLCD_MOSI            SD_MOSI_PIN
+  #endif
 
-      #define STAT_LED_BLUE_PIN            P0_26
-      #define STAT_LED_RED_PIN             P1_21
-
-    #else
-      #if IS_ULTIPANEL
-        #define LCD_PINS_D5                P1_17
-        #define LCD_PINS_D6                P1_14
-        #define LCD_PINS_D7                P1_10
-      #endif
-      #define BEEPER_PIN                   P1_30
-      #define DOGLCD_CS                 _EXP2_07
-
-      #if ENABLED(REPRAP_DISCOUNT_FULL_GRAPHIC_SMART_CONTROLLER)
-        #define BTN_ENC_EN           LCD_PINS_D7  // Detect the presence of the encoder
-      #endif
-
-    #endif
-
-    #if ANY(VIKI2, miniVIKI, MINIPANEL)
-      //#define LCD_SCREEN_ROTATE            180  // 0, 90, 180, 270
-    #endif
-
+  #if ANY(VIKI2, miniVIKI, MINIPANEL)
+    //#define LCD_SCREEN_ROTATE              180  // 0, 90, 180, 270
   #endif
 
 #endif // HAS_WIRED_LCD

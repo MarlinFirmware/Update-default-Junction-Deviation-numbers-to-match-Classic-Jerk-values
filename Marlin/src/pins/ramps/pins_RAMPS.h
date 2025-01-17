@@ -615,6 +615,10 @@
 
   // LCD pins already defined by including header
 
+#elif ENABLED(CR10_STOCKDISPLAY)
+
+  // Migrated to pins/lcd
+
 #elif HAS_WIRED_LCD
 
   //#define LCD_SCREEN_ROTATE                180  // 0, 90, 180, 270
@@ -643,17 +647,7 @@
 
   #else
 
-    #if ENABLED(CR10_STOCKDISPLAY)
-
-      #define LCD_PINS_RS            EXP1_07_PIN
-      #define LCD_PINS_EN            EXP1_08_PIN
-      #define LCD_PINS_D4            EXP1_06_PIN
-
-      #if !IS_NEWPANEL
-        #define BEEPER_PIN           EXP1_01_PIN
-      #endif
-
-    #elif ENABLED(ZONESTAR_LCD)
+    #if ENABLED(ZONESTAR_LCD)
 
       CONTROLLER_WARNING("RAMPS", "ZONESTAR_LCD", " Plugs into AUX2 but GND and 5V must be swapped.")
 
@@ -716,15 +710,10 @@
 
     #if IS_RRD_SC
 
-      #if ENABLED(CR10_STOCKDISPLAY)
-        #define BTN_EN1              EXP1_03_PIN
-        #define BTN_EN2              EXP1_05_PIN
-      #else
-        #define BTN_EN1              EXP2_03_PIN
-        #define BTN_EN2              EXP2_05_PIN
-      #endif
-
       #define BTN_ENC                EXP1_02_PIN
+      #define BTN_EN1                EXP2_03_PIN
+      #define BTN_EN2                EXP2_05_PIN
+
       #ifndef SD_DETECT_PIN
         #define SD_DETECT_PIN        EXP2_07_PIN
       #endif

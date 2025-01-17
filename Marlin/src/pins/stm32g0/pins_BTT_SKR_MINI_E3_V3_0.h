@@ -187,7 +187,17 @@
 #define SPI1_05_PIN                         PA7
 #define SPI1_06_PIN                         PA6
 
-#if HAS_DWIN_E3V2 || IS_DWIN_MARLINUI
+#if ENABLED(CR10_STOCKDISPLAY)
+
+  // Migrated to pins/lcd
+
+#elif ENABLED(MINIPANEL)
+
+  // Migrated to pins/lcd
+  #define ADAPTER_BTT_DUAL
+  #define FORCE_SOFT_SPI
+
+#elif HAS_DWIN_E3V2 || IS_DWIN_MARLINUI
   /**
    *        ------                ------                ------
    * (ENT) | 1  2 | (BEEP)       |10  9 |              |10  9 |
@@ -210,7 +220,7 @@
 
 #elif HAS_WIRED_LCD
 
-  #if ENABLED(SKR_MINI_SCREEN_ADAPTER)
+  #if ENABLED(ADAPTER_SKR_MINI_SCREEN)
     /** https://github.com/VoronDesign/Voron-Hardware/tree/master/SKR-Mini_Screen_Adaptor/SRK%20Mini%20E3%20V3.0
      *
      *            SKR Mini E3 V3.0                   SKR Mini Screen Adaptor
@@ -247,24 +257,12 @@
       #define LCD_BACKLIGHT_PIN             -1
       #define NEOPIXEL_PIN           EXP1_02_PIN
     #else
-      #error "Only FYSETC_MINI_12864_2_1 / MKS_MINI_12864_V3 / BTT_MINI_12864 / BEEZ_MINI_12864 are currently supported on the SKR Mini E3 with SKR_MINI_SCREEN_ADAPTER."
+      #error "Only FYSETC_MINI_12864_2_1 / MKS_MINI_12864_V3 / BTT_MINI_12864 / BEEZ_MINI_12864 are currently supported on the BIGTREE_SKR_MINI_E3 with ADAPTER_SKR_MINI_SCREEN."
     #endif
 
   #else
 
-    #if ENABLED(CR10_STOCKDISPLAY)
-
-      #define BEEPER_PIN             EXP1_01_PIN
-      #define BTN_ENC                EXP1_02_PIN
-
-      #define BTN_EN1                EXP1_03_PIN
-      #define BTN_EN2                EXP1_05_PIN
-
-      #define LCD_PINS_RS            EXP1_07_PIN
-      #define LCD_PINS_EN            EXP1_08_PIN
-      #define LCD_PINS_D4            EXP1_06_PIN
-
-    #elif ENABLED(ZONESTAR_LCD)                   // ANET A8 LCD Controller - Must convert to 3.3V - CONNECTING TO 5V WILL DAMAGE THE BOARD!
+    #if ENABLED(ZONESTAR_LCD)                     // ANET A8 LCD Controller - Must convert to 3.3V - CONNECTING TO 5V WILL DAMAGE THE BOARD!
 
       CONTROLLER_WARNING("BTT_SKR_MINI_E3_V3_0", "ZONESTAR_LCD")
 
@@ -275,20 +273,6 @@
       #define LCD_PINS_D6            EXP1_03_PIN
       #define LCD_PINS_D7            EXP1_01_PIN
       #define ADC_KEYPAD_PIN                PA1   // Repurpose servo pin for ADC - CONNECTING TO 5V WILL DAMAGE THE BOARD!
-
-    #elif ANY(MKS_MINI_12864, ENDER2_STOCKDISPLAY)
-
-      #define BTN_ENC                EXP1_02_PIN
-      #define BTN_EN1                EXP1_03_PIN
-      #define BTN_EN2                EXP1_05_PIN
-
-      #define DOGLCD_CS              EXP1_07_PIN
-      #define DOGLCD_A0              EXP1_06_PIN
-      #define DOGLCD_SCK             EXP1_01_PIN
-      #define DOGLCD_MOSI            EXP1_08_PIN
-
-      #define FORCE_SOFT_SPI
-      #define LCD_BACKLIGHT_PIN             -1
 
     #elif IS_TFTGLCD_PANEL
 
@@ -377,7 +361,7 @@
       #error "Only CR10_STOCKDISPLAY, ZONESTAR_LCD, ENDER2_STOCKDISPLAY, MKS_MINI_12864, FYSETC_MINI_12864_2_1, and TFTGLCD_PANEL_(SPI|I2C) are currently supported on the SKR Mini E3."
     #endif
 
-  #endif // SKR_MINI_SCREEN_ADAPTER
+  #endif // ADAPTER_SKR_MINI_SCREEN
 
 #endif // HAS_WIRED_LCD
 

@@ -154,6 +154,9 @@
 #define ONBOARD_SDIO
 #define NO_SD_HOST_DRIVE                          // This board's SD is only seen by the printer
 
+/**
+ * There are two variants of the EXP connector
+ */
 #if ANY(RET6_12864_LCD, HAS_DWIN_E3V2, IS_DWIN_MARLINUI)
 
   /**
@@ -166,11 +169,11 @@
    *   GND | 9 10 | 5V
    *        ------
    */
-  #define EXP3_01_PIN                       PC6
-  #define EXP3_02_PIN                       PB2
-  #define EXP3_03_PIN                       PB10
+  #define EXP3_01_PIN                       PC6   // BEEP
+  #define EXP3_02_PIN                       PB2   // ENC
+  #define EXP3_03_PIN                       PB10  // EN1
   #define EXP3_04_PIN                       PE8
-  #define EXP3_05_PIN                       PB14
+  #define EXP3_05_PIN                       PB14  // EN2
   #define EXP3_06_PIN                       PB13
   #define EXP3_07_PIN                       PB12
   #define EXP3_08_PIN                       PB15
@@ -191,10 +194,10 @@
   #define EXP3_02_PIN                       PC5
   #define EXP3_03_PIN                       PB10
   #define EXP3_04_PIN                       -1
-  #define EXP3_05_PIN                       PA6
-  #define EXP3_06_PIN                       PA5
-  #define EXP3_07_PIN                       PA4
-  #define EXP3_08_PIN                       PA7
+  #define EXP3_05_PIN                       PA6   // ENC
+  #define EXP3_06_PIN                       PA5   // BEEP
+  #define EXP3_07_PIN                       PA4   // EN2
+  #define EXP3_08_PIN                       PA7   // EN1
 
 #endif
 
@@ -203,17 +206,12 @@
     #error "Define RET6_12864_LCD or VET6_12864_LCD to select pins for CR10_STOCKDISPLAY with the Creality V4 controller."
   #endif
 
-  #define LCD_PINS_RS                EXP3_07_PIN
-  #define LCD_PINS_EN                EXP3_08_PIN
-  #define LCD_PINS_D4                EXP3_06_PIN
-
-  #define BTN_ENC                    EXP3_02_PIN
-  #define BTN_EN1                    EXP3_03_PIN
-  #define BTN_EN2                    EXP3_05_PIN
-
-  #define BEEPER_PIN                 EXP3_01_PIN
+  // Migrated to pins/lcd
+  #define LCD_ON_EXP3
 
 #elif ANY(DWIN_VET6_CREALITY_LCD, HAS_DWIN_E3V2, IS_DWIN_MARLINUI)
+
+  // Serial controller with click encoder
 
   // RET6 / VET6 DWIN ENCODER LCD
   #define BTN_ENC                    EXP3_05_PIN

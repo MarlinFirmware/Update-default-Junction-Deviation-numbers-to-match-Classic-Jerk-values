@@ -145,6 +145,9 @@
   #define TFT_BACKLIGHT_PIN                 PD12
   #define TFT_BACKLIGHT_PWM                 150   // Brightness with alt. TIM4 chan 1 (1-255)
 
+  #define DOGLCD_MOSI                       -1    // Prevent auto-define by pins_lcd.h
+  #define DOGLCD_SCK                        -1
+
   // Buffer for Color UI
   #define TFT_BUFFER_WORDS                  3200
 #endif

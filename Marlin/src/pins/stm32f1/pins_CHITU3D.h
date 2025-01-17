@@ -98,13 +98,21 @@
 //
 // LCD Pins
 //
-#if HAS_WIRED_LCD
+#if ENABLED(REPRAPWORLD_GRAPHICAL_LCD)
 
-  #if ENABLED(REPRAPWORLD_GRAPHICAL_LCD)
-    #define LCD_PINS_RS                     PD1   // 49  // CS chip select /SS chip slave select
-    #define LCD_PINS_EN                     PD3   // 51  // SID (MOSI)
-    #define LCD_PINS_D4                     PD4   // 52  // SCK (CLK) clock
-  #elif ALL(IS_NEWPANEL, PANEL_ONE)
+  #define BTN_ENC                           PD15
+  #define BTN_EN1                           PE0
+  #define BTN_EN2                           PD11
+
+  #define LCD_PINS_RS                       PD1  // CS
+  #define LCD_PINS_EN                       PD3  // MOSI
+  #define LCD_PINS_D4                       PD4  // SCK
+
+  #define SD_DETECT_PIN                     PC10
+
+#elif HAS_WIRED_LCD
+
+  #if ALL(IS_NEWPANEL, PANEL_ONE)
     #define LCD_PINS_RS                     PB8
     #define LCD_PINS_EN                     PD2
     #define LCD_PINS_D4                     PB12
@@ -145,13 +153,6 @@
       #if ENABLED(BQ_LCD_SMART_CONTROLLER)
         #define LCD_BACKLIGHT_PIN           PC7   // 39
       #endif
-
-    #elif ENABLED(REPRAPWORLD_GRAPHICAL_LCD)
-
-      #define BTN_EN1                       PE0   // 64
-      #define BTN_EN2                       PD11  // 59
-      #define BTN_ENC                       PD15  // 63
-      #define SD_DETECT_PIN                 PC10  // 42
 
     #elif ENABLED(LCD_I2C_PANELOLU2)
 

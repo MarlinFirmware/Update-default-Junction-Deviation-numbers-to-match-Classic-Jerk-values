@@ -25,6 +25,45 @@
  * pins_lcd.h - Define LCD pins based on the EXP connector / adapter
  */
 
+#if defined(LCD_PINS_EN) || defined(DOGLCD_A0)
+
+  // LCD pins were already defined in the board pins file
+
+#else
+
+  #include "lcd/adapters.h"
+
+  #if ENABLED(CR10_STOCKDISPLAY)
+    #include "lcd/CR10_STOCKDISPLAY.h"
+  #elif ENABLED(ENDER2_STOCKDISPLAY)
+    #include "lcd/ENDER2_STOCKDISPLAY.h"
+  #elif ENABLED(MKS_MINI_12864)
+    #include "lcd/MKS_MINI_12864.h"
+  #elif ENABLED(MINIPANEL)
+    #include "lcd/MINIPANEL.h"
+  #elif ANY(ANET_FULL_GRAPHICS_LCD, CTC_A10S_A13)
+    #include "lcd/ANET_FULL_GRAPHICS_LCD.h"
+  #elif ENABLED(FYSETC_MINI_12864)
+    #include "lcd/FYSETC_MINI_12864.h"
+  #elif ENABLED(ULTI_CONTROLLER)
+    #include "lcd/ULTI_CONTROLLER.h"
+  #elif ENABLED(REPRAPWORLD_GRAPHICAL_LCD)
+    #include "lcd/REPRAPWORLD_GRAPHICAL_LCD.h"
+  #elif IS_RRD_FG_SC
+    #include "lcd/RRD_FG_SC.h"
+  #elif IS_RRD_SC
+    #include "lcd/RRD_SC.h"
+  #else
+
+    // More displays to come
+    #if HAS_LCD_SELECTED && !LCD_IS_SERIAL_HOST
+      #define LCD_MIGRATION_WARNING
+    #endif
+
+  #endif
+
+#endif
+
 /**
  * Certain displays use LCD_PINS_RS as LCD_RESET_PIN
  */

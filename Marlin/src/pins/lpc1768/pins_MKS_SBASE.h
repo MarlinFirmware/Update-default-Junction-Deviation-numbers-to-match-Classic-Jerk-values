@@ -226,6 +226,8 @@
 #define EXP2_06_PIN                        P0_09
 #define EXP2_07_PIN                        P0_27
 
+#define EXP_REVERSE_KEYED
+
 //
 // LCD / Controller
 //

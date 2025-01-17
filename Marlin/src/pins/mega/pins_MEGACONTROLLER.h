@@ -168,24 +168,11 @@
 //
 
 #if ENABLED(MINIPANEL)
-
-  #define BEEPER_PIN                     MINI_15
-
-  #define DOGLCD_A0                      MINI_16
-  #define DOGLCD_CS                      MINI_14
-  #define LCD_BACKLIGHT_PIN              MINI_13  // backlight LED on PA3
-
-  #define KILL_PIN                       MINI_18
-
-  #define BTN_ENC                        MINI_20
-  #define BTN_EN1                        MINI_17
-  #define BTN_EN2                        MINI_19
-
-  #define SD_DETECT_PIN                  MINI_02
-
+  // Migrated to pins/lcd
+  // Real MINIPANEL is always mapped to LCD1/2
+  #define ADAPTER_MINIPANEL_DUAL
   //#define LCD_SCREEN_ROTATE                180  // 0, 90, 180, 270
-
-#endif // MINIPANEL
+#endif
 
 //
 // M3/M4/M5 - Spindle/Laser Control
