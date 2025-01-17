@@ -77,6 +77,10 @@
 
 #include "../MarlinCore.h"
 
+#if ENABLED(DIFFERENTIAL_EXTRUDER)
+  #include "printcounter.h"
+#endif
+
 #if HAS_LEVELING
   #include "../feature/bedlevel/bedlevel.h"
 #endif
@@ -3052,6 +3056,19 @@ bool Planner::buffer_line(const xyze_pos_t &cart, const_feedRate_t fr_mm_s
     return false;
 
   #else // !IS_KINEMATIC
+
+    // Differential Extruder
+    // The sum of X and E movement is applied to the E stepper.
+    // Outside of a print job, the differential extruder is handled by stepper.cpp.
+    #if ENABLED(DIFFERENTIAL_EXTRUDER)
+      if (print_job_timer.isRunning()) {
+        // Calculate the differential steps for the extruder
+        const int32_t e_steps = lround(machine.e * settings.axis_steps_per_mm[E_AXIS])
+                              + lround(machine.x * settings.axis_steps_per_mm[X_AXIS]);
+        // Update the machine position with the differential steps
+        machine.e = e_steps * mm_per_step[E_AXIS];
+      }
+    #endif
 
     return buffer_segment(machine, fr_mm_s, extruder, hints);
 

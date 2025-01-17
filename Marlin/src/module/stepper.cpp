@@ -98,6 +98,10 @@ Stepper stepper; // Singleton
 #include "planner.h"
 #include "motion.h"
 
+#if ENABLED(DIFFERENTIAL_EXTRUDER)
+  #include "printcounter.h"
+#endif
+
 #if ENABLED(FT_MOTION)
   #include "ft_motion.h"
 #endif
@@ -1783,6 +1787,10 @@ void Stepper::pulse_phase_isr() {
   // Direct Stepping page?
   const bool is_page = current_block->is_page();
 
+  #if ENABLED(DIFFERENTIAL_EXTRUDER)
+    const bool is_print_job = print_job_timer.isRunning();
+  #endif
+
   do {
     AxisFlags step_needed{0};
 
@@ -1845,18 +1853,31 @@ void Stepper::pulse_phase_isr() {
       DELTA_ERROR = de; \
     }while(0)
 
+    // Differential Extruder moves E along with X
+    #if ENABLED(DIFFERENTIAL_EXTRUDER)
+      #define DIFFERENTIAL_E_PULSE(AXIS, ONSTEP) \
+        if (!is_print_job && _AXIS(AXIS) == X_AXIS) { \
+          E_APPLY_DIR(count_direction[X_AXIS] > 0, false); /* Match E direction to X */ \
+          E_APPLY_STEP(ONSTEP ? _STEP_STATE(E) : !_STEP_STATE(E), false); /* Add the pulse to the E stepper */ \
+        }
+    #else
+      #define DIFFERENTIAL_E_PULSE(...) NOOP
+    #endif
+
     // Start an active pulse if needed
     #define PULSE_START(AXIS) do{ \
       if (step_needed.test(_AXIS(AXIS))) { \
         count_position[_AXIS(AXIS)] += count_direction[_AXIS(AXIS)]; \
-        _APPLY_STEP(AXIS, _STEP_STATE(AXIS), 0); \
+        _APPLY_STEP(AXIS, _STEP_STATE(AXIS), false); \
+        DIFFERENTIAL_E_PULSE(AXIS, true); \
       } \
     }while(0)
 
     // Stop an active pulse if needed
     #define PULSE_STOP(AXIS) do { \
       if (step_needed.test(_AXIS(AXIS))) { \
-        _APPLY_STEP(AXIS, !_STEP_STATE(AXIS), 0); \
+        _APPLY_STEP(AXIS, !_STEP_STATE(AXIS), false); \
+        DIFFERENTIAL_E_PULSE(AXIS, false); \
       } \
     }while(0)
 
