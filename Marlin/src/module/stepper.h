@@ -286,6 +286,16 @@ constexpr ena_mask_t enable_overlap[] = {
   typedef struct { int32_t A, B, C; } ne_fix_t;
 #endif
 
+#if ENABLED(FREEZE_FEATURE)
+  enum FreezePhase : uint8_t {
+    FREEZE_STATIONARY,
+    FREEZE_ACCELERATION,
+    FREEZE_DECELERATION,
+    FREEZE_CRUISE
+  };
+  enum FrozenState { FROZEN_TRIGGERED, FROZEN_SOLID };
+#endif
+
 //
 // Stepper class definition
 //
@@ -335,7 +345,8 @@ class Stepper {
     #endif
 
     #if ENABLED(FREEZE_FEATURE)
-      static bool frozen;                 // Set this flag to instantly freeze motion
+      static void set_frozen_triggered(const bool state) { set_frozen_flag(state, FROZEN_TRIGGERED); }
+      static bool is_frozen_triggered() { return TEST(frozen_state, FROZEN_TRIGGERED); }
     #endif
 
     #if ENABLED(NONLINEAR_EXTRUSION)
@@ -729,6 +740,18 @@ class Stepper {
       static void ftMotion_stepper();
     #endif
 
+    #if ENABLED(FREEZE_FEATURE)
+      static uint8_t frozen_state;                  // Frozen flags
+      static uint32_t frozen_time;                  // How much time passed since frozen_state was triggered?
+      #if ENABLED(LASER_FEATURE)
+        static uint8_t frozen_last_laser_power;     // Saved laser power prior to halting motion
+      #endif
+      static void check_frozen_time(uint32_t &step_rate);
+      static void check_frozen_state(const FreezePhase type, const uint32_t interval);
+      static void set_frozen_flag(const bool state, const uint8_t flag) { SET_BIT_TO(frozen_state, flag, state); }
+      static void set_frozen_solid(const bool state);
+      static bool is_frozen_solid() { return TEST(frozen_state, FROZEN_SOLID); }
+    #endif // FREEZE_FEATURE
 };
 
 extern Stepper stepper;
