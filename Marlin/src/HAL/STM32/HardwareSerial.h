@@ -38,12 +38,10 @@
 
 typedef struct {
   USART_TypeDef * uart;
-  uint32_t dma_rcc;
+  uint32_t DMA_ID;                        // DMA1=1; DM2=2; BDMA=3
   #if ANY(STM32F0xx, STM32F1xx)           // F0 / F1
-    DMA_TypeDef * dma_controller;
     DMA_Channel_TypeDef * dma_channelRX;
-  #else                                   // F2 / F4 / F7
-    uint32_t dma_channel;
+  #else                                   // F2 / F4 / F7 / H7
     DMA_Stream_TypeDef * dma_streamRX;
   #endif
 } DMA_CFG;
