@@ -68,6 +68,11 @@
  * G61  - Apply/restore saved coordinates. (Requires SAVED_POSITIONS)
  * G76  - Calibrate first layer temperature offsets. (Requires PTC_PROBE and PTC_BED)
  * G80  - Cancel current motion mode (Requires GCODE_MOTION_MODES)
+ *
+ * G81  - Drilling Cycles - Drilling (Requires CNC_DRILLING_CYCLE)
+ * G82  - Drilling Cycles - Spot drill (Requires CNC_DRILLING_CYCLE)
+ * G83  - Drilling Cycles - Pecking (Requires CNC_DRILLING_CYCLE)
+ *
  * G90  - Use Absolute Coordinates
  * G91  - Use Relative Coordinates
  * G92  - Set current position to coordinates given
@@ -180,6 +185,7 @@
  * M164 - Commit the mix and save to a virtual tool (current, or as specified by 'S'). (Requires MIXING_EXTRUDER)
  * M165 - Set the mix for the mixing extruder (and current virtual tool) with parameters ABCDHI. (Requires MIXING_EXTRUDER and DIRECT_MIXING_IN_G1)
  * M166 - Set the Gradient Mix for the mixing extruder. (Requires GRADIENT_MIX)
+ * M168 - Use 5x Movement (developing) (Requires CNC_5X)
  * M190 - Set bed target temperature and wait. R<temp> Set target temperature and wait. S<temp> Set, but only wait when heating. (Requires TEMP_SENSOR_BED)
  * M192 - Wait for probe to reach target temperature. (Requires TEMP_SENSOR_PROBE)
  * M193 - R<temp> Wait for cooler to reach target temp. ** Wait for cooling. **
@@ -629,6 +635,12 @@ private:
     static void G80();
   #endif
 
+  #if ENABLED(CNC_DRILLING_CYCLE)
+    static void G81();
+    static void G82();
+    static void G83();
+  #endif
+
   static void G92();
 
   #if ENABLED(CALIBRATION_GCODE)
@@ -869,6 +881,10 @@ private:
     #if ENABLED(GRADIENT_MIX)
       static void M166();
     #endif
+  #endif
+
+  #if ENABLED(CNC_5X)
+    static void M168();
   #endif
 
   #if DISABLED(NO_VOLUMETRICS)

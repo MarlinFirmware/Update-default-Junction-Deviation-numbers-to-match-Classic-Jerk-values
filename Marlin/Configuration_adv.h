@@ -3867,6 +3867,26 @@
  */
 //#define CNC_COORDINATE_SYSTEMS
 
+/**
+ * Drilling canned cycles
+ *
+ * Enables G81, G82, G83 for CNC Drilling
+ *
+ */
+//#define CNC_DRILLING_CYCLE
+
+/**
+ * 5x Conversion (developing)
+ *
+ * Enables M168 for 5-axis control
+ */
+//#define CNC_5X
+#if ENABLED(CNC_5X)
+  #define A_5x      // Enable A axis
+  //#define B_5x    // Enable B axis
+  #define C_5x      // Enable C axis
+#endif
+
 // @section security
 
 /**
@@ -4036,31 +4056,75 @@
 // Custom Menu: Main Menu
 //#define CUSTOM_MENU_MAIN
 #if ENABLED(CUSTOM_MENU_MAIN)
-  //#define CUSTOM_MENU_MAIN_TITLE "Custom Commands"
-  #define CUSTOM_MENU_MAIN_SCRIPT_DONE "M117 User Script Done"
+  #define CUSTOM_MENU_MAIN_TITLE "CNC Zeros"
+  #define CUSTOM_MENU_MAIN_SCRIPT_DONE "M117 Done"
   #define CUSTOM_MENU_MAIN_SCRIPT_AUDIBLE_FEEDBACK
   //#define CUSTOM_MENU_MAIN_SCRIPT_RETURN   // Return to status screen after a script
   #define CUSTOM_MENU_MAIN_ONLY_IDLE         // Only show custom menu when the machine is idle
 
-  #define MAIN_MENU_ITEM_1_DESC "Home & UBL Info"
-  #define MAIN_MENU_ITEM_1_GCODE "G28\nG29 W"
-  //#define MAIN_MENU_ITEM_1_CONFIRM          // Show a confirmation dialog before this action
+  #define MAIN_MENU_ITEM_1_DESC "Set G53"
+  #define MAIN_MENU_ITEM_1_GCODE "G28 \nG53 G92 X0 Y0 Z300 \nM500 \nG54 "
+  //#define MAIN_MENU_ITEM_1_CONFIRM
 
-  #define MAIN_MENU_ITEM_2_DESC "Preheat for " PREHEAT_1_LABEL
-  #define MAIN_MENU_ITEM_2_GCODE "M140 S" STRINGIFY(PREHEAT_1_TEMP_BED) "\nM104 S" STRINGIFY(PREHEAT_1_TEMP_HOTEND)
+  #define MAIN_MENU_ITEM_2_DESC "Set Zero G92 X Y"
+  #define MAIN_MENU_ITEM_2_GCODE "G92 X0 Y0 \nM500"
   //#define MAIN_MENU_ITEM_2_CONFIRM
 
-  //#define MAIN_MENU_ITEM_3_DESC "Preheat for " PREHEAT_2_LABEL
-  //#define MAIN_MENU_ITEM_3_GCODE "M140 S" STRINGIFY(PREHEAT_2_TEMP_BED) "\nM104 S" STRINGIFY(PREHEAT_2_TEMP_HOTEND)
+  #define MAIN_MENU_ITEM_3_DESC "Probe Z"
+  #define MAIN_MENU_ITEM_3_GCODE "G91 \nG38.2 F200 Z-50 \nG92 Z20.2 \nG91 \nG1 Z3 \nG91 \nG38.2 F30 Z-10 \nG92 Z20.2 \nG91 \nG0 Z5 \nG90 \nM500"
   //#define MAIN_MENU_ITEM_3_CONFIRM
 
-  //#define MAIN_MENU_ITEM_4_DESC "Heat Bed/Home/Level"
-  //#define MAIN_MENU_ITEM_4_GCODE "M140 S" STRINGIFY(PREHEAT_2_TEMP_BED) "\nG28\nG29"
+  #define MAIN_MENU_ITEM_4_DESC "Probe X+"
+  #define MAIN_MENU_ITEM_4_GCODE "G91 \nG38.2 F200 X50 Z-0.001 \nG92 X-20.2 \nG91 \nG1 X-3 \nG91 \nG38.2 F30 X10 Z-0.001 \nG92 X-20.2 \nG91 \nG0 X-5 \nG90 \nM500"
   //#define MAIN_MENU_ITEM_4_CONFIRM
 
-  //#define MAIN_MENU_ITEM_5_DESC "Home & Info"
-  //#define MAIN_MENU_ITEM_5_GCODE "G28\nM503"
+  #define MAIN_MENU_ITEM_5_DESC "Probe Y+"
+  #define MAIN_MENU_ITEM_5_GCODE "G91 \nG38.2 F200 Y50 Z-0.001 \nG92 Y-20.2 \nG91 \nG1 Y-3 \nG91 \nG38.2 F30 Y10 Z-0.001 \nG92 Y-20.2 \nG91 \nG0 Y-5 \nG90 \nM500"
   //#define MAIN_MENU_ITEM_5_CONFIRM
+
+  #define MAIN_MENU_ITEM_6_DESC "Probe X-"
+  #define MAIN_MENU_ITEM_6_GCODE "G91 \nG38.2 F200 X-50 Z-0.001 \nG92 X20.2 \nG91 \nG1 X3 \nG91 \nG38.2 F30 X-10 Z-0.001 \nG92 X20.2 \nG91 \nG0 X5 \nG90 \nM500"
+  //#define MAIN_MENU_ITEM_6_CONFIRM
+
+  #define MAIN_MENU_ITEM_7_DESC "Probe Y-"
+  #define MAIN_MENU_ITEM_7_GCODE "G91 \nG38.2 F200 Y-50 Z-0.001 \nG92 Y20.2 \nG91 \nG1 Y3 \nG91 \nG38.2 F30 Y-10 Z-0.001 \nG92 Y20.2 \nG91 \nG0 Y5 \nG90 \nM500"
+  //#define MAIN_MENU_ITEM_7_CONFIRM
+
+  #define MAIN_MENU_ITEM_8_DESC "Select G54"
+  #define MAIN_MENU_ITEM_8_GCODE "G54"
+  //#define MAIN_MENU_ITEM_8_CONFIRM
+
+  #define MAIN_MENU_ITEM_9_DESC "Select G55"
+  #define MAIN_MENU_ITEM_9_GCODE "G55"
+  //#define MAIN_MENU_ITEM_9_CONFIRM
+
+  #define MAIN_MENU_ITEM_10_DESC "Select G56"
+  #define MAIN_MENU_ITEM_10_GCODE "G56"
+  //#define MAIN_MENU_ITEM_10_CONFIRM
+
+  #define MAIN_MENU_ITEM_11_DESC "Select G57"
+  #define MAIN_MENU_ITEM_11_GCODE "G57"
+  //#define MAIN_MENU_ITEM_11_CONFIRM
+
+  #define MAIN_MENU_ITEM_12_DESC "Select G58"
+  #define MAIN_MENU_ITEM_12_GCODE "G58"
+  //#define MAIN_MENU_ITEM_12_CONFIRM
+
+  #define MAIN_MENU_ITEM_13_DESC "Select G59"
+  #define MAIN_MENU_ITEM_13_GCODE "G59"
+  //#define MAIN_MENU_ITEM_13_CONFIRM
+
+  #define MAIN_MENU_ITEM_14_DESC "Move X0 Y0"
+  #define MAIN_MENU_ITEM_14_GCODE "G00 X0 Y0"
+  //#define MAIN_MENU_ITEM_14_CONFIRM
+
+  #define MAIN_MENU_ITEM_15_DESC "Move Z0"
+  #define MAIN_MENU_ITEM_15_GCODE "G00 Z0"
+  //#define MAIN_MENU_ITEM_15_CONFIRM
+
+  #define MAIN_MENU_ITEM_16_DESC "Set Zero G92 Z"
+  #define MAIN_MENU_ITEM_16_GCODE "G92 Z0 \nM500"
+  //#define MAIN_MENU_ITEM_16_CONFIRM
 #endif
 
 // @section custom config menu
