@@ -39,7 +39,7 @@
 #include "../../../feature/bedlevel/bedlevel.h"
 #include "meshviewer.h"
 
-#if ENABLED(USE_GRID_MESHVIEWER)
+#if USE_GRID_MESHVIEWER
   #include "bedlevel_tools.h"
 #endif
 
@@ -112,14 +112,20 @@ void MeshViewer::drawMesh(const bed_mesh_t zval, const uint8_t csizex, const uin
 
 void MeshViewer::draw(const bool withsave/*=false*/, const bool redraw/*=true*/) {
   title.showCaption(GET_TEXT_F(MSG_MESH_VIEWER));
-  #if ENABLED(USE_GRID_MESHVIEWER)
-    DWINUI::clearMainArea();
-    bedLevelTools.viewer_print_value = true;
-    bedLevelTools.drawBedMesh(-1, 1, 8, 10 + TITLE_HEIGHT);
-  #else
+
+  const bool see_mesh = TERN0(USE_GRID_MESHVIEWER, bedLevelTools.view_mesh);
+  if (see_mesh) {
+    #if USE_GRID_MESHVIEWER
+      DWINUI::clearMainArea();
+      bedLevelTools.viewer_print_value = true;
+      bedLevelTools.drawBedMesh(-1, 1, 8, 10 + TITLE_HEIGHT);
+    #endif
+  }
+  else {
     if (redraw) drawMesh(bedlevel.z_values, GRID_MAX_POINTS_X, GRID_MAX_POINTS_Y);
     else DWINUI::drawBox(1, hmiData.colorBackground, { 89, 305, 99, 38 });
-  #endif
+  }
+
   if (withsave) {
     DWINUI::drawButton(BTN_Save, 26, 305);
     DWINUI::drawButton(BTN_Continue, 146, 305);
@@ -128,12 +134,11 @@ void MeshViewer::draw(const bool withsave/*=false*/, const bool redraw/*=true*/)
   else
     DWINUI::drawButton(BTN_Continue, 86, 305);
 
-  #if ENABLED(USE_GRID_MESHVIEWER)
-    bedLevelTools.setMeshViewerStatus();
-  #else
-    char str_1[6], str_2[6] = "";
-    ui.status_printf(0, F("Mesh minZ: %s, maxZ: %s"), dtostrf(min, 1, 2, str_1), dtostrf(max, 1, 2, str_2));
-  #endif
+  if (see_mesh) {
+    TERN_(USE_GRID_MESHVIEWER, bedLevelTools.setMeshViewerStatus());
+  }
+  else // TODO: in marlinui.h set_status_and_level was defined to (..., const int8_t level=0); remove ", 0" when pulling other PR
+    ui.set_status_and_level(MString<30>(F("Mesh Z min: "), p_float_t(min, 2), F(", max: "), p_float_t(max, 2)), 0);
 }
 
 void drawMeshViewer() { meshViewer.draw(true, meshredraw); }
