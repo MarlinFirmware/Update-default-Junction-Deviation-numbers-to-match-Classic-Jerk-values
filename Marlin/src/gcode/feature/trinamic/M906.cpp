@@ -129,7 +129,7 @@ void GcodeSuite::M906() {
 
       #if AXIS_IS_TMC(E0) || AXIS_IS_TMC(E1) || AXIS_IS_TMC(E2) || AXIS_IS_TMC(E3) || AXIS_IS_TMC(E4) || AXIS_IS_TMC(E5) || AXIS_IS_TMC(E6) || AXIS_IS_TMC(E7)
         case E_AXIS: {
-          const int8_t eindex = get_target_e_stepper_from_command(-2);
+          const int_fast8_t eindex = get_target_e_stepper_from_command(-2);
           #if AXIS_IS_TMC(E0)
             if (eindex < 0 || eindex == 0) TMC_SET_CURRENT(E0);
           #endif

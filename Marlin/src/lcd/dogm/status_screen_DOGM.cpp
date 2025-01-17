@@ -172,7 +172,7 @@
     #endif
 
     // ensure we have the right one selected for display
-    for (uint8_t i = 0; i < 3; i++) {
+    for (uint_fast8_t i = 0; i < 3; i++) {
       #if ENABLED(POWER_MONITOR_CURRENT)
         if (power_monitor.display_item == 0 && !iflag) ++power_monitor.display_item;
       #endif
@@ -696,7 +696,7 @@ void MarlinUI::draw_status_screen() {
   if (PAGE_UNDER(6 + 1 + 12 + 1 + 6 + 1)) {
     // Extruders
     #if DO_DRAW_HOTENDS
-      for (uint8_t e = 0; e < MAX_HOTEND_DRAW; ++e) _draw_hotend_status((heater_id_t)e, blink);
+      for (uint_fast8_t e = 0; e < MAX_HOTEND_DRAW; ++e) _draw_hotend_status((heater_id_t)e, blink);
     #endif
 
     // Laser / Spindle

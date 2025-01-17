@@ -292,16 +292,16 @@ static void setWindow(u8g_t *u8g, u8g_dev_t *dev, uint16_t xMin, uint16_t yMin, 
           v = color;
         else
           v = TFT_MARLINBG_COLOR;
-        for (uint8_t n = 0; n < GRAPHICAL_TFT_UPSCALE; ++n) buffer[k++] = v;
+        for (uint_fast8_t n = 0; n < GRAPHICAL_TFT_UPSCALE; ++n) buffer[k++] = v;
       }
       #if HAS_LCD_IO
-        for (uint8_t n = 1; n < GRAPHICAL_TFT_UPSCALE; ++n)
+        for (uint_fast8_t n = 1; n < GRAPHICAL_TFT_UPSCALE; ++n)
           for (uint16_t l = 0; l < UPSCALE0(length); l++)
             buffer[l + n * UPSCALE0(length)] = buffer[l];
 
         tftio.writeSequence(buffer, length * sq(GRAPHICAL_TFT_UPSCALE));
       #else
-        for (uint8_t i = GRAPHICAL_TFT_UPSCALE; i--;)
+        for (uint_fast8_t i = GRAPHICAL_TFT_UPSCALE; i--;)
           u8g_WriteSequence(u8g, dev, k << 1, (uint8_t*)buffer);
       #endif
     }
@@ -410,24 +410,24 @@ uint8_t u8g_dev_tft_320x240_upscale_from_128x64_fn(u8g_t *u8g, u8g_dev_t *dev, u
       #endif
       if (++page > (HEIGHT / PAGE_HEIGHT)) return 1;
 
-      for (uint8_t y = 0; y < PAGE_HEIGHT; ++y) {
+      for (uint_fast8_t y = 0; y < PAGE_HEIGHT; ++y) {
         uint32_t k = 0;
         TERN_(HAS_LCD_IO, buffer = (y & 1) ? bufferB : bufferA);
         for (uint16_t i = 0; i < (uint32_t)pb->width; i++) {
           const uint8_t b = *(((uint8_t *)pb->buf) + i);
           const uint16_t c = TEST(b, y) ? TFT_MARLINUI_COLOR : TFT_MARLINBG_COLOR;
-          for (uint8_t n = 0; n < GRAPHICAL_TFT_UPSCALE; ++n) buffer[k++] = c;
+          for (uint_fast8_t n = 0; n < GRAPHICAL_TFT_UPSCALE; ++n) buffer[k++] = c;
         }
         #if HAS_LCD_IO
-          for (uint8_t n = 1; n < GRAPHICAL_TFT_UPSCALE; ++n)
+          for (uint_fast8_t n = 1; n < GRAPHICAL_TFT_UPSCALE; ++n)
             for (uint16_t l = 0; l < UPSCALE0(WIDTH); l++)
               buffer[l + n * UPSCALE0(WIDTH)] = buffer[l];
 
           tftio.writeSequence(buffer, COUNT(bufferA));
         #else
           uint8_t *bufptr = (uint8_t*) buffer;
-          for (uint8_t i = GRAPHICAL_TFT_UPSCALE; i--;) {
-            for (uint8_t n = 0; n < GRAPHICAL_TFT_UPSCALE * 2; ++n) {
+          for (uint_fast8_t i = GRAPHICAL_TFT_UPSCALE; i--;) {
+            for (uint_fast8_t n = 0; n < GRAPHICAL_TFT_UPSCALE * 2; ++n) {
               u8g_WriteSequence(u8g, dev, WIDTH, &bufptr[WIDTH * n]);
             }
           }
@@ -477,7 +477,7 @@ uint8_t u8g_com_hal_tft_fn(u8g_t *u8g, uint8_t msg, uint8_t arg_val, void *arg_p
 
     case U8G_COM_MSG_WRITE_SEQ:
       tftio.dataTransferBegin(DATASIZE_16BIT);
-      for (uint8_t i = 0; i < arg_val; i += 2)
+      for (uint_fast8_t i = 0; i < arg_val; i += 2)
         tftio.writeData(*(uint16_t *)(((uintptr_t)arg_ptr) + i));
       tftio.dataTransferEnd();
       break;

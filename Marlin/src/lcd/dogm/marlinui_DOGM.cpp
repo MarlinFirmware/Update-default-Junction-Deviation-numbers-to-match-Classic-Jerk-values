@@ -193,7 +193,7 @@ bool MarlinUI::detected() { return true; }
         #if DISABLED(CUSTOM_BOOTSCREEN_ANIMATED_FRAME_TIME)
           constexpr millis_t frame_time = CUSTOM_BOOTSCREEN_FRAME_TIME;
         #endif
-        for (uint8_t f = 0; f < COUNT(custom_bootscreen_animation); ++f)
+        for (uint_fast8_t f = 0; f < COUNT(custom_bootscreen_animation); ++f)
       #endif
         {
           #if ENABLED(CUSTOM_BOOTSCREEN_ANIMATED_FRAME_TIME)
@@ -266,7 +266,7 @@ bool MarlinUI::detected() { return true; }
       draw_bootscreen_bmp(start_bmp);
     #else
       constexpr millis_t frame_time = MARLIN_BOOTSCREEN_FRAME_TIME;
-      for (uint8_t f = 0; f < COUNT(marlin_bootscreen_animation); ++f) {
+      for (uint_fast8_t f = 0; f < COUNT(marlin_bootscreen_animation); ++f) {
         draw_bootscreen_bmp((uint8_t*)pgm_read_ptr(&marlin_bootscreen_animation[f]));
         if (frame_time) safe_delay(frame_time);
       }
@@ -275,7 +275,7 @@ bool MarlinUI::detected() { return true; }
 
   // Show the Marlin bootscreen, with the u8g loop and delays
   void MarlinUI::show_marlin_bootscreen() {
-    for (uint8_t q = bootscreen_pages; q--;) {
+    for (uint_fast8_t q = bootscreen_pages; q--;) {
       draw_marlin_bootscreen(q == 0);
       if (q) safe_delay((BOOTSCREEN_TIMEOUT) / bootscreen_pages);
     }
@@ -663,9 +663,9 @@ void MarlinUI::clear_for_drawing() {
       u8g.setColorIndex(1);
       const u8g_uint_t sx = x_offset + pixels_per_x_mesh_pnt / 2;
             u8g_uint_t  y = y_offset + pixels_per_y_mesh_pnt / 2;
-      for (uint8_t j = 0; j < (GRID_MAX_POINTS_Y); j++, y += pixels_per_y_mesh_pnt)
+      for (uint_fast8_t j = 0; j < (GRID_MAX_POINTS_Y); j++, y += pixels_per_y_mesh_pnt)
         if (PAGE_CONTAINS(y, y))
-          for (uint8_t i = 0, x = sx; i < (GRID_MAX_POINTS_X); i++, x += pixels_per_x_mesh_pnt)
+          for (uint_fast8_t i = 0, x = sx; i < (GRID_MAX_POINTS_X); i++, x += pixels_per_x_mesh_pnt)
             u8g.drawBox(x, y, 1, 1);
 
       // Fill in the Specified Mesh Point

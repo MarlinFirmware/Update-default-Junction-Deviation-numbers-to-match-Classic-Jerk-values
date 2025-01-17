@@ -56,8 +56,8 @@ void GcodeSuite::M421() {
       const float zval = parser.value_linear_units();
       uint8_t sx = ix >= 0 ? ix : 0, ex = ix >= 0 ? ix : GRID_MAX_POINTS_X - 1,
               sy = iy >= 0 ? iy : 0, ey = iy >= 0 ? iy : GRID_MAX_POINTS_Y - 1;
-      for (uint8_t x = sx; x <= ex; ++x) {
-        for (uint8_t y = sy; y <= ey; ++y) {
+      for (uint_fast8_t x = sx; x <= ex; ++x) {
+        for (uint_fast8_t y = sy; y <= ey; ++y) {
           bedlevel.z_values[x][y] = zval + (hasQ ? bedlevel.z_values[x][y] : 0);
           TERN_(EXTENSIBLE_UI, ExtUI::onMeshUpdate(x, y, bedlevel.z_values[x][y]));
         }

@@ -83,7 +83,7 @@ static SPISettings spiConfig;
   void spiBeginTransaction(uint32_t spiClock, uint8_t bitOrder, uint8_t dataMode) { /* do nothing */ }
 
   uint8_t HAL_SPI_STM32_SpiTransfer_Mode_3(uint8_t b) { // using Mode 3
-    for (uint8_t bits = 8; bits--;) {
+    for (uint_fast8_t bits = 8; bits--;) {
       WRITE(SD_SCK_PIN, LOW);
       WRITE(SD_MOSI_PIN, b & 0x80);
 

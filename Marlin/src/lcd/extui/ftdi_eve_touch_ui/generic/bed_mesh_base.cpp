@@ -42,8 +42,8 @@ void BedMeshBase::_drawMesh(CommandProcessor &cmd, int16_t x, int16_t y, int16_t
   uint8_t val_cnt  = 0;
 
   if (opts & USE_AUTOSCALE) {
-    for (uint8_t y = 0; y < rows; y++) {
-      for (uint8_t x = 0; x < cols; x++) {
+    for (uint_fast8_t y = 0; y < rows; y++) {
+      for (uint_fast8_t x = 0; x < cols; x++) {
         if (ISVAL(x,y)) {
           const float val = VALUE(x,y);
           val_mean += val;
@@ -118,8 +118,8 @@ void BedMeshBase::_drawMesh(CommandProcessor &cmd, int16_t x, int16_t y, int16_t
      .cmd(TAG_MASK(false))
      .cmd(SAVE_CONTEXT());
 
-  for (uint8_t y = 0; y < rows; y++) {
-    for (uint8_t x = 0; x < cols; x++) {
+  for (uint_fast8_t y = 0; y < rows; y++) {
+    for (uint_fast8_t x = 0; x < cols; x++) {
       if (ISVAL(x,y)) {
        const bool hasLeftSegment  = x < cols - 1 && ISVAL(x+1,y);
        const bool hasRightSegment = y < rows - 1 && ISVAL(x,y+1);
@@ -137,7 +137,7 @@ void BedMeshBase::_drawMesh(CommandProcessor &cmd, int16_t x, int16_t y, int16_t
       const float sq_max = sq(val_max - val_mean);
       cmd.cmd(POINT_SIZE(basePointSize * 2));
       cmd.cmd(BEGIN(POINTS));
-      for (uint8_t x = 0; x < cols; x++) {
+      for (uint_fast8_t x = 0; x < cols; x++) {
         if (ISVAL(x,y)) {
           if (opts & USE_COLORS) {
             const float val_dev = sq(VALUE(x, y) - val_mean);
@@ -170,8 +170,8 @@ void BedMeshBase::_drawMesh(CommandProcessor &cmd, int16_t x, int16_t y, int16_t
     cmd.cmd(COLOR_MASK(false, false, false, false))
        .cmd(POINT_SIZE(basePointSize * 10))
        .cmd(BEGIN(POINTS));
-    for (uint8_t y = 0; y < rows; y++) {
-      for (uint8_t x = 0; x < cols; x++) {
+    for (uint_fast8_t y = 0; y < rows; y++) {
+      for (uint_fast8_t x = 0; x < cols; x++) {
         const uint8_t tag = pointToTag(x, y);
         cmd.tag(tag).cmd(VERTEX2F(TRANSFORM(x, y, HEIGHT(x, y))));
       }

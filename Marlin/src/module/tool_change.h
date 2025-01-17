@@ -72,31 +72,31 @@
 #endif
 
 #if DO_SWITCH_EXTRUDER
-  void move_extruder_servo(const uint8_t e);
+  void move_extruder_servo(const uint_fast8_t e);
 #endif
 
 #if ENABLED(SWITCHING_NOZZLE)
   #if SWITCHING_NOZZLE_TWO_SERVOS
-    void lower_nozzle(const uint8_t e);
-    void raise_nozzle(const uint8_t e);
+    void lower_nozzle(const uint_fast8_t e);
+    void raise_nozzle(const uint_fast8_t e);
   #else
-    void move_nozzle_servo(const uint8_t angle_index);
+    void move_nozzle_servo(const uint_fast8_t angle_index);
   #endif
 #endif
 
 #if ENABLED(PARKING_EXTRUDER)
 
-  void pe_solenoid_set_pin_state(const uint8_t extruder_num, const uint8_t state);
+  void pe_solenoid_set_pin_state(const uint_fast8_t extruder_num, const bool state);
 
   #define PE_MAGNET_ON_STATE TERN_(PARKING_EXTRUDER_SOLENOIDS_INVERT, !)PARKING_EXTRUDER_SOLENOIDS_PINS_ACTIVE
-  inline void pe_solenoid_magnet_on(const uint8_t extruder_num)  { pe_solenoid_set_pin_state(extruder_num,  PE_MAGNET_ON_STATE); }
-  inline void pe_solenoid_magnet_off(const uint8_t extruder_num) { pe_solenoid_set_pin_state(extruder_num, !PE_MAGNET_ON_STATE); }
+  inline void pe_solenoid_magnet_on(const uint_fast8_t extruder_num)  { pe_solenoid_set_pin_state(extruder_num,  PE_MAGNET_ON_STATE); }
+  inline void pe_solenoid_magnet_off(const uint_fast8_t extruder_num) { pe_solenoid_set_pin_state(extruder_num, !PE_MAGNET_ON_STATE); }
 
   void pe_solenoid_init();
 
   extern bool extruder_parked;
   inline void parking_extruder_set_parked(const bool parked) { extruder_parked = parked; }
-  bool parking_extruder_unpark_after_homing(const uint8_t final_tool, bool homed_towards_final_tool);
+  bool parking_extruder_unpark_after_homing(const uint_fast8_t final_tool, bool homed_towards_final_tool);
 
 #elif ENABLED(MAGNETIC_PARKING_EXTRUDER)
 
@@ -122,13 +122,13 @@
 #endif
 
 #if ENABLED(TOOL_SENSOR)
-  uint8_t check_tool_sensor_stats(const uint8_t active_tool, const bool kill_on_error=false, const bool disable=false);
+  uint8_t check_tool_sensor_stats(const uint_fast8_t active_tool, const bool kill_on_error=false, const bool disable=false);
 #else
-  inline uint8_t check_tool_sensor_stats(const uint8_t, const bool=false, const bool=false) { return 0; }
+  inline uint8_t check_tool_sensor_stats(const uint_fast8_t, const bool=false, const bool=false) { return 0; }
 #endif
 
 /**
  * Perform a tool-change, which may result in moving the
  * previous tool out of the way and the new tool into place.
  */
-void tool_change(const uint8_t tmp_extruder, bool no_move=false);
+void tool_change(const uint_fast8_t tmp_extruder, bool no_move=false);

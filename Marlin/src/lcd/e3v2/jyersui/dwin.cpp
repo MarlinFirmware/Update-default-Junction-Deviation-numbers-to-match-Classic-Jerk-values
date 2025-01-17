@@ -551,7 +551,7 @@ void JyersDWIN::drawMenu(const uint8_t menu, const uint8_t select/*=0*/, const u
   active_menu = menu;
   clearScreen();
   drawTitle(getMenuTitle(menu));
-  for (uint8_t i = 0; i < TROWS; ++i) menuItemHandler(menu, i + scrollpos);
+  for (uint_fast8_t i = 0; i < TROWS; ++i) menuItemHandler(menu, i + scrollpos);
   dwinDrawRectangle(1, getColor(eeprom_settings.cursor_color, COLOR_RECTANGLE), 0, MBASE(selection - scrollpos) - 18, 14, MBASE(selection - scrollpos) + 33);
 }
 
@@ -772,9 +772,9 @@ void JyersDWIN::drawSDItem(const uint8_t item, const uint8_t row) {
     len = pos;
     if (len > max) len = max;
     char name[len + 1];
-    for (uint8_t i = 0; i < len; ++i) name[i] = filename[i];
+    for (uint_fast8_t i = 0; i < len; ++i) name[i] = filename[i];
     if (pos > max)
-      for (uint8_t i = len - 3; i < len; ++i) name[i] = '.';
+      for (uint_fast8_t i = len - 3; i < len; ++i) name[i] = '.';
     name[len] = '\0';
     drawMenuItem(row, card.flag.filenameIsDir ? ICON_More : ICON_File, name);
   }
@@ -787,7 +787,7 @@ void JyersDWIN::drawSDList(const bool removed/*=false*/) {
   scrollpos = 0;
   process = Proc_File;
   if (card.isMounted() && !removed) {
-    for (uint8_t i = 0; i < _MIN(card.get_num_items() + 1, TROWS); ++i)
+    for (int_fast8_t i = 0; i < _MIN(card.get_num_items() + 1, TROWS); ++i)
       drawSDItem(i, i);
   }
   else {
@@ -1411,7 +1411,7 @@ void JyersDWIN::menuItemHandler(const uint8_t menu, const uint8_t item, bool dra
                   { { probe_x_max, probe_y_min }, PROBE_PT_STOW }
                 };
                 corner_avg = 0;
-                for (uint8_t i = 0; i < COUNT(points); i++) {
+                for (uint_fast8_t i = 0; i < COUNT(points); i++) {
                   const float mz = probe.probe_at_point(points[i].p, points[i].r, 0, false);
                   if (isnan(mz)) { corner_avg = 0; break; }
                   corner_avg += mz;
@@ -4435,10 +4435,13 @@ void JyersDWIN::valueControl() {
     switch (valuetype) {
       case 0: *(float*)valuepointer = tempvalue / valueunit; break;
       case 1: *(uint8_t*)valuepointer = tempvalue / valueunit; break;
-      case 2: *(uint16_t*)valuepointer = tempvalue / valueunit; break;
-      case 3: *(int16_t*)valuepointer = tempvalue / valueunit; break;
-      case 4: *(uint32_t*)valuepointer = tempvalue / valueunit; break;
-      case 5: *(int8_t*)valuepointer = tempvalue / valueunit; break;
+      case 2: *(int8_t*)valuepointer = tempvalue / valueunit; break;
+      case 3: *(uint16_t*)valuepointer = tempvalue / valueunit; break;
+      case 4: *(int16_t*)valuepointer = tempvalue / valueunit; break;
+      case 5: *(uint32_t*)valuepointer = tempvalue / valueunit; break;
+      case 6: *(int32_t*)valuepointer = tempvalue / valueunit; break;
+      case 7: *(uint_fast8_t*)valuepointer = tempvalue / valueunit; break;
+      case 8: *(int_fast8_t*)valuepointer = tempvalue / valueunit; break;
     }
     switch (active_menu) {
       case ID_Move:
@@ -4851,6 +4854,21 @@ void JyersDWIN::modifyValue(int8_t &value, const_float_t min, const_float_t max,
   funcpointer = f;
   setupValue((float)value, min, max, unit, 5);
 }
+void JyersDWIN::modifyValue(int32_t &value, const_float_t min, const_float_t max, const_float_t unit, void (*f)()/*=nullptr*/) {
+  valuepointer = &value;
+  funcpointer = f;
+  setupValue((float)value, min, max, unit, 6);
+}
+void JyersDWIN::modifyValue(uint_fast8_t &value, const_float_t min, const_float_t max, const_float_t unit, void (*f)()/*=nullptr*/) {
+  valuepointer = &value;
+  funcpointer = f;
+  setupValue((float)value, min, max, unit, 7);
+}
+void JyersDWIN::modifyValue(int_fast8_t &value, const_float_t min, const_float_t max, const_float_t unit, void (*f)()/*=nullptr*/) {
+  valuepointer = &value;
+  funcpointer = f;
+  setupValue((float)value, min, max, unit, 8);
+}
 
 void JyersDWIN::modifyOption(const uint8_t value, const char * const * options, const uint8_t max) {
   tempvalue = value;
@@ -4868,12 +4886,12 @@ void JyersDWIN::modifyOption(const uint8_t value, const char * const * options, 
 
 void JyersDWIN::updateStatus(const char * const text) {
   if (strncmp_P(text, PSTR("<F>"), 3) == 0) {
-    for (uint8_t i = 0; i < _MIN((size_t)LONG_FILENAME_LENGTH, strlen(text)); ++i) filename[i] = text[i + 3];
+    for (uint_fast8_t i = 0; i < _MIN((size_t)LONG_FILENAME_LENGTH, strlen(text)); ++i) filename[i] = text[i + 3];
     filename[_MIN((size_t)LONG_FILENAME_LENGTH - 1, strlen(text))] = '\0';
     drawPrintFilename(true);
   }
   else {
-    for (uint8_t i = 0; i < _MIN((size_t)64, strlen(text)); ++i) statusmsg[i] = text[i];
+    for (uint_fast8_t i = 0; i < _MIN((size_t)64, strlen(text)); ++i) statusmsg[i] = text[i];
     statusmsg[_MIN((size_t)64, strlen(text))] = '\0';
   }
 }
@@ -5001,7 +5019,7 @@ void JyersDWIN::screenUpdate() {
     static int16_t bedtarget = -1;
   #endif
   #if HAS_FAN
-    static int16_t fanspeed = -1;
+    static uint_fast8_t fanspeed = -1;
   #endif
 
   #if HAS_ZOFFSET_ITEM

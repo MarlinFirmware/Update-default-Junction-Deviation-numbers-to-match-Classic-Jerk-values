@@ -69,7 +69,7 @@ using namespace FTDI;
 
 void DLCache::init() {
   CLCD::mem_write_32(DL_FREE_ADDR, DL_FREE_ADDR + 4);
-  for (uint8_t slot = 0; slot < DL_CACHE_SLOTS; slot++)
+  for (uint_fast8_t slot = 0; slot < DL_CACHE_SLOTS; slot++)
     save_slot(slot, 0, 0, 0);
 }
 

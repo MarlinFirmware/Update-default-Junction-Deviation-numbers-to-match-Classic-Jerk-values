@@ -124,7 +124,7 @@ public:
     } src, dst;
 
     src.val = value;
-    for (uint8_t i = 0; i < sizeof(T); ++i) dst.byte[i] = src.byte[sizeof(T) - i - 1];
+    for (uint_fast8_t i = 0; i < sizeof(T); ++i) dst.byte[i] = src.byte[sizeof(T) - i - 1];
     return dst.val;
   }
 

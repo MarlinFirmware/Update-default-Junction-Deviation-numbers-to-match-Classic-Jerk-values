@@ -111,7 +111,7 @@
     #define _SERVO_NR(E) SWITCHING_EXTRUDER_SERVO_NR
   #endif
 
-  void move_extruder_servo(const uint8_t e) {
+  void move_extruder_servo(const uint_fast8_t e) {
     planner.synchronize();
     constexpr bool evenExtruders = !(EXTRUDERS & 1);
     if (evenExtruders || e < EXTRUDERS - 1) {
@@ -126,19 +126,19 @@
 
   #if SWITCHING_NOZZLE_TWO_SERVOS
 
-    inline void _move_nozzle_servo(const uint8_t e, const uint8_t angle_index) {
+    inline void _move_nozzle_servo(const uint_fast8_t e, const uint_fast8_t angle_index) {
       constexpr int8_t  sns_index[2] = { SWITCHING_NOZZLE_SERVO_NR, SWITCHING_NOZZLE_E1_SERVO_NR };
       planner.synchronize();
       servo[sns_index[e]].move(servo_angles[sns_index[e]][angle_index]);
       safe_delay(SWITCHING_NOZZLE_SERVO_DWELL);
     }
 
-    void lower_nozzle(const uint8_t e) { _move_nozzle_servo(e, 0); }
-    void raise_nozzle(const uint8_t e) { _move_nozzle_servo(e, 1); }
+    void lower_nozzle(const uint_fast8_t e) { _move_nozzle_servo(e, 0); }
+    void raise_nozzle(const uint_fast8_t e) { _move_nozzle_servo(e, 1); }
 
   #else
 
-    void move_nozzle_servo(const uint8_t angle_index) {
+    void move_nozzle_servo(const uint_fast8_t angle_index) {
       planner.synchronize();
       servo[SWITCHING_NOZZLE_SERVO_NR].move(servo_angles[SWITCHING_NOZZLE_SERVO_NR][angle_index]);
       safe_delay(SWITCHING_NOZZLE_SERVO_DWELL);
@@ -167,7 +167,7 @@ void fast_line_to_current(const AxisEnum fr_axis) { _line_to_current(fr_axis, 0.
         parkingtraveldistance,    // M951 D
         compensationmultiplier;
 
-  inline void magnetic_parking_extruder_tool_change(const uint8_t new_tool) {
+  inline void magnetic_parking_extruder_tool_change(const uint_fast8_t new_tool) {
 
     const float oldx = current_position.x,
                 grabpos = mpe_settings.parking_xpos[new_tool] + (new_tool ? mpe_settings.grab_distance : -mpe_settings.grab_distance),
@@ -256,10 +256,10 @@ void fast_line_to_current(const AxisEnum fr_axis) { _line_to_current(fr_axis, 0.
 #elif ENABLED(PARKING_EXTRUDER)
 
   void pe_solenoid_init() {
-    for (uint8_t n = 0; n <= 1; ++n) pe_solenoid_set_pin_state(n, !PARKING_EXTRUDER_SOLENOIDS_PINS_ACTIVE);
+    for (uint_fast8_t n = 0; n <= 1; ++n) pe_solenoid_set_pin_state(n, !PARKING_EXTRUDER_SOLENOIDS_PINS_ACTIVE);
   }
 
-  void pe_solenoid_set_pin_state(const uint8_t extruder_num, const uint8_t state) {
+  void pe_solenoid_set_pin_state(const uint_fast8_t extruder_num, const bool state) {
     switch (extruder_num) {
       case 1: OUT_WRITE(SOL1_PIN, state); break;
       default: OUT_WRITE(SOL0_PIN, state); break;
@@ -272,7 +272,7 @@ void fast_line_to_current(const AxisEnum fr_axis) { _line_to_current(fr_axis, 0.
   bool extruder_parked = true, do_solenoid_activation = true;
 
   // Modifies tool_change() behavior based on homing side
-  bool parking_extruder_unpark_after_homing(const uint8_t final_tool, bool homed_towards_final_tool) {
+  bool parking_extruder_unpark_after_homing(const uint_fast8_t final_tool, bool homed_towards_final_tool) {
     do_solenoid_activation = false; // Tell parking_extruder_tool_change to skip solenoid activation
 
     if (!extruder_parked) return false; // nothing to do
@@ -289,7 +289,7 @@ void fast_line_to_current(const AxisEnum fr_axis) { _line_to_current(fr_axis, 0.
     return true;
   }
 
-  inline void parking_extruder_tool_change(const uint8_t new_tool, bool no_move) {
+  inline void parking_extruder_tool_change(const uint_fast8_t new_tool, bool no_move) {
     if (!no_move) {
 
       constexpr float parkingposx[] = PARKING_EXTRUDER_PARKING_X;
@@ -421,7 +421,7 @@ void fast_line_to_current(const AxisEnum fr_axis) { _line_to_current(fr_axis, 0.
     );
   }
 
-  uint8_t check_tool_sensor_stats(const uint8_t tool_index, const bool kill_on_error/*=false*/, const bool disable/*=false*/) {
+  uint8_t check_tool_sensor_stats(const uint_fast8_t tool_index, const bool kill_on_error/*=false*/, const bool disable/*=false*/) {
     static uint8_t sensor_tries; // = 0
     for (;;) {
       if (poll_tool_sensor_pins() == _BV(tool_index)) {
@@ -497,7 +497,7 @@ void fast_line_to_current(const AxisEnum fr_axis) { _line_to_current(fr_axis, 0.
     #endif // TOOL_SENSOR
   }
 
-  inline void switching_toolhead_tool_change(const uint8_t new_tool, bool no_move/*=false*/) {
+  inline void switching_toolhead_tool_change(const uint_fast8_t new_tool, bool no_move/*=false*/) {
     if (no_move) return;
 
     constexpr float toolheadposx[] = SWITCHING_TOOLHEAD_X_POS;
@@ -601,7 +601,7 @@ void fast_line_to_current(const AxisEnum fr_axis) { _line_to_current(fr_axis, 0.
 
 #elif ENABLED(MAGNETIC_SWITCHING_TOOLHEAD)
 
-  inline void magnetic_switching_toolhead_tool_change(const uint8_t new_tool, bool no_move/*=false*/) {
+  inline void magnetic_switching_toolhead_tool_change(const uint_fast8_t new_tool, bool no_move/*=false*/) {
     if (no_move) return;
 
     constexpr float toolheadposx[] = SWITCHING_TOOLHEAD_X_POS,
@@ -726,7 +726,7 @@ void fast_line_to_current(const AxisEnum fr_axis) { _line_to_current(fr_axis, 0.
   inline void est_deactivate_solenoid() { OUT_WRITE(SOL0_PIN, LOW); }
   void est_init() { est_activate_solenoid(); }
 
-  inline void em_switching_toolhead_tool_change(const uint8_t new_tool, bool no_move) {
+  inline void em_switching_toolhead_tool_change(const uint_fast8_t new_tool, bool no_move) {
     if (no_move) return;
 
     constexpr float toolheadposx[] = SWITCHING_TOOLHEAD_X_POS;
@@ -823,7 +823,7 @@ void fast_line_to_current(const AxisEnum fr_axis) { _line_to_current(fr_axis, 0.
 #endif // ELECTROMAGNETIC_SWITCHING_TOOLHEAD
 
 #if HAS_EXTRUDERS
-  inline void invalid_extruder_error(const uint8_t e) {
+  inline void invalid_extruder_error(const uint_fast8_t e) {
     SERIAL_ECHO_START();
     SERIAL_CHAR('T'); SERIAL_ECHO(e);
     SERIAL_CHAR(' '); SERIAL_ECHOLNPGM(STR_INVALID_EXTRUDER);
@@ -839,7 +839,7 @@ void fast_line_to_current(const AxisEnum fr_axis) { _line_to_current(fr_axis, 0.
    * @param new_tool Tool index to activate
    * @param no_move Flag indicating no moves should take place
    */
-  inline void dualx_tool_change(const uint8_t new_tool, bool &no_move) {
+  inline void dualx_tool_change(const uint_fast8_t new_tool, bool &no_move) {
 
     DEBUG_ECHOPGM("Dual X Carriage Mode ");
     switch (dual_x_carriage_mode) {
@@ -924,7 +924,7 @@ void fast_line_to_current(const AxisEnum fr_axis) { _line_to_current(fr_axis, 0.
    * Returns TRUE if too cold to move (also echos message: STR_ERR_HOTEND_TOO_COLD)
    * Returns FALSE if able to  move.
    */
-  bool too_cold(uint8_t toolID){
+  bool too_cold(uint_fast8_t toolID){
     if (!DEBUGGING(DRYRUN) && thermalManager.targetTooColdToExtrude(toolID)) {
       SERIAL_ECHO_MSG(STR_ERR_HOTEND_TOO_COLD);
       return true;
@@ -1107,7 +1107,7 @@ void fast_line_to_current(const AxisEnum fr_axis) { _line_to_current(fr_axis, 0.
  * Perform a tool-change, which may result in moving the
  * previous tool out of the way and the new tool into place.
  */
-void tool_change(const uint8_t new_tool, bool no_move/*=false*/) {
+void tool_change(const uint_fast8_t new_tool, bool no_move/*=false*/) {
 
   if (TERN0(MAGNETIC_SWITCHING_TOOLHEAD, new_tool == active_extruder))
     return;
@@ -1173,7 +1173,7 @@ void tool_change(const uint8_t new_tool, bool no_move/*=false*/) {
       constexpr bool idex_full_control = false;
     #endif
 
-    const uint8_t old_tool = active_extruder;
+    const uint_fast8_t old_tool = active_extruder;
     const bool can_move_away = !no_move && !idex_full_control;
 
     #if ENABLED(AUTO_BED_LEVELING_UBL)
@@ -1539,7 +1539,7 @@ void tool_change(const uint8_t new_tool, bool no_move/*=false*/) {
 
     // Migrate to a target or the next extruder
 
-    uint8_t migration_extruder = active_extruder;
+    uint_fast8_t migration_extruder = active_extruder;
 
     if (migration.target) {
       DEBUG_ECHOLNPGM("Migration using fixed target");

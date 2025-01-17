@@ -119,7 +119,7 @@ void serialprintln_onoff(const bool onoff) { serialprint_onoff(onoff); SERIAL_EO
 void serialprint_truefalse(const bool tf) { SERIAL_ECHO(tf ? F("true") : F("false")); }
 
 void print_bin(uint16_t val) {
-  for (uint8_t i = 16; i--;) {
+  for (uint_fast8_t i = 16; i--;) {
     SERIAL_CHAR('0' + TEST(val, i));
     if (!(i & 0x3) && i) SERIAL_CHAR(' ');
   }

@@ -218,7 +218,7 @@ void InterfaceSettingsScreen::saveSettings(char *buff) {
   eeprom.touch_transform_f    = CLCD::mem_read_32(CLCD::REG::TOUCH_TRANSFORM_F);
   eeprom.display_h_offset_adj = CLCD::mem_read_16(CLCD::REG::HOFFSET) - FTDI::Hoffset;
   eeprom.display_v_offset_adj = CLCD::mem_read_16(CLCD::REG::VOFFSET) - FTDI::Voffset;
-  for (uint8_t i = 0; i < InterfaceSoundsScreen::NUM_EVENTS; i++)
+  for (uint_fast8_t i = 0; i < InterfaceSoundsScreen::NUM_EVENTS; i++)
     eeprom.event_sounds[i] = InterfaceSoundsScreen::event_sounds[i];
 
   memcpy(buff, &eeprom, sizeof(eeprom));
@@ -249,7 +249,7 @@ void InterfaceSettingsScreen::loadSettings(const char *buff) {
   CLCD::mem_write_32(CLCD::REG::TOUCH_TRANSFORM_F, eeprom.touch_transform_f);
   CLCD::mem_write_16(CLCD::REG::HOFFSET,           eeprom.display_h_offset_adj + FTDI::Hoffset);
   CLCD::mem_write_16(CLCD::REG::VOFFSET,           eeprom.display_v_offset_adj + FTDI::Voffset);
-  for (uint8_t i = 0; i < InterfaceSoundsScreen::NUM_EVENTS; i++)
+  for (uint_fast8_t i = 0; i < InterfaceSoundsScreen::NUM_EVENTS; i++)
     InterfaceSoundsScreen::event_sounds[i] = eeprom.event_sounds[i];
 
   TERN_(TOUCH_UI_DEVELOPER_MENU, StressTestScreen::startupCheck());

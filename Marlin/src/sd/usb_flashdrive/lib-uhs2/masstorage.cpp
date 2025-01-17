@@ -357,7 +357,7 @@ uint8_t BulkOnly::Init(uint8_t parent __attribute__((unused)), uint8_t port __at
 
   USBTRACE2("NC:", num_of_conf);
 
-  for (uint8_t i = 0; i < num_of_conf; i++) {
+  for (uint_fast8_t i = 0; i < num_of_conf; i++) {
     ConfigDescParser< USB_CLASS_MASS_STORAGE,
       MASS_SUBCLASS_SCSI,
       MASS_PROTO_BBB,
@@ -395,7 +395,7 @@ uint8_t BulkOnly::Init(uint8_t parent __attribute__((unused)), uint8_t port __at
 
   delay(1000); // Delay a bit for slow firmware.
 
-  for (uint8_t lun = 0; lun <= bMaxLUN; lun++) {
+  for (uint_fast8_t lun = 0; lun <= bMaxLUN; lun++) {
     InquiryResponse response;
     rcode = Inquiry(lun, sizeof (InquiryResponse), (uint8_t*) & response);
     if (rcode) {
@@ -591,7 +591,7 @@ uint8_t BulkOnly::Release() {
 bool BulkOnly::CheckLUN(uint8_t lun) {
   uint8_t rcode;
   Capacity capacity;
-  for (uint8_t i = 0; i < 8; i++) capacity.data[i] = 0;
+  for (uint_fast8_t i = 0; i < 8; i++) capacity.data[i] = 0;
 
   rcode = ReadCapacity10(lun, (uint8_t*)capacity.data);
   if (rcode) {
@@ -599,7 +599,7 @@ bool BulkOnly::CheckLUN(uint8_t lun) {
     return false;
   }
   ErrorMessage<uint8_t> (PSTR(">>>>>>>>>>>>>>>>CAPACITY OK ON LUN"), lun);
-  for (uint8_t i = 0; i < 8 /*sizeof (Capacity)*/; i++)
+  for (uint_fast8_t i = 0; i < 8 /*sizeof (Capacity)*/; i++)
           D_PrintHex<uint8_t> (capacity.data[i], 0x80);
   Notify(PSTR("\r\n\r\n"), 0x80);
 
@@ -628,7 +628,7 @@ bool BulkOnly::CheckLUN(uint8_t lun) {
  * Scan for media change on all LUNs
  */
 void BulkOnly::CheckMedia() {
-  for (uint8_t lun = 0; lun <= bMaxLUN; lun++) {
+  for (uint_fast8_t lun = 0; lun <= bMaxLUN; lun++) {
     if (TestUnitReady(lun)) {
       LUNOk[lun] = false;
       continue;
@@ -637,7 +637,7 @@ void BulkOnly::CheckMedia() {
   }
   #if 0
     printf("}}}}}}}}}}}}}}}}STATUS ");
-    for (uint8_t lun = 0; lun <= bMaxLUN; lun++)
+    for (uint_fast8_t lun = 0; lun <= bMaxLUN; lun++)
       printf(LUNOk[lun] ? "#" : ".");
     printf("\r\n");
   #endif
@@ -857,7 +857,7 @@ uint8_t BulkOnly::ResetRecovery() {
  * Clear all EP data and clear all LUN status
  */
 void BulkOnly::ClearAllEP() {
-  for (uint8_t i = 0; i < MASS_MAX_ENDPOINTS; i++) {
+  for (uint_fast8_t i = 0; i < MASS_MAX_ENDPOINTS; i++) {
     epInfo[i].epAddr = 0;
     epInfo[i].maxPktSize = (i) ? 0 : 8;
     epInfo[i].bmSndToggle = 0;
@@ -865,7 +865,7 @@ void BulkOnly::ClearAllEP() {
     epInfo[i].bmNakPower = USB_NAK_DEFAULT;
   }
 
-  for (uint8_t i = 0; i < MASS_MAX_SUPPORTED_LUN; i++) {
+  for (uint_fast8_t i = 0; i < MASS_MAX_SUPPORTED_LUN; i++) {
     LUNOk[i] = false;
     WriteOk[i] = false;
     CurrentCapacity[i] = 0UL;

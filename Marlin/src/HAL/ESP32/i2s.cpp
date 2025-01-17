@@ -374,7 +374,7 @@ void i2s_push_sample() {
   // Every 4µs (when space in DMA buffer) toggle each expander PWM output using
   // the current duty cycle/frequency so they sync with any steps (once
   // through the DMA/FIFO buffers).  PWM signal inversion handled by other functions
-  for (uint8_t p = 0; p < MAX_EXPANDER_BITS; ++p) {
+  for (uint_fast8_t p = 0; p < MAX_EXPANDER_BITS; ++p) {
     if (hal.pwm_pin_data[p].pwm_duty_ticks > 0) { // pin has active pwm?
       if (hal.pwm_pin_data[p].pwm_tick_count == 0) {
         if (TEST32(i2s_port_data, p)) {  // hi->lo

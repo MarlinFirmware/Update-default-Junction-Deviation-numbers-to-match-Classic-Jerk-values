@@ -148,7 +148,7 @@ static void serial_echo_xy(const uint8_t sp, const int16_t x, const int16_t y) {
 
 static void serial_echo_column_labels(const uint8_t sp) {
   SERIAL_ECHO_SP(7);
-  for (uint8_t i = 0; i < GRID_MAX_POINTS_X; ++i) {
+  for (uint_fast8_t i = 0; i < GRID_MAX_POINTS_X; ++i) {
     if (i < 10) SERIAL_CHAR(' ');
     SERIAL_ECHO(i);
     SERIAL_ECHO_SP(sp);
@@ -198,7 +198,7 @@ void unified_bed_leveling::display_map(const uint8_t map_type) {
     }
 
     // Row Values (I indexes)
-    for (uint8_t i = 0; i < GRID_MAX_POINTS_X; ++i) {
+    for (int_fast8_t i = 0; i < GRID_MAX_POINTS_X; ++i) {
 
       // Opening Brace or Space
       const bool is_current = i == curr.x && j == curr.y;

@@ -143,7 +143,7 @@ void GcodeSuite::M217() {
     if (parser.seen('T')) {     // Migrate now
       if (parser.has_value()) {
         const int16_t tval = parser.value_int();
-        if (WITHIN(tval, 0, EXTRUDERS - 1) && tval != active_extruder) {
+        if (WITHIN(tval, 0, EXTRUDERS - 1) && tval != signed(active_extruder)) {
           migration.target = tval + 1;
           extruder_migration();
           migration.target = 0; // disable
