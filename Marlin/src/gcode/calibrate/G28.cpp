@@ -52,6 +52,10 @@
   #include "../../feature/bltouch.h"
 #endif
 
+#if ENABLED(FT_MOTION)
+  #include "../../module/ft_motion.h"
+#endif
+
 #include "../../lcd/marlinui.h"
 
 #if ENABLED(EXTENSIBLE_UI)
@@ -129,6 +133,11 @@
 #if ENABLED(Z_SAFE_HOMING)
 
   inline void home_z_safely() {
+
+    #if ENABLED(FT_MOTION) && ANY(BIQU_MICROPROBE_V1, BIQU_MICROPROBE_V2)
+      FTMotionDisableUntilExit FT_Disabler; // Disable Fixed-Time Motion for homing
+    #endif
+
     DEBUG_SECTION(log_G28, "home_z_safely", DEBUGGING(LEVELING));
 
     // Disallow Z homing if X or Y homing is needed
@@ -282,6 +291,10 @@ void GcodeSuite::G28() {
 
     #if ENABLED(IMPROVE_HOMING_RELIABILITY)
       motion_state_t saved_motion_state = begin_slow_homing();
+    #endif
+
+    #if ENABLED(FT_MOTION) && ANY(BIQU_MICROPROBE_V1, BIQU_MICROPROBE_V2)
+      FTMotionDisableUntilExit FT_Disabler; // Disable Fixed-Time Motion for homing
     #endif
 
     // Always home with tool 0 active
