@@ -22,6 +22,9 @@
 
 #include "../gcode.h"
 #include "../../module/motion.h"
+#if ENABLED(CREALITY_RTS)
+  #include "../../lcd/rts/lcd_rts.h"
+#endif
 
 #include "../../MarlinCore.h"
 
@@ -122,4 +125,5 @@ void GcodeSuite::G0_G1(TERN_(HAS_FAST_MOVES, const bool fast_move/*=false*/)) {
   #endif
 
   TERN_(SOVOL_SV06_RTS, RTS_PauseMoveAxisPage());
+  TERN_(CREALITY_RTS, RTS_PauseMoveAxisPage());
 }

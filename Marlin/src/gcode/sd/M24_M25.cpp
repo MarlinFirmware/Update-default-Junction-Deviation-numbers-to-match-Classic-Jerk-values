@@ -28,6 +28,9 @@
 #include "../../sd/cardreader.h"
 #include "../../module/printcounter.h"
 #include "../../lcd/marlinui.h"
+#if ENABLED(CREALITY_RTS)
+  #include "../../lcd/rts/lcd_rts.h"
+#endif
 
 #if ENABLED(PARK_HEAD_ON_PAUSE)
   #include "../../feature/pause.h"
@@ -83,6 +86,8 @@ void GcodeSuite::M24() {
   #endif
 
   ui.reset_status();
+
+  TERN_(CREALITY_RTS, RTS_PrintStartedSD());
 }
 
 /**

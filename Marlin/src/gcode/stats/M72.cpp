@@ -1,6 +1,6 @@
 /**
  * Marlin 3D Printer Firmware
- * Copyright (c) 2020 MarlinFirmware [https://github.com/MarlinFirmware/Marlin]
+ * Copyright (c) 2024 MarlinFirmware [https://github.com/MarlinFirmware/Marlin]
  *
  * Based on Sprinter and grbl.
  * Copyright (c) 2011 Camiel Gubbels / Erik van der Zalm
@@ -22,27 +22,31 @@
 
 #include "../../inc/MarlinConfig.h"
 
-#if HAS_MEDIA
+#if ALL(HAS_MEDIA, CREALITY_RTS)
 
 #include "../gcode.h"
 #include "../../sd/cardreader.h"
 #include "../../lcd/marlinui.h"
-#if ENABLED(CREALITY_RTS)
-  #include "../../lcd/rts/lcd_rts.h"
+#include "../../lcd/rts/lcd_rts.h"
+
+#if HAS_FILAMENT_SENSOR
+  #include "../../feature/runout.h"
 #endif
 
 /**
- * M23: Open a file
+ * M72: Open a file
  *
  * The path is relative to the root directory
  */
-void GcodeSuite::M23() {
+void GcodeSuite::M72() {
   // Simplify3D includes the size, so zero out all spaces (#7227)
   for (char *fn = parser.string_arg; *fn; ++fn) if (*fn == ' ') *fn = '\0';
+
   card.openFileRead(parser.string_arg);
 
-  TERN_(SET_PROGRESS_PERCENT, ui.set_progress(0));
-  TERN_(CREALITY_RTS, RTS_OpenFileCloud());
+  RTS_OpenFileCloud();
+
+  TERN_(LCD_SET_PROGRESS_MANUALLY, ui.set_progress(0));
 }
 
-#endif // HAS_MEDIA
+#endif // HAS_MEDIA && CREALITY_RTS

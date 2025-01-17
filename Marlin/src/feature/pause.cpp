@@ -68,6 +68,10 @@
 
 #include "../lcd/marlinui.h"
 
+#if ENABLED(CREALITY_RTS)
+  #include "../lcd/rts/lcd_rts.h"
+#endif
+
 #if HAS_SOUND
   #include "../libs/buzzer.h"
 #endif
@@ -159,11 +163,13 @@ static bool ensure_safe_temperature(const bool wait=true, const PauseMode mode=P
 
   if (wait) return thermalManager.wait_for_hotend(active_extruder);
 
-  // Allow interruption by Emergency Parser M108
-  wait_for_heatup = TERN1(PREVENT_COLD_EXTRUSION, !thermalManager.allow_cold_extrude);
-  while (wait_for_heatup && ABS(thermalManager.wholeDegHotend(active_extruder) - thermalManager.degTargetHotend(active_extruder)) > (TEMP_WINDOW))
-    idle();
-  wait_for_heatup = false;
+  #if DISABLED(CREALITY_RTS)
+    // Allow interruption by Emergency Parser M108
+    wait_for_heatup = TERN1(PREVENT_COLD_EXTRUSION, !thermalManager.allow_cold_extrude);
+    while (wait_for_heatup && ABS(thermalManager.wholeDegHotend(active_extruder) - thermalManager.degTargetHotend(active_extruder)) > (TEMP_WINDOW))
+      idle();
+    wait_for_heatup = false;
+  #endif
 
   #if ENABLED(PREVENT_COLD_EXTRUSION)
     // A user can cancel wait-for-heating with M108
@@ -433,6 +439,7 @@ bool pause_print(const_float_t retract, const xyz_pos_t &park_point, const bool 
   #endif
 
   TERN_(HOST_PROMPT_SUPPORT, hostui.prompt_open(PROMPT_INFO, F("Pause"), FPSTR(DISMISS_STR)));
+  TERN_(CREALITY_RTS, RTS_PausedPrint());
 
   // Indicate that the printer is paused
   ++did_pause_print;
@@ -481,9 +488,28 @@ bool pause_print(const_float_t retract, const xyz_pos_t &park_point, const bool 
     TERN_(AUTO_BED_LEVELING_UBL, set_bed_leveling_enabled(leveling_was_enabled)); // restore leveling
   }
 
-  // If axes don't need to home then the nozzle can park
-  if (do_park) nozzle.park(0, park_point); // Park the nozzle by doing a Minimum Z Raise followed by an XY Move
-  if (!do_park) LCD_MESSAGE(MSG_PARK_FAILED);
+  #if ENABLED(CREALITY_RTS)
+
+    while (planner.movesplanned() < 2 && destination != current_position) idle();
+
+    queue.clear();
+    delay(20);
+    if (!planner.has_blocks_queued()) {
+      if (axis_is_trusted(X_AXIS) && axis_is_trusted(Y_AXIS)) {
+        //if (!axes_need_homing())
+        nozzle.park(0, park_point);
+      }
+    }
+
+  #else
+
+    // If axes don't need to home then the nozzle can park
+    if (do_park) nozzle.park(0, park_point); // Park the nozzle by doing a Minimum Z Raise followed by an XY Move
+    if (!do_park) LCD_MESSAGE(MSG_PARK_FAILED);
+
+  #endif
+
+  TERN_(DWIN_LCD_PROUI, if (!do_park) ui.set_status(GET_TEXT_F(MSG_PARK_FAILED)));
 
   #if ENABLED(DUAL_X_CARRIAGE)
     const int8_t saved_ext        = active_extruder;
@@ -491,14 +517,18 @@ bool pause_print(const_float_t retract, const xyz_pos_t &park_point, const bool 
     set_duplication_enabled(false, DXC_ext);
   #endif
 
-  // Unload the filament, if specified
-  if (unload_length)
-    unload_filament(unload_length, show_lcd, PAUSE_MODE_CHANGE_FILAMENT);
+  #if DISABLED(CREALITY_RTS)
+    // Unload the filament, if specified
+    if (unload_length)
+      unload_filament(unload_length, show_lcd, PAUSE_MODE_CHANGE_FILAMENT);
+  #endif
 
   TERN_(DUAL_X_CARRIAGE, set_duplication_enabled(saved_ext_dup_mode, saved_ext));
 
   // Disable the Extruder for manual change
   disable_active_extruder();
+
+  TERN_(CREALITY_RTS, RTS_ReheatHotend(170));
 
   return true;
 }
@@ -613,6 +643,7 @@ void wait_for_confirmation(const bool is_reload/*=false*/, const int8_t max_beep
       nozzle_timed_out = false;
       first_impatient_beep(max_beep_count);
     }
+    TERN_(CREALITY_RTS, wait_for_user = false);
     idle_no_sleep();
   }
   TERN_(DUAL_X_CARRIAGE, set_duplication_enabled(saved_ext_dup_mode, saved_ext));
@@ -698,13 +729,17 @@ void resume_print(
   unscaled_e_move(-(PAUSE_PARK_RETRACT_LENGTH), feedRate_t(PAUSE_PARK_RETRACT_FEEDRATE));
 
   if (!axes_should_home()) {
-    // Move XY back to saved position
-    destination.set(resume_position.x, resume_position.y, current_position.z, current_position.e);
-    prepare_internal_move_to_destination(NOZZLE_PARK_XY_FEEDRATE);
+    #if ENABLED(CREALITY_RTS)
+      destination.set(resume_position.x, resume_position.y, resume_position.z, current_position.e);
+    #else
+      // Move XY back to saved position
+      destination.set(resume_position.x, resume_position.y, current_position.z, current_position.e);
+      prepare_internal_move_to_destination(NOZZLE_PARK_XY_FEEDRATE);
 
-    // Move Z back to saved position
-    destination.z = resume_position.z;
-    prepare_internal_move_to_destination(NOZZLE_PARK_Z_FEEDRATE);
+      // Move Z back to saved position
+      destination.z = resume_position.z;
+      prepare_internal_move_to_destination(NOZZLE_PARK_Z_FEEDRATE);
+    #endif
   }
 
   #if ENABLED(AUTO_BED_LEVELING_UBL)

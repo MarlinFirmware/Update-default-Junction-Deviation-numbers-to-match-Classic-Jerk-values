@@ -22,6 +22,10 @@
 
 #include "../../inc/MarlinConfigPre.h"
 
+#if ENABLED(POWER_LOSS_RECOVERY)
+  #include "../../feature/powerloss.h"
+#endif
+
 /**
  * Adjust USB_DEBUG to select debugging verbosity.
  *    0 - no debug messages
@@ -228,7 +232,16 @@ void DiskIODriver_USBFlash::idle() {
         }
         break;
 
-      case MEDIA_READY: break;
+      case MEDIA_READY:
+        #if ENABLED(POWER_LOSS_RECOVERY)
+          static bool firstStart = false;
+          if (!firstStart) {
+            firstStart = true;
+            recovery.check();
+          }
+        #endif
+        break;
+
       case MEDIA_ERROR: break;
     }
 
