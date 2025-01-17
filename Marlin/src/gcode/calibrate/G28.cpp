@@ -306,7 +306,20 @@ void GcodeSuite::G28() {
       bool finalRaiseZ = false;
     #endif
 
+    // Allow 'G28 F<feedrate>' to override specified homing axes
+    #if ENABLED(EDITABLE_HOMING_FEEDRATE)
+      REMEMBER(fr, homing_feedrate_mm_m);
+      float override_fr_units_min = parser.floatval('F');
+      NOLESS(override_fr_units_min, 0.0f);
+      #define SET_AXIS_FR(A) homing_feedrate_mm_m.A = A##_AXIS_UNIT(override_fr_units_min);
+    #else
+      constexpr float override_fr_units_min = 0.0f;
+      #define SET_AXIS_FR(...) NOOP;
+    #endif
+
     #if ENABLED(DELTA)
+
+      if (override_fr_units_min) { MAP(SET_AXIS_FR, X, Y, Z); }
 
       constexpr bool doZ = true; // for NANODLP_Z_SYNC if your DLP is on a DELTA
 
@@ -315,6 +328,8 @@ void GcodeSuite::G28() {
       TERN_(IMPROVE_HOMING_RELIABILITY, end_slow_homing(saved_motion_state));
 
     #elif ENABLED(AXEL_TPARA)
+
+      if (override_fr_units_min) { MAP(SET_AXIS_FR, X, Y, Z); }
 
       constexpr bool doZ = true; // for NANODLP_Z_SYNC if your DLP is on a TPARA
 
@@ -331,12 +346,20 @@ void GcodeSuite::G28() {
                    needU = _UNSAFE(U), needV = _UNSAFE(V), needW = _UNSAFE(W)
                  )
                  NUM_AXIS_LIST_(             // Home each axis if needed or flagged
-                   homeX = needX || parser.seen_test('X'),
-                   homeY = needY || parser.seen_test('Y'),
+                   seenX = parser.seen_test('X'),
+                   seenY = parser.seen_test('Y'),
+                   seenZ = homeZZ,
+                   seenI = parser.seen_test(AXIS4_NAME), seenJ = parser.seen_test(AXIS5_NAME),
+                   seenK = parser.seen_test(AXIS6_NAME), seenU = parser.seen_test(AXIS7_NAME),
+                   seenV = parser.seen_test(AXIS8_NAME), seenW = parser.seen_test(AXIS9_NAME)
+                 )
+                 NUM_AXIS_LIST_(             // Home each axis if needed or flagged
+                   homeX = needX || seenX,
+                   homeY = needY || seenY,
                    homeZ = homeZZ,
-                   homeI = needI || parser.seen_test(AXIS4_NAME), homeJ = needJ || parser.seen_test(AXIS5_NAME),
-                   homeK = needK || parser.seen_test(AXIS6_NAME), homeU = needU || parser.seen_test(AXIS7_NAME),
-                   homeV = needV || parser.seen_test(AXIS8_NAME), homeW = needW || parser.seen_test(AXIS9_NAME)
+                   homeI = needI || seenI, homeJ = needJ || seenJ,
+                   homeK = needK || seenK, homeU = needU || seenU,
+                   homeV = needV || seenV, homeW = needW || seenW
                  )
                  home_all = NUM_AXIS_GANG_(  // Home-all if all or none are flagged
                       homeX == homeX, && homeY == homeX, && homeZ == homeX,
@@ -352,6 +375,16 @@ void GcodeSuite::G28() {
       #if !HAS_Y_AXIS
         constexpr bool doY = false;
       #endif
+
+      // Override any specified axes, or just XY for "home all"
+      #define OVERRIDE_AXIS_FR(A) \
+       if (override_fr_units_min && (seen##A || \
+         (home_all && TERN1(HAS_X_AXIS, _AXIS(A) == X_AXIS) && TERN1(HAS_Y_AXIS, _AXIS(A) == Y_AXIS)) \
+       )) SET_AXIS_FR(A);
+
+      TERN_(HAS_X_AXIS, OVERRIDE_AXIS_FR(X));
+      TERN_(HAS_Y_AXIS, OVERRIDE_AXIS_FR(Y));
+      TERN_(HAS_Z_AXIS, OVERRIDE_AXIS_FR(Z));
 
       #if HAS_Z_AXIS
 
@@ -434,7 +467,7 @@ void GcodeSuite::G28() {
 
       #if ALL(FOAMCUTTER_XYUV, HAS_I_AXIS)
         // Home I (after X)
-        if (doI) homeaxis(I_AXIS);
+        if (doI) { OVERRIDE_AXIS_FR(I); homeaxis(I_AXIS); }
       #endif
 
       #if HAS_Y_AXIS
@@ -444,7 +477,7 @@ void GcodeSuite::G28() {
 
       #if ALL(FOAMCUTTER_XYUV, HAS_J_AXIS)
         // Home J (after Y)
-        if (doJ) homeaxis(J_AXIS);
+        if (doJ) { OVERRIDE_AXIS_FR(J); homeaxis(J_AXIS); }
       #endif
 
       TERN_(IMPROVE_HOMING_RELIABILITY, end_slow_homing(saved_motion_state));
@@ -481,14 +514,9 @@ void GcodeSuite::G28() {
           }
         #endif
 
-        SECONDARY_AXIS_CODE(
-          if (doI) homeaxis(I_AXIS),
-          if (doJ) homeaxis(J_AXIS),
-          if (doK) homeaxis(K_AXIS),
-          if (doU) homeaxis(U_AXIS),
-          if (doV) homeaxis(V_AXIS),
-          if (doW) homeaxis(W_AXIS)
-        );
+        #define _HOME_AXIS(A) if (do##A) homeaxis(_AXIS(A));
+        SECONDARY_AXIS_MAP(OVERRIDE_AXIS_FR);
+        SECONDARY_AXIS_MAP(_HOME_AXIS);
 
       #endif // HAS_Z_AXIS
 
@@ -531,6 +559,9 @@ void GcodeSuite::G28() {
     #endif // DUAL_X_CARRIAGE
 
     endstops.not_homing();
+
+    // Restore feedrates before any machine-dependent moves
+    TERN_(EDITABLE_HOMING_FEEDRATE, RESTORE(fr));
 
     // Clear endstop state for polled stallGuard endstops
     TERN_(SPI_ENDSTOPS, endstops.clear_endstop_state());
