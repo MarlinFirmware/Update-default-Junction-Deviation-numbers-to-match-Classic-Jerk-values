@@ -685,7 +685,9 @@ public:
 
     // Manual Movement
     static ManualMove manual_move;
-    static bool can_show_slider() { return !external_control && currentScreen != manual_move.screen_ptr; }
+    static bool can_show_slider() {
+      return ENABLED(TFT_COLOR_UI) || (!external_control && currentScreen != manual_move.screen_ptr);
+    }
 
     // Select Screen (modal NO/YES style dialog)
     static bool selection;

@@ -25,6 +25,9 @@
 #include "../inc/MarlinConfigPre.h"
 #include "../core/utility.h"
 
+#define DEBUG_OUT 1
+#include "../core/debug_out.h"
+
 #pragma GCC diagnostic ignored "-Wimplicit-fallthrough"
 
 constexpr char DIGIT(const uint8_t n) { return '0' + n; }
@@ -135,6 +138,11 @@ const char* i16tostr3rj(const int16_t x) {
   conv[6] = RJDIGIT(xx, 10);
   conv[7] = DIGIMOD(xx, 1);
   return &conv[5];
+}
+
+// Convert unsigned 16bit int to string 1, 12, 123 format, capped at 999
+const char* utostr3(const uint16_t x) {
+  return i16tostr3left(_MIN(x, 999U));
 }
 
 // Convert unsigned 16bit int to lj string with 123 format
@@ -384,6 +392,32 @@ inline const char* ftostrX1rj(const_float_t f, const int index=1) {
   return &conv[index];
 }
 
+/**
+ * Convert float to string representing its absolute value with up to 8 characters including decimal dot, right aligned, example: ____5678, ____5.67, ___45.67, __345.67, _2345.67, 12345.67
+ *
+ * IMPORTANT: Supports only floats that can be displayed by above mentioned format
+ * IMPORTANT: Float is represented by scientific notation using two parameters, from which float can be acquired by intVal / decimal
+ * @param intVal Scaled integer value with float digits
+ * @param decimal divisor to acquire the float, must be power of 10
+ */
+const char* ftostr7xrj(int32_t intVal, int32_t decimal) {
+  if (intVal < 0) intVal *= -1; // Just print the absolute value
+
+  uint32_t div = 1;  // Current digit value: 1, 10, 100, 1000...
+  int8_t intEnd = 7; // Index of the digit out
+
+  // Loop while there are digits or a decimal point to print
+  // Collect digits from right to left
+  while (intEnd >= 0 && (intVal >= div || decimal >= div)) {
+    if (decimal == div && WITHIN(intEnd, 1, 6)) conv[intEnd--] = '.'; // Decimal at the given power of 10
+    conv[intEnd] = DIGIT((intVal / div) % 10);                        // The digit
+    div *= 10;
+    intEnd--;
+  }
+
+  return &conv[intEnd + 1];
+}
+
 // Convert unsigned float to string with _2.3 / 12.3 format
 const char* ftostr31rj(const_float_t f) { return ftostrX1rj(f, 7 - 3); }
 
@@ -453,9 +487,43 @@ const char* ftostr52sp(const_float_t f) {
   return &conv[1];
 }
 
-// Convert unsigned 16bit int to string 1, 12, 123 format, capped at 999
-const char* utostr3(const uint16_t x) {
-  return i16tostr3left(_MIN(x, 999U));
+const char* ftostr52custom(const_float_t f) {
+  long i = INTFLOAT(f, 3);
+  if (i < 0) i = -i;
+
+  uint8_t dig, intEnd = 7;
+
+  if ((dig = i % 10)) {              // third digit after decimal point?
+    conv[4] = '.';
+    conv[5] = DIGIMOD(i, 100);
+    conv[6] = DIGIMOD(i, 10);
+    conv[7] = DIGIT(dig);
+    intEnd = 3;
+  }
+  else if ((dig = (i / 10) % 10)) {  // second digit after decimal point?
+    conv[5] = '.';
+    conv[6] = DIGIMOD(i, 100);
+    conv[7] = DIGIT(dig);
+    intEnd = 4;
+  }
+  else if ((dig = (i / 100) % 10)) { // first digit after decimal point?
+    conv[6] = '.';
+    conv[7] = DIGIT(dig);
+    intEnd = 5;
+  }
+
+  conv[intEnd--] = DIGIMOD(i, 1000);
+  conv[intEnd--] = RJDIGIT(i, 10000);
+  conv[intEnd]   = RJDIGIT(i, 100000);
+
+  for (; intEnd < 8; intEnd++) {
+    if (conv[intEnd] != ' ' && ((i % 10) == 0 || conv[intEnd] != '0')) { //todo this should be moved under a flag or sep func
+      if (f < 0) conv[--intEnd] = '-';
+      return &conv[intEnd];
+    }
+  }
+
+  return &conv[0];
 }
 
 // Convert float to space-padded string with 1.23, 12.34, 123.45 format
@@ -482,4 +550,36 @@ const char* ftostr52sprj(const_float_t f) {
   conv[7] = DIGIMOD(i, 1);
 
   return &conv[1];
+}
+
+const char* shortenNum(const char * convptr, bool removeWhole0, bool removeUnit) {
+  // TODO: Implementation behaves as if removeWhole0 and removeUnit were true
+
+  uint8_t intStart = 7, returnStart = 8;
+  bool numberFound = false;
+  int8_t decimalIdx = -1;
+  int i = 0;
+
+  while (convptr[i] != 0) {
+    if (convptr[i] == '.') decimalIdx = i;
+    i++;
+  }
+
+  for (--i; i >= 0; --i) {
+    const char c = convptr[i];
+    if (c == ' ' || c == '%' || ((c == '0' || c == '.') && !numberFound && WITHIN(decimalIdx, 0, i)))
+      continue;
+
+    numberFound = true;
+    conv[intStart] = c;
+    if (c != '0' || WITHIN(decimalIdx, 0, i)) {
+      returnStart = intStart;
+      if (c == '-') conv[returnStart] = '-';
+    }
+    --intStart;
+  }
+
+  if (returnStart == 8) --returnStart;
+
+  return &conv[returnStart];
 }
