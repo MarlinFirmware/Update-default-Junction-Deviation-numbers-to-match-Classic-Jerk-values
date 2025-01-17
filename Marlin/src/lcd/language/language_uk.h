@@ -548,8 +548,7 @@ namespace LanguageNarrow_uk {
   LSTR MSG_LOCKSCREEN                       = _UxGT("Блокувати екран"); // ProUI
   //MSG_LOCKSCREEN_LOCKED
   //MSG_LOCKSCREEN_UNLOCK
-  LSTR MSG_PLEASE_WAIT_REBOOT               = _UxGT("Перезавантаж..."); // ProUI
-  LSTR MSG_MEDIA_NOT_INSERTED               = _UxGT("Немає носія");     // ProUI
+  LSTR MSG_MEDIA_NOT_INSERTED               = _UxGT("Носій не вставлений"); // ProUI
   LSTR MSG_PLEASE_PREHEAT                   = _UxGT("Нагрійте хотенд"); // ProUI
 
   LSTR MSG_INFO_PRINT_COUNT                 = _UxGT("Друків");
@@ -759,7 +758,6 @@ namespace LanguageWide_uk {
     LSTR MSG_INFO_RUNAWAY_OFF               = _UxGT("Контроль витіку ") LCD_STR_THERMOMETER _UxGT(" Вимк");
     LSTR MSG_INFO_RUNAWAY_ON                = _UxGT("Контроль витіку ") LCD_STR_THERMOMETER _UxGT(" Увімк");
     LSTR MSG_HOTEND_IDLE_TIMEOUT            = _UxGT("Час простою хотенду");
-    LSTR MSG_MEDIA_NOT_INSERTED             = _UxGT("Носій не вставлений");
     LSTR MSG_PLEASE_WAIT_REBOOT             = _UxGT("Перезавантаження...");
     LSTR MSG_INFO_PRINT_COUNT               = _UxGT("Кількість друків");
     LSTR MSG_INFO_PRINT_TIME                = _UxGT("Час друку");

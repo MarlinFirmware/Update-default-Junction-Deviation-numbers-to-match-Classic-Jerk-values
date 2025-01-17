@@ -602,8 +602,6 @@ namespace LanguageNarrow_de {
   LSTR MSG_LOCKSCREEN                     = _UxGT("Bildschirm sperren");    // ProUI
   LSTR MSG_LOCKSCREEN_LOCKED              = _UxGT("Drucker ist gesperrt,"); // ProUI
   LSTR MSG_LOCKSCREEN_UNLOCK              = _UxGT("Scrollen zum Entsper."); // ProUI
-  LSTR MSG_PLEASE_WAIT_REBOOT             = _UxGT("Auf Neustart warten");   // ProUI
-  LSTR MSG_PLEASE_PREHEAT                 = _UxGT("Bitte vorheizen");       // ProUI
 
   LSTR MSG_INFO_PRINT_COUNT               = _UxGT("Drucke");
   LSTR MSG_INFO_COMPLETED_PRINTS          = _UxGT("Komplette");

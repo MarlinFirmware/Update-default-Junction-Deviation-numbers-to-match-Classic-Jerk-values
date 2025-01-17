@@ -74,31 +74,23 @@ enum processID : uint8_t {
 
 #if ANY(HAS_PID_HEATING, MPC_AUTOTUNE)
 
-  enum TempControl {
-    AUTOTUNE_DONE,
+  enum tempcontrol_t : uint8_t {
     #if HAS_PID_HEATING
-      #if ENABLED(PIDTEMP)
-        PIDTEMP_START,
-      #endif
-      #if ENABLED(PIDTEMPBED)
-        PIDTEMPBED_START,
-      #endif
-      #if ENABLED(PIDTEMPCHAMBER)
-        PIDTEMPCHAMBER_START,
-      #endif
+      PID_DONE = 0,
+      PID_STARTED,
+      PID_BED_STARTED,
+      PID_CHAMBER_STARTED,
       PID_BAD_HEATER_ID,
       PID_TEMP_TOO_HIGH,
       PID_TUNING_TIMEOUT,
     #endif
     #if ENABLED(MPC_AUTOTUNE)
+      MPC_DONE = 0,
       MPC_STARTED,
       MPC_TEMP_ERROR,
       MPC_INTERRUPTED,
     #endif
-    TEMPCONTROL_COUNT
   };
-
-  typedef bits_t(TEMPCONTROL_COUNT) tempcontrol_t;
 
 #endif
 
@@ -186,8 +178,10 @@ typedef struct {
 
 typedef struct {
   rgb_t color;                        // Color
-  #if ANY(HAS_PID_HEATING, MPCTEMP)
-    tempcontrol_t tempControl = AUTOTUNE_DONE;
+  #if HAS_PID_HEATING
+    tempcontrol_t tempControl = PID_DONE;
+  #elif ENABLED(MPC_AUTOTUNE)
+    tempcontrol_t tempControl = MPC_DONE;
   #endif
   uint8_t select = 0;                 // Auxiliary selector variable
   AxisEnum axis = X_AXIS;             // Axis Select
@@ -285,10 +279,12 @@ void updateVariable();
 void dwinInitScreen();
 void dwinHandleScreen();
 void dwinCheckStatusMessage();
+void dwinDrawStatusMessage();
 void dwinHomingStart();
 void dwinHomingDone();
 #if HAS_MESH
-  void dwinMeshUpdate(const int8_t cpos, const int8_t tpos, const_float_t zval);
+  void dwinMeshUpdate(const int8_t xpos, const int8_t ypos, const_float_t zval);
+  void dwinPointUpdate(const int8_t cpos, const int8_t tpos, const_float_t zval);
 #endif
 void dwinLevelingStart();
 void dwinLevelingDone();
@@ -298,7 +294,7 @@ void dwinPrintResume();
 void dwinPrintFinished();
 void dwinPrintAborted();
 #if HAS_FILAMENT_SENSOR
-  void dwinFilamentRunout(const uint8_t extruder);
+  void dwinFilamentRunout();
 #endif
 void dwinPrintHeader(const char * const cstr=nullptr);
 void dwinSetColorDefaults();
@@ -308,8 +304,6 @@ void dwinSetDataDefaults();
 void dwinRebootScreen();
 
 #if ENABLED(ADVANCED_PAUSE_FEATURE)
-  void dwinPopupPause(FSTR_P const fmsg, uint8_t button=0);
-  void drawPopupFilamentPurge();
   void gotoFilamentPurge();
 #endif
 
@@ -327,8 +321,15 @@ void dwinRebootScreen();
 #endif
 #if ALL(PROUI_TUNING_GRAPH, PROUI_ITEM_PLOT)
   void dwinDrawPlot(tempcontrol_t result);
-  void drawHPlot();
-  void drawBPlot();
+  #if ENABLED(PIDTEMP)
+    void drawHotendPlot();
+  #endif
+  #if ENABLED(PIDTEMPBED)
+    void drawBedPlot();
+  #endif
+  #if ENABLED(PIDTEMPCHAMBER)
+    void drawChamberPlot();
+  #endif
 #endif
 
 // Menu drawing functions

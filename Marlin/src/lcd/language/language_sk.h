@@ -646,8 +646,6 @@ namespace LanguageNarrow_sk {
   LSTR MSG_LOCKSCREEN_LOCKED              = _UxGT("Tlačiareň je uzamknutá,");     // ProUI
   LSTR MSG_LOCKSCREEN_UNLOCK              = _UxGT("potiahnite pre odomknutie.");  // ProUI
   LSTR MSG_PLEASE_WAIT_REBOOT             = _UxGT("Prosím čakajte do reštartu."); // ProUI
-  LSTR MSG_MEDIA_NOT_INSERTED             = _UxGT("Žiadna karta");                // ProUI
-  LSTR MSG_PLEASE_PREHEAT                 = _UxGT("Prosím zahrejte");             // ProUI
 
   LSTR MSG_INFO_PRINT_COUNT               = _UxGT("Tlače");
   LSTR MSG_INFO_PRINT_TIME                = _UxGT("Čas");

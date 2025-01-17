@@ -670,8 +670,6 @@ namespace LanguageNarrow_tr {
   LSTR MSG_LOCKSCREEN_LOCKED              = _UxGT("Yazıcı Kilitlendi,");    // ProUI
   LSTR MSG_LOCKSCREEN_UNLOCK              = _UxGT("Açmak için kaydırın.");  // ProUI
   LSTR MSG_PLEASE_WAIT_REBOOT             = _UxGT("Y.Başlatma bekleyin.");  // ProUI
-  LSTR MSG_MEDIA_NOT_INSERTED             = _UxGT("Medya Yok");             // ProUI
-  LSTR MSG_PLEASE_PREHEAT                 = _UxGT("Ön Isıtma Lütfen");      // ProUI
 
   LSTR MSG_INFO_PRINT_COUNT               = _UxGT("Baskı");
   LSTR MSG_INFO_PRINT_TIME                = _UxGT("Süre");
@@ -896,9 +894,9 @@ namespace LanguageWide_tr {
     LSTR MSG_MEDIA_MENU                   = _UxGT("SD Karttan Yazdır");
     LSTR MSG_TURN_OFF                     = _UxGT("Yazıcıyı kapat");
     LSTR MSG_END_LOOPS                    = _UxGT("Tekrr Döngüler Bitir");
-    LSTR MSG_MEDIA_NOT_INSERTED           = _UxGT("Ortam yerleştirilmedi.");        // ProUI
-    LSTR MSG_PLEASE_PREHEAT               = _UxGT("Lütfen önce hotend'i ısıtın.");  // ProUI
-    LSTR MSG_INFO_PRINT_COUNT_RESET       = _UxGT("Baskı Sayısını Sıfırla");        // ProUI
+    LSTR MSG_MEDIA_NOT_INSERTED           = _UxGT("Ortam yerleştirilmedi.");       // ProUI
+    LSTR MSG_PLEASE_PREHEAT               = _UxGT("Lütfen önce hotend'i ısıtın."); // ProUI
+    LSTR MSG_INFO_PRINT_COUNT_RESET       = _UxGT("Baskı Sayısını Sıfırla");       // ProUI
     LSTR MSG_INFO_PRINT_COUNT             = _UxGT("Baskı Sayısı");
     LSTR MSG_INFO_PRINT_TIME              = _UxGT("Toplam Baskı Süresi");
     LSTR MSG_INFO_PRINT_LONGEST           = _UxGT("En Uzun Baskı Süresi");

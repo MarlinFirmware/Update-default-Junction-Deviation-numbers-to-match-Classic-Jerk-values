@@ -79,6 +79,8 @@
     #include "lcd/e3v2/creality/dwin.h"
   #elif ENABLED(DWIN_CREALITY_LCD_JYERSUI)
     #include "lcd/e3v2/jyersui/dwin.h"
+  #elif ENABLED(DWIN_LCD_PROUI)
+    #include "lcd/extui/ui_api.h"
   #elif ENABLED(SOVOL_SV06_RTS)
     #include "lcd/sovol_rts/sovol_rts.h"
   #endif
@@ -1622,13 +1624,13 @@ void setup() {
     SERIAL_ECHO_TERNARY(err, "BL24CXX Check ", "failed", "succeeded", "!\n");
   #endif
 
-  #if ENABLED(DWIN_CREALITY_LCD)
+  #if HAS_DWIN_E3V2_BASIC
     SETUP_RUN(dwinInitScreen());
   #elif ENABLED(SOVOL_SV06_RTS)
     SETUP_RUN(rts.init());
   #endif
 
-  #if HAS_SERVICE_INTERVALS && DISABLED(DWIN_CREALITY_LCD)
+  #if HAS_SERVICE_INTERVALS && !HAS_DWIN_E3V2_BASIC
     SETUP_RUN(ui.reset_status(true));  // Show service messages or keep current status
   #endif
 
