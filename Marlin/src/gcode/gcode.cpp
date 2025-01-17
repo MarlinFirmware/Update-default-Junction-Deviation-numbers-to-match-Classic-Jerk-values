@@ -100,6 +100,10 @@ relative_t GcodeSuite::axis_relative; // Init in constructor
   xyz_pos_t GcodeSuite::coordinate_system[MAX_COORDINATE_SYSTEMS];
 #endif
 
+#if ENABLED(CNC_COORDINATE_ROTATION)
+  rotation_t GcodeSuite::rotation;
+#endif
+
 void GcodeSuite::report_echo_start(const bool forReplay) { if (!forReplay) SERIAL_ECHO_START(); }
 void GcodeSuite::report_heading(const bool forReplay, FSTR_P const fstr, const bool eol/*=true*/) {
   if (forReplay) return;
@@ -170,6 +174,14 @@ void GcodeSuite::get_destination_from_command() {
     constexpr bool skip_move = false;
   #endif
 
+  // TODO: Slow and introduces errors, so we actually need to
+  // cache the unrotated current_position and destination, then
+  // ensure both copies are updated in sync throughout Marlin.
+  #if ENABLED(CNC_COORDINATE_ROTATION)
+    rotation.unrotate(current_position);
+    rotation.unrotate(destination);
+  #endif
+
   // Get new XYZ position, whether absolute or relative
   LOOP_NUM_AXES(i) {
     if ( (seen[i] = parser.seenval(AXIS_CHAR(i))) ) {
@@ -182,6 +194,12 @@ void GcodeSuite::get_destination_from_command() {
     else
       destination[i] = current_position[i];
   }
+
+  // Re-rotate the current position and destination
+  #if ENABLED(CNC_COORDINATE_ROTATION)
+    rotation.rotate(current_position);
+    rotation.rotate(destination);
+  #endif
 
   #if HAS_EXTRUDERS
     // Get new E position, whether absolute or relative
@@ -446,7 +464,12 @@ void GcodeSuite::process_parsed_command(const bool no_ok/*=false*/) {
 
       #if SAVED_POSITIONS
         case 60: G60(); break;                                    // G60:  save current position
-        case 61: G61(); break;                                    // G61:  Apply/restore saved coordinates.
+        case 61: G61(); break;                                    // G61:  Apply/restore saved coordinates
+      #endif
+
+      #if ENABLED(CNC_COORDINATE_ROTATION)
+        case 68: G68(); break;                                    // G68  - Set coordinate rotation center and angle
+        case 69: G69(); break;                                    // G69  - Reset coordinate rotation
       #endif
 
       #if ALL(PTC_PROBE, PTC_BED)
