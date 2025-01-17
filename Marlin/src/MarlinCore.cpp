@@ -422,12 +422,8 @@ inline void manage_inactivity(const bool no_stepper_sleep=false) {
   // Reset both the M18/M84 activity timeout and the M85 max 'kill' timeout
   if (do_reset_timeout) gcode.reset_stepper_timeout(ms);
 
-  if (gcode.stepper_max_timed_out(ms)) {
-    SERIAL_ERROR_START();
-    SERIAL_ECHOPGM(STR_KILL_PRE);
-    SERIAL_ECHOLNPGM(STR_KILL_INACTIVE_TIME, parser.command_ptr);
-    kill();
-  }
+  // Kill the machine on max idle timeout
+  if (gcode.stepper_max_timed_out(ms)) kill(F(STR_KILL_MOTION_TIMEOUT));
 
   const bool has_blocks = planner.has_blocks_queued();  // Any moves in the planner?
   if (has_blocks) gcode.reset_stepper_timeout(ms);      // Reset timeout for M18/M84, M85 max 'kill', and laser.
@@ -893,12 +889,14 @@ void idle(const bool no_stepper_sleep/*=false*/) {
  * After this the machine will need to be reset.
  */
 void kill(FSTR_P const lcd_error/*=nullptr*/, FSTR_P const lcd_component/*=nullptr*/, const bool steppers_off/*=false*/) {
+  TERN_(CNC_ABORT_ON_ENDSTOP_HIT, minkill(steppers_off));
+
   thermalManager.disable_all_heaters();
 
   TERN_(HAS_CUTTER, cutter.kill()); // Full cutter shutdown including ISR control
 
   // Echo the LCD message to serial for extra context
-  if (lcd_error) { SERIAL_ECHO_START(); SERIAL_ECHOLN(lcd_error); }
+  if (lcd_error) { SERIAL_ECHO_START(); SERIAL_ECHOPGM(STR_KILL_PRE); SERIAL_ECHOLN(lcd_error); }
 
   #if HAS_DISPLAY
     ui.kill_screen(lcd_error ?: GET_TEXT_F(MSG_KILLED), lcd_component ?: FPSTR(NUL_STR));
@@ -915,7 +913,7 @@ void kill(FSTR_P const lcd_error/*=nullptr*/, FSTR_P const lcd_component/*=nullp
     hostui.kill();
   #endif
 
-  minkill(steppers_off);
+  IF_DISABLED(CNC_ABORT_ON_ENDSTOP_HIT, minkill(steppers_off));
 }
 
 void minkill(const bool steppers_off/*=false*/) {
