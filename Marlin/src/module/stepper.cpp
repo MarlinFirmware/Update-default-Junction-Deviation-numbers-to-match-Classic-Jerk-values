@@ -152,6 +152,10 @@ Stepper stepper; // Singleton
   #include "../HAL/ESP32/i2s.h"
 #endif
 
+#if ENABLED(MOTION_STEPS_COUNTER)
+  #include "../feature/runout.h"
+#endif
+
 // public:
 
 #if ANY(HAS_EXTRA_ENDSTOPS, Z_STEPPER_AUTO_ALIGN)
@@ -2832,10 +2836,12 @@ hal_timer_t Stepper::block_phase_isr() {
           ne_fix.A = (1L << 24) * ne.A;
           ne_fix.B = (1L << 24) * ne.B;
           ne_fix.C = (1L << 24) * ne.C;
+          TERN_(MOTION_STEPS_COUNTER, FilamentSensorEncoder::extruding = true);
         }
         else {
           ne_fix.A = ne_fix.B = 0;
           ne_fix.C = (1L << 24);
+          
         }
       #endif
 
@@ -2853,6 +2859,10 @@ hal_timer_t Stepper::block_phase_isr() {
           const uint32_t la_step_rate = la_advance_steps < current_block->max_adv_steps ? current_block->la_advance_rate : 0;
           la_interval = calc_timer_interval((current_block->initial_rate + la_step_rate) >> current_block->la_scaling);
         }
+      #endif
+
+      #if ENABLED(MOTION_STEPS_COUNTER)
+        FilamentSensorEncoder::extruding = ANY_AXIS_MOVES(current_block);
       #endif
     }
   } // !current_block

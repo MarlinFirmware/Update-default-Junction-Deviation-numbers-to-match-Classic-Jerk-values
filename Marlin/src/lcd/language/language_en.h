@@ -935,6 +935,10 @@ namespace LanguageNarrow_en {
 
   LSTR MSG_HOST_SHUTDOWN                  = _UxGT("Host Shutdown");
 
+  LSTR MSG_ENCODER_INFO                   = _UxGT("Filament motion");
+  LSTR MSG_ENCODER_STEPS                  = _UxGT("Steps/reset");
+  LSTR MSG_ENCODER_CALIBRATION            = _UxGT("Calibration mode");
+
   LSTR MSG_SHORT_DAY                      = _UxGT("d"); // One character only
   LSTR MSG_SHORT_HOUR                     = _UxGT("h"); // One character only
   LSTR MSG_SHORT_MINUTE                   = _UxGT("m"); // One character only

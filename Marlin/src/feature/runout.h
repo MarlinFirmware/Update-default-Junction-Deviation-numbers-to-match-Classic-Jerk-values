@@ -226,13 +226,6 @@ class FilamentSensorBase {
         return (0 REPEAT_1(NUM_MOTION_SENSORS, _OR_MOTION));
         #undef _OR_MOTION
       }
-
-      // Return a bitmask of motion flag states (1 bits always indicates runout)
-      static uint8_t poll_motion_states() {
-        #define _OR_MOTION(N) | (FIL_MOTION##N##_STATE ? 0 : _BV(N - 1))
-        return poll_motion_pins() ^ uint8_t(0 REPEAT_1(NUM_MOTION_SENSORS, _OR_MOTION));
-        #undef _OR_MOTION
-      }
     #endif
 };
 
@@ -254,6 +247,11 @@ class FilamentSensorBase {
                       change    = old_state ^ new_state;
         old_state = new_state;
 
+        #if ENABLED(MOTION_STEPS_COUNTER)
+          if (change && (extruding || calibration))
+            encoder_steps++;
+        #endif
+
         #if ENABLED(FILAMENT_RUNOUT_SENSOR_DEBUG)
           if (change) {
             SERIAL_ECHOPGM("Motion detected:");
@@ -267,6 +265,12 @@ class FilamentSensorBase {
       }
 
     public:
+      #if ENABLED(MOTION_STEPS_COUNTER)
+        static bool     extruding;
+        static bool     calibration;
+        static uint16_t encoder_steps;
+      #endif
+
       static void block_completed(const block_t * const b) {
         // If the sensor wheel has moved since the last call to
         // this method reset the runout counter for the extruder.
