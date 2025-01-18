@@ -114,7 +114,7 @@ xyze_pos_t destination; // {0}
 #endif
 
 // The active extruder (tool). Set with T<extruder> command.
-#if HAS_MULTI_EXTRUDER
+#if HAS_MULTI_TOOLS
   uint8_t active_extruder = 0; // = 0
 #endif
 
@@ -124,15 +124,19 @@ xyze_pos_t destination; // {0}
 
 // Extruder offsets
 #if HAS_HOTEND_OFFSET
-  xyz_pos_t hotend_offset[HOTENDS]; // Initialized by settings.load
+  xyz_pos_t hotend_offset[TOOLS]; // Initialized by settings.load
   void reset_hotend_offsets() {
-    constexpr float tmp[XYZ][HOTENDS] = { HOTEND_OFFSET_X, HOTEND_OFFSET_Y, HOTEND_OFFSET_Z };
+    constexpr float tmp[XYZ][TOOLS] = { HOTEND_OFFSET_X, HOTEND_OFFSET_Y, HOTEND_OFFSET_Z };
     static_assert(
       !tmp[X_AXIS][0] && !tmp[Y_AXIS][0] && !tmp[Z_AXIS][0],
       "Offsets for the first hotend must be 0.0."
     );
     // Transpose from [XYZ][HOTENDS] to [HOTENDS][XYZ]
-    HOTEND_LOOP() LOOP_ABC(a) hotend_offset[e][a] = tmp[a][e];
+    for (uint8_t e = 0; e < TOOLS; e++) {
+      for (uint8_t a = 0; a < XYZ; a++) {
+        hotend_offset[e][a] = tmp[a][e];
+      }
+    }
     TERN_(DUAL_X_CARRIAGE, hotend_offset[1].x = _MAX(X2_HOME_POS, X2_MAX_POS));
   }
 #endif

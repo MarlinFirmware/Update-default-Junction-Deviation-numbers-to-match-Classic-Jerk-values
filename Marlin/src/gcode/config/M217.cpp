@@ -22,7 +22,7 @@
 
 #include "../../inc/MarlinConfigPre.h"
 
-#if HAS_MULTI_EXTRUDER
+#if HAS_MULTI_TOOLS
 
 #include "../gcode.h"
 
@@ -220,4 +220,4 @@ void GcodeSuite::M217_report(const bool forReplay/*=true*/) {
   SERIAL_ECHOLNPGM_P(SP_Z_STR, LINEAR_UNIT(toolchange_settings.z_raise));
 }
 
-#endif // HAS_MULTI_EXTRUDER
+#endif // HAS_MULTI_TOOLS

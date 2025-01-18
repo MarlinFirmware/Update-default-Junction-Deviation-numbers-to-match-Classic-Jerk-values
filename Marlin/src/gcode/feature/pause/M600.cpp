@@ -34,7 +34,7 @@
   #include "../../../lcd/sovol_rts/sovol_rts.h"
 #endif
 
-#if HAS_MULTI_EXTRUDER
+#if HAS_MULTI_TOOLS
   #include "../../../module/tool_change.h"
 #endif
 
@@ -124,7 +124,7 @@ void GcodeSuite::M600() {
   // If needed, home before parking for filament change
   TERN_(HOME_BEFORE_FILAMENT_CHANGE, home_if_needed(true));
 
-  #if HAS_MULTI_EXTRUDER
+  #if HAS_MULTI_TOOLS
     // Change toolhead if specified
     const uint8_t active_extruder_before_filament_change = active_extruder;
     if (active_extruder != target_extruder && TERN1(DUAL_X_CARRIAGE, !idex_is_duplicating()))
@@ -186,7 +186,7 @@ void GcodeSuite::M600() {
     }
   }
 
-  #if HAS_MULTI_EXTRUDER
+  #if HAS_MULTI_TOOLS
     // Restore toolhead if it was changed
     if (active_extruder_before_filament_change != active_extruder)
       tool_change(active_extruder_before_filament_change);

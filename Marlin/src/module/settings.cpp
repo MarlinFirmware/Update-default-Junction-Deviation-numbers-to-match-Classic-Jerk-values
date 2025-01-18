@@ -125,7 +125,7 @@
   extern float other_extruder_advance_K[DISTINCT_E];
 #endif
 
-#if HAS_MULTI_EXTRUDER
+#if HAS_MULTI_TOOLS
   #include "tool_change.h"
   void M217_report(const bool eeprom);
 #endif
@@ -249,7 +249,7 @@ typedef struct SettingsDataStruct {
   // Hotend Offset
   //
   #if HAS_HOTEND_OFFSET
-    xyz_pos_t hotend_offset[HOTENDS - 1];               // M218 XYZ
+    xyz_pos_t hotend_offset[TOOLS - 1];               // M218 XYZ
   #endif
 
   //
@@ -536,7 +536,7 @@ typedef struct SettingsDataStruct {
   //
   // Tool-change settings
   //
-  #if HAS_MULTI_EXTRUDER
+  #if HAS_MULTI_TOOLS
     toolchange_settings_t toolchange_settings;          // M217 S P R
   #endif
 
@@ -932,7 +932,7 @@ void MarlinSettings::postprocess() {
     {
       #if HAS_HOTEND_OFFSET
         // Skip hotend 0 which must be 0
-        for (uint8_t e = 1; e < HOTENDS; ++e)
+        for (uint8_t e = 1; e < TOOLS; ++e)
           EEPROM_WRITE(hotend_offset[e]);
       #endif
     }
@@ -1625,7 +1625,7 @@ void MarlinSettings::postprocess() {
     // Multiple Extruders
     //
 
-    #if HAS_MULTI_EXTRUDER
+    #if HAS_MULTI_TOOLS
       _FIELD_TEST(toolchange_settings);
       EEPROM_WRITE(toolchange_settings);
     #endif
@@ -2005,7 +2005,7 @@ void MarlinSettings::postprocess() {
       {
         #if HAS_HOTEND_OFFSET
           // Skip hotend 0 which must be 0
-          for (uint8_t e = 1; e < HOTENDS; ++e)
+          for (uint8_t e = 1; e < TOOLS; ++e)
             EEPROM_READ(hotend_offset[e]);
         #endif
       }
@@ -2747,7 +2747,7 @@ void MarlinSettings::postprocess() {
       //
       // Tool-change settings
       //
-      #if HAS_MULTI_EXTRUDER
+      #if HAS_MULTI_TOOLS
         _FIELD_TEST(toolchange_settings);
         EEPROM_READ(toolchange_settings);
       #endif
