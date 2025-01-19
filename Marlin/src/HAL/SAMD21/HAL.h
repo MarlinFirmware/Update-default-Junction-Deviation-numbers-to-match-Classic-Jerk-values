@@ -36,11 +36,11 @@
 // ------------------------
 // Serial ports
 // ------------------------
+
 #include "../../core/serial_hook.h"
 typedef ForwardSerial1Class< decltype(SerialUSB) > DefaultSerial1;
 extern DefaultSerial1 MSerialUSB;
 
-// Serial ports
 typedef ForwardSerial1Class< decltype(Serial1) > DefaultSerial2;
 typedef ForwardSerial1Class< decltype(Serial2) > DefaultSerial3;
 
@@ -51,43 +51,10 @@ extern DefaultSerial3 MSerial1;
 #define _MSERIAL(X) __MSERIAL(X)
 #define MSERIAL(X) _MSERIAL(INCREMENT(X))
 
-#if WITHIN(SERIAL_PORT, 0, 1)
-  #define MYSERIAL1 MSERIAL(SERIAL_PORT)
-#elif SERIAL_PORT == -1
-  #define MYSERIAL1 MSerialUSB
-#else
-  #error "SERIAL_PORT must be -1 (Native USB only)."
-#endif
-
-#ifdef SERIAL_PORT_2
-  #if WITHIN(SERIAL_PORT_2, 0, 1)
-    #define MYSERIAL2 MSERIAL(SERIAL_PORT)
-  #elif SERIAL_PORT_2 == -1
-    #define MYSERIAL2 MSerialUSB
-  #else
-    #error "SERIAL_PORT_2 must be -1 (Native USB only)."
-  #endif
-#endif
-
-#ifdef MMU_SERIAL_PORT
-  #if WITHIN(MMU_SERIAL_PORT, 0, 1)
-    #define MMU_SERIAL MSERIAL(SERIAL_PORT)
-  #elif MMU_SERIAL_PORT == -1
-    #define MMU_SERIAL MSerialUSB
-  #else
-    #error "MMU_SERIAL_PORT must be -1 (Native USB only)."
-  #endif
-#endif
-
-#ifdef LCD_SERIAL_PORT
-  #if WITHIN(LCD_SERIAL_PORT, 0, 1)
-    #define LCD_SERIAL MSERIAL(SERIAL_PORT)
-  #elif LCD_SERIAL_PORT == -1
-    #define LCD_SERIAL MSerialUSB
-  #else
-    #error "LCD_SERIAL_PORT must be -1 (Native USB only)."
-  #endif
-#endif
+#define SERIAL_INDEX_MIN 0
+#define SERIAL_INDEX_MAX 1
+#define USB_SERIAL_PORT(...) MSerialUSB
+#include "../shared/serial_ports.h"
 
 typedef int8_t pin_t;
 

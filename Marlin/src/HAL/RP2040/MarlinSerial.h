@@ -29,24 +29,22 @@
 
 #include "../../core/serial_hook.h"
 
+typedef ForwardSerial1Class< decltype(Serial) > DefaultSerial1;
+extern DefaultSerial1 MSerial0;
+typedef ForwardSerial1Class<decltype(SerialUSB)> USBSerialType;
+extern USBSerialType USBSerial;
+
 #define Serial0 Serial
 #define _DECLARE_SERIAL(X) \
   typedef ForwardSerial1Class<decltype(Serial##X)> DefaultSerial##X; \
   extern DefaultSerial##X MSerial##X
 #define DECLARE_SERIAL(X) _DECLARE_SERIAL(X)
 
-typedef ForwardSerial1Class<decltype(SerialUSB)> USBSerialType;
-extern USBSerialType USBSerial;
+#define SERIAL_INDEX_MIN 0
+#define SERIAL_INDEX_MAX 6
+#define USB_SERIAL_PORT(...) MSerial0
+#include "../shared/serial_ports.h"
 
-#define _MSERIAL(X) MSerial##X
-#define MSERIAL(X) _MSERIAL(X)
-
-#if SERIAL_PORT == -1
- // #define MYSERIAL1 USBSerial this is already done in the HAL
-#elif WITHIN(SERIAL_PORT, 0, 3)
- #define MYSERIAL1 MSERIAL(SERIAL_PORT)
-  DECLARE_SERIAL(SERIAL_PORT);
-#else
-  #error "SERIAL_PORT must be from 0 to 3, or -1 for Native USB."
+#if defined(LCD_SERIAL_PORT) && ANY(HAS_DGUS_LCD, EXTENSIBLE_UI)
+  #define SERIAL_GET_TX_BUFFER_FREE() LCD_SERIAL.availableForWrite()
 #endif
-

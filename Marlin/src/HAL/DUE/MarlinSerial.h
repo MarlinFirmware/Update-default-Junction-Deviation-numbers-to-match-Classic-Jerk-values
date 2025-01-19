@@ -33,6 +33,21 @@
 #include "../../core/types.h"
 #include "../../core/serial_hook.h"
 
+typedef ForwardSerial1Class< decltype(Serial) > DefaultSerial1;
+typedef ForwardSerial1Class< decltype(Serial1) > DefaultSerial2;
+typedef ForwardSerial1Class< decltype(Serial2) > DefaultSerial3;
+typedef ForwardSerial1Class< decltype(Serial3) > DefaultSerial4;
+extern DefaultSerial1 MSerial0;
+extern DefaultSerial2 MSerial1;
+extern DefaultSerial3 MSerial2;
+extern DefaultSerial4 MSerial3;
+
+#define SERIAL_INDEX_MIN 0
+#define SERIAL_INDEX_MAX 3
+#define EP_SERIAL_PORT(N) customizedSerial##N
+#define USB_SERIAL_PORT(N) customizedSerial##N
+#include "../shared/serial_ports.h"
+
 // Define constants and variables for buffering incoming serial data.  We're
 // using a ring buffer (I think), in which rx_buffer_head is the index of the
 // location to which to write the next incoming character and rx_buffer_tail
