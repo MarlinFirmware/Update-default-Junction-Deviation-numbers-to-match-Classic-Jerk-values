@@ -72,7 +72,7 @@
 //
 #define SPINDLE_LASER_PWM_PIN               PB9
 
-// 
+//
 // NEOPIXEL
 //
 #ifndef NEOPIXEL_PIN
@@ -138,7 +138,6 @@
 #define TEMP_2_PIN                          PC5   // Analog Input
 #define TEMP_BED_PIN                        PB1   // Analog Input
 
-
 //
 // Heaters / Fans
 //
@@ -146,8 +145,6 @@
 #define HEATER_1_PIN                        PD13
 #define HEATER_2_PIN                        PD14
 #define HEATER_BED_PIN                      PB0
-
-
 
 #define FAN0_PIN                            PA0
 #define FAN1_PIN                            PA1
@@ -206,13 +203,13 @@
 // Trinamic SPI
 //
 #ifndef TMC_SPI_SCK
-  #define TMC_SPI_SCK                PB3
+  #define TMC_SPI_SCK                       PB3
 #endif
 #ifndef TMC_SPI_MISO
-  #define TMC_SPI_MISO               PB4
+  #define TMC_SPI_MISO                      PB4
 #endif
 #ifndef TMC_SPI_MOSI
-  #define TMC_SPI_MOSI               PB5
+  #define TMC_SPI_MOSI                      PB5
 #endif
 
 //

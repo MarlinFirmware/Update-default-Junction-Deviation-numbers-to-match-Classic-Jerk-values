@@ -70,7 +70,7 @@
 //
 // NEOPIXEL
 //
-//#define NEOPIXEL_PIN                        PA4
+//#define NEOPIXEL_PIN                      PA4
 #define NEOPIXEL2_PIN                       PD15
 
 //

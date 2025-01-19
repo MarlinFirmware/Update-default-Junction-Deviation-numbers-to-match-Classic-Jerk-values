@@ -147,7 +147,6 @@
 #define TEMP_2_PIN                          PC4   // Analog Input
 #define TEMP_BED_PIN                        PC5   // Analog Input
 
-
 //
 // Heaters / Fans
 //
@@ -155,8 +154,6 @@
 #define HEATER_1_PIN                        PD13
 #define HEATER_2_PIN                        PD14
 #define HEATER_BED_PIN                      PB0
-
-
 
 #define FAN0_PIN                            PA0
 #define FAN1_PIN                            PA1

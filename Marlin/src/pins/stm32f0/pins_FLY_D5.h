@@ -37,7 +37,6 @@
   #endif
 #endif
 
-
 //
 // Timers
 //
@@ -106,19 +105,10 @@
 
 #if HAS_TMC_UART
   #define X_SERIAL_TX_PIN                   PC13
-  #define X_SERIAL_RX_PIN        X_SERIAL_TX_PIN
-
   #define Y_SERIAL_TX_PIN                   PC3
-  #define Y_SERIAL_RX_PIN        Y_SERIAL_TX_PIN
-
   #define Z_SERIAL_TX_PIN                   PA3
-  #define Z_SERIAL_RX_PIN        Z_SERIAL_TX_PIN
-
   #define E0_SERIAL_TX_PIN                  PA7
-  #define E0_SERIAL_RX_PIN      E0_SERIAL_TX_PIN
-
-  #define E1_SERIAL_TX_PIN                   PB1
-  #define E1_SERIAL_RX_PIN      E1_SERIAL_TX_PIN
+  #define E1_SERIAL_TX_PIN                  PB1
 #endif
 
 //
@@ -138,7 +128,6 @@
 #endif
 #define FAN1_PIN                            PC9
 
-
 /**
  *        ------                ------
  *  NC   | 1  2 | PA15    PB14 | 1  2 | PB13
@@ -149,14 +138,14 @@
  *        ------                ------
  *         EXP1                  EXP2
  */
-#define EXP1_01_PIN                         NC
+#define EXP1_01_PIN                         -1
 #define EXP1_02_PIN                         PA15
 #define EXP1_03_PIN                         PC11
 #define EXP1_04_PIN                         PA14
 #define EXP1_05_PIN                         PC10
 #define EXP1_06_PIN                         PA13
-#define EXP1_07_PIN                         NC
-#define EXP1_08_PIN                         NC
+#define EXP1_07_PIN                         -1
+#define EXP1_08_PIN                         -1
 
 #define EXP2_01_PIN                         PB14
 #define EXP2_02_PIN                         PB13
@@ -166,7 +155,6 @@
 #define EXP2_06_PIN                         PB15
 #define EXP2_07_PIN                         PB7
 #define EXP2_08_PIN                         -1    // RESET
-
 
 //
 // Onboard SD support

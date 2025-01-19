@@ -74,7 +74,7 @@
 //
 // Z Probe (when not Z_MIN_PIN)
 //
-#define Z_MIN_PROBE_PIN                     PC3  // Z3_PIN
+#define Z_MIN_PROBE_PIN                     PC3   // Z3_PIN
 
 //
 // Steppers
@@ -135,7 +135,6 @@
 #ifndef E4_CS_PIN
   #define E4_CS_PIN                         PG5
 #endif
-
 
 //
 // Temperature Sensors
@@ -210,7 +209,6 @@
 #if SD_CONNECTION_IS(ONBOARD)
 
   #define ONBOARD_SDIO                            // Use SDIO for onboard SD
-
 
 #elif SD_CONNECTION_IS(LCD)
 
