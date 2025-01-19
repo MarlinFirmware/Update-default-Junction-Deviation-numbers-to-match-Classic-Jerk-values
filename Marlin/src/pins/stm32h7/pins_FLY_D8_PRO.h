@@ -1,6 +1,6 @@
 /**
  * Marlin 3D Printer Firmware
- * Copyright (c) 2024 MarlinFirmware [https://github.com/MarlinFirmware/Marlin]
+ * Copyright (c) 2025 MarlinFirmware [https://github.com/MarlinFirmware/Marlin]
  *
  * Based on Sprinter and grbl.
  * Copyright (c) 2011 Camiel Gubbels / Erik van der Zalm
@@ -159,7 +159,6 @@
 #define HEATER_3_PIN                        PD13
 #define HEATER_4_PIN                        PD14
 
-
 #define FAN0_PIN                            PA1
 #define FAN1_PIN                            PA2
 #define FAN2_PIN                            PA3
@@ -203,13 +202,11 @@
 #endif
 
 #if SD_CONNECTION_IS(LCD)
-
   #define SD_SCK_PIN                 EXP2_02_PIN
   #define SD_MISO_PIN                EXP2_01_PIN
   #define SD_MOSI_PIN                EXP2_06_PIN
   #define SDSS                       EXP2_04_PIN
   #define SD_DETECT_PIN              EXP2_07_PIN
-
 #endif
 
 //
