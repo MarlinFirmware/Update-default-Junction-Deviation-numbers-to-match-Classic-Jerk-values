@@ -35,67 +35,9 @@
 
 #include <stdint.h>
 
-#include "../../core/serial_hook.h"
-
-// ------------------------
-// Serial ports
-// ------------------------
-
-typedef ForwardSerial1Class< decltype(Serial) > DefaultSerial1;
-typedef ForwardSerial1Class< decltype(Serial1) > DefaultSerial2;
-typedef ForwardSerial1Class< decltype(Serial2) > DefaultSerial3;
-typedef ForwardSerial1Class< decltype(Serial3) > DefaultSerial4;
-extern DefaultSerial1 MSerial0;
-extern DefaultSerial2 MSerial1;
-extern DefaultSerial3 MSerial2;
-extern DefaultSerial4 MSerial3;
-
-#define _MSERIAL(X) MSerial##X
-#define MSERIAL(X) _MSERIAL(X)
-
-#if SERIAL_PORT == -1 || ENABLED(EMERGENCY_PARSER)
-  #define MYSERIAL1 customizedSerial1
-#elif WITHIN(SERIAL_PORT, 0, 3)
-  #define MYSERIAL1 MSERIAL(SERIAL_PORT)
-#else
-  #error "The required SERIAL_PORT must be from 0 to 3, or -1 for USB Serial."
-#endif
-
-#ifdef SERIAL_PORT_2
-  #if SERIAL_PORT_2 == -1 || ENABLED(EMERGENCY_PARSER)
-    #define MYSERIAL2 customizedSerial2
-  #elif WITHIN(SERIAL_PORT_2, 0, 3)
-    #define MYSERIAL2 MSERIAL(SERIAL_PORT_2)
-  #else
-    #error "SERIAL_PORT_2 must be from 0 to 3, or -1 for USB Serial."
-  #endif
-#endif
-
-#ifdef SERIAL_PORT_3
-  #if SERIAL_PORT_3 == -1 || ENABLED(EMERGENCY_PARSER)
-    #define MYSERIAL3 customizedSerial3
-  #elif WITHIN(SERIAL_PORT_3, 0, 3)
-    #define MYSERIAL3 MSERIAL(SERIAL_PORT_3)
-  #else
-    #error "SERIAL_PORT_3 must be from 0 to 3, or -1 for USB Serial."
-  #endif
-#endif
-
-#ifdef MMU_SERIAL_PORT
-  #if WITHIN(MMU_SERIAL_PORT, 0, 3)
-    #define MMU_SERIAL MSERIAL(MMU_SERIAL_PORT)
-  #else
-    #error "MMU_SERIAL_PORT must be from 0 to 3."
-  #endif
-#endif
-
-#ifdef LCD_SERIAL_PORT
-  #if WITHIN(LCD_SERIAL_PORT, 0, 3)
-    #define LCD_SERIAL MSERIAL(LCD_SERIAL_PORT)
-  #else
-    #error "LCD_SERIAL_PORT must be from 0 to 3."
-  #endif
-#endif
+//
+// Serial Ports
+//
 
 #include "MarlinSerial.h"
 #include "MarlinSerialUSB.h"

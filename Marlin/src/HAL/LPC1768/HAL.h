@@ -38,72 +38,15 @@ extern "C" volatile uint32_t _millis;
 #include "../shared/math_32bit.h"
 #include "../shared/HAL_SPI.h"
 #include "fastio.h"
-#include "MarlinSerial.h"
 
 #include <adc.h>
 #include <pinmapping.h>
-#include <CDCSerial.h>
 
-// ------------------------
-// Serial ports
-// ------------------------
+//
+// Serial Ports
+//
 
-typedef ForwardSerial1Class< decltype(UsbSerial) > DefaultSerial1;
-extern DefaultSerial1 USBSerial;
-
-#define _MSERIAL(X) MSerial##X
-#define MSERIAL(X) _MSERIAL(X)
-
-#if SERIAL_PORT == -1
-  #define MYSERIAL1 USBSerial
-#elif WITHIN(SERIAL_PORT, 0, 3)
-  #define MYSERIAL1 MSERIAL(SERIAL_PORT)
-#else
-  #error "SERIAL_PORT must be from 0 to 3. You can also use -1 if the board supports Native USB."
-#endif
-
-#ifdef SERIAL_PORT_2
-  #if SERIAL_PORT_2 == -1
-    #define MYSERIAL2 USBSerial
-  #elif WITHIN(SERIAL_PORT_2, 0, 3)
-    #define MYSERIAL2 MSERIAL(SERIAL_PORT_2)
-  #else
-    #error "SERIAL_PORT_2 must be from 0 to 3. You can also use -1 if the board supports Native USB."
-  #endif
-#endif
-
-#ifdef SERIAL_PORT_3
-  #if SERIAL_PORT_3 == -1
-    #define MYSERIAL3 USBSerial
-  #elif WITHIN(SERIAL_PORT_3, 0, 3)
-    #define MYSERIAL3 MSERIAL(SERIAL_PORT_3)
-  #else
-    #error "SERIAL_PORT_3 must be from 0 to 3. You can also use -1 if the board supports Native USB."
-  #endif
-#endif
-
-#ifdef MMU_SERIAL_PORT
-  #if MMU_SERIAL_PORT == -1
-    #define MMU_SERIAL USBSerial
-  #elif WITHIN(MMU_SERIAL_PORT, 0, 3)
-    #define MMU_SERIAL MSERIAL(MMU_SERIAL_PORT)
-  #else
-    #error "MMU_SERIAL_PORT must be from 0 to 3. You can also use -1 if the board supports Native USB."
-  #endif
-#endif
-
-#ifdef LCD_SERIAL_PORT
-  #if LCD_SERIAL_PORT == -1
-    #define LCD_SERIAL USBSerial
-  #elif WITHIN(LCD_SERIAL_PORT, 0, 3)
-    #define LCD_SERIAL MSERIAL(LCD_SERIAL_PORT)
-  #else
-    #error "LCD_SERIAL_PORT must be from 0 to 3. You can also use -1 if the board supports Native USB."
-  #endif
-  #if ANY(HAS_DGUS_LCD, EXTENSIBLE_UI)
-    #define LCD_SERIAL_TX_BUFFER_FREE() LCD_SERIAL.available()
-  #endif
-#endif
+#include "MarlinSerial.h"
 
 //
 // Interrupts

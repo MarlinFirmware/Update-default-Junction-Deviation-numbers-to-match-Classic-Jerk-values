@@ -24,6 +24,14 @@
 #include "../../core/serial_hook.h"
 #include <drivers/usart/Usart.h>
 
+#define SERIAL_INDEX_MIN 1
+#define SERIAL_INDEX_MAX 4
+#include "../shared/serial_ports.h"
+
+#if defined(LCD_SERIAL_PORT) && ANY(HAS_DGUS_LCD, EXTENSIBLE_UI)
+  #define LCD_SERIAL_TX_BUFFER_FREE() LCD_SERIAL.availableForWrite()
+#endif
+
 // Optionally set uart IRQ priority to reduce overflow errors
 //#define UART_RX_IRQ_PRIO 1
 //#define UART_TX_IRQ_PRIO 1
