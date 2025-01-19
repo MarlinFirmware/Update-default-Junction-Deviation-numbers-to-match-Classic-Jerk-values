@@ -586,6 +586,12 @@
   #include "stm32f0/pins_MALYAN_M200_V2.h"          // STM32F0                              env:STM32F070RB_malyan env:STM32F070CB_malyan
 #elif MB(MALYAN_M300)
   #include "stm32f0/pins_MALYAN_M300.h"             // STM32F0                              env:malyan_M300
+#elif MB(FLY_D5)
+  #include "stm32f0/pins_FLY_D5.h"                  // STM32F0                              env:FLY_D5
+#elif MB(FLY_DP5)
+  #include "stm32f0/pins_FLY_DP5.h"                 // STM32F0                              env:FLY_D5
+#elif MB(FLY_D7)
+  #include "stm32f0/pins_FLY_D7.h"                  // STM32F0                              env:FLY_D7
 
 //
 // STM32 ARM Cortex-M3
@@ -845,6 +851,12 @@
   #include "stm32f4/pins_XTLW_CLIMBER_8TH.h"        // STM32F4                              env:XTLW_CLIMBER_8TH
 #elif MB(FLY_RRF_E3_V1)
   #include "stm32f4/pins_FLY_RRF_E3_V1.h"           // STM32F4                              env:FLY_RRF_E3_V1
+#elif MB(FLY_SUPER8)
+  #include "stm32f4/pins_FLY_SUPER8.h"              // STM32F4                              env:FLY_SUPER8
+#elif MB(FLY_D8)
+  #include "stm32f4/pins_FLY_D8.h"                  // STM32F4                              env:FLY_D8
+#elif MB(FLY_CDY_V3)
+  #include "stm32f4/pins_FLY_CDY_V3.h"              // STM32F4                              env:FLY_CDY_V3
 
 //
 // Other ARM Cortex-M4
@@ -883,6 +895,10 @@
   #include "teensy4/pins_TEENSY41.h"                // Teensy-4.x                           env:teensy41
 #elif MB(T41U5XBB)
   #include "teensy4/pins_T41U5XBB.h"                // Teensy-4.x                           env:teensy41
+#elif MB(FLY_D8_PRO)
+  #include "stm32h7/pins_FLY_D8_PRO.h"              // STM32H7                              env:FLY_D8_PRO
+#elif MB(FLY_SUPER8_PRO)
+  #include "stm32h7/pins_FLY_SUPER8_PRO.h"          // STM32H7                              env:FLY_SUPER8_PRO
 
 //
 // Espressif ESP32
