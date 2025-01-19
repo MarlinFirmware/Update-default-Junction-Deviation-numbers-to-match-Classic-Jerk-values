@@ -39,6 +39,11 @@
   #include "../../../feature/powerloss.h"
 #endif
 
+#define FILAMENT_IS_OUT(N...) (READ(FIL_RUNOUT##N##_PIN) == FIL_RUNOUT##N##_STATE)
+#ifndef FILAMENT_RUNOUT_THRESHOLD
+  #define FILAMENT_RUNOUT_THRESHOLD 20
+#endif
+
 extern uint32_t To_pre_view;
 extern bool flash_preview_begin, default_preview_flg, gcode_preview_over;
 
@@ -101,6 +106,7 @@ void printer_state_polling() {
       update_spi_flash();
     }
   }
+
   #if ENABLED(POWER_LOSS_RECOVERY)
     if (uiCfg.print_state == REPRINTED) {
       #if HAS_HOTEND
@@ -118,6 +124,7 @@ void printer_state_polling() {
       #endif
 
       recovery.resume();
+
       #if 0
         // Move back to the saved XY
         char str_1[16], str_2[16];
@@ -140,61 +147,57 @@ void printer_state_polling() {
     }
   #endif
 
-  if (uiCfg.print_state == WORKING)
-    filament_check();
+  if (uiCfg.print_state == WORKING) filament_check();
 
   TERN_(MKS_WIFI_MODULE, wifi_looping());
 }
 
 void filament_pin_setup() {
-  #if PIN_EXISTS(MT_DET_1)
-    SET_INPUT_PULLUP(MT_DET_1_PIN);
+  #if PIN_EXISTS(FIL_RUNOUT1)
+    SET_INPUT_PULLUP(FIL_RUNOUT1_PIN);
   #endif
-  #if PIN_EXISTS(MT_DET_2)
-    SET_INPUT_PULLUP(MT_DET_2_PIN);
+  #if PIN_EXISTS(FIL_RUNOUT2)
+    SET_INPUT_PULLUP(FIL_RUNOUT2_PIN);
   #endif
-  #if PIN_EXISTS(MT_DET_3)
-    SET_INPUT_PULLUP(MT_DET_3_PIN);
+  #if PIN_EXISTS(FIL_RUNOUT3)
+    SET_INPUT_PULLUP(FIL_RUNOUT3_PIN);
   #endif
 }
 
 void filament_check() {
-  #if ANY_PIN(MT_DET_1, MT_DET_2, MT_DET_3)
-    const int FIL_DELAY = 20;
-  #endif
-  #if PIN_EXISTS(MT_DET_1)
+  #if PIN_EXISTS(FIL_RUNOUT1)
     static int fil_det_count_1 = 0;
-    if (READ(MT_DET_1_PIN) == MT_DET_PIN_STATE)
+    if (FILAMENT_IS_OUT(1))
       fil_det_count_1++;
     else if (fil_det_count_1 > 0)
       fil_det_count_1--;
   #endif
 
-  #if PIN_EXISTS(MT_DET_2)
+  #if PIN_EXISTS(FIL_RUNOUT2)
     static int fil_det_count_2 = 0;
-    if (READ(MT_DET_2_PIN) == MT_DET_PIN_STATE)
+    if (FILAMENT_IS_OUT(2))
       fil_det_count_2++;
     else if (fil_det_count_2 > 0)
       fil_det_count_2--;
   #endif
 
-  #if PIN_EXISTS(MT_DET_3)
+  #if PIN_EXISTS(FIL_RUNOUT3)
     static int fil_det_count_3 = 0;
-    if (READ(MT_DET_3_PIN) == MT_DET_PIN_STATE)
+    if (FILAMENT_IS_OUT(3))
       fil_det_count_3++;
     else if (fil_det_count_3 > 0)
       fil_det_count_3--;
   #endif
 
   if (false
-    #if PIN_EXISTS(MT_DET_1)
-      || fil_det_count_1 >= FIL_DELAY
+    #if PIN_EXISTS(FIL_RUNOUT1)
+      || fil_det_count_1 >= FILAMENT_RUNOUT_THRESHOLD
     #endif
-    #if PIN_EXISTS(MT_DET_2)
-      || fil_det_count_2 >= FIL_DELAY
+    #if PIN_EXISTS(FIL_RUNOUT2)
+      || fil_det_count_2 >= FILAMENT_RUNOUT_THRESHOLD
     #endif
-    #if PIN_EXISTS(MT_DET_3)
-      || fil_det_count_3 >= FIL_DELAY
+    #if PIN_EXISTS(FIL_RUNOUT3)
+      || fil_det_count_3 >= FILAMENT_RUNOUT_THRESHOLD
     #endif
   ) {
     clear_cur_ui();

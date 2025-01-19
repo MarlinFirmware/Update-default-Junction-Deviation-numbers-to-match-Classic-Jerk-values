@@ -31,7 +31,7 @@ extern "C" {
 #define PA0  PIN_A0  // | 0       | A0             |                          |           |                       |           |
 #define PA1  PIN_A1  // | 1       | A1             |                          |           |                       |           |
 #define PA2  PIN_A2  // | 2       | A2             | USART2_TX                |           |                       |           |
-#define PA3  PIN_A3  // | 2       | A2, DAC_OUT1** | USART2_RX                |           |                       |           |
+#define PA3  PIN_A3  // | 2       | A3, DAC_OUT1** | USART2_RX                |           |                       |           |
 #define PA4  PIN_A4  // | 4       | A4, DAC_OUT2** |                          |           | SPI1_SS               |           |
 #define PA5  PIN_A5  // | 5       | A5             |                          |           | SPI1_SCK              |           |
 #define PA6  PIN_A6  // | 6       | A6             |                          |           | SPI1_MISO             |           |

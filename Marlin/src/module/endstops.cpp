@@ -27,7 +27,7 @@
 #include "endstops.h"
 #include "stepper.h"
 
-#if HAS_STATUS_MESSAGE
+#if ANY(HAS_STATUS_MESSAGE, VALIDATE_HOMING_ENDSTOPS)
   #include "../lcd/marlinui.h"
 #endif
 
@@ -519,21 +519,15 @@ void __O2 Endstops::report_states() {
     print_es_state(READ(CALIBRATION_PIN) != CALIBRATION_PIN_INVERTING, F(STR_CALIBRATION));
   #endif
   #if MULTI_FILAMENT_SENSOR
-    #define _CASE_RUNOUT(N) case N: pin = FIL_RUNOUT##N##_PIN; state = FIL_RUNOUT##N##_STATE; break;
-    for (uint8_t i = 1; i <= NUM_RUNOUT_SENSORS; ++i) {
-      pin_t pin;
-      uint8_t state;
-      switch (i) {
-        default: continue;
-        REPEAT_1(NUM_RUNOUT_SENSORS, _CASE_RUNOUT)
-      }
-      SERIAL_ECHOPGM(STR_FILAMENT);
-      if (i > 1) SERIAL_CHAR(' ', '0' + i);
-      print_es_state(extDigitalRead(pin) != state);
-    }
+    #define _CASE_RUNOUT(N) do{ \
+      SERIAL_ECHO(F(STR_FILAMENT)); \
+      if ((N) > 1) SERIAL_CHAR(' ', '0' + char(N)); \
+      print_es_state(!FILAMENT_IS_OUT(N)); \
+    }while(0);
+    REPEAT_1(NUM_RUNOUT_SENSORS, _CASE_RUNOUT)
     #undef _CASE_RUNOUT
   #elif HAS_FILAMENT_SENSOR
-    print_es_state(!FILAMENT_IS_OUT());
+    print_es_state(!FILAMENT_IS_OUT(), F(STR_FILAMENT));
   #endif
 
   TERN_(BLTOUCH, bltouch._reset_SW_mode());

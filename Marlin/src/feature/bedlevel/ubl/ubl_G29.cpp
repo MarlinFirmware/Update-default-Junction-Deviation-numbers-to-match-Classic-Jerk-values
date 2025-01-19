@@ -297,7 +297,13 @@ G29_parameters_t unified_bed_leveling::param;
 
 void unified_bed_leveling::G29() {
 
-  bool probe_deployed = false;
+  #ifdef EVENT_GCODE_AFTER_G29
+    bool probe_deployed = false;
+    #define SET_PROBE_DEPLOYED(N) probe_deployed = N
+  #else
+    #define SET_PROBE_DEPLOYED(N)
+  #endif
+
   if (G29_parse_parameters()) return; // Abort on parameter error
 
   const uint8_t p_val = parser.byteval('P');
@@ -315,6 +321,11 @@ void unified_bed_leveling::G29() {
       if (axes_should_home() || parser.seen_test('N')) gcode.home_all_axes();
     #endif
     probe.use_probing_tool();
+
+    #ifdef EVENT_GCODE_BEFORE_G29
+      if (DEBUGGING(LEVELING)) DEBUG_ECHOLNPGM("Before G29 G-code: ", EVENT_GCODE_BEFORE_G29);
+      gcode.process_subcommands_now(F(EVENT_GCODE_BEFORE_G29));
+    #endif
 
     // Position bed horizontally and Z probe vertically.
     #if HAS_SAFE_BED_LEVELING
@@ -430,7 +441,7 @@ void unified_bed_leveling::G29() {
         do_blocking_move_to_xy(0.5f * ((MESH_MIN_X) + (MESH_MAX_X)), 0.5f * ((MESH_MIN_Y) + (MESH_MAX_Y)));
       #endif
       report_current_position();
-      probe_deployed = true;
+      SET_PROBE_DEPLOYED(true);
     }
 
   #endif // HAS_BED_PROBE
@@ -465,7 +476,7 @@ void unified_bed_leveling::G29() {
           probe_entire_mesh(param.XY_pos, parser.seen_test('T'), parser.seen_test('E'), parser.seen_test('U'));
 
           report_current_position();
-          probe_deployed = true;
+          SET_PROBE_DEPLOYED(true);
         } break;
 
       #endif // HAS_BED_PROBE
@@ -503,7 +514,7 @@ void unified_bed_leveling::G29() {
               SERIAL_ECHOLNPGM("?Error in Business Card measurement.");
               return;
             }
-            probe_deployed = true;
+            SET_PROBE_DEPLOYED(true);
           }
 
           if (!position_is_reachable(param.XY_pos)) {
@@ -681,13 +692,11 @@ void unified_bed_leveling::G29() {
   #endif
 
   #ifdef EVENT_GCODE_AFTER_G29
-    if (DEBUGGING(LEVELING)) DEBUG_ECHOLNPGM("Z Probe End Script: ", EVENT_GCODE_AFTER_G29);
+    if (DEBUGGING(LEVELING)) DEBUG_ECHOLNPGM("After G29 G-code: ", EVENT_GCODE_AFTER_G29);
     if (probe_deployed) {
       planner.synchronize();
       gcode.process_subcommands_now(F(EVENT_GCODE_AFTER_G29));
     }
-  #else
-    UNUSED(probe_deployed);
   #endif
 
   probe.use_probing_tool(false);

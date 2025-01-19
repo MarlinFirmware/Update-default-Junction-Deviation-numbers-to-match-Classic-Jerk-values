@@ -44,6 +44,7 @@
 #define SET_INPUT_PULLUP(IO)    _SET_MODE(IO, GPIO_INPUT_PU)
 #define SET_INPUT_PULLDOWN(IO)  _SET_MODE(IO, GPIO_INPUT_PD)
 #define SET_OUTPUT(IO)          OUT_WRITE(IO, LOW)
+#define SET_OUTPUT_OD(IO)       OUT_WRITE_OD(IO, LOW)
 #define SET_PWM(IO)             pinMode(IO, PWM)    // do{ gpio_set_mode(PIN_MAP[pin].gpio_device, PIN_MAP[pin].gpio_bit, GPIO_AF_OUTPUT_PP); timer_set_mode(PIN_MAP[pin].timer_device, PIN_MAP[pin].timer_channel, TIMER_PWM); }while(0)
 #define SET_PWM_OD(IO)          pinMode(IO, PWM_OPEN_DRAIN)
 

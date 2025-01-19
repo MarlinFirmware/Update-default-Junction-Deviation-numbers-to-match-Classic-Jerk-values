@@ -458,7 +458,7 @@
 #elif MB(RAMPS_14_RE_ARM_EFB, RAMPS_14_RE_ARM_EEB, RAMPS_14_RE_ARM_EFF, RAMPS_14_RE_ARM_EEF, RAMPS_14_RE_ARM_SF)
   #include "lpc1768/pins_RAMPS_RE_ARM.h"            // LPC1768                              env:LPC1768
 #elif MB(MKS_SBASE)
-  #include "lpc1768/pins_MKS_SBASE.h"               // LPC1768                              env:LPC1768
+  #include "lpc1768/pins_MKS_SBASE.h"               // LPC1768/9                            env:LPC1768 env:LPC1769
 #elif MB(AZSMZ_MINI)
   #include "lpc1768/pins_AZSMZ_MINI.h"              // LPC1768                              env:LPC1768
 #elif MB(BIQU_BQ111_A4)
@@ -497,7 +497,7 @@
 #elif MB(COHESION3D_MINI)
   #include "lpc1769/pins_COHESION3D_MINI.h"         // LPC1769                              env:LPC1769
 #elif MB(SMOOTHIEBOARD)
-  #include "lpc1769/pins_SMOOTHIEBOARD.h"           // LPC1769                              env:LPC1769
+  #include "lpc1769/pins_SMOOTHIEBOARD.h"           // LPC1768/9                            env:LPC1768 env:LPC1769
 #elif MB(TH3D_EZBOARD)
   #include "lpc1769/pins_TH3D_EZBOARD.h"            // LPC1769                              env:LPC1769
 #elif MB(BTT_SKR_V1_4_TURBO)

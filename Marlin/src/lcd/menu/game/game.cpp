@@ -40,15 +40,15 @@ bool MarlinGame::game_frame() {
 }
 
 void MarlinGame::draw_game_over() {
-  constexpr int8_t gowide = (MENU_FONT_WIDTH) * 9,
-                   gohigh = MENU_FONT_ASCENT - 3,
-                       lx = (LCD_PIXEL_WIDTH - gowide) / 2,
-                       ly = (LCD_PIXEL_HEIGHT + gohigh) / 2;
+  constexpr int8_t gowide = (GAME_FONT_WIDTH) * 9,
+                   gohigh = GAME_FONT_ASCENT - 3,
+                       lx = (GAME_WIDTH - gowide) / 2,
+                       ly = (GAME_HEIGHT + gohigh) / 2;
   if (PAGE_CONTAINS(ly - gohigh - 1, ly + 1)) {
-    u8g.setColorIndex(0);
-    u8g.drawBox(lx - 1, ly - gohigh - 1, gowide + 2, gohigh + 2);
-    u8g.setColorIndex(1);
-    if (ui.get_blink()) lcd_put_u8str(lx, ly, F("GAME OVER"));
+    set_color(color::BLACK);
+    draw_box(lx - 1, ly - gohigh - 1, gowide + 2, gohigh + 2);
+    set_color(color::WHITE);
+    if (ui.get_blink()) draw_string(lx, ly, F("GAME OVER"));
   }
 }
 

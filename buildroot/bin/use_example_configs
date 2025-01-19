@@ -1,4 +1,4 @@
-#!/usr/bin/env bash
+#!/usr/bin/env python
 #
 # use_example_configs [repo:]configpath
 #
@@ -14,40 +14,75 @@
 #       The fallback branch is bugfix-2.1.x.
 #
 
-which curl >/dev/null && TOOL='curl -L -s -S -f -o wgot'
-which wget >/dev/null && TOOL='wget -q -O wgot'
+import os, subprocess, sys, urllib.request
 
-CURR=$(git branch 2>/dev/null | grep ^* | sed 's/\* //g')
-case "$CURR" in
-   bugfix-2.*.x ) BRANCH=$CURR ;;
-  *-2.1.x|2.1.x ) BRANCH=latest-2.1.x ;;
-  *-2.0.x|2.0.x ) BRANCH=latest-2.0.x ;;
-  *-1.1.x|1.1.x ) BRANCH=latest-1.1.x ;;
-  *-1.0.x|1.0.x ) BRANCH=latest-1.0.x ;;
-              * ) BRANCH=bugfix-2.1.x ;;
-esac
+def get_current_branch():
+  try:
+    result = subprocess.run(['git', 'branch'], capture_output=True, text=True, check=True)
+    for line in result.stdout.splitlines():
+      if line.startswith('*'):
+        return line[2:]
+  except subprocess.CalledProcessError:
+    return None
 
-if [[ $# > 0 ]]; then
-  IFS=: read -r PART1 PART2 <<< "$@"
-  [[ -n $PART2 ]] && { UDIR="$PART2" ; BRANCH="$PART1" ; } \
-                  || { UDIR="$PART1" ; }
-  RDIR="${UDIR// /%20}"
-  echo "Fetching $UDIR configurations from $BRANCH..."
-  EXAMPLES="examples/$RDIR"
-else
-  EXAMPLES="default"
-fi
+def fetch_configs(branch, config_path):
+  print(f"Fetching {config_path} configurations from {branch}...")
+  base_url = f"https://raw.githubusercontent.com/MarlinFirmware/Configurations/{branch}/config/{config_path}"
+  files = ["Configuration.h", "Configuration_adv.h", "_Bootscreen.h", "_Statusscreen.h"]
+  marlin_dir = os.path.join(os.getcwd(), "Marlin")
+  if not os.path.exists(marlin_dir):
+    print(f"Directory {marlin_dir} does not exist.")
+    sys.exit(1)
+  for file in files:
+    url = f"{base_url}/{file}"
+    dest_file = os.path.join(marlin_dir, file)
+    if os.getenv('DEBUG', '0') == '1':
+      print(f"Fetching {file} from {url} to {dest_file}")
+    try:
+      urllib.request.urlretrieve(url, dest_file)
+    except urllib.error.HTTPError as e:
+      if e.code == 404:
+        if os.getenv('DEBUG', '0') == '1':
+          print(f"File {file} not found (404), skipping.")
+      else:
+        raise
 
-CONFIGS="https://raw.githubusercontent.com/MarlinFirmware/Configurations/$BRANCH/config/${EXAMPLES}"
+def main():
+  branch = get_current_branch()
+  if not branch:
+    print("Not a git repository or no branch found.")
+    sys.exit(1)
 
-restore_configs
+  if branch.startswith("bugfix-2."):
+    branch = branch
+  elif branch.endswith("-2.1.x") or branch == "2.1.x":
+    branch = "latest-2.1.x"
+  elif branch.endswith("-2.0.x") or branch == "2.0.x":
+    branch = "latest-2.0.x"
+  elif branch.endswith("-1.1.x") or branch == "1.1.x":
+    branch = "latest-1.1.x"
+  elif branch.endswith("-1.0.x") or branch == "1.0.x":
+    branch = "latest-1.0.x"
+  else:
+    branch = "bugfix-2.1.x"
 
-cd Marlin
+  if len(sys.argv) > 1:
+    arg = sys.argv[1]
+    if ':' in arg:
+      part1, part2 = arg.split(':', 1)
+      config_path = part2
+      branch = part1
+    else:
+      config_path = arg
+    config_path = 'examples/'+config_path.replace(' ', '%20')
+  else:
+    config_path = "default"
 
-$TOOL "$CONFIGS/Configuration.h"     >/dev/null 2>&1 && mv wgot Configuration.h
-$TOOL "$CONFIGS/Configuration_adv.h" >/dev/null 2>&1 && mv wgot Configuration_adv.h
-$TOOL "$CONFIGS/_Bootscreen.h"       >/dev/null 2>&1 && mv wgot _Bootscreen.h
-$TOOL "$CONFIGS/_Statusscreen.h"     >/dev/null 2>&1 && mv wgot _Statusscreen.h
+  try:
+    subprocess.run(['restore_configs'], check=True)
+  except FileNotFoundError:
+    print("restore_configs not found, skipping.")
+  fetch_configs(branch, config_path)
 
-rm -f wgot
-cd - >/dev/null
+if __name__ == "__main__":
+  main()

@@ -80,6 +80,10 @@
 #define Z_MIN_PIN                           PA11
 #define Z_MAX_PIN                           PC4
 
+#ifndef FIL_RUNOUT_PIN
+  #define FIL_RUNOUT_PIN                    PA4   // MT_DET
+#endif
+
 //
 // Probe enable
 //
@@ -187,8 +191,9 @@
     #define KILL_PIN_STATE                  HIGH
   #endif
 
-  #define MT_DET_1_PIN                      PA4
-  #define MT_DET_PIN_STATE                  LOW
+  #ifndef FIL_RUNOUT_STATE
+    #define FIL_RUNOUT_STATE                LOW
+  #endif
 
   #define WIFI_IO0_PIN                      PC13
   #define WIFI_IO1_PIN                      PC7
@@ -205,7 +210,6 @@
 #else
   //#define POWER_LOSS_PIN                  PA2   // PW_DET
   //#define PS_ON_PIN                       PB2   // PW_OFF
-  #define FIL_RUNOUT_PIN                    PA4
 #endif
 
 //#define LED_PIN                           PB2

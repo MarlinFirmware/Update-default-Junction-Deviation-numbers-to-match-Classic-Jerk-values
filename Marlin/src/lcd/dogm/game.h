@@ -1,6 +1,6 @@
 /**
  * Marlin 3D Printer Firmware
- * Copyright (c) 2021 MarlinFirmware [https://github.com/MarlinFirmware/Marlin]
+ * Copyright (c) 2025 MarlinFirmware [https://github.com/MarlinFirmware/Marlin]
  *
  * Based on Sprinter and grbl.
  * Copyright (c) 2011 Camiel Gubbels / Erik van der Zalm
@@ -19,15 +19,15 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  *
  */
-#ifndef ENV_VALIDATE_H
-#define ENV_VALIDATE_H
+#pragma once
 
-#if ENABLED(ALLOW_LPC1768_OR_9) && NOT_TARGET(MCU_LPC1768, MCU_LPC1769)
-  #error "Oops! Make sure you have the LPC1768 or LPC1769 environment selected in your IDE."
-#elif NOT_TARGET(MCU_LPC1769)
-  #error "Oops! Make sure you have the LPC1769 environment selected in your IDE."
-#endif
+#include "marlinui_DOGM.h"
+#include "../lcdprint.h"
 
-#undef ALLOW_LPC1768_OR_9
+typedef uint8_t game_dim_t;
+typedef const u8g_pgm_uint8_t* pgm_bitmap_t;
 
-#endif // ENV_VALIDATE_H
+constexpr game_dim_t GAME_WIDTH = LCD_PIXEL_WIDTH;
+constexpr game_dim_t GAME_HEIGHT = LCD_PIXEL_HEIGHT;
+constexpr game_dim_t GAME_FONT_WIDTH = MENU_FONT_WIDTH;
+constexpr game_dim_t GAME_FONT_ASCENT = MENU_FONT_ASCENT;
