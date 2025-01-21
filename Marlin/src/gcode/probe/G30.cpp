@@ -81,7 +81,7 @@ void GcodeSuite::G30() {
     TERN_(HAS_PTC, ptc.set_enabled(parser.boolval('C', true)));
 
     #if ENABLED(FT_MOTION) && ANY(BIQU_MICROPROBE_V1, BIQU_MICROPROBE_V2)
-      FTMotionDisableUntilExit FT_Disabler; // Disable Fixed-Time Motion for probing
+      FTMotionDisableInScope FT_Disabler; // Disable Fixed-Time Motion for probing
     #endif
 
     // Probe the bed, optionally raise, and return the measured height

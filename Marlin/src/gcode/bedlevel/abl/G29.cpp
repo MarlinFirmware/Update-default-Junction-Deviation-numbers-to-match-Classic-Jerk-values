@@ -285,7 +285,7 @@ G29_TYPE GcodeSuite::G29() {
   TERN_(FULL_REPORT_TO_HOST_FEATURE, set_and_report_grblstate(M_PROBE, false));
 
   #if DISABLED(PROBE_MANUALLY) && ENABLED(FT_MOTION) && ANY(BIQU_MICROPROBE_V1, BIQU_MICROPROBE_V2)
-    FTMotionDisableUntilExit FT_Disabler; // Disable Fixed-Time Motion for probing
+    FTMotionDisableInScope FT_Disabler; // Disable Fixed-Time Motion for probing
   #endif
 
   /**

@@ -217,14 +217,14 @@ class FTMotion {
 
 extern FTMotion ftMotion;
 
-typedef struct FTMotionDisableUntilExit {
+typedef struct FTMotionDisableInScope {
   bool isactive;
-  FTMotionDisableUntilExit() {
+  FTMotionDisableInScope() {
     isactive = ftMotion.cfg.active;
     ftMotion.cfg.active = false;
   }
-  ~FTMotionDisableUntilExit() {
+  ~FTMotionDisableInScope() {
     ftMotion.cfg.active = isactive;
     if (isactive) ftMotion.init();
   }
-} FTMotionDisableUntilExit_t;
+} FTMotionDisableInScope_t;
