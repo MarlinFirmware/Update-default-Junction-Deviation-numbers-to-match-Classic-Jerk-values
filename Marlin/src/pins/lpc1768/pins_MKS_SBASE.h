@@ -25,6 +25,7 @@
  * Makerbase MKS SBASE pin assignments
  */
 
+#define ALLOW_LPC1768_OR_9
 #include "env_validate.h"
 
 #ifndef BOARD_INFO_NAME

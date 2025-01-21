@@ -205,15 +205,6 @@ public:
 
   static void init();
 
-  #if HAS_DISPLAY || HAS_DWIN_E3V2
-    static void init_lcd();
-    // Erase the LCD contents. Do the lowest-level thing required to clear the LCD.
-    static void clear_lcd();
-  #else
-    static void init_lcd() {}
-    static void clear_lcd() {}
-  #endif
-
   static void reinit_lcd() { TERN_(REINIT_NOISY_LCD, init_lcd()); }
 
   #if HAS_WIRED_LCD
@@ -522,6 +513,11 @@ public:
 
   #if HAS_DISPLAY
 
+    static void init_lcd();
+
+    // Erase the LCD contents. Do the lowest-level thing required to clear the LCD.
+    static void clear_lcd();
+
     // Clear the LCD before new drawing. Some LCDs do nothing because they redraw frequently.
     static void clear_for_drawing();
 
@@ -635,6 +631,8 @@ public:
 
   #else // No LCD
 
+    static void init_lcd() {}
+    static void clear_lcd() {}
     static void clear_for_drawing() {}
     static void kill_screen(FSTR_P const, FSTR_P const) {}
 

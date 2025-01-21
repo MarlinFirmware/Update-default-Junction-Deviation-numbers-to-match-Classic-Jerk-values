@@ -585,7 +585,7 @@
   #endif
 #endif
 
-#if ANY(HAS_WIRED_LCD, EXTENSIBLE_UI, DWIN_LCD_PROUI, DWIN_CREALITY_LCD_JYERSUI)
+#if ANY(HAS_WIRED_LCD, EXTENSIBLE_UI, HAS_DWIN_E3V2)
   /**
    * HAS_DISPLAY indicates the display uses these MarlinUI methods...
    *  - update
@@ -605,10 +605,8 @@
    *    (calling advance_status_scroll, status_and_len for a scrolling status message)
    */
   #define HAS_DISPLAY 1
-#endif
-
-#if ANY(HAS_DISPLAY, DWIN_CREALITY_LCD)
   #define HAS_UI_UPDATE 1
+  #define HAS_STATUS_MESSAGE 1
 #endif
 
 #if HAS_WIRED_LCD && !HAS_GRAPHICAL_TFT && !IS_DWIN_MARLINUI
@@ -617,10 +615,6 @@
 
 #if HAS_DISPLAY || HAS_LCDPRINT
   #define HAS_UTF8_UTILS 1
-#endif
-
-#if ANY(HAS_DISPLAY, HAS_DWIN_E3V2)
-  #define HAS_STATUS_MESSAGE 1
 #endif
 
 #if IS_ULTIPANEL && DISABLED(NO_LCD_MENUS)

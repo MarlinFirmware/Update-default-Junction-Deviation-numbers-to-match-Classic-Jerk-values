@@ -309,16 +309,18 @@
   //
   // Software serial
   //
-  #define X_SERIAL_TX_PIN                   PF10
-  #define Y_SERIAL_TX_PIN                   PD4
-  #define Z_SERIAL_TX_PIN                   PC8
-  #define E0_SERIAL_TX_PIN                  PD8
-  #define E1_SERIAL_TX_PIN                  PB11
+  //#define X_SERIAL_TX_PIN                 PF10
+  //#define Y_SERIAL_TX_PIN                 PD4
+  //#define Z_SERIAL_TX_PIN                 PC8
+  //#define E0_SERIAL_TX_PIN                PD8
+  //#define E1_SERIAL_TX_PIN                PB11
 
   // Reduce baud rate to improve software serial reliability
-  #ifndef TMC_BAUD_RATE
-    #define TMC_BAUD_RATE                  19200
-  #endif
+  //#ifndef TMC_BAUD_RATE
+  //  #define TMC_BAUD_RATE                19200
+  //#endif
+
+  #error "UART-based drivers are not supported on this board."
 
 #endif
 

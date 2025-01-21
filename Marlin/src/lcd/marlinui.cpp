@@ -55,10 +55,10 @@ MarlinUI ui;
 #endif
 
 #if ENABLED(LCD_PROGRESS_BAR) && !IS_TFTGLCD_PANEL
-  #define BASIC_PROGRESS_BAR 1
+  #define HAS_BASIC_PROGRESS_BAR 1
 #endif
 
-#if ANY(HAS_DISPLAY, HAS_STATUS_MESSAGE, BASIC_PROGRESS_BAR)
+#if ANY(HAS_DISPLAY, HAS_STATUS_MESSAGE, HAS_BASIC_PROGRESS_BAR)
   #include "../module/printcounter.h"
 #endif
 
@@ -598,7 +598,7 @@ void MarlinUI::init() {
    * This is very display-dependent, so the lcd implementation draws this.
    */
 
-  #if BASIC_PROGRESS_BAR
+  #if HAS_BASIC_PROGRESS_BAR
     millis_t MarlinUI::progress_bar_ms; // = 0
     #if PROGRESS_MSG_EXPIRE > 0
       millis_t MarlinUI::expire_status_ms; // = 0
@@ -607,7 +607,7 @@ void MarlinUI::init() {
 
   void MarlinUI::status_screen() {
 
-    #if BASIC_PROGRESS_BAR
+    #if HAS_BASIC_PROGRESS_BAR
 
       //
       // HD44780 implements the following message blinking and
@@ -647,7 +647,7 @@ void MarlinUI::init() {
 
       #endif // PROGRESS_MSG_EXPIRE
 
-    #endif // BASIC_PROGRESS_BAR
+    #endif // HAS_BASIC_PROGRESS_BAR
 
     bool did_expire = status_reset_callback && (*status_reset_callback)();
 
@@ -1592,11 +1592,11 @@ void MarlinUI::host_notify(const char * const cstr) {
 
     #if HAS_WIRED_LCD
 
-      #if BASIC_PROGRESS_BAR || ALL(FILAMENT_LCD_DISPLAY, HAS_MEDIA)
+      #if HAS_BASIC_PROGRESS_BAR || ALL(FILAMENT_LCD_DISPLAY, HAS_MEDIA)
         const millis_t ms = millis();
       #endif
 
-      #if BASIC_PROGRESS_BAR
+      #if HAS_BASIC_PROGRESS_BAR
         progress_bar_ms = ms;
         #if PROGRESS_MSG_EXPIRE > 0
           expire_status_ms = persist ? 0 : ms + PROGRESS_MSG_EXPIRE;

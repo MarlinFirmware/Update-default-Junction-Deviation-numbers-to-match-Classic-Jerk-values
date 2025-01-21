@@ -70,6 +70,9 @@
 #ifndef FIL_RUNOUT_PIN
   #define FIL_RUNOUT_PIN                    PA4   // MT_DET
 #endif
+#ifndef FIL_RUNOUT_STATE
+  #define FIL_RUNOUT_STATE                  LOW
+#endif
 
 //
 // Probe enable
@@ -125,11 +128,6 @@
 //
 #define POWER_LOSS_PIN                      PA2   // PW_DET
 #define PS_ON_PIN                           PA3   // PW_OFF
-
-#if HAS_TFT_LVGL_UI
-  #define MT_DET_1_PIN                      PA4   // MT_DET
-  #define MT_DET_PIN_STATE                  LOW
-#endif
 
 #define WIFI_IO0_PIN                        PC13
 
