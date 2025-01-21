@@ -1423,6 +1423,9 @@
     #define FTM_WINDOW_SIZE FTM_BW_SIZE
     #define FTM_BATCH_SIZE  FTM_BW_SIZE
   #endif
+  #if ANY(BIQU_MICROPROBE_V1, BIQU_MICROPROBE_V2)
+    #define FT_MOTION_DISABLE_FOR_PROBING 1
+  #endif
 #endif
 
 // Multi-Stepping Limit

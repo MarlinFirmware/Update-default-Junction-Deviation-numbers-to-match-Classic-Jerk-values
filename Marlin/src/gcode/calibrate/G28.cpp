@@ -134,7 +134,7 @@
 
   inline void home_z_safely() {
 
-    #if ENABLED(FT_MOTION) && ANY(BIQU_MICROPROBE_V1, BIQU_MICROPROBE_V2)
+    #if FT_MOTION_DISABLE_FOR_PROBING
       FTMotionDisableInScope FT_Disabler; // Disable Fixed-Time Motion for homing
     #endif
 
@@ -293,7 +293,7 @@ void GcodeSuite::G28() {
       motion_state_t saved_motion_state = begin_slow_homing();
     #endif
 
-    #if ENABLED(FT_MOTION) && ANY(BIQU_MICROPROBE_V1, BIQU_MICROPROBE_V2)
+    #if FT_MOTION_DISABLE_FOR_PROBING
       FTMotionDisableInScope FT_Disabler; // Disable Fixed-Time Motion for homing
     #endif
 

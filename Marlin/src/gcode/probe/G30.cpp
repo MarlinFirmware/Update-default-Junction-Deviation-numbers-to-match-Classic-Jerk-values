@@ -34,7 +34,7 @@
   #include "../../feature/probe_temp_comp.h"
 #endif
 
-#if ENABLED(FT_MOTION) && ANY(BIQU_MICROPROBE_V1, BIQU_MICROPROBE_V2)
+#if FT_MOTION_DISABLE_FOR_PROBING
   #include "../../module/ft_motion.h"
 #endif
 
@@ -80,7 +80,7 @@ void GcodeSuite::G30() {
     // Use 'C' to set Probe Temperature Compensation ON/OFF (on by default)
     TERN_(HAS_PTC, ptc.set_enabled(parser.boolval('C', true)));
 
-    #if ENABLED(FT_MOTION) && ANY(BIQU_MICROPROBE_V1, BIQU_MICROPROBE_V2)
+    #if FT_MOTION_DISABLE_FOR_PROBING
       FTMotionDisableInScope FT_Disabler; // Disable Fixed-Time Motion for probing
     #endif
 
