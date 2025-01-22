@@ -28,7 +28,7 @@
 #if HAS_USB_FLASH_DRIVE && DISABLED(USE_UHS3_USB)
 
 #if !PINS_EXIST(USB_CS, USB_INTR)
-  #error "USB_FLASH_DRIVE_SUPPORT requires USB_CS_PIN and USB_INTR_PIN (or USE_UHS3_USB) to be defined."
+  #error "SB_CS_PIN and USB_INTR_PIN (or USE_UHS3_USB) are required for VOLUME# USBFD."
 #endif
 
 #include "Usb.h"

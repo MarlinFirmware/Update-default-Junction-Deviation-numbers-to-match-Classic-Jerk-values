@@ -28,25 +28,44 @@
 #include "../../sd/cardreader.h"
 
 /**
- * M21: Init SD Card
+ * M21: Select / Mount the SD Card or USB Flash Drive
  *
- * With MULTI_VOLUME:
- *  P0 or S - Change to the SD Card and mount it
- *  P1 or U - Change to the USB Drive and mount it
+ * With multiple volumes:
+ *  P# - Select and mount the indexed Volume (VOLUME0, VOLUME1, etc.)
+ *  S0 - Select and mount the first SD Card. (Also S with no index)
+ *  S1 - Select and mount the second SD Card.
+ *  U0 - Select and mount the first USB Flash Drive. (Also U with no index)
  */
 void GcodeSuite::M21() {
   #if HAS_MULTI_VOLUME
-    const int8_t vol = parser.intval('P', -1);
-    if (vol == 0 || parser.seen_test('S'))       // "S" for SD Card
-      card.changeMedia(&card.media_driver_sdcard);
-    else if (vol == 1 || parser.seen_test('U'))  // "U" for USB
-      card.changeMedia(&card.media_driver_usbFlash);
-  #endif
+    static int8_t vol = 0; // VOLUME0 is the default
+    const int8_t newvol = (
+                                     parser.seen_test('S')  ? 0 : // "S" for SD Card
+      TERN0(HAS_USB_FLASH_DRIVE,     parser.seen_test('U')) ? 1 : // "U" for USB
+      TERN0(ONBOARD_SDIO,            parser.seen_test('O')) ? 2 : // "O" for SDIO (usually onboard)
+                                     parser.intval('P', vol)      // "P" for integer volume number
+    );
+
+    if (newvol != vol) {
+      vol = newvol;
+      switch (newvol + 1) {
+        default: card.changeMedia(&card.media_driver_sdcard); break;
+        #if HAS_USB_FLASH_DRIVE
+          case 1: card.changeMedia(&card.media_driver_usbFlash); break;
+        #endif
+        #if ENABLED(ONBOARD_SDIO)
+          case 2: card.changeMedia(&card.media_driver_sdiocard); break;
+        #endif
+      }
+    }
+
+  #endif // HAS_MULTI_VOLUME
+
   card.mount();
 }
 
 /**
- * M22: Release SD Card
+ * M22: Release the SD Card or USB Flash Drive
  */
 void GcodeSuite::M22() {
   if (!IS_SD_PRINTING()) card.release();

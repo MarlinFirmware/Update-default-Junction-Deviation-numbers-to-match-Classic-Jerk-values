@@ -70,4 +70,4 @@ void lv_clear_media_select() {
   lv_obj_del(scr);
 }
 
-#endif // HAS_TFT_LVGL_UI
+#endif // HAS_TFT_LVGL_UI && HAS_MULTI_VOLUME

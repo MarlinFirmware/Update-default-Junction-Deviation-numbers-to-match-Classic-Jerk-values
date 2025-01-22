@@ -13,7 +13,7 @@ files needed for Marlin as "GPLv2 or later", as documented in this thread.
   https://github.com/felis/USB_Host_Shield_2.0/issues/364
 
 Small modifications have been made to the source. Please search for
-USB_FLASH_DRIVE_SUPPORT or look at the patch file to see what was changed.
+HAS_USB_FLASH_DRIVE or look at the patch file to see what was changed.
 
 ==== LICENSE SUMMARY ====
 

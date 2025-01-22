@@ -15,7 +15,7 @@
 
 #include "../../inc/MarlinConfig.h"
 
-#if SD_CONNECTION_IS(ONBOARD)
+#if ANY_VOLUME_IS(ONBOARD)
 
 #include "onboard_sd.h"
 #include "SPI.h"
@@ -567,5 +567,5 @@ DRESULT disk_read (
 
 #endif // _DISKIO_IOCTL
 
-#endif // SD_CONNECTION_IS(ONBOARD)
+#endif // ANY_VOLUME_IS(ONBOARD)
 #endif // __STM32F1__
