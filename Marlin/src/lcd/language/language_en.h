@@ -606,9 +606,13 @@ namespace LanguageNarrow_en {
   LSTR MSG_FILAMENTUNLOAD                 = _UxGT("Unload Filament");
   LSTR MSG_FILAMENTUNLOAD_E               = _UxGT("Unload * Filament");
   LSTR MSG_FILAMENTUNLOAD_ALL             = _UxGT("Unload All");
-  LSTR MSG_ATTACH_MEDIA                   = _UxGT("Attach ") MEDIA_TYPE_EN;
-  LSTR MSG_ATTACH_SD_MEDIA                = _UxGT("Attach SD Card");
-  LSTR MSG_ATTACH_USB_MEDIA               = _UxGT("Attach USB Drive");
+  #if HAS_MULTI_VOLUME
+    LSTR MSG_ATTACH_MEDIA                 = _UxGT("Attach ") MEDIA_TYPE_EN;
+    LSTR MSG_ATTACH_SD_MEDIA              = _UxGT("Attach SD Card");
+    LSTR MSG_ATTACH_USB_MEDIA             = _UxGT("Attach USB Drive");
+  #else
+    LSTR MSG_ATTACH_MEDIA                 = _UxGT("Attach SD Card");
+  #endif
   LSTR MSG_CHANGE_MEDIA                   = _UxGT("Change ") MEDIA_TYPE_EN;
   LSTR MSG_RELEASE_MEDIA                  = _UxGT("Release ") MEDIA_TYPE_EN;
   LSTR MSG_ZPROBE_OUT                     = _UxGT("Z Probe Past Bed");
@@ -931,6 +935,8 @@ namespace LanguageNarrow_en {
   LSTR MSG_DRIVER_BACKWARD                = _UxGT(" driver backward");
 
   LSTR MSG_SD_CARD                        = _UxGT("SD Card");
+  LSTR MSG_SD_CARD_ONBOARD                = _UxGT("SD Card (onboard)");
+  LSTR MSG_SD_CARD_EXTERNAL               = _UxGT("SD Card (external)");
   LSTR MSG_USB_DISK                       = _UxGT("USB Disk");
 
   LSTR MSG_HOST_SHUTDOWN                  = _UxGT("Host Shutdown");

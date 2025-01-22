@@ -142,7 +142,13 @@ namespace LanguageNarrow_pt {
   LSTR MSG_AUTORETRACT                    = _UxGT(" Auto-Retract");
   LSTR MSG_FILAMENTCHANGE                 = _UxGT("Trocar filamento");
   LSTR MSG_FILAMENTCHANGE_E               = _UxGT("Trocar filamento *");
-  LSTR MSG_ATTACH_MEDIA                   = _UxGT("Inici. cartão SD");
+  #if HAS_MULTI_VOLUME
+    LSTR MSG_ATTACH_MEDIA                 = _UxGT("Inici. mídia");
+    LSTR MSG_ATTACH_SD_MEDIA              = _UxGT("Inici. cartão SD");
+    LSTR MSG_ATTACH_USB_MEDIA             = _UxGT("Inici. flash USB");
+  #else
+    LSTR MSG_ATTACH_MEDIA                 = _UxGT("Inici. cartão SD");
+  #endif
   LSTR MSG_CHANGE_MEDIA                   = _UxGT("Trocar cartão SD");
   LSTR MSG_ZPROBE_OUT                     = _UxGT("Sensor fora/base");
   LSTR MSG_ZPROBE_XOFFSET                 = _UxGT("Desvio X");
