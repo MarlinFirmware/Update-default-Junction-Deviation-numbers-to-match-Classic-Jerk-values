@@ -33,7 +33,7 @@
   #if USE_FALLBACK_EEPROM
     #warning "EEPROM type not specified. Fallback is SDCARD_EEPROM_EMULATION."
   #endif
-  #error "SDCARD_EEPROM_EMULATION requires SDSUPPORT. Enable SDSUPPORT or choose another EEPROM emulation."
+  #error "SDCARD_EEPROM_EMULATION requires writeable media. Define VOLUME0 or choose another EEPROM emulation."
 #endif
 
 #if ENABLED(SRAM_EEPROM_EMULATION)

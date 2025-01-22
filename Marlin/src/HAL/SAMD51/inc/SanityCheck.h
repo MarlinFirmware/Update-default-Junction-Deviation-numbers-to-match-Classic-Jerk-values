@@ -37,8 +37,8 @@
   #warning "Did you activate the SmartEEPROM? See https://github.com/GMagician/SAMD51-SmartEEprom-Manager/releases"
 #endif
 
-#if defined(ADAFRUIT_GRAND_CENTRAL_M4) && SD_CONNECTION_IS(CUSTOM_CABLE)
-  #error "No custom SD drive cable defined for this board."
+#if defined(ADAFRUIT_GRAND_CENTRAL_M4) && ANY_VOLUME_IS(CUSTOM)
+  #error "No custom SD pins defined for this board."
 #endif
 
 #if (defined(TEMP_0_SCK_PIN) && defined(TEMP_0_MISO_PIN) && (TEMP_0_SCK_PIN == SCK1 || TEMP_0_MISO_PIN == MISO1)) || \

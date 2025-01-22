@@ -30,7 +30,7 @@
   #if USE_FALLBACK_EEPROM
     #warning "EEPROM type not specified. Fallback is SDCARD_EEPROM_EMULATION."
   #endif
-  #error "SDCARD_EEPROM_EMULATION requires SDSUPPORT. Enable SDSUPPORT or choose another EEPROM emulation."
+  #error "SDCARD_EEPROM_EMULATION requires VOLUME0. Enable VOLUME0 or choose another EEPROM emulation."
 #endif
 
 #if ENABLED(SERIAL_STATS_MAX_RX_QUEUED)

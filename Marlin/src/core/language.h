@@ -37,7 +37,7 @@
 
 // NOTE: IF YOU CHANGE LANGUAGE FILES OR MERGE A FILE WITH CHANGES
 //
-//   ==> ALWAYS TRY TO COMPILE MARLIN WITH/WITHOUT "ULTIPANEL" / "ULTRA_LCD" / "SDSUPPORT" #define IN "Configuration.h"
+//   ==> ALWAYS TRY TO COMPILE MARLIN WITH/WITHOUT "ULTIPANEL" / "ULTRA_LCD" / "VOLUME#" #define IN "Configuration.h"
 //   ==> ALSO TRY ALL AVAILABLE LANGUAGE OPTIONS
 // See also https://marlinfw.org/docs/development/lcd_language.html
 

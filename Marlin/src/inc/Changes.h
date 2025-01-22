@@ -415,8 +415,8 @@
   #error "CASE_LIGHT_NEOPIXEL_COLOR is now CASE_LIGHT_DEFAULT_COLOR."
 #elif defined(ABORT_ON_ENDSTOP_HIT_FEATURE_ENABLED)
   #error "ABORT_ON_ENDSTOP_HIT_FEATURE_ENABLED is now SD_ABORT_ON_ENDSTOP_HIT."
-#elif defined(LPC_SD_LCD) || defined(LPC_SD_ONBOARD) || defined(LPC_SD_CUSTOM_CABLE)
-  #error "LPC_SD_(LCD|ONBOARD|CUSTOM_CABLE) are now SDCARD_CONNECTION."
+#elif defined(LPC_SD_LCD) || defined(LPC_SD_ONBOARD) || defined(LPC_SD_CUSTOM)
+  #error "LPC_SD_(LCD|ONBOARD|CUSTOM) are now VOLUME0."
 #elif defined(USB_SD_DISABLED)
   #error "USB_SD_DISABLED is now NO_SD_HOST_DRIVE."
 #elif defined(USB_SD_ONBOARD)
@@ -745,6 +745,8 @@
   #error "FTM_SHAPING_DEFAULT_[XY]_FREQ is now FTM_SHAPING_DEFAULT_FREQ_[XY]."
 #elif defined(SDSS)
   #error "SDSS is now SD_SS_PIN."
+#elif defined(SDSUPPORT)
+  //#error "SDSUPPORT is now enabled by defining VOLUME0, VOLUME1, etc."
 #endif
 
 // SDSS renamed to SD_SS_PIN
