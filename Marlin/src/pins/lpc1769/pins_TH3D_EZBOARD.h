@@ -139,14 +139,18 @@
 // SD Card
 //
 
-#define SDCARD_CONNECTION                ONBOARD
+#ifndef VOLUME0
+  #define VOLUME0                        ONBOARD
+#endif
 
-#define SD_DETECT_PIN                      P0_27  // SD_CD
-#define SD_SCK_PIN                         P0_07
-#define SD_MISO_PIN                        P0_08
-#define SD_MOSI_PIN                        P0_09
-#define ONBOARD_SD_CS_PIN                  P0_06
-#define SD_SS_PIN              ONBOARD_SD_CS_PIN
+#if ANY_VOLUME_IS(ONBOARD)
+  #define SD_DETECT_PIN                    P0_27  // SD_CD
+  #define SD_SCK_PIN                       P0_07
+  #define SD_MISO_PIN                      P0_08
+  #define SD_MOSI_PIN                      P0_09
+  #define ONBOARD_SD_CS_PIN                P0_06
+  #define SD_SS_PIN            ONBOARD_SD_CS_PIN
+#endif
 
 //
 // LCD / Controller

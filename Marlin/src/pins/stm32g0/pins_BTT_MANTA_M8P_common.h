@@ -218,11 +218,11 @@
 //
 // SD Support
 //
-#ifndef SDCARD_CONNECTION
+#ifndef VOLUME0
   #if HAS_WIRED_LCD && DISABLED(NO_LCD_SDCARD)
-    #define SDCARD_CONNECTION                LCD
+    #define VOLUME0                          LCD
   #else
-    #define SDCARD_CONNECTION            ONBOARD
+    #define VOLUME0                      ONBOARD
   #endif
 #endif
 
@@ -258,21 +258,21 @@
 // Onboard SD card
 // Must use soft SPI because Marlin's default hardware SPI is tied to LCD's EXP2
 //
-#if SD_CONNECTION_IS(LCD)
+#if ANY_VOLUME_IS(LCD)
   #define SD_SS_PIN                  EXP2_04_PIN
   #define SD_SCK_PIN                 EXP2_02_PIN
   #define SD_MISO_PIN                EXP2_01_PIN
   #define SD_MOSI_PIN                EXP2_06_PIN
   #define SD_DETECT_PIN              EXP2_07_PIN
-#elif SD_CONNECTION_IS(ONBOARD)
+#elif ANY_VOLUME_IS(ONBOARD)
   #define SD_DETECT_PIN                     PE8
   #define SD_SCK_PIN                        PB13
   #define SD_MISO_PIN                       PB14
   #define SD_MOSI_PIN                       PB11
   #define ONBOARD_SD_CS_PIN                 PB14  // Chip select for "System" SD card
   #define SD_SS_PIN            ONBOARD_SD_CS_PIN
-#elif SD_CONNECTION_IS(CUSTOM_CABLE)
-  #error "No custom SD drive cable defined for this board."
+#elif ANY_VOLUME_IS(CUSTOM)
+  #error "No custom SD pins defined for this board."
 #endif
 
 //

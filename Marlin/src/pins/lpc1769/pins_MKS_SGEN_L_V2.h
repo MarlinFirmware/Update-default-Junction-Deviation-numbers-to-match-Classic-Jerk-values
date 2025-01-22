@@ -429,23 +429,23 @@
 //
 // SD Card
 //
-#ifndef SDCARD_CONNECTION
-  #define SDCARD_CONNECTION              ONBOARD
+#ifndef VOLUME0
+  #define VOLUME0                        ONBOARD
 #endif
 
-#if SD_CONNECTION_IS(LCD) || SD_CONNECTION_IS(ONBOARD)
+#if ANY_VOLUME_IS(LCD) || ANY_VOLUME_IS(ONBOARD)
   #define SD_DETECT_PIN              EXP2_07_PIN
   #define SD_SCK_PIN                 EXP2_02_PIN
   #define SD_MISO_PIN                EXP2_01_PIN
   #define SD_MOSI_PIN                EXP2_06_PIN
-  #if SD_CONNECTION_IS(ONBOARD)
+  #if ANY_VOLUME_IS(ONBOARD)
     #define ONBOARD_SD_CS_PIN              P0_06  // Chip select for "System" SD card
     #define SD_SS_PIN          ONBOARD_SD_CS_PIN
   #else
     #define SD_SS_PIN                EXP2_04_PIN
   #endif
-#elif SD_CONNECTION_IS(CUSTOM_CABLE)
-  #error "No custom SD drive cable defined for this board."
+#elif ANY_VOLUME_IS(CUSTOM)
+  #error "No custom SD pins defined for this board."
 #endif
 
 //

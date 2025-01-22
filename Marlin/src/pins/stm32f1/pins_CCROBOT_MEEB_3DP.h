@@ -174,7 +174,7 @@
 //
 // SD-NAND
 //
-#if SD_CONNECTION_IS(ONBOARD)
+#if ANY_VOLUME_IS(ONBOARD)
   #define SD_DETECT_PIN                     -1
   #define SD_SCK_PIN                        PA5
   #define SD_MISO_PIN                       PA6

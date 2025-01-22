@@ -154,7 +154,7 @@
   #define KILL_PIN                         P2_11  // EXP2-10
 
   #if HAS_MEDIA
-    #error "SDSUPPORT is not currently supported by the Cohesion3D boards"
+    #error "VOLUME# is not currently supported by the Cohesion3D boards."
   #endif
 
 #endif // HAS_WIRED_LCD

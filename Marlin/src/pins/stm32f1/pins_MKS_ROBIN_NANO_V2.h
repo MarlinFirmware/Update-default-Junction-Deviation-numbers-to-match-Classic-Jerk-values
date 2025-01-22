@@ -245,16 +245,16 @@
 //
 // SD Card
 //
-#ifndef SDCARD_CONNECTION
-  #define SDCARD_CONNECTION              ONBOARD
+#ifndef VOLUME0
+  #define VOLUME0                        ONBOARD
 #endif
 
-#if SD_CONNECTION_IS(ONBOARD)
+#if ANY_VOLUME_IS(ONBOARD)
   #define ONBOARD_SDIO
   #define SDIO_CLOCK                     4500000  // 4.5 MHz
   #define SD_DETECT_PIN                     PD12
   #define ONBOARD_SD_CS_PIN                 PC11
-#elif SD_CONNECTION_IS(LCD)
+#elif ANY_VOLUME_IS(LCD)
   #define ENABLE_SPI1
   #define SD_SS_PIN                  EXP2_04_PIN
   #define SD_SCK_PIN                 EXP2_02_PIN
@@ -386,7 +386,7 @@
     #define NEOPIXEL_PIN             EXP1_06_PIN
     #define DOGLCD_MOSI              EXP2_06_PIN
     #define DOGLCD_SCK               EXP2_02_PIN
-    #if SD_CONNECTION_IS(ONBOARD)
+    #if ANY_VOLUME_IS(ONBOARD)
       #define FORCE_SOFT_SPI
     #endif
     //#define LCD_SCREEN_ROTATE              180  // 0, 90, 180, 270

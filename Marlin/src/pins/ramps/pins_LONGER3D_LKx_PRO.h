@@ -147,7 +147,7 @@
   #define BTN_ENC                             15
   #define BEEPER_PIN                          11
 
-  #define SDCARD_CONNECTION              ONBOARD
+  #define VOLUME0                        ONBOARD
 
   #define LCD_PINS_DEFINED
 #endif

@@ -344,7 +344,7 @@
 
   #elif HAS_SPI_TFT                               // Config for Classic UI (emulated DOGM) and Color UI
 
-    #define SDCARD_CONNECTION            ONBOARD
+    #define VOLUME0                      ONBOARD
 
     #define BEEPER_PIN               EXP1_01_PIN
 

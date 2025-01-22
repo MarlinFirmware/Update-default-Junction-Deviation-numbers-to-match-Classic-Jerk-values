@@ -160,14 +160,14 @@
 // SD Connection
 //
 #ifndef SDCARD_CONNECTION
-  #define SDCARD_CONNECTION                 ONBOARD
+  #define VOLUME0                        ONBOARD
 #endif
 
 //
 // Onboard SD card
 // Must use soft SPI because Marlin's default hardware SPI is tied to LCD's EXP2
 //
-#if SD_CONNECTION_IS(ONBOARD)
+#if ANY_VOLUME_IS(ONBOARD)
   #define SDIO_SUPPORT                            // Use SDIO for onboard SD
   #define SDIO_D0_PIN                       PC8
   #define SDIO_D1_PIN                       PC9
@@ -175,7 +175,7 @@
   #define SDIO_D3_PIN                       PC11
   #define SDIO_CK_PIN                       PC12
   #define SDIO_CMD_PIN                      PD2
-#elif SD_CONNECTION_IS(LCD)
+#elif ANY_VOLUME_IS(LCD)
   #define CUSTOM_SPI_PINS
   #define SD_SS_PIN                         PA4
   #define SD_SCK_PIN                        PA5

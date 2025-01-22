@@ -132,7 +132,7 @@
 // SD Card
 //
 #define SD_DETECT_PIN                       PA10
-#define SDCARD_CONNECTION ONBOARD
+#define VOLUME0                          ONBOARD
 #define ONBOARD_SDIO
 #define NO_SD_HOST_DRIVE // This board's SD card is only seen by the printer
 

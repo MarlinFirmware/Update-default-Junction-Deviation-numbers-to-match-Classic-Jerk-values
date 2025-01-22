@@ -239,11 +239,11 @@
 //
 // SD Support
 //
-#ifndef SDCARD_CONNECTION
-  #define SDCARD_CONNECTION              ONBOARD
+#ifndef VOLUME0
+  #define VOLUME0                        ONBOARD
 #endif
 
-#if SD_CONNECTION_IS(ONBOARD)
+#if ANY_VOLUME_IS(ONBOARD)
   #define SD_SS_PIN                           83
   #undef SD_DETECT_PIN
   #define SD_DETECT_PIN                       95

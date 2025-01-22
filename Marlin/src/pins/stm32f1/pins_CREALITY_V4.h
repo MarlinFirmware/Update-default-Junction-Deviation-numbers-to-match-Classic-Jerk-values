@@ -169,7 +169,7 @@
 // SD Card
 //
 #define SD_DETECT_PIN                       PC7
-#define SDCARD_CONNECTION ONBOARD
+#define VOLUME0                          ONBOARD
 #define ONBOARD_SDIO
 #define NO_SD_HOST_DRIVE                          // This board's SD is only seen by the printer
 
@@ -275,7 +275,7 @@
 
   CONTROLLER_WARNING("CREALITY_V4", "FYSETC_MINI_12864_2_1 and clones")
 
-  #if SD_CONNECTION_IS(LCD)
+  #if ANY_VOLUME_IS(LCD)
     #error "The LCD SD Card is not connected with this configuration."
   #endif
 

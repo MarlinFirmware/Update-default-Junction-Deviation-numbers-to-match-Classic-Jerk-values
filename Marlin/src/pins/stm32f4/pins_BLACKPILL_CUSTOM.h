@@ -100,10 +100,10 @@
 // Encoder pins
 //
 #if ENABLED(OLED_PANEL_TINYBOY2)
-#define BTN_EN1                             PB12
-#define BTN_EN2                             PB13
-#define BTN_ENC                             PB14
-#define BEEPER_PIN                          PC15
+  #define BTN_EN1                           PB12
+  #define BTN_EN2                           PB13
+  #define BTN_ENC                           PB14
+  #define BEEPER_PIN                        PC15
 #endif
 
 //
@@ -111,11 +111,11 @@
 //
 #define ONBOARD_SPI_DEVICE                     1
 #define SD_DETECT_PIN                       -1
-#define SDCARD_CONNECTION                ONBOARD
+#define VOLUME0                          ONBOARD
 //#define ONBOARD_SDIO
 #define NO_SD_HOST_DRIVE                          // This board's SD is only seen by the printer
 
-#if SD_CONNECTION_IS(ONBOARD)
+#if ANY_VOLUME_IS(ONBOARD)
   #define ONBOARD_SD_CS_PIN                 PA4
   #define SD_SS_PIN            ONBOARD_SD_CS_PIN
   #define SD_SCK_PIN                        PA5

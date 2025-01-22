@@ -603,16 +603,16 @@
  *
  *           LCD - Use the SD drive in the external LCD controller.
  *       ONBOARD - Use the SD drive on the control board.
- *  CUSTOM_CABLE - Use a custom cable to access the SD (as defined in a pins file).
+ *  CUSTOM - Use a custom cable to access the SD (as defined in a pins file).
  *
- * :[ 'LCD', 'ONBOARD', 'CUSTOM_CABLE' ]
+ * :[ 'LCD', 'ONBOARD', 'CUSTOM' ]
  */
 
-#ifndef SDCARD_CONNECTION
-  #define SDCARD_CONNECTION              ONBOARD
+#ifndef VOLUME0
+  #define VOLUME0                        ONBOARD
 #endif
 
-#if SD_CONNECTION_IS(ONBOARD)
+#if ANY_VOLUME_IS(ONBOARD)
   #define SD_SS_PIN                           83
   #undef SD_DETECT_PIN
   #define SD_DETECT_PIN                       95

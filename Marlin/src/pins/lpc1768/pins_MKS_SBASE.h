@@ -163,11 +163,11 @@
 #define ENET_TXD0                          P1_00  // J12-11
 #define ENET_TXD1                          P1_01  // J12-12
 
-#ifndef SDCARD_CONNECTION
-  #define SDCARD_CONNECTION              ONBOARD
+#ifndef VOLUME0
+  #define VOLUME0                        ONBOARD
 #endif
 
-#if SD_CONNECTION_IS(CUSTOM_CABLE)
+#if ANY_VOLUME_IS(CUSTOM)
 
   /**
    * A custom cable is needed.
@@ -186,11 +186,11 @@
   #define SD_SS_PIN                        P0_28
   #define SOFTWARE_SPI                            // With a custom cable we need software SPI because the
                                                   // selected pins are not on a hardware SPI controller
-#elif SD_CONNECTION_IS(LCD) || SD_CONNECTION_IS(ONBOARD)
+#elif ANY_VOLUME_IS(LCD) || ANY_VOLUME_IS(ONBOARD)
   #define SD_SCK_PIN                       P0_07
   #define SD_MISO_PIN                      P0_08
   #define SD_MOSI_PIN                      P0_09
-  #if SD_CONNECTION_IS(LCD)
+  #if ANY_VOLUME_IS(LCD)
     // Use standard cable and header, SPI and SD detect are shared with onboard SD card.
     // Hardware SPI is used for both SD cards. The detect pin is shared between the
     // LCD and onboard SD readers so we disable it.
@@ -235,8 +235,9 @@
   #if ENABLED(TFTGLCD_PANEL_SPI)
     #define TFTGLCD_CS               EXP2_03_PIN
   #endif
-  #if SD_CONNECTION_IS(LCD)
-    #define SD_DETECT_PIN            EXP2_04_PIN
+
+  #if ANY_VOLUME_IS(LCD)
+    #define SD_DETECT_PIN            EXP2_04_PIN  // EXP2.4
   #endif
 
 #elif HAS_WIRED_LCD

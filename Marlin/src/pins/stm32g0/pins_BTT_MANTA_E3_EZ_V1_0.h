@@ -310,16 +310,16 @@
 //
 // SD Support
 //
-#ifndef SDCARD_CONNECTION
-  #define SDCARD_CONNECTION              ONBOARD
+#ifndef VOLUME0
+  #define VOLUME0                        ONBOARD
 #endif
 
 #define SD_DETECT_PIN                       -1
 
-#if SD_CONNECTION_IS(LCD) && (ALL(TOUCH_UI_FTDI_EVE, LCD_FYSETC_TFT81050) || IS_TFTGLCD_PANEL)
+#if ANY_VOLUME_IS(LCD) && (ALL(TOUCH_UI_FTDI_EVE, LCD_FYSETC_TFT81050) || IS_TFTGLCD_PANEL)
   #define SD_SS_PIN                  EXP1_05_PIN
-#elif SD_CONNECTION_IS(CUSTOM_CABLE)
-  #error "SD CUSTOM_CABLE is not compatible with Manta E3 EZ."
+#elif ANY_VOLUME_IS(CUSTOM)
+  #error "SD CUSTOM is not compatible with Manta E3 EZ."
 #endif
 
 #define ONBOARD_SPI_DEVICE                     3  // SPI3 -> used only by HAL/STM32F1...

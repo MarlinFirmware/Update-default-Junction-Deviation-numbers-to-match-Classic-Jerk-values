@@ -123,7 +123,7 @@
 // SD Card
 //
 #define SD_DETECT_PIN                       PC7
-#define SDCARD_CONNECTION                ONBOARD
+#define VOLUME0                          ONBOARD
 #define ON_BOARD_SPI_DEVICE                    1
 #define ONBOARD_SD_CS_PIN                   PC12  // SDSS
 #define ONBOARD_SDIO

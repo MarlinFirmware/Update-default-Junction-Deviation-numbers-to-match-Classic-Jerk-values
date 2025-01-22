@@ -253,8 +253,8 @@
 //
 // SD card
 //
-#ifndef SDCARD_CONNECTION
-  #define SDCARD_CONNECTION              ONBOARD
+#ifndef VOLUME0
+  #define VOLUME0                        ONBOARD
 #endif
 
 #define SOFTWARE_SPI

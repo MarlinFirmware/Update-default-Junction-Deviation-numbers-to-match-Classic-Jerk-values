@@ -140,11 +140,11 @@
 //
 // Onboard SD support
 //
-#ifndef SDCARD_CONNECTION
-  #define SDCARD_CONNECTION              ONBOARD
+#ifndef VOLUME0
+  #define VOLUME0                        ONBOARD
 #endif
 
-#if SD_CONNECTION_IS(ONBOARD)
+#if ANY_VOLUME_IS(ONBOARD)
   #define ONBOARD_SDIO                            // Use SDIO for onboard SD
   #if DISABLED(ONBOARD_SDIO)
     #define SOFTWARE_SPI                          // Use soft SPI for onboard SD

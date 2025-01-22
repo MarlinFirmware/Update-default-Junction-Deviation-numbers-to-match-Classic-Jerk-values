@@ -60,8 +60,8 @@
  *    AUX1                   32 |_______________| 33     PWM              AUX2
  */
 
-#ifndef SDCARD_CONNECTION
-  #define SDCARD_CONNECTION              ONBOARD
+#ifndef VOLUME0
+  #define VOLUME0                        ONBOARD
 #endif
 
 //

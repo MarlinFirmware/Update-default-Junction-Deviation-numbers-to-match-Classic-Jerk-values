@@ -243,7 +243,7 @@
 
     CONTROLLER_WARNING("BTT_SKR_E3_DIP", "FYSETC_MINI_12864_2_1 and clones")
 
-    #if SD_CONNECTION_IS(LCD)
+    #if ANY_VOLUME_IS(LCD)
       #error "The LCD SD Card is not supported with this configuration."
     #endif
 
@@ -350,20 +350,20 @@
 //
 // SD Card
 //
-#ifndef SDCARD_CONNECTION
-  #define SDCARD_CONNECTION              ONBOARD
+#ifndef VOLUME0
+  #define VOLUME0                        ONBOARD
 #endif
 
-#if SD_CONNECTION_IS(ONBOARD)
+#if ANY_VOLUME_IS(ONBOARD)
   #define SD_DETECT_PIN                     PC4
   #define SD_SCK_PIN                        PA5
   #define SD_MISO_PIN                       PA6
   #define SD_MOSI_PIN                       PA7
-#elif SD_CONNECTION_IS(LCD) && ALL(TOUCH_UI_FTDI_EVE, LCD_FYSETC_TFT81050)
+#elif ANY_VOLUME_IS(LCD) && ALL(TOUCH_UI_FTDI_EVE, LCD_FYSETC_TFT81050)
   #define SD_DETECT_PIN              EXP1_01_PIN
   #define SD_SS_PIN                  EXP1_05_PIN
-#elif SD_CONNECTION_IS(CUSTOM_CABLE)
-  #error "SD CUSTOM_CABLE is not compatible with SKR E3 DIP."
+#elif ANY_VOLUME_IS(CUSTOM)
+  #error "SD CUSTOM is not compatible with SKR E3 DIP."
 #endif
 
 #define ONBOARD_SPI_DEVICE                     1  // SPI1

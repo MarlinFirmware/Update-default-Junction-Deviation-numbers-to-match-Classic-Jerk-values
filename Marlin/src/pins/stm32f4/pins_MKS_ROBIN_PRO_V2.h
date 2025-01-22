@@ -203,8 +203,8 @@
   #define LED_PIN                           PB2
 #endif
 
-#ifndef SDCARD_CONNECTION
-  #define SDCARD_CONNECTION ONBOARD
+#ifndef VOLUME0
+  #define VOLUME0                        ONBOARD
 #endif
 
 //#define USE_NEW_SPI_API 1
@@ -214,7 +214,7 @@
 // NOT compatible with LCD
 //
 // Detect pin doesn't work when ONBOARD and NO_SD_HOST_DRIVE disabled
-#if SD_CONNECTION_IS(ONBOARD)
+#if ANY_VOLUME_IS(ONBOARD)
   #if USE_NEW_SPI_API
     #define SD_SPI MARLIN_SPI(HardwareSPI3, PC9)
   #else
@@ -258,7 +258,7 @@
 // LCD SD
 //
 /*
-#if SD_CONNECTION_IS(LCD)
+#if ANY_VOLUME_IS(LCD)
   #define ENABLE_SPI1
   #define SD_SS_PIN                  EXP2_04_PIN
   #define SD_SCK_PIN                 EXP2_02_PIN

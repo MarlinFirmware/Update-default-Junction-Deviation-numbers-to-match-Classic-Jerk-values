@@ -198,8 +198,8 @@
 //
 //#define ONBOARD_SDIO
 
-#ifndef SDCARD_CONNECTION
-  #define SDCARD_CONNECTION         CUSTOM_CABLE
+#ifndef VOLUME0
+  #define VOLUME0                         CUSTOM
 #endif
 
 #if HAS_MEDIA

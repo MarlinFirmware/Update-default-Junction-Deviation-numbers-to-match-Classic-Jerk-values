@@ -217,22 +217,22 @@
 //
 // SD Card
 //
-#ifndef SDCARD_CONNECTION
-  #define SDCARD_CONNECTION              ONBOARD
+#ifndef VOLUME0
+  #define VOLUME0                        ONBOARD
 #endif
 
-#if SD_CONNECTION_IS(LCD)
+#if ANY_VOLUME_IS(LCD)
   #define SD_DETECT_PIN              EXP2_07_PIN
   #define SD_SCK_PIN                 EXP2_02_PIN
   #define SD_MISO_PIN                EXP2_01_PIN
   #define SD_MOSI_PIN                EXP2_06_PIN
   #define SD_SS_PIN                  EXP2_04_PIN
-#elif SD_CONNECTION_IS(ONBOARD)
+#elif ANY_VOLUME_IS(ONBOARD)
   #define ONBOARD_SDIO
   #define SD_DETECT_PIN                     PD12
   #define ONBOARD_SD_CS_PIN                 PC11
-#elif SD_CONNECTION_IS(CUSTOM_CABLE)
-  #error "No custom SD drive cable defined for this board."
+#elif ANY_VOLUME_IS(CUSTOM)
+  #error "No custom SD pins defined for this board."
 #endif
 
 /**               ------                                      ------

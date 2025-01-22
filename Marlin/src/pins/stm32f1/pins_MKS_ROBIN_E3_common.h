@@ -252,8 +252,9 @@
 //
 // SD Card
 //
-#define SDCARD_CONNECTION                ONBOARD
-#define ONBOARD_SPI_DEVICE                     2  // Maple
+#define VOLUME0                          ONBOARD
+#define SPI_DEVICE                             2  // Maple
+#define ONBOARD_SPI_DEVICE                     2
 #define ONBOARD_SD_CS_PIN            EXP2_04_PIN
 #define SD_DETECT_PIN                EXP2_07_PIN
 #define NO_SD_HOST_DRIVE

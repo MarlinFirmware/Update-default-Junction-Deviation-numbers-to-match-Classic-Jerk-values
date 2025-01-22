@@ -147,21 +147,21 @@
 // SD Support
 //
 
-#ifndef SDCARD_CONNECTION
+#ifndef VOLUME0
   #if ENABLED(NO_LCD_SDCARD)
-    #define SDCARD_CONNECTION            ONBOARD
+    #define VOLUME0                      ONBOARD
   #else
-    #define SDCARD_CONNECTION                LCD
+    #define VOLUME0                          LCD
   #endif
 #endif
 
-#if SD_CONNECTION_IS(LCD)
+#if ANY_VOLUME_IS(LCD)
   #define SD_SCK_PIN                       P0_15
   #define SD_MISO_PIN                      P0_17
   #define SD_MOSI_PIN                      P0_18
   #define SD_SS_PIN                        P0_16
   #define SD_DETECT_PIN                    P1_22
-#elif SD_CONNECTION_IS(ONBOARD)
+#elif ANY_VOLUME_IS(ONBOARD)
   #define SD_SCK_PIN                       P0_07
   #define SD_MISO_PIN                      P0_08
   #define SD_MOSI_PIN                      P0_09
