@@ -116,13 +116,6 @@
 #define SERVO0_PIN                          PC3
 
 //
-// SPI
-//
-#define SCK_PIN                             PC10
-#define MISO_PIN                            PC11
-#define MOSI_PIN                            PC12
-
-//
 // LCD / Controller
 //
 
