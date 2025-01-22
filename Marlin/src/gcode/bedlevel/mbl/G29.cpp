@@ -45,7 +45,7 @@
 #define DEBUG_OUT ENABLED(DEBUG_LEVELING_FEATURE)
 #include "../../../core/debug_out.h"
 
-#if ENABLED(FT_MOTION)
+#if FT_MOTION_DISABLE_FOR_PROBING
   #include "../../module/ft_motion.h"
 #endif
 

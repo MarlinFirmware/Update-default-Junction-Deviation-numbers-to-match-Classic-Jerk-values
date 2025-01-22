@@ -48,6 +48,10 @@
   #include "../hilbert_curve.h"
 #endif
 
+#if FT_MOTION_DISABLE_FOR_PROBING
+  #include "../../../module/ft_motion.h"
+#endif
+
 #include <math.h>
 
 #define UBL_G29_P31

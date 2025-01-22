@@ -52,7 +52,7 @@
   #include "../../feature/bltouch.h"
 #endif
 
-#if ENABLED(FT_MOTION)
+#if FT_MOTION_DISABLE_FOR_PROBING
   #include "../../module/ft_motion.h"
 #endif
 
