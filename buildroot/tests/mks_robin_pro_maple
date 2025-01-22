@@ -9,7 +9,7 @@ set -e
 use_example_configs Mks/Robin_Pro
 opt_enable EMERGENCY_PARSER
 opt_set SERIAL_PORT 3 \
-        SDCARD_CONNECTION LCD \
+        VOLUME0 LCD \
         X_DRIVER_TYPE TMC2209 Y_DRIVER_TYPE TMC2130 \
         TEMP_SENSOR_BED 1
 opt_disable SERIAL_PORT_2 THERMAL_PROTECTION_HOTENDS
