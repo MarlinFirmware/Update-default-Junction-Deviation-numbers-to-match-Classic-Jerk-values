@@ -156,7 +156,7 @@
 //
 // Misc. Functions
 //
-#define SDSS                                  20  // B0
+#define SD_SS_PIN                             20  // B0
 #define LED_PIN                                6  // D6
 #define PS_ON_PIN                             27  // B7
 

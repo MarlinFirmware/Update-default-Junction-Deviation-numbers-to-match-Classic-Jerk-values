@@ -67,7 +67,7 @@
 //
 // Misc. Functions
 //
-#define SDSS                                -1
+#define SD_SS_PIN                           -1
 #define LED_PIN                             -1
 
 #ifndef CASE_LIGHT_PIN
@@ -184,7 +184,7 @@
       #define BTN_EN2                       PA7   //  7
       #define BTN_ENC                       PC7   // 39
 
-      #define SDSS                          PD5   // 53
+      #define SD_SS_PIN                     PD5   // 53
       #define SD_DETECT_PIN                 -1    // Pin 49 for display sd interface, 72 for easy adapter board
 
       #define KILL_PIN                      PB15  // 31
@@ -213,7 +213,7 @@
       #define DOGLCD_A0                     PC12  // 44
       #define DOGLCD_CS                     PE2   // 66
       #define LCD_BACKLIGHT_PIN             PE1   // 65   // backlight LED on A11/D65
-      #define SDSS                          PD5   // 53
+      #define SD_SS_PIN                     PD5   // 53
 
       #define KILL_PIN                      PE0   // 64
 

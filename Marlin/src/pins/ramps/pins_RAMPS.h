@@ -284,8 +284,8 @@
 //
 // Misc. Functions
 //
-#ifndef SDSS
-  #define SDSS                           AUX3_06
+#ifndef SD_SS_PIN
+  #define SD_SS_PIN                      AUX3_06
 #endif
 #define LED_PIN                               13
 

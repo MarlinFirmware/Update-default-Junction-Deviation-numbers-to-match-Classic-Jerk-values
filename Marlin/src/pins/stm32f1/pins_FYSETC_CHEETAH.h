@@ -119,7 +119,7 @@
 //
 // Misc. Functions
 //
-#define SDSS                                PA4
+#define SD_SS_PIN                           PA4
 #define SD_DETECT_PIN                       PC3
 
 #ifndef RGB_LED_R_PIN

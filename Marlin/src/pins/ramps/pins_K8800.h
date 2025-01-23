@@ -85,7 +85,7 @@
 //
 // SD Card
 //
-#define SDSS                                  25
+#define SD_SS_PIN                             25
 #define SD_DETECT_PIN                         21  // PD0
 
 //

@@ -199,9 +199,8 @@
   #define SD_SCK_PIN                        PC12
   #define SD_MISO_PIN                       PC8
   #define SD_MOSI_PIN                       PD2
-  #define SD_SS_PIN                         -1
   #define ONBOARD_SD_CS_PIN                 PC11
-  #define SDSS                              PD2
+  #define SD_SS_PIN                         PD2
   #define SD_DETECT_PIN                     -1
 #endif
 

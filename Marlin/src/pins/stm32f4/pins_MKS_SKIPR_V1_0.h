@@ -267,7 +267,6 @@
   #elif SD_CONNECTION_IS(CUSTOM_CABLE)
     #error "CUSTOM_CABLE is not a supported SDCARD_CONNECTION for this board"
   #endif
-  #define SDSS                         SD_SS_PIN
 #endif
 
 //

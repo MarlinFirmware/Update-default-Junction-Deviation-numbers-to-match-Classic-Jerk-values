@@ -47,7 +47,3 @@
 #ifndef SD_SS_PIN
   #define SD_SS_PIN         P1_23
 #endif
-#if !defined(SDSS) || SDSS == P_NC // gets defaulted in pins.h
-  #undef SDSS
-  #define SDSS          SD_SS_PIN
-#endif

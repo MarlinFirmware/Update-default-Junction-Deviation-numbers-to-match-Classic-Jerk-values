@@ -41,6 +41,3 @@
 #ifndef SD_SS_PIN
   #define SD_SS_PIN         53
 #endif
-#ifndef SDSS
-  #define SDSS       SD_SS_PIN
-#endif

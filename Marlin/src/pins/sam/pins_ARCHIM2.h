@@ -193,7 +193,7 @@
 #define SD_SCK_PIN                            76  // D76 PA27
 #define SD_MISO_PIN                           74  // D74 PA25
 #define SD_MOSI_PIN                           75  // D75 PA26
-#define SDSS                                  87  // D87 PA29
+#define SD_SS_PIN                             87  // D87 PA29
 
 // Unused Digital GPIO J20 Pins
 #define GPIO_PB1_J20_5                        94  // D94 PB1 (Header J20 5)

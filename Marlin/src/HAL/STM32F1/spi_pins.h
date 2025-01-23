@@ -49,8 +49,6 @@
 #ifndef SD_SS_PIN
   #define SD_SS_PIN   PA4
 #endif
-#undef SDSS
-#define SDSS    SD_SS_PIN
 
 #ifndef SPI_DEVICE
   #define SPI_DEVICE 1

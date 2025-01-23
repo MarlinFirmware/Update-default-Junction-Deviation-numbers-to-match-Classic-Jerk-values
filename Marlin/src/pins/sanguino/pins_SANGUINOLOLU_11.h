@@ -109,8 +109,8 @@
  * If you encounter issues with these pins, upgrade your
  * Sanguino libraries! See #368.
  */
-//#define SDSS                                24
-#define SDSS                             AUX1_09
+//#define SD_SS_PIN                           24
+#define SD_SS_PIN                        AUX1_09
 
 #if IS_MELZI
   #define LED_PIN                        AUX1_01

@@ -59,6 +59,3 @@
     #define SD_MOSI_PIN   51
   #endif
 #endif
-
-/* A.28, A.29, B.21, C.26, C.29 */
-#define SD_SS_PIN         SDSS

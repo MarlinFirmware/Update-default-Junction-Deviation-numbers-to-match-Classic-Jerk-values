@@ -127,7 +127,7 @@
 // SD Support
 //
 #define SD_DETECT_PIN                EXP2_07_PIN
-#define SDSS                         EXP2_04_PIN
+#define SD_SS_PIN                    EXP2_04_PIN
 
 /**                      PICA Expansion Headers
  *               ------                            ------

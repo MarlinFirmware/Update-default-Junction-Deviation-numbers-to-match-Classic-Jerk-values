@@ -21,7 +21,7 @@
  */
 #pragma once
 
-#define PIN_SPI_SS   SDSS
+#define PIN_SPI_SS   -1
 #define PIN_SPI_SCK  18
 #define PIN_SPI_MISO 19
 #define PIN_SPI_MOSI 23

@@ -257,15 +257,14 @@
 //
 #if SD_CONNECTION_IS(ONBOARD)
   #define ENABLE_SPI3
-  #define SD_SS_PIN                         -1
-  #define SDSS                              PC9
+  #define SD_SS_PIN                         PC9
   #define SD_SCK_PIN                        PC10
   #define SD_MISO_PIN                       PC11
   #define SD_MOSI_PIN                       PC12
   #define SD_DETECT_PIN                     PC4   // SD_DETECT_PIN doesn't work with NO_SD_HOST_DRIVE disabled
 #elif SD_CONNECTION_IS(LCD)
   #define ENABLE_SPI1
-  #define SDSS                       EXP2_04_PIN
+  #define SD_SS_PIN                  EXP2_04_PIN
   #define SD_SCK_PIN                 EXP2_02_PIN
   #define SD_MISO_PIN                EXP2_01_PIN
   #define SD_MOSI_PIN                EXP2_06_PIN

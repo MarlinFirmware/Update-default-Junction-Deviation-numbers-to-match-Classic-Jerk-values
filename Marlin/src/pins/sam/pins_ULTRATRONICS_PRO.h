@@ -128,7 +128,7 @@
 //
 // Misc. Functions
 //
-#define SDSS                                  59
+#define SD_SS_PIN                             59
 #define SD_DETECT_PIN                         60
 #define LED_PIN                               13
 #define PS_ON_PIN                             32

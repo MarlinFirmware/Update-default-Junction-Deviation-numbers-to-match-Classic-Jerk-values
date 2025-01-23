@@ -159,7 +159,7 @@
 // SD card
 //
 #if HAS_MEDIA
-  #define SDSS                                 4
+  #define SD_SS_PIN                            4
 #endif
 #define SD_DETECT_PIN                         -1
 

@@ -38,11 +38,6 @@
 #endif
 
 //
-// SD CARD SPI
-//
-#define SDSS                           SD_SS_PIN
-
-//
 // Timers
 //
 #define STEP_TIMER  6

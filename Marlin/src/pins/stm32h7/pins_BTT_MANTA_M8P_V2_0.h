@@ -383,16 +383,14 @@
   #elif SD_DETECT_STATE == LOW
     #error "BOARD_BTT_MANTA_M8P_V2_0 onboard SD requires SD_DETECT_STATE set to HIGH."
   #endif
-  #define SDSS                              PB12
-  #define SD_SS_PIN                         SDSS
+  #define SD_SS_PIN                         PB12
   #define SD_SCK_PIN                        PB13
   #define SD_MISO_PIN                       PB14
   #define SD_MOSI_PIN                       PB15
   #define SD_DETECT_PIN                     -1
   #define SOFTWARE_SPI
 #elif SD_CONNECTION_IS(LCD)
-  #define SDSS                       EXP2_04_PIN
-  #define SD_SS_PIN                         SDSS
+  #define SD_SS_PIN                  EXP2_04_PIN
   #define SD_SCK_PIN                 EXP2_02_PIN
   #define SD_MISO_PIN                EXP2_01_PIN
   #define SD_MOSI_PIN                EXP2_06_PIN

@@ -155,7 +155,7 @@
 //
 // Misc. Functions
 //
-#define SDSS                                   4  // 4,10,52 if using HW SPI.
+#define SD_SS_PIN                              4  // 4,10,52 if using HW SPI.
 #define LED_PIN                               -1  // 13 - HEATER_0_PIN
 #define PS_ON_PIN                             -1  // 65
 

@@ -561,11 +561,11 @@
 #endif
 
 #if SD_CONNECTION_IS(ONBOARD)
-  #define SDSS                                83
+  #define SD_SS_PIN                           83
   #undef SD_DETECT_PIN
   #define SD_DETECT_PIN                       95
 #else
-  #define SDSS                       EXP2_04_PIN
+  #define SD_SS_PIN                  EXP2_04_PIN
 #endif
 
 #if HAS_TMC_UART

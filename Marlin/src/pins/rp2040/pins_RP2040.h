@@ -123,7 +123,7 @@
 //
 // Misc. Functions
 //
-#define SDSS                                  20
+#define SD_SS_PIN                             20
 //#define LED_PIN                             13
 #define NEOPIXEL_PIN                          15
 

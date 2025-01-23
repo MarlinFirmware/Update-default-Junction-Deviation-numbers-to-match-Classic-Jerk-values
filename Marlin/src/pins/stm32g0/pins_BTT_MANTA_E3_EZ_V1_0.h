@@ -326,7 +326,6 @@
 #define ONBOARD_SD_CS_PIN                   PC13  // Chip select for "System" SD card
 
 #define ENABLE_SPI3
-#define SDSS                   ONBOARD_SD_CS_PIN
 #define SD_SS_PIN              ONBOARD_SD_CS_PIN
 #define SD_SCK_PIN                          PC10
 #define SD_MISO_PIN                         PC11

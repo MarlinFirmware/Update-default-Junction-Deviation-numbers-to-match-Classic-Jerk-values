@@ -135,7 +135,7 @@
 //
 // Misc functions
 //
-#define SDSS                                PE7
+#define SD_SS_PIN                           PE7
 #define LED_PIN                             PB7   // Heart beat
 #define PS_ON_PIN                           PA10
 #define KILL_PIN                            PA8

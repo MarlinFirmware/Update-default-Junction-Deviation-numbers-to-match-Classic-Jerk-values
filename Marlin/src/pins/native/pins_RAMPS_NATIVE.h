@@ -193,7 +193,7 @@
 //
 // Misc. Functions
 //
-#define SDSS                                  53
+#define SD_SS_PIN                             53
 #define LED_PIN                               13
 #define BOARD_NEOPIXEL_PIN                    71
 

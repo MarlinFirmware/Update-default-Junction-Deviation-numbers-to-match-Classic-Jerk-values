@@ -168,7 +168,7 @@
   #define BEEPER_PIN                        PC13
 
   #if HAS_MEDIA
-    #define SDSS                            PA15
+    #define SD_SS_PIN                       PA15
     #define SD_DETECT_PIN                   PD2
   #endif
 

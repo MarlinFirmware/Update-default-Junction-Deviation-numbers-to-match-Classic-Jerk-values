@@ -500,7 +500,7 @@
 // SD Support
 //
 
-#define SDSS                                   2
+#define SD_SS_PIN                              2
 #undef SD_DETECT_PIN
 #define SD_DETECT_PIN                         22
 

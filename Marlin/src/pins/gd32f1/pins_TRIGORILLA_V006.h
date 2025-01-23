@@ -123,7 +123,6 @@
   // SPI
   //
   #define SPI_DEVICE                        -1    // Maple
-  #define SDSS                              -1
   #define SD_SS_PIN                         -1
   #define SD_SCK_PIN                        -1
   #define SD_MISO_PIN                       -1
@@ -142,8 +141,7 @@
 
 #else
 
-  #define SDSS                              PC11  // SDIO_D3_PIN
-  #define SD_SS_PIN                         SDSS
+  #define SD_SS_PIN                         PC11  // SDIO_D3_PIN
   #define SD_SCK_PIN                        PC12  // SDIO_CK_PIN
   #define SD_MISO_PIN                       PC8   // SDIO_D0_PIN
   #define SD_MOSI_PIN                       PD2   // SDIO_CMD_PIN

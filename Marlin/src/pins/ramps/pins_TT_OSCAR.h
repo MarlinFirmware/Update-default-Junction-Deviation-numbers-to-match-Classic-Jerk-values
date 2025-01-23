@@ -206,7 +206,7 @@
 //
 // Misc. Functions
 //
-#define SDSS                                  53  // EXP2-4
+#define SD_SS_PIN                             53  // EXP2-4
 #define LED_PIN                               13
 
 //#ifndef FILWIDTH_PIN
@@ -447,7 +447,7 @@
       #define BTN_EN2                          7
       #define BTN_ENC                         39
 
-      #define SDSS                   EXP2_04_PIN
+      #define SD_SS_PIN              EXP2_04_PIN
       #define SD_DETECT_PIN                   -1  // Pin 49 for display SD interface, 72 for easy adapter board
       //#define KILL_PIN                      31
 
@@ -481,7 +481,7 @@
       #define BTN_EN1                         31
       #define BTN_EN2                         33
       #define BTN_ENC                         35
-      //#define SDSS                 EXP2_04_PIN
+      //#define SD_SS_PIN            EXP2_04_PIN
       #define SD_DETECT_PIN          EXP2_07_PIN
       //#define KILL_PIN                      64
 
@@ -501,7 +501,7 @@
       #define BTN_EN2                         63
       #define BTN_ENC                         59
 
-      #define SDSS                   EXP2_04_PIN
+      #define SD_SS_PIN              EXP2_04_PIN
       #define SD_DETECT_PIN          EXP2_07_PIN
       //#define KILL_PIN                      64
 
