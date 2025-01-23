@@ -127,33 +127,20 @@
 
 #if HAS_WIRED_LCD
 
-  #define LCD_PINS_RS                         13
-  #define LCD_PINS_EN                         17
-  #define LCD_PINS_D4                         16
+  #define EXP1_01_PIN                        151  // BEEPER
+  #define EXP1_02_PIN                         14  // ENC
+  #define EXP1_03_PIN                          0  // EN1
+  #define EXP1_04_PIN                         -1
+  #define EXP1_05_PIN                         12  // EN2
+  #define EXP1_06_PIN                         16  // D4
+  #define EXP1_07_PIN                         13  // RS
+  #define EXP1_08_PIN                         17  // EN
 
-  #if ENABLED(CR10_STOCKDISPLAY)
-
-    #define BEEPER_PIN                       151
-
-  #elif IS_RRD_FG_SC
-
-    #define BEEPER_PIN                       151
-
-    //#define LCD_PINS_D5                    150
-    //#define LCD_PINS_D6                    152
-    //#define LCD_PINS_D7                    153
-
-  #else
-
-    #error "Only CR10_STOCKDISPLAY and REPRAP_DISCOUNT_FULL_GRAPHIC_SMART_CONTROLLER are currently supported. Comment out this line to continue."
-
+  #if !IS_RRD_FG_SC
+    #error "Only REPRAP_DISCOUNT_FULL_GRAPHIC_SMART_CONTROLLER and compatible are currently supported. Comment out this line to continue."
   #endif
 
-  #define BTN_EN1                              0
-  #define BTN_EN2                             12
-  #define BTN_ENC                             14
-
-#endif // HAS_MARLINUI_U8GLIB
+#endif // HAS_WIRED_LCD
 
 // Hardware serial pins
 // Add the following to Configuration.h or Configuration_adv.h to assign

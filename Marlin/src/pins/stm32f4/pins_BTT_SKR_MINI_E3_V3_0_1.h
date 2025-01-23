@@ -181,7 +181,17 @@
 #define EXP1_07_PIN                         PD2
 #define EXP1_08_PIN                         PC0
 
-#if HAS_DWIN_E3V2 || IS_DWIN_MARLINUI
+#if ENABLED(CR10_STOCKDISPLAY)
+
+  // Migrated to pins/lcd
+
+#elif ENABLED(MINIPANEL)
+
+  // Migrated to pins/lcd
+  #define ADAPTER_BTT_DUAL
+  #define FORCE_SOFT_SPI
+
+#elif HAS_DWIN_E3V2 || IS_DWIN_MARLINUI
   /**
    *        ------                ------                ------
    * (ENT) | 1  2 | (BEEP)       |10  9 |              |10  9 |
@@ -204,19 +214,7 @@
 
 #elif HAS_WIRED_LCD
 
-  #if ENABLED(CR10_STOCKDISPLAY)
-
-    #define BEEPER_PIN               EXP1_01_PIN
-    #define BTN_ENC                  EXP1_02_PIN
-
-    #define BTN_EN1                  EXP1_03_PIN
-    #define BTN_EN2                  EXP1_05_PIN
-
-    #define LCD_PINS_RS              EXP1_07_PIN
-    #define LCD_PINS_EN              EXP1_08_PIN
-    #define LCD_PINS_D4              EXP1_06_PIN
-
-  #elif ENABLED(ZONESTAR_LCD)                     // ANET A8 LCD Controller - Must convert to 3.3V - CONNECTING TO 5V WILL DAMAGE THE BOARD!
+  #if ENABLED(ZONESTAR_LCD)                       // ANET A8 LCD Controller - Must convert to 3.3V - CONNECTING TO 5V WILL DAMAGE THE BOARD!
 
     CONTROLLER_WARNING("BTT_SKR_MINI_E3_V3_0_1", "ZONESTAR_LCD")
 
@@ -227,20 +225,6 @@
     #define LCD_PINS_D6              EXP1_03_PIN
     #define LCD_PINS_D7              EXP1_01_PIN
     #define ADC_KEYPAD_PIN                  PA1   // Repurpose servo pin for ADC - CONNECTING TO 5V WILL DAMAGE THE BOARD!
-
-  #elif ANY(MKS_MINI_12864, ENDER2_STOCKDISPLAY)
-
-    #define BTN_ENC                  EXP1_02_PIN
-    #define BTN_EN1                  EXP1_03_PIN
-    #define BTN_EN2                  EXP1_05_PIN
-
-    #define DOGLCD_CS                EXP1_07_PIN
-    #define DOGLCD_A0                EXP1_06_PIN
-    #define DOGLCD_SCK               EXP1_01_PIN
-    #define DOGLCD_MOSI              EXP1_08_PIN
-
-    #define FORCE_SOFT_SPI
-    #define LCD_BACKLIGHT_PIN               -1
 
   #elif IS_TFTGLCD_PANEL
 

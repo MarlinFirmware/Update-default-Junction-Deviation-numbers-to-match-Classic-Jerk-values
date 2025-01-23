@@ -189,21 +189,28 @@
 #define TFT_02                              PA3
 #define TFT_03                              PA2
 
-#if HAS_WIRED_LCD
+#if ENABLED(CR10_STOCKDISPLAY)
 
-  #if ENABLED(CR10_STOCKDISPLAY)
+  // Migrated to pins/lcd
 
-    #define BEEPER_PIN               EXP1_01_PIN
+#elif ANY(ENDER2_STOCKDISPLAY, MKS_MINI_12864)
 
-    #define BTN_ENC                  EXP1_02_PIN
-    #define BTN_EN1                  EXP1_03_PIN
-    #define BTN_EN2                  EXP1_05_PIN
+  // Migrated to pins/lcd
+  #define FORCE_SOFT_SPI
 
-    #define LCD_PINS_RS              EXP1_07_PIN
-    #define LCD_PINS_EN              EXP1_08_PIN
-    #define LCD_PINS_D4              EXP1_06_PIN
+#elif ENABLED(FYSETC_MINI_12864_2_1)
 
-  #elif ENABLED(ZONESTAR_LCD)                     // ANET A8 LCD Controller - Must convert to 3.3V - CONNECTING TO 5V WILL DAMAGE THE BOARD!
+  // Migrated to pins/lcd
+
+  CONTROLLER_WARNING("BTT_SKR_E3_DIP", "FYSETC_MINI_12864_2_1 and clones")
+
+  #if SD_CONNECTION_IS(LCD)
+    #error "The LCD SD Card is not supported with this configuration."
+  #endif
+
+#elif HAS_WIRED_LCD
+
+  #if ENABLED(ZONESTAR_LCD)                       // ANET A8 LCD Controller - Must convert to 3.3V - CONNECTING TO 5V WILL DAMAGE THE BOARD!
 
     CONTROLLER_WARNING("BTT_SKR_E3_DIP", "ZONESTAR_LCD")
 
@@ -215,93 +222,8 @@
     #define LCD_PINS_D7              EXP1_01_PIN
     #define ADC_KEYPAD_PIN                  PA1   // Repurpose servo pin for ADC - CONNECTING TO 5V WILL DAMAGE THE BOARD!
 
-  #elif ANY(MKS_MINI_12864, ENDER2_STOCKDISPLAY)
-
-    /** Creality Ender-2 display pinout
-     *                   ------
-     *   (SCK)     PA15 | 1  2 | PB6 (BTN_ENC)
-     *   (BTN_EN1) PA9  | 3  4 | RESET
-     *   (BTN_EN2) PA10   5  6 | PB9 (LCD_A0)
-     *   (LCD_RS)  PB8  | 7  8 | PB7 (MOSI)
-     *              GND | 9 10 | 5V
-     *                   ------
-     *                    EXP1
-     */
-
-    #define BTN_ENC                  EXP1_02_PIN
-    #define BTN_EN1                  EXP1_03_PIN
-    #define BTN_EN2                  EXP1_05_PIN
-
-    #define DOGLCD_CS                EXP1_07_PIN
-    #define DOGLCD_A0                EXP1_06_PIN
-    #define DOGLCD_SCK               EXP1_01_PIN
-    #define DOGLCD_MOSI              EXP1_08_PIN
-    #define FORCE_SOFT_SPI
-    #define LCD_BACKLIGHT_PIN               -1
-
-  #elif ENABLED(FYSETC_MINI_12864_2_1)
-
-    CONTROLLER_WARNING("BTT_SKR_E3_DIP", "FYSETC_MINI_12864_2_1 and clones")
-
-    #if SD_CONNECTION_IS(LCD)
-      #error "The LCD SD Card is not supported with this configuration."
-    #endif
-
-    /**
-     * FYSETC_MINI_12864_2_1 / MKS_MINI_12864_V3 / BTT_MINI_12864 / BEEZ_MINI_12864 display pinout
-     *
-     *                   Board                               Display
-     *                   ------                               ------
-     * (NEOPIXEL)  PA15 | 1  2 | PB6 (BTN_ENC)            5V |10  9 | GND
-     * (BTN_EN2)   PA9  | 3  4 | RESET                    -- | 8  7 | --
-     * (BTN_EN1)   PA10   5  6 | PB9 (LCD_RESET)    NEOPIXEL | 6  5   LCD RESET
-     * (LCD_A0)    PB8  | 7  8 | PB7 (LCD_CS)         LCD_A0 | 4  3 | LCD_CS
-     *              GND | 9 10 | 5V                  BTN_ENC | 2  1 | BEEP
-     *                   ------                               ------
-     *                    EXP1                                 EXP1
-     *
-     *
-     *                   ---                                  ------
-     *                  | 1 | RST                         -- |10  9 | --
-     *                  | 2 | PA3 RX2              RESET_BTN | 8  7 | SD_DETECT
-     *                  | 3 | PA2 TX2               LCD_MOSI | 6  5   EN2
-     *                  | 4 | GND                         -- | 4  3 | EN1
-     *                  | 5 | 5V                     LCD_SCK | 2  1 | --
-     *                   ---                                  ------
-     *                   TFT                                   EXP2
-
-     *
-     * Needs custom cable.
-     *
-     *    BOARD EXP1 NEOPIXEL   <-->  LCD EXP1 NEOPIXEL
-     *    BOARD EXP1 BTN_ENC    <-->  LCD EXP1 BTN_ENC
-     *    BOARD EXP1 BTN_EN2    <-->  LCD EXP2 EN2
-     *    BOARD EXP1 RESET      <-->  LCD EXP2 RESET_BTN
-     *    BOARD EXP1 BTN_EN1    <-->  LCD EXP2 EN1
-     *    BOARD EXP1 LCD_RESET  <-->  LCD EXP1 LCD RESET
-     *    BOARD EXP1 LCD_A0     <-->  LCD EXP1 LCD_A0
-     *    BOARD EXP1 LCD_CS     <-->  LCD EXP1 LCD_CS
-     *    BOARD TFT RX2         <-->  LCD EXP2 LCD_MOSI
-     *    BOARD TFT TX2         <-->  LCD EXP2 LCD_SCK
-     */
-
-    #define NEOPIXEL_PIN             EXP1_01_PIN
-    #define BTN_ENC                  EXP1_02_PIN
-    #define BTN_EN1                  EXP1_03_PIN
-    #define BTN_EN2                  EXP1_05_PIN
-    #define LCD_RESET_PIN            EXP1_06_PIN
-    #define BEEPER_PIN                      -1
-    #define DOGLCD_A0                EXP1_07_PIN
-    #define DOGLCD_CS                EXP1_08_PIN
-
-    #define DOGLCD_SCK                      PA2
-    #define DOGLCD_MOSI                     PA3
-
-    #define LCD_BACKLIGHT_PIN               -1
-    #define FORCE_SOFT_SPI
-
   #else
-    #error "Only CR10_STOCKDISPLAY, ZONESTAR_LCD, ENDER2_STOCKDISPLAY, MKS_MINI_12864, FYSETC_MINI_12864_2_1 and MKS_LCD12864A/B are currently supported on the SKR E3 DIP."
+    #error "The selected LCD / Controller is not currently supported for BIGTREE_SKR_E3_DIP."
   #endif
 
 #endif // HAS_WIRED_LCD

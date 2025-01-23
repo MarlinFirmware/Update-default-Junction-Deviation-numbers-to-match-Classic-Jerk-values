@@ -157,7 +157,11 @@
 #define EXP1_07_PIN                         PB12
 #define EXP1_08_PIN                         PB15
 
-#if HAS_WIRED_LCD
+#if ENABLED(CR10_STOCKDISPLAY)
+
+  // Migrated to pins/lcd
+
+#elif HAS_WIRED_LCD
   #define BEEPER_PIN                 EXP1_01_PIN
 
   #if HAS_MARLINUI_U8GLIB

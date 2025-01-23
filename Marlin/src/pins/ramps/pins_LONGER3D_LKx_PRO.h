@@ -139,17 +139,18 @@
    *      Connected via provided custom cable to:
    *      Aux-1, J21, J17 and Y-Max.
    */
-  #define LCD_PINS_RS                          5
-  #define LCD_PINS_EN                          4
-  #define LCD_PINS_D4                          6
-  #define BTN_EN1                             18
-  #define BTN_EN2                             19
-  #define BTN_ENC                             15
-  #define BEEPER_PIN                          11
+
+  // Migrated to pins/lcd
+
+  #define EXP1_01_PIN                         11
+  #define EXP1_02_PIN                         15
+  #define EXP1_03_PIN                         18
+  #define EXP1_05_PIN                         19
+  #define EXP1_06_PIN                          6
+  #define EXP1_07_PIN                          5
+  #define EXP1_08_PIN                          4
 
   #define SDCARD_CONNECTION              ONBOARD
-
-  #define LCD_PINS_DEFINED
 #endif
 
 //

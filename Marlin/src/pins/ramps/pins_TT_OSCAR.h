@@ -301,7 +301,13 @@
 // LCD / Controller
 //
 
-#if HAS_WIRED_LCD
+#if ENABLED(CR10_STOCKDISPLAY)
+
+  // Migrated to pins/lcd
+
+  //#define KILL_PIN                          41
+
+#elif HAS_WIRED_LCD
 
   //
   // LCD Display output pins
@@ -333,43 +339,27 @@
 
   #else
 
-    #if ENABLED(CR10_STOCKDISPLAY)
-
-      #define LCD_PINS_RS                     27
-      #define LCD_PINS_EN                     29
-      #define LCD_PINS_D4                     25
-
-      #if !IS_NEWPANEL
-        #define BEEPER_PIN                    37
-      #endif
-
+    #if ANY(MKS_12864OLED, MKS_12864OLED_SSD1306)
+      #define LCD_PINS_DC                     25  // Set as output on init
+      #define LCD_PINS_RS                     27  // Pull low for 1s to init
+      // DOGM SPI LCD Support
+      #define DOGLCD_CS                       16
+      #define DOGLCD_MOSI                     17
+      #define DOGLCD_SCK                      23
+      #define DOGLCD_A0              LCD_PINS_DC
     #else
-
-      #if ANY(MKS_12864OLED, MKS_12864OLED_SSD1306)
-        #define LCD_PINS_DC                   25  // Set as output on init
-        #define LCD_PINS_RS                   27  // Pull low for 1s to init
-        // DOGM SPI LCD Support
-        #define DOGLCD_CS                     16
-        #define DOGLCD_MOSI                   17
-        #define DOGLCD_SCK                    23
-        #define DOGLCD_A0            LCD_PINS_DC
-      #else
-        #define LCD_PINS_RS                   16
-        #define LCD_PINS_EN                   17
-        #define LCD_PINS_D4                   23
-        #define LCD_PINS_D5                   25
-        #define LCD_PINS_D6                   27
-      #endif
-
-      #define LCD_PINS_D7                     29
-
-      #if !IS_NEWPANEL
-        #define BEEPER_PIN                    33
-      #endif
-
+      #define LCD_PINS_RS                     16
+      #define LCD_PINS_EN                     17
+      #define LCD_PINS_D4                     23
+      #define LCD_PINS_D5                     25
+      #define LCD_PINS_D6                     27
     #endif
 
+    #define LCD_PINS_D7                       29
+
     #if !IS_NEWPANEL
+      #define BEEPER_PIN                      33
+
       // Buttons attached to a shift register
       // Not wired yet
       //#define SHIFT_CLK_PIN                 38
@@ -393,15 +383,10 @@
 
       #define BEEPER_PIN                      37
 
-      #if ENABLED(CR10_STOCKDISPLAY)
-        #define BTN_EN1                       17
-        #define BTN_EN2                       23
-      #else
-        #define BTN_EN1                       31
-        #define BTN_EN2                       33
-      #endif
-
       #define BTN_ENC                         35
+      #define BTN_EN1                         31
+      #define BTN_EN2                         33
+
       #define SD_DETECT_PIN          EXP2_07_PIN
       //#define KILL_PIN                      41
 

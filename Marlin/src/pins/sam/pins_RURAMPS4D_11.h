@@ -216,58 +216,38 @@
 //
 // LCD / Controller
 //
+#if ENABLED(FYSETC_MINI_12864)
 
-#if HAS_WIRED_LCD
+  // Migrated to pins/lcd
 
-  #if ANY(RADDS_DISPLAY, IS_RRD_SC, IS_RRD_FG_SC)
+  //#define FORCE_SOFT_SPI                        // Use this if Hardware SPI causes display problems.
+                                                  // Results in LCD Software SPI mode 3, SD Software SPI mode 0.
+#elif IS_RRD_FG_SC
+
+  // Migrated to pins/lcd
+
+#elif IS_RRD_SC
+
+  // Migrated to pins/lcd
+
+#elif HAS_WIRED_LCD
+
+  #if ENABLED(RADDS_DISPLAY)
+
     #define BEEPER_PIN               EXP1_01_PIN
     #define LCD_PINS_D4              EXP1_05_PIN
     #define LCD_PINS_D5              EXP1_06_PIN
     #define LCD_PINS_D6              EXP1_07_PIN
     #define LCD_PINS_D7              EXP1_08_PIN
     #define SD_DETECT_PIN            EXP2_07_PIN
-  #endif
-
-  #if ANY(RADDS_DISPLAY, IS_RRD_SC)
-
     #define LCD_PINS_RS              EXP1_04_PIN
     #define LCD_PINS_EN              EXP1_03_PIN
-
-  #elif IS_RRD_FG_SC
-
-    #define LCD_PINS_RS              EXP1_07_PIN
-    #define LCD_PINS_EN              EXP1_08_PIN
 
   #elif HAS_U8GLIB_I2C_OLED
 
     #define BEEPER_PIN               EXP1_01_PIN
     #define LCD_SDSS                 EXP2_04_PIN
     #define SD_DETECT_PIN            EXP2_07_PIN
-
-  #elif ENABLED(FYSETC_MINI_12864)
-
-    #define BEEPER_PIN               EXP1_01_PIN
-    #define DOGLCD_CS                EXP1_03_PIN
-    #define DOGLCD_A0                EXP1_04_PIN
-
-    //#define FORCE_SOFT_SPI                      // Use this if default of hardware SPI causes display problems
-                                                  //   results in LCD soft SPI mode 3, SD soft SPI mode 0
-
-    #define LCD_RESET_PIN            EXP1_05_PIN  // Must be high or open for LCD to operate normally.
-
-    #if ANY(FYSETC_MINI_12864_1_2, FYSETC_MINI_12864_2_0)
-      #ifndef RGB_LED_R_PIN
-        #define RGB_LED_R_PIN        EXP1_06_PIN  // D5
-      #endif
-      #ifndef RGB_LED_G_PIN
-        #define RGB_LED_G_PIN        EXP1_07_PIN  // D6
-      #endif
-      #ifndef RGB_LED_B_PIN
-        #define RGB_LED_B_PIN        EXP1_08_PIN  // D7
-      #endif
-    #elif ENABLED(FYSETC_MINI_12864_2_1)
-      #define NEOPIXEL_PIN           EXP1_06_PIN  // D5
-    #endif
 
   #elif ENABLED(SPARK_FULL_GRAPHICS)
 
@@ -286,10 +266,6 @@
     #define BTN_EN1                  EXP2_03_PIN
     #define BTN_EN2                  EXP2_05_PIN
     #define BTN_ENC                  EXP1_02_PIN
-  #endif
-
-  #if ENABLED(REPRAP_DISCOUNT_FULL_GRAPHIC_SMART_CONTROLLER)
-    #define BTN_ENC_EN               LCD_PINS_D7  // Detect the presence of the encoder
   #endif
 
 #endif // HAS_WIRED_LCD

@@ -256,43 +256,23 @@
 #define EXP2_07_PIN                        P1_31
 #define EXP2_08_PIN                        -1
 
-#if HAS_WIRED_LCD
+#if ENABLED(CR10_STOCKDISPLAY)
+
+  // Migrated to pins/lcd
+
+#elif ENABLED(ANET_FULL_GRAPHICS_LCD)
+
+  // Migrated to pins/lcd
+
+#elif ENABLED(CTC_A10S_A13)
+
+  #error "CTC_A10S_A13 only applies to the ANET 1.0 board."
+
+#elif HAS_WIRED_LCD
+
   #if ENABLED(CTC_A10S_A13)
+
     #error "CTC_A10S_A13 only applies to the ANET 1.0 board."
-
-  #elif ENABLED(ANET_FULL_GRAPHICS_LCD)
-
-    CONTROLLER_WARNING("BTT_SKR_V1_3", "ANET_FULL_GRAPHICS_LCD")
-
-   /**
-    * 1. Cut the tab off the LCD connector so it can be plugged into the "EXP1" connector the other way.
-    * 2. Swap the LCD's +5V (Pin2) and GND (Pin1) wires. (This is the critical part!)
-    * 3. Rewire the CLK Signal (LCD Pin9) to LCD Pin7. (LCD Pin9 remains open because it is open drain.)
-    * 4. A wire is needed to connect the Reset switch at J3 (LCD Pin7) to EXP2 (Pin3) on the board.
-    *
-    * !!! If you are unsure, ask for help! Your motherboard may be damaged in some circumstances !!!
-    *
-    * The ANET_FULL_GRAPHICS_LCD connector plug:
-    *
-    *                  BEFORE                          AFTER
-    *                  ------                          ------
-    *           (CLK) | 1  2 | (BEEPER)      (BEEPER) |10  9 | --
-    *              -- | 3  4 | (BTN_ENC)    (BTN_ENC) | 8  7 | (CLK)
-    *           (SID)   5  6 | (BTN_EN1)    (BTN_EN1)   6  5 | (SID)
-    *            (CS) | 7  8 | (BTN_EN2)    (BTN_EN2) | 4  3 | (CS)
-    *             GND | 9 10 | 5V                 GND | 2  1 | 5V
-    *                  ------                          ------
-    *                   LCD                             LCD
-    */
-
-    #define LCD_PINS_RS              EXP1_08_PIN
-
-    #define BTN_EN1                  EXP1_05_PIN
-    #define BTN_EN2                  EXP1_07_PIN
-    #define BTN_ENC                  EXP1_03_PIN
-
-    #define LCD_PINS_EN              EXP1_06_PIN
-    #define LCD_PINS_D4              EXP1_04_PIN
 
   #elif ENABLED(WYH_L12864)
 
@@ -326,17 +306,6 @@
     #define DOGLCD_SCK               EXP1_04_PIN
     #define DOGLCD_MOSI              EXP1_01_PIN
     #define LCD_BACKLIGHT_PIN              -1
-
-  #elif ENABLED(CR10_STOCKDISPLAY)
-
-    #define LCD_PINS_RS              EXP1_07_PIN
-
-    #define BTN_EN1                  EXP1_03_PIN
-    #define BTN_EN2                  EXP1_05_PIN
-    #define BTN_ENC                  EXP1_02_PIN  // (58) open-drain
-
-    #define LCD_PINS_EN              EXP1_08_PIN
-    #define LCD_PINS_D4              EXP1_06_PIN
 
   #elif HAS_ADC_BUTTONS
 
@@ -512,38 +481,18 @@
 
       #elif ENABLED(ENDER2_STOCKDISPLAY)
 
-        /**
-         * Creality Ender-2 display pinout
-         *                   ------
-         *      (SCK) P1_30 | 1  2 | P0_28 (BTN_ENC)
-         *  (BTN_EN1) P1_18 | 3  4 | P1_19 (RESET)
-         *  (BTN_EN2) P1_20   5  6 | P1_21 (LCD_A0)
-         *   (LCD_CS) P1_22 | 7  8 | P1_23 (MOSI)
-         *              GND | 9 10 | 5V
-         *                   ------
-         *                    EXP1
-         */
-
-        #define BTN_EN1              EXP1_03_PIN
-        #define BTN_EN2              EXP1_05_PIN
-        #define BTN_ENC              EXP1_02_PIN
-        #define DOGLCD_CS            EXP1_07_PIN
-        #define DOGLCD_A0            EXP1_06_PIN
-        #define DOGLCD_SCK           EXP1_01_PIN
-        #define DOGLCD_MOSI          EXP1_08_PIN
+        // Migrated to pins/lcd
         #define FORCE_SOFT_SPI
-        #define LCD_BACKLIGHT_PIN          -1
+
       #endif
 
       #if IS_ULTIPANEL
         #define LCD_PINS_D5          EXP1_06_PIN
         #define LCD_PINS_D6          EXP1_07_PIN
         #define LCD_PINS_D7          EXP1_08_PIN
-
         #if ENABLED(REPRAP_DISCOUNT_FULL_GRAPHIC_SMART_CONTROLLER)
           #define BTN_ENC_EN         LCD_PINS_D7  // Detect the presence of the encoder
         #endif
-
       #endif
 
     #endif // !FYSETC_MINI_12864
