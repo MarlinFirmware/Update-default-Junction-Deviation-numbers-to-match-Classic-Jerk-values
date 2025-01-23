@@ -61,6 +61,3 @@
 #ifndef SD_MOSI_PIN
   #define SD_MOSI_PIN _PIN_SPI_MOSI
 #endif
-#ifndef SD_SS_PIN
-  #define SD_SS_PIN   _PIN_SPI_SS
-#endif

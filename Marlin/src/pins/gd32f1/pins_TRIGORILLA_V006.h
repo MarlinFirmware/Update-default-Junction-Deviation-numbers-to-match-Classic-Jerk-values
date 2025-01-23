@@ -123,7 +123,6 @@
   // SPI
   //
   #define SPI_DEVICE                        -1    // Maple
-  #define SD_SS_PIN                         -1
   #define SD_SCK_PIN                        -1
   #define SD_MISO_PIN                       -1
   #define SD_MOSI_PIN                       -1

@@ -193,7 +193,7 @@
 #define ONBOARD_SD_CS_PIN                   PA4
 //#define SD_DETECT_PIN                     -1
 
-#define SD_SS_PIN             ONBOARD_SD_CS_PIN
+#define SD_SS_PIN              ONBOARD_SD_CS_PIN
 #define SD_SCK_PIN                          PA5
 #define SD_MISO_PIN                         PA6
 #define SD_MOSI_PIN                         PA7

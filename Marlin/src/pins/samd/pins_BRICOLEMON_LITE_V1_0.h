@@ -562,7 +562,6 @@
 
 #if SD_CONNECTION_IS(ONBOARD)
   #define SD_SS_PIN                           83
-  #undef SD_DETECT_PIN
   #define SD_DETECT_PIN                       95
 #else
   #define SD_SS_PIN                  EXP2_04_PIN

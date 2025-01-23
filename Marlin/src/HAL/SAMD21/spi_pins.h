@@ -45,6 +45,3 @@
 #ifndef SD_MOSI_PIN
   #define SD_MOSI_PIN   37
 #endif
-#ifndef SD_SS_PIN
-  #define SD_SS_PIN     18
-#endif

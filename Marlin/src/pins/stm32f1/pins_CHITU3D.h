@@ -67,7 +67,6 @@
 //
 // Misc. Functions
 //
-#define SD_SS_PIN                           -1
 #define LED_PIN                             -1
 
 #ifndef CASE_LIGHT_PIN
