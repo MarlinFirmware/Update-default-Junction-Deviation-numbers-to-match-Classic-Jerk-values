@@ -51,6 +51,11 @@ bool FilamentMonitorBase::enabled = true,
   #if ENABLED(FILAMENT_MOTION_SENSOR)
     uint8_t FilamentSensorEncoder::motion_detected;
   #endif
+  #if ENABLED(MOTION_STEPS_COUNTER)
+    uint16_t FilamentSensorEncoder::encoder_steps;
+    bool     FilamentSensorEncoder::extruding;
+    bool     FilamentSensorEncoder::calibration;
+  #endif
 #else
   int8_t RunoutResponseDebounced::runout_count[NUM_RUNOUT_SENSORS]; // = 0
 #endif
