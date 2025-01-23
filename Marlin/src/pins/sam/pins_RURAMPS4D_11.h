@@ -241,7 +241,7 @@
   #elif HAS_U8GLIB_I2C_OLED
 
     #define BEEPER_PIN               EXP1_01_PIN
-    #define LCD_SDSS                 EXP2_04_PIN
+    #define LCD_SDSS_PIN             EXP2_04_PIN
     #define SD_DETECT_PIN            EXP2_07_PIN
 
   #elif ENABLED(FYSETC_MINI_12864)

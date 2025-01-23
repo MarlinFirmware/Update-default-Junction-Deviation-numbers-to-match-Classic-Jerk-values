@@ -184,7 +184,7 @@
 
 #if HAS_WIRED_LCD
 
-  #define LCD_SDSS                   EXP1_06_PIN
+  #define LCD_SDSS_PIN               EXP1_06_PIN
 
   #if HAS_ADC_BUTTONS
 

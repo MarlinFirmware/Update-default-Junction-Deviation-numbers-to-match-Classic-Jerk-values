@@ -158,7 +158,7 @@
       #define BTN_EN1                       PC15  // 47
       #define BTN_EN2                       PC11  // 43
       #define BTN_ENC                       PC0   // 32
-      #define LCD_SDSS                      PD5   // 53
+      #define LCD_SDSS_PIN                  PD5   // 53
       #define SD_DETECT_PIN                 -1
       #define KILL_PIN                      PC9   // 41
       #undef LCD_PINS_EN                          // not used, causes false pin conflict report
@@ -169,7 +169,7 @@
       #define BTN_EN2                       PA7   //  7   // 22/7 are unused on RAMPS_14. 22 is unused and 7 the SERVO0_PIN on RAMPS_13.
 
       #define BTN_ENC                       -1
-      #define LCD_SDSS                      PD5   // 53
+      #define LCD_SDSS_PIN                  PD5   // 53
       #define SD_DETECT_PIN                 PD1   // 49
 
     #elif ANY(VIKI2, miniVIKI)
@@ -199,7 +199,7 @@
       #define BTN_EN2                       PC5   // 37
       #define BTN_ENC                       PB15  // 31
       #define SD_DETECT_PIN                 PD1   // 49
-      #define LCD_SDSS                      PD5   // 53
+      #define LCD_SDSS_PIN                  PD5   // 53
       #define KILL_PIN                      PC9   // 41
       #define BEEPER_PIN                    PB7   // 23
       #define DOGLCD_CS                     PB13  // 29

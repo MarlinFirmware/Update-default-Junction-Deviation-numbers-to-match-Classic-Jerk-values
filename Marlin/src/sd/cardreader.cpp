@@ -488,8 +488,8 @@ void CardReader::mount() {
   if (root.isOpen()) root.close();
 
   if (!driver->init(SD_SPI_SPEED, SDSS)
-    #if defined(LCD_SDSS) && (LCD_SDSS != SDSS)
-      && !driver->init(SD_SPI_SPEED, LCD_SDSS)
+    #if PIN_EXISTS(LCD_SDSS) && (LCD_SDSS_PIN != SDSS)
+      && !driver->init(SD_SPI_SPEED, LCD_SDSS_PIN)
     #endif
   ) SERIAL_ECHO_MSG(STR_SD_INIT_FAIL);
   else if (!volume.init(driver))

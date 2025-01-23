@@ -427,7 +427,7 @@
       #define BTN_EN1                         47
       #define BTN_EN2                         43
       #define BTN_ENC                         32
-      #define LCD_SDSS                      SDSS
+      #define LCD_SDSS_PIN             SD_SS_PIN
       #define KILL_PIN                        41
 
     #elif ENABLED(LCD_I2C_VIKI)
@@ -436,7 +436,7 @@
       #define BTN_EN2                          7  // 22/7 are unused on RAMPS_14. 22 is unused and 7 the SERVO0_PIN on RAMPS_13.
       #define BTN_ENC                         -1
 
-      #define LCD_SDSS                      SDSS
+      #define LCD_SDSS_PIN             SD_SS_PIN
       #define SD_DETECT_PIN                   49
 
     #elif ANY(VIKI2, miniVIKI)
@@ -468,7 +468,7 @@
       #define BTN_EN2                         37
       #define BTN_ENC                         31
 
-      #define LCD_SDSS                      SDSS
+      #define LCD_SDSS_PIN             SD_SS_PIN
       #define SD_DETECT_PIN                   49
       #define KILL_PIN                        41
 

@@ -196,7 +196,7 @@
     #define BTN_EN1                        P0_00
     #define BTN_EN2                        P0_01
 
-    #define LCD_SDSS                       P0_16
+    #define LCD_SDSS_PIN                   P0_16
 
     #if ENABLED(MKS_12864OLED_SSD1306)
 

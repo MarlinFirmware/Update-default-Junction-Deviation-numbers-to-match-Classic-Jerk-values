@@ -178,7 +178,7 @@
     #define SD_DETECT_PIN               _EXP2_01
     #define KILL_PIN                    _EXP1_10
     #define LCD_PINS_RS                 _EXP2_07
-    #define LCD_SDSS                    _EXP2_07
+    #define LCD_SDSS_PIN                _EXP2_07
     #define LCD_BACKLIGHT_PIN           _EXP2_07
     #define LCD_PINS_EN                 _EXP2_10
     #define LCD_PINS_D4                 _EXP2_09
