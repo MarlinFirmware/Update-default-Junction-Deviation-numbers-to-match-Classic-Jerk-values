@@ -813,6 +813,8 @@
   #include "stm32f4/pins_TH3D_EZBOARD_V2.h"         // STM32F4                              env:TH3D_EZBoard_V2_no_bootloader env:TH3D_EZBoard_V2_OpenBLT
 #elif MB(OPULO_LUMEN_REV3)
   #include "stm32f4/pins_OPULO_LUMEN_REV3.h"        // STM32F4                              env:Opulo_Lumen_REV3
+#elif MB(OPULO_LUMEN_REV4)
+  #include "stm32f4/pins_OPULO_LUMEN_REV4.h"        // STM32F4                              env:Opulo_Lumen_REV4
 #elif MB(MKS_ROBIN_NANO_V1_3_F4)
   #include "stm32f4/pins_MKS_ROBIN_NANO_V1_3_F4.h"  // STM32F4                              env:mks_robin_nano_v1_3_f4 env:mks_robin_nano_v1_3_f4_usbmod
 #elif MB(MKS_EAGLE)
@@ -823,8 +825,6 @@
   #include "stm32f4/pins_CREALITY_V24S1_301F4.h"    // STM32F4                              env:STM32F401RC_creality env:STM32F401RC_creality_nobootloader env:STM32F401RC_creality_jlink env:STM32F401RC_creality_stlink
 #elif MB(CREALITY_CR4NTXXC10)
   #include "stm32f4/pins_CREALITY_CR4NTXXC10.h"     // STM32F4                              env:STM32F401RE_freeruns env:STM32F401RE_freeruns_jlink env:STM32F401RE_freeruns_stlink
-#elif MB(OPULO_LUMEN_REV4)
-  #include "stm32f4/pins_OPULO_LUMEN_REV4.h"        // STM32F4                              env:Opulo_Lumen_REV4
 #elif MB(FYSETC_SPIDER_KING407)
   #include "stm32f4/pins_FYSETC_SPIDER_KING407.h"   // STM32F4                              env:FYSETC_SPIDER_KING407
 #elif MB(MKS_SKIPR_V1)

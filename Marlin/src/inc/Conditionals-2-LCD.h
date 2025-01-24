@@ -36,6 +36,12 @@
 #if ENABLED(SDSUPPORT)
   #define HAS_MEDIA 1
 #endif
+#if ENABLED(MULTI_VOLUME)
+  #define HAS_MULTI_VOLUME 1
+#endif
+#if ENABLED(USB_FLASH_DRIVE_SUPPORT)
+  #define HAS_USB_FLASH_DRIVE 1
+#endif
 
 //
 // Serial Port Info

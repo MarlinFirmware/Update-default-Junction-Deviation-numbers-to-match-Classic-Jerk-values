@@ -152,7 +152,7 @@
   #define BTN_EN2                             50
   #define BTN_ENC                             46
 
-  #define SDSS                                 4
+  #define SD_SS_PIN                            4
   #define SD_DETECT_PIN                       14
 
   #define BEEPER_PIN                          41

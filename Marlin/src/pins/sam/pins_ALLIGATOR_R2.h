@@ -121,7 +121,7 @@
 //
 // Misc. Functions
 //
-#define SDSS                                  77  // PA28
+#define SD_SS_PIN                             77  // PA28
 #define SD_DETECT_PIN                         87  // PA29
 #define LED_RED_PIN                           40  // PC8
 #define LED_GREEN_PIN                         41  // PC9

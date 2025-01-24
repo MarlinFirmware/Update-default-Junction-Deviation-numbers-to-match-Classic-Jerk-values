@@ -239,7 +239,7 @@
 //
 // SD Card
 //
-#define SDSS                                  53  // B0
+#define SD_SS_PIN                             53  // B0
 #define SD_DETECT_PIN                          9  // H6
 
 #if HAS_TMC_UART

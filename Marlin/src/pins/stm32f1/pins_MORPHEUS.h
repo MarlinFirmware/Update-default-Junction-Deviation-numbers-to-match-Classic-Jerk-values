@@ -88,6 +88,6 @@
 // Misc.
 //
 #define LED_PIN                             PC13
-#define SDSS                                PA3
+#define SD_SS_PIN                           PA3
 #define TFTGLCD_CS                          PA4
 #define SD_DETECT_PIN                       PC14

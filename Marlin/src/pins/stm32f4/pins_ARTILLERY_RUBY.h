@@ -116,13 +116,6 @@
 #define SERVO0_PIN                          PC3
 
 //
-// SPI
-//
-#define SCK_PIN                             PC10
-#define MISO_PIN                            PC11
-#define MOSI_PIN                            PC12
-
-//
 // LCD / Controller
 //
 
@@ -175,7 +168,7 @@
   #define BEEPER_PIN                        PC13
 
   #if HAS_MEDIA
-    #define SDSS                            PA15
+    #define SD_SS_PIN                       PA15
     #define SD_DETECT_PIN                   PD2
   #endif
 

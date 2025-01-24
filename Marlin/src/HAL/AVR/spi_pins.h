@@ -23,43 +23,41 @@
 
 /**
  * Define SPI Pins: SCK, MISO, MOSI, SS
+ * Platform pins have parentheses, e.g., "(53)", so we cannot use them.
  */
 #if defined(__AVR_ATmega168__) || defined(__AVR_ATmega328__) || defined(__AVR_ATmega328P__)
-  #define AVR_SCK_PIN  13
-  #define AVR_MISO_PIN 12
-  #define AVR_MOSI_PIN 11
-  #define AVR_SS_PIN   10
+  #define _PIN_SPI_SCK  13
+  #define _PIN_SPI_MISO 12
+  #define _PIN_SPI_MOSI 11
+  #define _PIN_SPI_SS   10
 #elif defined(__AVR_ATmega644__) || defined(__AVR_ATmega644P__) || defined(__AVR_ATmega644PA__) || defined(__AVR_ATmega1284P__)
-  #define AVR_SCK_PIN  7
-  #define AVR_MISO_PIN 6
-  #define AVR_MOSI_PIN 5
-  #define AVR_SS_PIN   4
+  #define _PIN_SPI_SCK  7
+  #define _PIN_SPI_MISO 6
+  #define _PIN_SPI_MOSI 5
+  #define _PIN_SPI_SS   4
 #elif defined(__AVR_ATmega1280__) || defined(__AVR_ATmega2560__)
-  #define AVR_SCK_PIN  52
-  #define AVR_MISO_PIN 50
-  #define AVR_MOSI_PIN 51
-  #define AVR_SS_PIN   53
+  #define _PIN_SPI_SCK  52
+  #define _PIN_SPI_MISO 50
+  #define _PIN_SPI_MOSI 51
+  #define _PIN_SPI_SS   53
 #elif defined(__AVR_AT90USB1287__) || defined(__AVR_AT90USB1286__) || defined(__AVR_AT90USB646__) || defined(__AVR_AT90USB647__)
-  #define AVR_SCK_PIN  21
-  #define AVR_MISO_PIN 23
-  #define AVR_MOSI_PIN 22
-  #define AVR_SS_PIN   20
+  #define _PIN_SPI_SCK  21
+  #define _PIN_SPI_MISO 23
+  #define _PIN_SPI_MOSI 22
+  #define _PIN_SPI_SS   20
 #elif defined(__AVR_ATmega1281__) || defined(__AVR_ATmega2561__)
-  #define AVR_SCK_PIN  10
-  #define AVR_MISO_PIN 12
-  #define AVR_MOSI_PIN 11
-  #define AVR_SS_PIN   16
+  #define _PIN_SPI_SCK  10
+  #define _PIN_SPI_MISO 12
+  #define _PIN_SPI_MOSI 11
+  #define _PIN_SPI_SS   16
 #endif
 
 #ifndef SD_SCK_PIN
-  #define SD_SCK_PIN  AVR_SCK_PIN
+  #define SD_SCK_PIN  _PIN_SPI_SCK
 #endif
 #ifndef SD_MISO_PIN
-  #define SD_MISO_PIN AVR_MISO_PIN
+  #define SD_MISO_PIN _PIN_SPI_MISO
 #endif
 #ifndef SD_MOSI_PIN
-  #define SD_MOSI_PIN AVR_MOSI_PIN
-#endif
-#ifndef SD_SS_PIN
-  #define SD_SS_PIN   AVR_SS_PIN
+  #define SD_MOSI_PIN _PIN_SPI_MOSI
 #endif

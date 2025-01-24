@@ -258,8 +258,7 @@
 #endif
 
 #define SOFTWARE_SPI
-#define SDSS                                PA15
-#define SD_SS_PIN                           SDSS
+#define SD_SS_PIN                           PA15
 #define SD_SCK_PIN                          PC10
 #define SD_MISO_PIN                         PC11
 #define SD_MOSI_PIN                         PC12

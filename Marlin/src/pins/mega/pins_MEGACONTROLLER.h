@@ -128,7 +128,7 @@
 //
 // Misc. Functions
 //
-#define SDSS                             MINI_06
+#define SD_SS_PIN                        MINI_06
 #define LED_PIN                               13
 
 #ifndef CASE_LIGHT_PIN

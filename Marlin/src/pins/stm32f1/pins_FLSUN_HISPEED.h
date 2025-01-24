@@ -256,7 +256,6 @@
   #define SD_SCK_PIN                        PC12
   #define SD_MISO_PIN                       PC8
   #define SD_MOSI_PIN                       PD2
-  #define SD_SS_PIN                         -1
   #define SD_DETECT_PIN                     PD12  // SD_CD (if -1 no detection)
 #else
   #define ONBOARD_SDIO

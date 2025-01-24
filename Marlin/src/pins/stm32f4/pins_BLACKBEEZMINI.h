@@ -100,7 +100,7 @@
 //
 // SD Card
 //
-#define SDSS                                PA4
+#define SD_SS_PIN                           PA4
 #define SD_DETECT_PIN                       -1
 #define SD_SCK_PIN                          PA5
 #define SD_MISO_PIN                         PA6

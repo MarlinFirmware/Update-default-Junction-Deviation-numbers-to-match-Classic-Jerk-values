@@ -1452,10 +1452,6 @@ static_assert(NUM_SERVOS <= NUM_SERVO_PLUGS, "NUM_SERVOS (or some servo index) i
       #error "BIQU MicroProbe requires a PROBE_ENABLE_PIN."
     #endif
 
-    #if ENABLED(FT_MOTION) && DISABLED(ENDSTOP_INTERRUPTS_FEATURE)
-      #error "BIQU Microprobe requires ENDSTOP_INTERRUPTS_FEATURE with FT_MOTION."
-    #endif
-
     #if ENABLED(BIQU_MICROPROBE_V1)
       #if ENABLED(INVERTED_PROBE_STATE)
         #if Z_MIN_PROBE_ENDSTOP_HIT_STATE != LOW
@@ -3854,11 +3850,9 @@ static_assert(_PLUS_TEST(3), "DEFAULT_MAX_ACCELERATION values must be positive."
   #error "PRINTCOUNTER requires EEPROM_SETTINGS."
 #endif
 
-#if ENABLED(USB_FLASH_DRIVE_SUPPORT) && !PINS_EXIST(USB_CS, USB_INTR) && DISABLED(USE_OTG_USB_HOST)
-  #error "USB_CS_PIN and USB_INTR_PIN are required for USB_FLASH_DRIVE_SUPPORT."
-#endif
-
-#if ENABLED(USE_OTG_USB_HOST) && !defined(HAS_OTG_USB_HOST_SUPPORT)
+#if HAS_USB_FLASH_DRIVE && DISABLED(USE_OTG_USB_HOST) && !PINS_EXIST(USB_CS, USB_INTR)
+  #error "USB_CS_PIN and USB_INTR_PIN (or USE_OTG_USB_HOST) are required for USB_FLASH_DRIVE_SUPPORT."
+#elif ENABLED(USE_OTG_USB_HOST) && !defined(HAS_OTG_USB_HOST_SUPPORT)
   #error "The current board does not support USE_OTG_USB_HOST."
 #endif
 
@@ -4079,7 +4073,7 @@ static_assert(_PLUS_TEST(3), "DEFAULT_MAX_ACCELERATION values must be positive."
  * Check to make sure MONITOR_DRIVER_STATUS isn't enabled
  * on boards where TMC drivers share the SPI bus with SD.
  */
-#if HAS_TMC_SPI && ALL(MONITOR_DRIVER_STATUS, HAS_MEDIA, USES_SHARED_SPI)
+#if HAS_TMC_SPI && ALL(HAS_MEDIA, MONITOR_DRIVER_STATUS, USES_SHARED_SPI)
   #error "MONITOR_DRIVER_STATUS and SDSUPPORT cannot be used together on boards with shared SPI."
 #endif
 

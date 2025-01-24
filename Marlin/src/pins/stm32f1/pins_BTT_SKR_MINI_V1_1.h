@@ -283,4 +283,3 @@
 
 #define ONBOARD_SPI_DEVICE                     1  // SPI1
 #define ONBOARD_SD_CS_PIN                   PA4   // Chip select for "System" SD card
-#define SDSS                           SD_SS_PIN

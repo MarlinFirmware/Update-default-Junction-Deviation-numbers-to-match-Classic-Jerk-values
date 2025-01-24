@@ -110,8 +110,8 @@
 #define SERVO0_PIN                            26  // PWM_EXT1
 #define SERVO1_PIN                            27  // PWM_EXT2
 
-#define SDSS                                  57  // Onboard SD card reader
-//#define SDSS                                 9  // LCD SD card reader
+#define SD_SS_PIN                             57  // Onboard SD card reader
+//#define SD_SS_PIN                            9  // LCD SD card reader
 #define LED_PIN                               21  // STATUS_LED
 
 //

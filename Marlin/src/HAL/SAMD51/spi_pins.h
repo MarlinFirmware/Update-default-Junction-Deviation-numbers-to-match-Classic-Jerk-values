@@ -46,14 +46,9 @@
   #ifndef SD_MOSI_PIN
     #define SD_MOSI_PIN   51
   #endif
-  #ifndef SDSS
-    #define SDSS          53
-  #endif
 
 #else
 
   #error "Unsupported board!"
 
 #endif
-
-#define SD_SS_PIN     SDSS

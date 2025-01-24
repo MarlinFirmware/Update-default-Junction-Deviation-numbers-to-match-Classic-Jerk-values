@@ -521,7 +521,7 @@ void RTS::sdCardStop() {
   thermalManager.zero_fan_speeds();
   wait_for_heatup = wait_for_user = false;
   poweroff_continue = false;
-  #if ALL(SDSUPPORT, POWER_LOSS_RECOVERY)
+  #if ALL(HAS_MEDIA, POWER_LOSS_RECOVERY)
     if (card.flag.mounted) card.removeJobRecoveryFile();
   #endif
   #ifdef EVENT_GCODE_SD_STOP
@@ -1094,7 +1094,7 @@ void RTS::handleData() {
           thermalManager.disable_all_heaters();
           print_job_timer.reset();
 
-          #if ALL(SDSUPPORT, POWER_LOSS_RECOVERY)
+          #if ALL(HAS_MEDIA, POWER_LOSS_RECOVERY)
             if (card.flag.mounted) {
               card.removeJobRecoveryFile();
               recovery.info.valid_head = 0;

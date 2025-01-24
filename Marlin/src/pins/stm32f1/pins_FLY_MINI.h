@@ -155,7 +155,6 @@
   #define SD_MISO_PIN                EXP2_01_PIN
   #define SD_MOSI_PIN                EXP2_06_PIN
 
-  #define SDSS                         SD_SS_PIN
   #define SD_DETECT_PIN              EXP2_07_PIN
 
   #define BEEPER_PIN                 EXP1_01_PIN

@@ -273,7 +273,7 @@ void GCodeParser::parse(char *p) {
   // Only use string_arg for these M codes
   if (letter == 'M') switch (codenum) {
     TERN_(EXPECTED_PRINTER_CHECK, case 16:)
-    TERN_(SDSUPPORT, case 23: case 28: case 30: case 928:)
+    TERN_(HAS_MEDIA, case 23: case 28: case 30: case 928:)
     TERN_(HAS_STATUS_MESSAGE, case 117:)
     TERN_(HAS_RS485_SERIAL, case 485:)
     TERN_(GCODE_MACROS, case 810 ... 819:)

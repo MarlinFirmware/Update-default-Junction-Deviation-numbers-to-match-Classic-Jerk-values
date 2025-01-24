@@ -213,7 +213,18 @@ class FTMotion {
 
     FORCE_INLINE static int32_t num_samples_shaper_settle() { return ( shaping.x.ena || shaping.y.ena ) ? FTM_ZMAX : 0; }
 
-
 }; // class FTMotion
 
 extern FTMotion ftMotion;
+
+typedef struct FTMotionDisableInScope {
+  bool isactive;
+  FTMotionDisableInScope() {
+    isactive = ftMotion.cfg.active;
+    ftMotion.cfg.active = false;
+  }
+  ~FTMotionDisableInScope() {
+    ftMotion.cfg.active = isactive;
+    if (isactive) ftMotion.init();
+  }
+} FTMotionDisableInScope_t;

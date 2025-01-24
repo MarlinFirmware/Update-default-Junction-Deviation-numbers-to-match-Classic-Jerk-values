@@ -244,11 +244,11 @@
 #endif
 
 #if SD_CONNECTION_IS(ONBOARD)
-  #define SDSS                                83
+  #define SD_SS_PIN                           83
   #undef SD_DETECT_PIN
   #define SD_DETECT_PIN                       95
 #else
-  #define SDSS                                53
+  #define SD_SS_PIN                           53
 #endif
 
 //
@@ -538,7 +538,7 @@
       #define BTN_EN1                    AUX4_04
       #define BTN_EN2                    AUX4_06
       #define BTN_ENC                    AUX4_03
-      #define LCD_SDSS                      SDSS
+      #define LCD_SDSS_PIN             SD_SS_PIN
       #define KILL_PIN                   AUX4_07
       #undef LCD_PINS_EN                          // not used, causes false pin conflict report
 
@@ -548,7 +548,7 @@
       #define BTN_EN2                    AUX2_08
       #define BTN_ENC                         -1
 
-      #define LCD_SDSS                      SDSS
+      #define LCD_SDSS_PIN             SD_SS_PIN
       #ifndef SD_DETECT_PIN
         #define SD_DETECT_PIN        EXP2_07_PIN
       #endif
@@ -584,7 +584,7 @@
       #define BTN_EN2                EXP1_01_PIN
       #define BTN_ENC                EXP2_03_PIN
 
-      #define LCD_SDSS                      SDSS
+      #define LCD_SDSS_PIN             SD_SS_PIN
       #ifndef SD_DETECT_PIN
         #define SD_DETECT_PIN        EXP2_07_PIN
       #endif

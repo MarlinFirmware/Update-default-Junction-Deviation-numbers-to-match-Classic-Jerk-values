@@ -206,8 +206,7 @@
 
   #if DISABLED(ONBOARD_SDIO)
     #define SOFTWARE_SPI
-    #define SDSS                            PC11
-    #define SD_SS_PIN                       SDSS
+    #define SD_SS_PIN                       PC11
     #define SD_SCK_PIN                      PC12
     #define SD_MISO_PIN                     PC8
     #define SD_MOSI_PIN                     PD2

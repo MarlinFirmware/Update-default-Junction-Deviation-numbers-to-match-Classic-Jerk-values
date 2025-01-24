@@ -160,7 +160,7 @@
 //#define SD_SCK_PIN                 EXP2_02_PIN  // uses esp32 default 18
 
 // TODO: Migrate external SD Card to pins/lcd
-#define SDSS                         EXP2_04_PIN
+#define SD_SS_PIN                    EXP2_04_PIN
 #define SD_DETECT_PIN                EXP2_07_PIN  // IO34 default is SD_DET signal (Jump to SDDET)
 #define USES_SHARED_SPI                           // SPI is shared by SD card with TMC SPI drivers
 

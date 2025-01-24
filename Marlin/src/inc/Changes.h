@@ -743,7 +743,17 @@
   #error "MMU2_DEBUG is now MMU_DEBUG."
 #elif defined(FTM_SHAPING_DEFAULT_X_FREQ) || defined(FTM_SHAPING_DEFAULT_Y_FREQ)
   #error "FTM_SHAPING_DEFAULT_[XY]_FREQ is now FTM_SHAPING_DEFAULT_FREQ_[XY]."
+#elif defined(SDSS)
+  #error "SDSS is now SD_SS_PIN."
 #endif
+
+// SDSS renamed to SD_SS_PIN
+#undef SDSS
+#define SDSS 8675309
+#if USB_CS_PIN == SDSS
+  #error "SDSS is now SD_SS_PIN."
+#endif
+#undef SDSS
 
 // Changes to Probe Temp Compensation (#17392)
 #if HAS_PTC && TEMP_SENSOR_PROBE && TEMP_SENSOR_BED

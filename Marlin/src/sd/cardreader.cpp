@@ -487,9 +487,9 @@ void CardReader::mount() {
   nrItems = -1;
   if (root.isOpen()) root.close();
 
-  if (!driver->init(SD_SPI_SPEED, SDSS)
-    #if defined(LCD_SDSS) && (LCD_SDSS != SDSS)
-      && !driver->init(SD_SPI_SPEED, LCD_SDSS)
+  if (!driver->init(SD_SPI_SPEED, SD_SS_PIN)
+    #if PIN_EXISTS(LCD_SDSS) && (LCD_SDSS_PIN != SD_SS_PIN)
+      && !driver->init(SD_SPI_SPEED, LCD_SDSS_PIN)
     #endif
   ) SERIAL_ECHO_MSG(STR_SD_INIT_FAIL);
   else if (!volume.init(driver))
@@ -504,7 +504,7 @@ void CardReader::mount() {
   if (flag.mounted)
     cdroot();
   else {
-    #if ANY(HAS_SD_DETECT, USB_FLASH_DRIVE_SUPPORT)
+    #if ANY(HAS_SD_DETECT, HAS_USB_FLASH_DRIVE)
       if (marlin_state != MarlinState::MF_INITIALIZING) LCD_ALERTMESSAGE(MSG_MEDIA_INIT_FAIL);
     #endif
   }

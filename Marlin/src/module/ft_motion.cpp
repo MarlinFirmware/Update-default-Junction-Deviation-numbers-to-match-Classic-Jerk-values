@@ -382,8 +382,6 @@ void FTMotion::reset() {
   steps.reset();
   interpIdx = 0;
 
-  stepper.axis_did_move.reset();
-
   #if HAS_FTM_SHAPING
     TERN_(HAS_X_AXIS, ZERO(shaping.x.d_zi));
     TERN_(HAS_Y_AXIS, ZERO(shaping.y.d_zi));

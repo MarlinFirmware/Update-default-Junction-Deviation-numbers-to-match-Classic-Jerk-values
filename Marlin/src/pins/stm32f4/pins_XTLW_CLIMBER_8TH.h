@@ -177,8 +177,7 @@
   #define SDIO_CMD_PIN                      PD2
 #elif SD_CONNECTION_IS(LCD)
   #define CUSTOM_SPI_PINS
-  #define SDSS                              PA4
-  #define SD_SS_PIN                         SDSS
+  #define SD_SS_PIN                         PA4
   #define SD_SCK_PIN                        PA5
   #define SD_MISO_PIN                       PA6
   #define SD_MOSI_PIN                       PA7

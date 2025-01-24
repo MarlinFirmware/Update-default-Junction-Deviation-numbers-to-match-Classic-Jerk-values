@@ -357,8 +357,7 @@
 // Must use soft SPI because Marlin's default hardware SPI is tied to LCD's EXP2
 //
 #if SD_CONNECTION_IS(LCD)
-  #define SDSS                       EXP2_04_PIN
-  #define SD_SS_PIN                         SDSS
+  #define SD_SS_PIN                  EXP2_04_PIN
   #define SD_SCK_PIN                 EXP2_02_PIN
   #define SD_MISO_PIN                EXP2_01_PIN
   #define SD_MOSI_PIN                EXP2_06_PIN

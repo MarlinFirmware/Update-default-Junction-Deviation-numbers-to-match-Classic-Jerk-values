@@ -230,8 +230,6 @@
   #define SD_DETECT_PIN                     -1    // Card detect is not connected
 #endif
 
-#define SDSS                           SD_SS_PIN
-
 #if ENABLED(WIFISUPPORT)
   //
   // ESP WiFi can be soldered to J9 connector which is wired to USART2.
