@@ -32,6 +32,38 @@
 #include "MarlinConfigPre-4-adv.h"
 //========================================================
 
+//
+// Compatibility layer for old Media settings
+// Remove for release.
+//
+#ifdef SDSUPPORT
+  #ifdef SDCARD_CONNECTION
+    #define _SDCARD_LCD          1
+    #define _SDCARD_ONBOARD      2
+    #define _SDCARD_CUSTOM_CABLE 3
+    #define _SDCARD_ID(V) _CAT(_SDCARD_, V)
+    #define SD_CONNECTION_IS(V) (_SDCARD_ID(SDCARD_CONNECTION) == _SDCARD_ID(V))
+    #if SD_CONNECTION_IS(ONBOARD)
+      #define VOLUME0 ONBOARD
+    #elif SD_CONNECTION_IS(LCD)
+      #define VOLUME0 LCD
+    #elif SD_CONNECTION_IS(CUSTOM_CABLE)
+      #define VOLUME0 CUSTOM
+    #endif
+  #endif
+  #if ENABLED(USB_FLASH_DRIVE_SUPPORT)
+    #ifndef VOLUME0
+      #define VOLUME0 USBFD
+    #else
+      #define VOLUME1 USBFD
+    #endif
+  #endif
+#endif
+#if ENABLED(MULTI_VOLUME)
+#endif
+
+//========================================================
+
 #if ENABLED(MARLIN_SMALL_BUILD)
   #undef EEPROM_CHITCHAT
   #undef CAPABILITIES_REPORT
