@@ -46,7 +46,7 @@
 //
 //#define QSPI_EEPROM                             // Use AGCM4 onboard QSPI EEPROM (Uses 4K of RAM)
 #define I2C_EEPROM                                // EEPROM on I2C-0
-#define MARLIN_EEPROM_SIZE                0x8000  // 32K (24lc256)
+#define MARLIN_EEPROM_SIZE               0x8000U  // 32K (24lc256)
 
 //
 // Foam Cutter requirements

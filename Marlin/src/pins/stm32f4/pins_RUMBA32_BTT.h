@@ -30,7 +30,7 @@
 
 #if NO_EEPROM_SELECTED
   #define I2C_EEPROM
-  #define MARLIN_EEPROM_SIZE            0x1000  // 4K (24LC32AT-I/OT)
+  #define MARLIN_EEPROM_SIZE             0x1000U  // 4K (24LC32AT-I/OT)
 #endif
 
 #if ENABLED(FLASH_EEPROM_EMULATION)

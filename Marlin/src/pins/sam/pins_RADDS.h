@@ -34,7 +34,7 @@
 //
 #if ANY(NO_EEPROM_SELECTED, I2C_EEPROM)
   #define I2C_EEPROM
-  #define MARLIN_EEPROM_SIZE              0x2000  // 8K
+  #define MARLIN_EEPROM_SIZE             0x2000U  // 8K
 #endif
 
 //

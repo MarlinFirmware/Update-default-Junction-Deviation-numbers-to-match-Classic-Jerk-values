@@ -44,7 +44,7 @@
  */
 //#define FLASH_EEPROM_EMULATION
 //#define I2C_EEPROM                              // EEPROM on I2C-0
-#define MARLIN_EEPROM_SIZE                   500  // 4000 bytes
+#define MARLIN_EEPROM_SIZE                  500U  // 4000 bytes
 
 //This its another option to emulate an EEPROM, but its more efficient to dont loose the data the first One.
 //#define SDCARD_EEPROM_EMULATION

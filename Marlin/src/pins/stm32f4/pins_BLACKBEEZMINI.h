@@ -45,7 +45,7 @@
   #define FLASH_EEPROM_EMULATION
   #define FLASH_EEPROM_LEVELING
   #define FLASH_SECTOR          (FLASH_SECTOR_TOTAL - 1)
-  #define FLASH_UNIT_SIZE       0x4000                                           // 16kB
+  #define FLASH_UNIT_SIZE               0x4000U  // 16K
   #define MARLIN_EEPROM_SIZE    FLASH_UNIT_SIZE
   #undef NO_EEPROM_SELECTED
 #endif

@@ -40,7 +40,7 @@
  */
 
 #define SRAM_EEPROM_EMULATION
-#define MARLIN_EEPROM_SIZE                0x2000  // 8K
+#define MARLIN_EEPROM_SIZE               0x2000U  // 8K
 
 // I2C MCP3426 (16-Bit, 240SPS, dual-channel ADC)
 #define HAS_MCP3426_ADC

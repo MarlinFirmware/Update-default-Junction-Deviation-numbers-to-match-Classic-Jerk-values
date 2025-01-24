@@ -27,7 +27,7 @@
 #define DEFAULT_MACHINE_NAME "RP2040 Test"
 
 #ifndef MARLIN_EEPROM_SIZE
-  #define MARLIN_EEPROM_SIZE              0x1000  // 4KB
+  #define MARLIN_EEPROM_SIZE             0x1000U  // 4K
 #endif
 
 //

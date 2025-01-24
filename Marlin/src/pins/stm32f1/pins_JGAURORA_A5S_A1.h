@@ -53,9 +53,9 @@
 #endif
 
 #if ENABLED(I2C_EEPROM)
-  //#define MARLIN_EEPROM_SIZE          0x8000UL  // 32K
+  //#define MARLIN_EEPROM_SIZE           0x8000U  // 32K
 #elif ENABLED(FLASH_EEPROM_EMULATION)
-  //#define MARLIN_EEPROM_SIZE          0x1000UL  // 4K
+  //#define MARLIN_EEPROM_SIZE           0x1000U  // 4K
   //#define MARLIN_EEPROM_SIZE (EEPROM_START_ADDRESS + (EEPROM_PAGE_SIZE) * 2UL)
 #endif
 

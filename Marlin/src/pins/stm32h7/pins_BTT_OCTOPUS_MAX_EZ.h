@@ -34,7 +34,7 @@
   #define SOFT_I2C_EEPROM                         // Force the use of Software I2C
   #define I2C_SCL_PIN                       PB10
   #define I2C_SDA_PIN                       PB11
-  #define MARLIN_EEPROM_SIZE              0x1000  // 4KB
+  #define MARLIN_EEPROM_SIZE             0x1000U  // 4KB
 #endif
 
 // Avoid conflict with TIMER_TONE

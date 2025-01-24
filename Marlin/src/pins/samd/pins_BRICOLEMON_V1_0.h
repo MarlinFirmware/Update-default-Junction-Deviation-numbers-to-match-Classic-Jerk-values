@@ -48,7 +48,7 @@
  */
 //#define FLASH_EEPROM_EMULATION
 #define I2C_EEPROM                                // EEPROM on I2C-0
-#define MARLIN_EEPROM_SIZE               0x10000  // 64K (CAT24C512)
+#define MARLIN_EEPROM_SIZE              0x10000U  // 64K (CAT24C512)
 
 //This its another option to emulate an EEPROM, but its more efficient to dont loose the data the first One.
 //#define SDCARD_EEPROM_EMULATION
