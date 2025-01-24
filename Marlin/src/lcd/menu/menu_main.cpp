@@ -441,12 +441,12 @@ void menu_main() {
       #if HAS_SD_DETECT
         ACTION_ITEM(MSG_NO_MEDIA, nullptr);               // "No Media"
       #else
-          #if HAS_MULTI_VOLUME
-            GCODES_ITEM(MSG_ATTACH_SD_MEDIA, F("M21S"));    // M21S Attach SD Card
-            GCODES_ITEM(MSG_ATTACH_USB_MEDIA, F("M21U"));   // M21U Attach USB Media
-          #else
-            GCODES_ITEM(MSG_ATTACH_MEDIA, F("M21"));        // M21 Attach Media
-          #endif
+        #if HAS_MULTI_VOLUME
+          GCODES_ITEM(MSG_ATTACH_SD_MEDIA, F("M21S"));    // M21S Attach SD Card
+          GCODES_ITEM(MSG_ATTACH_USB_MEDIA, F("M21U"));   // M21U Attach USB Media
+        #else
+          GCODES_ITEM(MSG_ATTACH_MEDIA, F("M21"));        // M21 Attach Media
+        #endif
       #endif
     }
     // END MEDIA MENU

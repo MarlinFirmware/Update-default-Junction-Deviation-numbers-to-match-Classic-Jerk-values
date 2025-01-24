@@ -493,7 +493,12 @@ namespace LanguageNarrow_de {
   LSTR MSG_FILAMENTUNLOAD                 = _UxGT("Filament entladen");
   LSTR MSG_FILAMENTUNLOAD_E               = _UxGT("Filament entladen *");
   LSTR MSG_FILAMENTUNLOAD_ALL             = _UxGT("Alles entladen");
-  LSTR MSG_ATTACH_MEDIA                   = _UxGT("Medium initial."); // Manually initialize the SD-card via user interface
+  #if HAS_MULTI_VOLUME
+    LSTR MSG_ATTACH_SD_MEDIA              = _UxGT("SD initial.");
+    LSTR MSG_ATTACH_USB_MEDIA             = _UxGT("USB initial.");
+  #else
+    LSTR MSG_ATTACH_MEDIA                 = _UxGT("SD initial.");
+  #endif
   LSTR MSG_CHANGE_MEDIA                   = _UxGT("Medium getauscht"); // SD-card changed by user. For machines with no autocarddetect. Both send "M21"
   LSTR MSG_RELEASE_MEDIA                  = _UxGT("Medium freigeben"); // if Marlin gets confused - M22
   LSTR MSG_ZPROBE_OUT                     = _UxGT("Z-Sonde außerhalb");

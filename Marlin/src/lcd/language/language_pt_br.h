@@ -321,7 +321,12 @@ namespace LanguageNarrow_pt_br {
   LSTR MSG_FILAMENTUNLOAD                 = _UxGT("Descarreg. Filamento");
   LSTR MSG_FILAMENTUNLOAD_E               = _UxGT("Descarreg. Filamento *");
   LSTR MSG_FILAMENTUNLOAD_ALL             = _UxGT("Descarregar Todos");
-  LSTR MSG_ATTACH_MEDIA                   = _UxGT("Iniciar SD");
+  #if HAS_MULTI_VOLUME
+    LSTR MSG_ATTACH_SD_MEDIA              = _UxGT("Iniciar cartão SD");
+    LSTR MSG_ATTACH_USB_MEDIA             = _UxGT("Iniciar flash USB");
+  #else
+    LSTR MSG_ATTACH_MEDIA                 = _UxGT("Iniciar cartão SD");
+  #endif
   LSTR MSG_CHANGE_MEDIA                   = _UxGT("Trocar SD");
   LSTR MSG_RELEASE_MEDIA                  = _UxGT("Liberar SD");
   LSTR MSG_ZPROBE_OUT                     = _UxGT("Sonda fora da mesa");

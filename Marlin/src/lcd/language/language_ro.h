@@ -388,7 +388,12 @@ namespace LanguageNarrow_ro {
   LSTR MSG_FILAMENTUNLOAD                 = _UxGT("Scoatere Filament");
   LSTR MSG_FILAMENTUNLOAD_E               = _UxGT("Scoatere Filament *");
   LSTR MSG_FILAMENTUNLOAD_ALL             = _UxGT("Scoate Tot");
-  LSTR MSG_ATTACH_MEDIA                   = _UxGT("Atasare Media");
+  #if HAS_MULTI_VOLUME
+    LSTR MSG_ATTACH_SD_MEDIA              = _UxGT("Atasare card SD");
+    LSTR MSG_ATTACH_USB_MEDIA             = _UxGT("Atasare FD USB");
+  #else
+    LSTR MSG_ATTACH_MEDIA                 = _UxGT("Atasare card SD");
+  #endif
   LSTR MSG_CHANGE_MEDIA                   = _UxGT("Inlocuire Media");
   LSTR MSG_RELEASE_MEDIA                  = _UxGT("Eliberare Media");
   LSTR MSG_ZPROBE_OUT                     = _UxGT("Z Probe Past Bed");

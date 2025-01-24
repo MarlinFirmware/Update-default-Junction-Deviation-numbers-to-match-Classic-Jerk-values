@@ -392,7 +392,12 @@ namespace LanguageNarrow_fr_na {
   LSTR MSG_FILAMENTUNLOAD                 = _UxGT("Retrait filament");
   LSTR MSG_FILAMENTUNLOAD_E               = _UxGT("Retrait filament *");
   LSTR MSG_FILAMENTUNLOAD_ALL             = _UxGT("Retirer tout");
-  LSTR MSG_ATTACH_MEDIA                   = _UxGT("Charger le media");
+  #if HAS_MULTI_VOLUME
+    LSTR MSG_ATTACH_SD_MEDIA              = _UxGT("Charger le SD");
+    LSTR MSG_ATTACH_USB_MEDIA             = _UxGT("Charger le USB");
+  #else
+    LSTR MSG_ATTACH_MEDIA                 = _UxGT("Charger le SD");
+  #endif
   LSTR MSG_CHANGE_MEDIA                   = _UxGT("Actualiser media");
   LSTR MSG_RELEASE_MEDIA                  = _UxGT("Retirer le media");
   LSTR MSG_ZPROBE_OUT                     = _UxGT("Sonde Z hors lit");

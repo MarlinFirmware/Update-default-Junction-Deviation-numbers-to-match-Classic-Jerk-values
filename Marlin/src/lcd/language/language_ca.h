@@ -145,7 +145,12 @@ namespace LanguageNarrow_ca {
   LSTR MSG_AUTORETRACT                    = _UxGT("Auto retraccio");
   LSTR MSG_FILAMENTCHANGE                 = _UxGT("Canvia filament");
   LSTR MSG_FILAMENTCHANGE_E               = _UxGT("Canvia filament *");
-  LSTR MSG_ATTACH_MEDIA                   = _UxGT("Inicialitza SD");
+  #if HAS_MULTI_VOLUME
+    LSTR MSG_ATTACH_SD_MEDIA              = _UxGT("Inicialitza SD");
+    LSTR MSG_ATTACH_USB_MEDIA             = _UxGT("Inicialitza USB");
+  #else
+    LSTR MSG_ATTACH_MEDIA                 = _UxGT("Inicialitza SD");
+  #endif
   LSTR MSG_CHANGE_MEDIA                   = _UxGT("Canvia SD");
   LSTR MSG_ZPROBE_OUT                     = _UxGT("Sonda Z fora");
   LSTR MSG_BLTOUCH_RESET                  = _UxGT("Reinicia BLTouch");
