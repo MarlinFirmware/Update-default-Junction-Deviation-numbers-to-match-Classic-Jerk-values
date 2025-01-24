@@ -406,8 +406,8 @@ void HAL_HardwareSerial::flush() {
 
     // Reset DMA, wait if needed to complete the running process
     RX_DMA.dma_streamRX->CR = 0;                             // DMA stream clear/disable
-    while (RX_DMA.dma_streamRX->CR & DMA_SxCR_EN)  { /* just wait for DMA to complete */ } 
-    
+    while (RX_DMA.dma_streamRX->CR & DMA_SxCR_EN)  { /* just wait for DMA to complete */ }
+
     // UART clear/disable
     RX_DMA.uart->CR1 = 0;
 
@@ -427,37 +427,25 @@ void HAL_HardwareSerial::flush() {
 
     #else // STM32H7xx, select channel with DMAMUX1, channel DMA1 is channel DMAMUX, channel DMA2 is channel DMAMUX + 8
 
-      if (RX_DMA.uart == USART1)
-        DMAMUX1_Channel10->CCR |= DMA_REQUEST_USART1_RX;        // DMA2, Stream 2
-
-      if (RX_DMA.uart == USART2)
-        DMAMUX1_Channel5->CCR |= DMA_REQUEST_USART2_RX;         // DMA1, Stream 5
-
-      if (RX_DMA.uart == USART3)
-        DMAMUX1_Channel1->CCR |= DMA_REQUEST_USART3_RX;         // DMA1, Stream 1
+      if (RX_DMA.uart == USART1) DMAMUX1_Channel10->CCR |= DMA_REQUEST_USART1_RX;   // DMA2, Stream 2
+      if (RX_DMA.uart == USART2) DMAMUX1_Channel5->CCR |= DMA_REQUEST_USART2_RX;    // DMA1, Stream 5
+      if (RX_DMA.uart == USART3) DMAMUX1_Channel1->CCR |= DMA_REQUEST_USART3_RX;    // DMA1, Stream 1
       #ifdef UART4
-        if (RX_DMA.uart == UART4)
-          DMAMUX1_Channel2->CCR |= DMA_REQUEST_UART4_RX;        // DMA1, Stream 2
+        if (RX_DMA.uart == UART4) DMAMUX1_Channel2->CCR |= DMA_REQUEST_UART4_RX;    // DMA1, Stream 2
       #endif
-
       #ifdef USART4
-        if (RX_DMA.uart == USART4)
-          DMAMUX1_Channel2->CCR |= DMA_REQUEST_USART4_RX;       // DMA1, Stream 2
+        if (RX_DMA.uart == USART4) DMAMUX1_Channel2->CCR |= DMA_REQUEST_USART4_RX;  // DMA1, Stream 2
       #endif
-
       #ifdef UART5
-        if (RX_DMA.uart == UART5)
-          DMAMUX1_Channel0->CCR |= DMA_REQUEST_UART5_RX;        // DMA1, Stream 0
+        if (RX_DMA.uart == UART5) DMAMUX1_Channel0->CCR |= DMA_REQUEST_UART5_RX;    // DMA1, Stream 0
       #endif
-
       #ifdef USART6
-        if (RX_DMA.uart == USART6)
-          DMAMUX1_Channel9->CCR |= DMA_REQUEST_USART6_RX;       // DMA2, Stream 1
+        if (RX_DMA.uart == USART6) DMAMUX1_Channel9->CCR |= DMA_REQUEST_USART6_RX;  // DMA2, Stream 1
       #endif
 
     #endif // !STM32H7xx
 
-    // Configure DMA    
+    // Configure DMA
     //RX_DMA.dma_streamRX->CR |= DMA_MBURST_SINGLE;             // DMA stream Memory Burst transfer: single transfer = 0b00
     //RX_DMA.dma_streamRX->CR |= DMA_PBURST_SINGLE;             // DMA stream Peripheral Burst transfer: single transfer = 0b00
 
@@ -501,8 +489,8 @@ void HAL_HardwareSerial::flush() {
       __HAL_RCC_DMA2_CLK_ENABLE(); // enable DMA2 clock
 
     RX_DMA.dma_channelRX->CCR &= ~USART_CR1_UE;                   // DMA stream clear/disable
-    while (RX_DMA.dma_channelRX->CCR & DMA_CCR_EN) { /* just wait for DMA to complete */ } 
- 
+    while (RX_DMA.dma_channelRX->CCR & DMA_CCR_EN) { /* just wait for DMA to complete */ }
+
     // Clear/disable UART and DMA
     RX_DMA.uart->CR1             = 0;                             // UART clear CR1, disable DMA
 
@@ -515,7 +503,7 @@ void HAL_HardwareSerial::flush() {
     #endif
 
     RX_DMA.dma_channelRX->CMAR   = (uint32_t)_serial.rx_buff;     // DMA channel Memory Address Register
-    RX_DMA.dma_channelRX->CNDTR  = RX_BUFFER_SIZE;                // DMA channel Number of Data Transfer Register   
+    RX_DMA.dma_channelRX->CNDTR  = RX_BUFFER_SIZE;                // DMA channel Number of Data Transfer Register
     //RX_DMA.dma_channelRX->CCR |= (0b00 << DMA_CCR_PL_Pos);      // DMA channel Priority Level: Low = 0b00
     //RX_DMA.dma_channelRX->CCR &= ~DMA_CCR_MSIZE;                // DMA channel Data Size: 8 bit = 0
     //RX_DMA.dma_channelRX->CCR &= ~DMA_CCR_PSIZE;                // DMA channel Peripheral data size: 8 bit = 0
