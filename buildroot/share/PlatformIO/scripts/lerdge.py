@@ -39,7 +39,7 @@ if pioutil.is_pio_build():
         enfile.close()
         os.remove(fwpath)
 
-    if "crypt_lerdge" in board.get("build").keys():
+    if 'crypt_lerdge' in board.get("build").keys():
         if board.get("build.crypt_lerdge") != "":
             marlin.add_post_action(encrypt)
     else:

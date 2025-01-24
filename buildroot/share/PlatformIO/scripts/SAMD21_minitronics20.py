@@ -14,5 +14,5 @@ if pioutil.is_pio_build():
 
     serialBuf = str(max(int(rxBuf), int(txBuf), 350))
 
-    build_flags = env.get("BUILD_FLAGS")
+    build_flags = env.get('BUILD_FLAGS')
     env.Replace(BUILD_FLAGS=build_flags)

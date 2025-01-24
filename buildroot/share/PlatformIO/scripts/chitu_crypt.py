@@ -73,7 +73,7 @@ if pioutil.is_pio_build():
         # the input file is exepcted to be in chunks of 0x800
         # so round the size
         while len(input_file) % block_size != 0:
-            input_file.extend(b"0x0")
+            input_file.extend(b'0x0')
 
         # write the file header
         output_file.write(struct.pack(">I", 0x443D2D3F))

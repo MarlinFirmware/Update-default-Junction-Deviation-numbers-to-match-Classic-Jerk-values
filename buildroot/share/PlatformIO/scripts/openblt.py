@@ -8,19 +8,11 @@ if pioutil.is_pio_build():
 
     board = env.BoardConfig()
     board_keys = board.get("build").keys()
-    if "encode" in board_keys:
+    if 'encode' in board_keys:
         env.AddPostAction(
             join("$BUILD_DIR", "${PROGNAME}.bin"),
-            env.VerboseAction(
-                " ".join(
-                    [
-                        "$OBJCOPY",
-                        "-O",
-                        "srec",
-                        '"$BUILD_DIR/${PROGNAME}.elf"',
-                        '"' + join("$BUILD_DIR", board.get("build.encode")) + '"',
-                    ]
-                ),
-                "Building " + board.get("build.encode")
-            )
+            env.VerboseAction(" ".join([
+                "$OBJCOPY", "-O", "srec",
+                "\"$BUILD_DIR/${PROGNAME}.elf\"", "\"" + join("$BUILD_DIR", board.get("build.encode")) + "\""
+            ]), "Building " + board.get("build.encode"))
         )

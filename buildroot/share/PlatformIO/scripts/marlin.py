@@ -16,11 +16,11 @@ def copytree(src, dst, symlinks=False, ignore=None):
             shutil.copy2(item, dst / item.name)
 
 def replace_define(field, value):
-    envdefs = env["CPPDEFINES"].copy()
+    envdefs = env['CPPDEFINES'].copy()
     for define in envdefs:
         if define[0] == field:
-            env["CPPDEFINES"].remove(define)
-    env["CPPDEFINES"].append((field, value))
+            env['CPPDEFINES'].remove(define)
+    env['CPPDEFINES'].append((field, value))
 
 # Relocate the firmware to a new address, such as "0x08005000"
 def relocate_firmware(address):
@@ -44,45 +44,11 @@ def custom_ld_script(ldname):
 def encrypt_mks(source, target, env, new_name):
     import sys
 
-    key = [
-        0xA3,
-        0xBD,
-        0xAD,
-        0x0D,
-        0x41,
-        0x11,
-        0xBB,
-        0x8D,
-        0xDC,
-        0x80,
-        0x2D,
-        0xD0,
-        0xD2,
-        0xC4,
-        0x9B,
-        0x1E,
-        0x26,
-        0xEB,
-        0xE3,
-        0x33,
-        0x4A,
-        0x15,
-        0xE4,
-        0x0A,
-        0xB3,
-        0xB1,
-        0x3C,
-        0x93,
-        0xBB,
-        0xAF,
-        0xF7,
-        0x3E
-    ]
+    key = [0xA3, 0xBD, 0xAD, 0x0D, 0x41, 0x11, 0xBB, 0x8D, 0xDC, 0x80, 0x2D, 0xD0, 0xD2, 0xC4, 0x9B, 0x1E, 0x26, 0xEB, 0xE3, 0x33, 0x4A, 0x15, 0xE4, 0x0A, 0xB3, 0xB1, 0x3C, 0x93, 0xBB, 0xAF, 0xF7, 0x3E]
 
     # If FIRMWARE_BIN is defined by config, override all
     mf = env["MARLIN_FEATURES"]
-    if "FIRMWARE_BIN" in mf:
-        new_name = mf["FIRMWARE_BIN"]
+    if "FIRMWARE_BIN" in mf: new_name = mf["FIRMWARE_BIN"]
 
     fwpath = Path(target[0].path)
     fwfile = fwpath.open("rb")
@@ -95,7 +61,7 @@ def encrypt_mks(source, target, env, new_name):
             if 320 <= position < 31040:
                 byte = chr(ord(byte) ^ key[position & 31])
                 if sys.version_info[0] > 2:
-                    byte = bytes(byte, "latin1")
+                    byte = bytes(byte, 'latin1')
             enfile.write(byte)
             position += 1
     finally:

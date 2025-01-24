@@ -10,20 +10,14 @@ if pioutil.is_pio_build():
 
     env = pioutil.env
     if env.MarlinHas("POSTMORTEM_DEBUGGING"):
-        FRAMEWORK_DIR = env.PioPlatform().get_package_dir(
-            "framework-arduinoststm32-maple"
-        )
+        FRAMEWORK_DIR = env.PioPlatform().get_package_dir("framework-arduinoststm32-maple")
         patchflag_path = join(FRAMEWORK_DIR, ".exc-patching-done")
 
         # patch file only if we didn't do it before
         if not isfile(patchflag_path):
             print("Patching libmaple exception handlers")
-            original_file = join(
-                FRAMEWORK_DIR, "STM32F1", "cores", "maple", "libmaple", "exc.S"
-            )
-            backup_file = join(
-                FRAMEWORK_DIR, "STM32F1", "cores", "maple", "libmaple", "exc.S.bak"
-            )
+            original_file = join(FRAMEWORK_DIR, "STM32F1", "cores", "maple", "libmaple", "exc.S")
+            backup_file = join(FRAMEWORK_DIR, "STM32F1", "cores", "maple", "libmaple", "exc.S.bak")
             src_file = join("buildroot", "share", "PlatformIO", "scripts", "exc.S")
 
             assert isfile(original_file) and isfile(src_file)
