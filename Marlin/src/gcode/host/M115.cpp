@@ -35,16 +35,12 @@
   #include "../../feature/caselight.h"
 #endif
 
-#if ENABLED(CAN_TOOLHEAD)
-  #include "../../HAL/shared/CAN_host.h"
+#if ANY(CAN_HOST, CAN_TOOLHEAD)
+  #include "../../HAL/shared/CAN.h"
 #endif
 
 #if !defined(MACHINE_UUID) && ENABLED(HAS_STM32_UID)
   #include "../../libs/hex_print.h"
-#endif
-
-#if ENABLED(CAN_HOST)
-  #include "../../HAL/shared/CAN_host.h"
 #endif
 
 //#define MINIMAL_CAP_LINES // Don't even mention the disabled capabilities

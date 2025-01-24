@@ -45,7 +45,7 @@
 #include "../../feature/controllerfan.h"
 #include "../../core/serial.h"
 
-#include "../shared/CAN_HOST.h"
+#include "../shared/CAN.h"
 
 extern "C" void TIM16_IRQHandler(void); // Override weak functions
 extern "C" void HAL_FDCAN_RxFifo0Callback(FDCAN_HandleTypeDef *hfdcan, uint32_t RxFifo0ITs);
@@ -58,7 +58,14 @@ extern "C" void HAL_FDCAN_RxFifo1Callback(FDCAN_HandleTypeDef *hfdcan, uint32_t 
 #define CAN_DATALENGTH_OFFSET    16 // Used for CAN TxHeader DataLength record
 
 #ifndef CAN_BAUDRATE
-  #define CAN_BAUDRATE 1000000
+  #define CAN_BAUDRATE 1000000LU
+#endif
+
+#ifndef CAN_RD_PIN
+  #define CAN_RD_PIN PB0
+#endif
+#ifndef CAN_TD_PIN
+  #define CAN_TD_PIN PB1
 #endif
 
 #define FDCAN_RX_FIFO0_MASK        (FDCAN_IR_RF0L | FDCAN_IR_RF0F | FDCAN_IR_RF0N) // FIFO0: Message lost | FIFO full | New message
@@ -226,8 +233,8 @@ void process_can_queue() {
             #endif
           }
           else
-          if (!(identifier & CAN_EXTENDED_ID_MARKER_MASK)) // Standard ID message, so parameters were added to the Gcode
-            CAN_gcode_buffer.trunc(backupLength); // Cut off the part of the Gcode that was added, so we can process the CAN message again
+            if (!(identifier & CAN_EXTENDED_ID_MARKER_MASK)) // Standard ID message, so parameters were added to the Gcode
+              CAN_gcode_buffer.trunc(backupLength); // Cut off the part of the Gcode that was added, so we can process the CAN message again
       }
       else
         CAN_queue_tail = (CAN_queue_tail + 1) % CAN_QUEUE_DEPTH; // Always advance tail
@@ -319,35 +326,49 @@ void HAL_FDCAN_RxFifo1Callback(FDCAN_HandleTypeDef *hfdcan, uint32_t RxFifo1ITs)
 
 }
 
+// Enable a GPIO clock based on the GPIOx address for STM32G0
+void gpio_clock_enable(GPIO_TypeDef *regs)
+{
+  // Or use: STM_PORT(CAN_TD_pin) GPIOA=0, GPIOB=1 etc.
+  uint32_t pos = ((uint32_t)regs - IOPORT_BASE) >> 10;
+  RCC->IOPENR |= (1 << pos);
+  RCC->IOPENR;
+}
+
 void HAL_FDCAN_MspInit(FDCAN_HandleTypeDef* fdcanHandle) { // Called automatically by FDCAN_init(), configure GPIO for CAN, enable interrupts
 
-  RCC_PeriphCLKInitTypeDef PeriphClkInit = { 0 };
-
-  PeriphClkInit.PeriphClockSelection = RCC_PERIPHCLK_FDCAN;
-//PeriphClkInit.FdcanClockSelection  = RCC_FDCANCLKSOURCE_HSE;   // 8MHz external crystal
-//PeriphClkInit.FdcanClockSelection  = RCC_FDCANCLKSOURCE_PLL;   // 64MHz
-  PeriphClkInit.FdcanClockSelection  = RCC_FDCANCLKSOURCE_PCLK1; // 64MHz
- 
-  HAL_RCCEx_PeriphCLKConfig(&PeriphClkInit);
-
   // STM32G0B1 and STM32G0 C1 only
-  // CAN1/2 clock enable (one clock for both CAN devices)
-  if (__HAL_RCC_FDCAN_IS_CLK_DISABLED())
-    __HAL_RCC_FDCAN_CLK_ENABLE();
 
-  if (__HAL_RCC_GPIOB_IS_CLK_DISABLED())
-  __HAL_RCC_GPIOB_CLK_ENABLE(); // ENABLE GPIO B CLOCK
   // FDCAN2 GPIO Configuration
-  // PB0 AF3 ------> FDCAN2_RX
-  // PB1 AF3 ------> FDCAN2_TX
+  // PB0 AF3 ------> FDCAN2_RD
+  // PB1 AF3 ------> FDCAN2_TD
+
+  // CAN1/2 clock enable (one clock for both CAN devices)
+  __HAL_RCC_FDCAN_CLK_ENABLE();
+
+  // Use some macros to find the required setup info based on the provided CAN pins
+  uint32_t _CAN_RD_pin = digitalPinToPinName(CAN_RD_PIN);
+  uint32_t _CAN_TD_pin = digitalPinToPinName(CAN_TD_PIN);
+  uint32_t _CAN_RD_function = pinmap_find_function(digitalPinToPinName(CAN_RD_PIN), PinMap_CAN_RD);
+  uint32_t _CAN_TD_function = pinmap_find_function(digitalPinToPinName(CAN_TD_PIN), PinMap_CAN_TD);
+  
+  // Enable the GPIOx device related to the CAN_RD_pin
+  gpio_clock_enable(get_GPIO_Port(STM_PORT(_CAN_RD_pin))); // PB0
 
   GPIO_InitTypeDef GPIO_InitStruct = { 0 };
-  GPIO_InitStruct.Pin       = GPIO_PIN_0 | GPIO_PIN_1; // Pin PB0 and Pin PB1
-  GPIO_InitStruct.Mode      = GPIO_MODE_AF_PP;         // Alternate function
-  GPIO_InitStruct.Pull      = GPIO_NOPULL;             // No pullup or pulldown
-  GPIO_InitStruct.Speed     = GPIO_SPEED_FREQ_HIGH;    // High frequency device
-  GPIO_InitStruct.Alternate = GPIO_AF3_FDCAN2;         // Alternate function 3
-  HAL_GPIO_Init(GPIOB, &GPIO_InitStruct);              // Port B
+  GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_HIGH; // High frequency device
+  GPIO_InitStruct.Mode  = GPIO_MODE_AF_PP;      // Alternate function
+  GPIO_InitStruct.Pin = STM_GPIO_PIN(STM_PIN(_CAN_RD_pin)) | STM_GPIO_PIN(STM_PIN(_CAN_TD_pin));
+  GPIO_InitStruct.Pull = STM_PIN_PUPD(_CAN_RD_function);
+  GPIO_InitStruct.Alternate = STM_PIN_AFNUM(_CAN_RD_function);
+  HAL_GPIO_Init(get_GPIO_Port(STM_PORT(_CAN_RD_pin)), &GPIO_InitStruct);
+
+  //NOTE: Separating the pin initialisation causes issues, why?
+  //Enable the GPIOx device related to the CAN_TD_pin
+  //gpio_clock_enable(get_GPIO_Port(STM_PORT(_CAN_TD_pin)));
+  //GPIO_InitStruct.Pin = STM_GPIO_PIN(STM_PIN(_CAN_TD_pin));
+  //GPIO_InitStruct.Alternate = STM_PIN_AFNUM(_CAN_TD_function);
+  //HAL_GPIO_Init(get_GPIO_Port(STM_PORT(_CAN_TD_pin)), &GPIO_InitStruct);
 
   // Enable CAN interrupts
   HAL_NVIC_SetPriority(TIM16_FDCAN_IT0_IRQn, 1, 1);   // Set interrupt priority
@@ -355,7 +376,31 @@ void HAL_FDCAN_MspInit(FDCAN_HandleTypeDef* fdcanHandle) { // Called automatical
 
 } // HAL_FDCAN_MspInit
 
-HAL_StatusTypeDef CAN_toolhead_start(void) { // Start the CAN device
+// Calculate the CAN sample timing, seg1 and seg2, sjw = 1 (no baudrate switching)
+// seg1 range: 2-256, seg2 range: 2-128, SJW = 1, so minimum is 5 clocks per bit
+int FDCAN_calculate_segments(uint32_t *seg1, uint32_t *seg2) {
+
+  uint32_t CAN_clock =  HAL_RCCEx_GetPeriphCLKFreq(RCC_PERIPHCLK_FDCAN);
+  float clocks_per_bit = CAN_clock / CAN_BAUDRATE; // Clocks per bit must be a whole number
+  
+  if ((clocks_per_bit != int(clocks_per_bit)) || (clocks_per_bit < 5)) // Minimal 5 clocks per bit (2+2+1)
+    return -1; // Baudrate is not possible
+
+ *seg2 = (clocks_per_bit / 8) + 0.5;  // Preferred sample point at 87.5% (7/8)
+ *seg1 = uint32_t(clocks_per_bit) - *seg2 - 1; // sjw = 1;
+
+  return HAL_OK;
+}
+
+HAL_StatusTypeDef CAN_toolhead_start() { // Start the CAN device
+
+  // The CAN clock and clock source must to be set first because the sample timing depends on it
+  RCC_PeriphCLKInitTypeDef PeriphClkInit = { 0 };
+  PeriphClkInit.PeriphClockSelection = RCC_PERIPHCLK_FDCAN;
+  PeriphClkInit.FdcanClockSelection  = RCC_FDCANCLKSOURCE_HSE;   //  8MHz external crystal
+//PeriphClkInit.FdcanClockSelection  = RCC_FDCANCLKSOURCE_PLL;   // 64MHz
+//PeriphClkInit.FdcanClockSelection  = RCC_FDCANCLKSOURCE_PCLK1; // 64MHz
+  HAL_RCCEx_PeriphCLKConfig(&PeriphClkInit); // Select the FDCAN clock source
 
   HAL_StatusTypeDef status = HAL_OK;
   // CAN baud rate = Device Clock Frequency / Clock Divider / Prescaler / (SJW + TSG1 + TSG2)
@@ -363,6 +408,14 @@ HAL_StatusTypeDef CAN_toolhead_start(void) { // Start the CAN device
   // Baud rate = 64M / 1 /  4 / (1 + 13 + 2) = 1M    Bit sample point = (1 + 13) / (1 + 13 + 2) = 87.5%
   // Baud rate = 64M / 1 /  8 / (1 + 13 + 2) = 500K  Bit sample point = (1 + 13) / (1 + 13 + 2) = 87.5%
   // Baud rate = 64M / 1 / 16 / (1 + 13 + 2) = 250K  Bit sample point = (1 + 13) / (1 + 13 + 2) = 87.5%
+
+  uint32_t seg1, seg2;
+  if (FDCAN_calculate_segments(&seg1, &seg2) != HAL_OK) {
+    SERIAL_ECHOLNPGM("Impossible CAN baudrate, check CAN clock and baudrate");
+    return HAL_ERROR;
+  }
+  
+  __HAL_RCC_FDCAN_CLK_DISABLE(); // Disable for startup, sample calculation were done
 
   hCAN1.Instance                  = FDCAN2;                  // The FDCAN device used
   hCAN1.Init.ClockDivider         = FDCAN_CLOCK_DIV1;        // Clock divider 1 2 4 6 8 10 12 14 16 18 20 22 24 26 28 30
@@ -372,10 +425,10 @@ HAL_StatusTypeDef CAN_toolhead_start(void) { // Start the CAN device
   hCAN1.Init.TransmitPause        = DISABLE;                 // Transmit Pause to allow for other device to send message
   hCAN1.Init.ProtocolException    = DISABLE;                 // ProtocolException handling
 
-  hCAN1.Init.NominalPrescaler     =  4; // Arbitration/data clock prescaler (1-512)
-  hCAN1.Init.NominalSyncJumpWidth =  1; // Arbitration/data sync jump width (1-128)
-  hCAN1.Init.NominalTimeSeg1      = 13; // Arbitration/data period 1 (2-256)
-  hCAN1.Init.NominalTimeSeg2      =  2; // Arbitration/data period 2 (2-128)
+  hCAN1.Init.NominalPrescaler     =    1; // Arbitration/data clock prescaler (1-512)
+  hCAN1.Init.NominalSyncJumpWidth =    1; // Arbitration/data Sync Jump Width (1-128)
+  hCAN1.Init.NominalTimeSeg1      = seg1; // Arbitration/data period 1 (2-256)
+  hCAN1.Init.NominalTimeSeg2      = seg2; // Arbitration/data period 2 (2-128)
 
   /* Not used, no bitrate switching
   hCAN1.Init.DataPrescaler        =  4; // Arbitration/data clock prescaler (1-32)
@@ -457,7 +510,7 @@ HAL_StatusTypeDef CAN_toolhead_start(void) { // Start the CAN device
     SERIAL_ECHOLNPGM(">>> FDCAN BAUDRATE: ", baudrate);
 
     if (baudrate != CAN_BAUDRATE) {
-      SERIAL_ECHOLNPGM(">>> ", CAN_ERROR_MSG_INVALID_BAUDRATE, ": ", baudrate, "  CAN_BAUDRATE=", CAN_BAUDRATE);
+      SERIAL_ECHOLNPGM(">>> Toolhead ", CAN_ERROR_MSG_INVALID_BAUDRATE, ": ", baudrate, "  CAN_BAUDRATE=", CAN_BAUDRATE);
       CAN_toolhead_error_code |= CAN_ERROR_TOOLHEAD_INVALID_BAUDRATE;
     }
 

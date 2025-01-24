@@ -30,7 +30,7 @@
 #include "motion.h"
 
 #if ENABLED(CAN_HOST)
-  #include "../HAL/shared/CAN_host.h"
+  #include "../HAL/shared/CAN.h"
 #endif
 
 #if ENABLED(BLTOUCH)

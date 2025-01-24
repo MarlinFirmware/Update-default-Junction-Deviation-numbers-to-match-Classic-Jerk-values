@@ -51,7 +51,7 @@
 #endif
 
 #if ENABLED(CAN_HOST)
-  #include "../HAL/shared/CAN_host.h"
+  #include "../HAL/shared/CAN.h"
 #endif
 
 #if ENABLED(DWIN_CREALITY_LCD)

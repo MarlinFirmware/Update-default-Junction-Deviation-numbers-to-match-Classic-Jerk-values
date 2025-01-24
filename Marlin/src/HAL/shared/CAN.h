@@ -40,25 +40,25 @@
 #define CAN_ID_PARAMETER_COUNT_MASK                     0b111 // Parameter count
 #define CAN_ID_GCODE_TYPE_MASK                           0b11 // Gcode type mask
 
-#define CAN_ID_PROBE_MASK                             (1 << 0) // Virtual IO bit for Z-probe pin
+#define CAN_ID_PROBE_BIT_MASK                         (1 << 0) // Virtual IO bit for Z-probe pin
 #define CAN_ID_PROBE_BIT_POS                                0
-#define CAN_ID_FILAMENT_MASK                          (1 << 1) // Virtual IO bit for filament pin
+#define CAN_ID_FILAMENT_BIT_MASK                      (1 << 1) // Virtual IO bit for filament pin
 #define CAN_ID_FILAMENT_BIT_POS                             1
-#define CAN_ID_X_ENDSTOP_MASK                         (1 << 2) // Virtual IO bit for X-min pin
+#define CAN_ID_X_ENDSTOP_BIT_MASK                     (1 << 2) // Virtual IO bit for X-min pin
 #define CAN_ID_X_ENDSTOP_BIT_POS                            2
-#define CAN_ID_Y_ENDSTOP_MASK                         (1 << 3) // Virtual IO bit for Y-min pin
+#define CAN_ID_Y_ENDSTOP_BIT_MASK                     (1 << 3) // Virtual IO bit for Y-min pin
 #define CAN_ID_Y_ENDSTOP_BIT_POS                            3
-#define CAN_ID_Z_ENDSTOP_MASK                         (1 << 4) // Virtual IO bit for Z-min pin
+#define CAN_ID_Z_ENDSTOP_BIT_MASK                     (1 << 4) // Virtual IO bit for Z-min pin
 #define CAN_ID_Z_ENDSTOP_BIT_POS                            4
-#define CAN_ID_STRING_MESSAGE_MASK                    (1 << 5) // Signals the toolhead sent a string message
+#define CAN_ID_STRING_MESSAGE_BIT_MASK                (1 << 5) // Signals the toolhead sent a string message
 #define CAN_ID_STRING_MESSAGE_BIT_POS                       5
-#define CAN_ID_REQUEST_SETUP_MASK                     (1 << 6) // Signals the toolhead requests setup information
+#define CAN_ID_REQUEST_SETUP_BIT_MASK                 (1 << 6) // Signals the toolhead requests setup information
 #define CAN_ID_REQUEST_SETUP_BIT_POS                        6
-#define CAN_ID_TMC_OT_MASK                           (1 << 7) // Signals the toolhead signals a TMC Over-Temp error
+#define CAN_ID_TMC_OT_BIT_MASK                        (1 << 7) // Signals the toolhead signals a TMC Over-Temp error
 #define CAN_ID_TMC_OT_BIT_POS                               7
-#define CAN_ID_REQUEST_TIME_SYNC_MASK                 (1 << 8) // Signals the toolhead requested a time sync
+#define CAN_ID_REQUEST_TIME_SYNC_BIT_MASK             (1 << 8) // Signals the toolhead requested a time sync
 #define CAN_ID_REQUEST_TIME_SYNC_BIT_POS                    8
-#define CAN_ID_ERROR_MASK                             (1 << 9) // Signals the toolhead encountered an error
+#define CAN_ID_ERROR_BIT_MASK                         (1 << 9) // Signals the toolhead encountered an error
 #define CAN_ID_ERROR_BIT_POS                                9
 
 #define CAN_ID_PARAMETER1_BIT_POS                           0
@@ -86,23 +86,21 @@
 #define CAN_ERROR_TOOLHEAD_INVALID_BAUDRATE           (1 << 8) // Generated baudrate doesn't match CAN_BAUDRATE
 
 // CAN error messsages
-#define CAN_ERROR_MSG_RX_FIFO_OVERFLOW         "Toolhead CAN RX FIFO overflow"
-#define CAN_ERROR_MSG_TX_FIFO_OVERFLOW         "Toolhead CAN TX FIFO overflow"
-#define CAN_ERROR_MSG_INCOMPLETE_GCODE         "Toolhead incomplete Gcode message received"
-#define CAN_ERROR_MSG_MARLIN_CMM_BUF_OVERFLOW  "Toolhead Marlin CMD buffer overflow"
-#define CAN_ERROR_MSG_INVALID_BAUDRATE         "Toolhead Incorrect CAN baudrate"
+#define CAN_ERROR_MSG_RX_FIFO_OVERFLOW               "CAN RX FIFO overflow"
+#define CAN_ERROR_MSG_TX_FIFO_OVERFLOW               "CAN TX FIFO overflow"
+#define CAN_ERROR_MSG_INCOMPLETE_GCODE               "Incomplete Gcode message received"
+#define CAN_ERROR_MSG_MARLIN_CMM_BUF_OVERFLOW        "Marlin CMD buffer overflow"
+#define CAN_ERROR_MSG_INVALID_BAUDRATE               "Incorrect CAN baudrate"
 
-
-
-void CAN_host_idle();                    // CAN idle task
-void CAN_host_send_setup();              // Send configuration to toolhead
-uint32_t CAN_host_get_iostate();         // Read the CAN virtual IO state
-HAL_StatusTypeDef CAN_host_start();      // Start the CAN device
-HAL_StatusTypeDef CAN_host_stop();       // Stop the CAN device
-HAL_StatusTypeDef CAN_host_send_gcode(); // Send Gcode to the toolhead
+void CAN_host_idle();                                // CAN idle task
+void CAN_host_send_setup(bool change_status);        // Send configuration to toolhead
+uint32_t CAN_host_get_iostate();                     // Read the CAN virtual IO state
+HAL_StatusTypeDef CAN_host_start();                  // Start the CAN device
+HAL_StatusTypeDef CAN_host_stop();                   // Stop the CAN device
+HAL_StatusTypeDef CAN_host_send_gcode();             // Send Gcode to the toolhead
 HAL_StatusTypeDef CAN_host_send_gcode_2params(uint32_t Gcode_type, uint32_t Gcode_no, uint32_t parameter1, float value1, uint32_t parameter2, float value2);
 
 HAL_StatusTypeDef CAN_toolhead_start();              // Start the CAN device
-void CAN_toolhead_send_update(bool TempUpdate);      // Send an IO and temp update to the host
+void CAN_toolhead_send_update(bool tempUpdate);      // Send an IO and temp update to the host
 void CAN_toolhead_send_string(const char * message); // Send CAN string to host
 void CAN_toolhead_idle();   

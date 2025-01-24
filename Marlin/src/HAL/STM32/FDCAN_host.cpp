@@ -41,7 +41,7 @@
 #include "../../feature/controllerfan.h" // For controllerFan settings
 #include "../../libs/numtostr.h"  // For float to string conversion
 
-#include "../shared/CAN_host.h"
+#include "../shared/CAN.h"
 
 // Interrupt handlers
 extern "C" void FDCAN1_IT0_IRQHandler(void);
@@ -49,7 +49,14 @@ extern "C" void HAL_FDCAN_RxFifo0Callback(FDCAN_HandleTypeDef *hfdcan, uint32_t 
 extern "C" void HAL_FDCAN_RxFifo1Callback(FDCAN_HandleTypeDef *hfdcan, uint32_t RxFifo1ITs);
 
 #ifndef CAN_BAUDRATE
-  #define CAN_BAUDRATE 1000000
+  #define CAN_BAUDRATE 1000000LU
+#endif
+
+#ifndef CAN_RD_PIN
+  #define CAN_RD_PIN PB8
+#endif
+#ifndef CAN_TD_PIN
+  #define CAN_TD_PIN PB9
 #endif
 
 #if (CAN_BAUDRATE != 1000000) && (CAN_BAUDRATE != 500000) && (CAN_BAUDRATE != 250000) && (CAN_BAUDRATE != 125000)
@@ -564,37 +571,65 @@ void CAN_host_send_position() { // Send the X, Y, Z and E position to the TOOLHE
   CAN_host_send_gcode_2params('G', 92, 'Z', current_position.z, 'E', current_position.e); // M92 E<pos> Z<pos>
 }
 
-// TODO: SETUP HARDWARE BASED ON CAN_RX, CAN_TX PINS
+// Enable a GPIO clock based on the GPIOx address for STM32H7
+void gpio_clock_enable(GPIO_TypeDef *regs)
+{
+    uint32_t pos = ((uint32_t)regs - D3_AHB1PERIPH_BASE) >> 10;
+    RCC->AHB4ENR |= (1 << pos);
+    RCC->AHB4ENR;
+}
+
+// TODO: SETUP HARDWARE BASED ON CAN_RD_PIN, CAN_TD_PIN PINS
 void HAL_FDCAN_MspInit(FDCAN_HandleTypeDef* canHandle) { // Called by HAL_FDCAN_Init
 
-  if (canHandle->Instance == FDCAN1) {
+   __HAL_RCC_FDCAN_CLK_ENABLE(); // Enable FDCAN1/2 clock
 
-// Select the FDCAN clock source
-    __HAL_RCC_FDCAN_CONFIG(RCC_FDCANCLKSOURCE_HSE);  // 25MHz, select external clock oscillator
-//  __HAL_RCC_FDCAN_CONFIG(RCC_FDCANCLKSOURCE_PLL);  // 55MHz, select PLL
-//  __HAL_RCC_FDCAN_CONFIG(RCC_FDCANCLKSOURCE_PLL2); // 80MHz, select PLL2
+  // Use some macros to find the required setup info based on the provided CAN pins
+  uint32_t _CAN_RD_pin = digitalPinToPinName(CAN_RD_PIN);
+  uint32_t _CAN_TD_pin = digitalPinToPinName(CAN_TD_PIN);
+  uint32_t _CAN_RD_function = pinmap_find_function(digitalPinToPinName(CAN_RD_PIN), PinMap_CAN_RD);
+  uint32_t _CAN_TD_function = pinmap_find_function(digitalPinToPinName(CAN_TD_PIN), PinMap_CAN_TD);
 
-    if (__HAL_RCC_FDCAN_IS_CLK_DISABLED())
-      __HAL_RCC_FDCAN_CLK_ENABLE();         // Enable FDCAN clock
+  // Enable the GPIOx device related to the CAN_RD_pin
+  gpio_clock_enable(get_GPIO_Port(STM_PORT(_CAN_RD_pin)));
 
-    if (__HAL_RCC_GPIOB_IS_CLK_DISABLED()) // Should be enabled by Marlin already
-      __HAL_RCC_GPIOB_CLK_ENABLE();        // Enable GPIO B clock
-    // CAN1 GPIO Configuration
-    // PB8     ------> CAN1_RX
-    // PB9     ------> CAN1_TX
+  GPIO_InitTypeDef GPIO_InitStruct = { 0 };
+  GPIO_InitStruct.Mode      = GPIO_MODE_AF_PP;
+  GPIO_InitStruct.Speed     = GPIO_SPEED_FREQ_HIGH;
+  GPIO_InitStruct.Pull      = STM_PIN_PUPD(_CAN_RD_function);
 
-    GPIO_InitTypeDef GPIO_InitStruct = {0};
-    GPIO_InitStruct.Pin       = GPIO_PIN_8 | GPIO_PIN_9; // Pin PB8 and Pin PB9
-    GPIO_InitStruct.Mode      = GPIO_MODE_AF_PP;
-    GPIO_InitStruct.Pull      = GPIO_NOPULL;
-    GPIO_InitStruct.Speed     = GPIO_SPEED_FREQ_HIGH;
-    GPIO_InitStruct.Alternate = GPIO_AF9_FDCAN1;         // Alternate function 9
-    HAL_GPIO_Init(GPIOB, &GPIO_InitStruct);              // Port B
+  // SETUP CAN_RD_PIN
+  GPIO_InitStruct.Pin       = STM_GPIO_PIN(STM_PIN(_CAN_RD_pin));
+  GPIO_InitStruct.Alternate = STM_PIN_AFNUM(_CAN_RD_function);
+  HAL_GPIO_Init(get_GPIO_Port(STM_PORT(_CAN_RD_pin)), &GPIO_InitStruct);
 
-    // Enabled the FDCAN interrupt handler
-    HAL_NVIC_SetPriority(FDCAN1_IT0_IRQn, 1, 1); // Set FDCAN interrupt priority
-    HAL_NVIC_EnableIRQ(FDCAN1_IT0_IRQn);         // Enable FDCAN interrupt handler line 0 (default)
-  }
+  // SETUP CAN_TD_PIN (Separated for flexibility, might not be needed)
+  // Enable the GPIOx device related to the CAN_TD_pin
+  gpio_clock_enable(get_GPIO_Port(STM_PORT(_CAN_TD_pin)));
+  GPIO_InitStruct.Pin       = STM_GPIO_PIN(STM_PIN(_CAN_TD_pin));
+  GPIO_InitStruct.Alternate = STM_PIN_AFNUM(_CAN_TD_function);
+  HAL_GPIO_Init(get_GPIO_Port(STM_PORT(_CAN_TD_pin)), &GPIO_InitStruct);
+
+  // Enabled the FDCAN interrupt handler for FDCAN1 or FDCAN2
+  HAL_NVIC_SetPriority((canHandle->Instance == FDCAN1) ? FDCAN1_IT0_IRQn : FDCAN2_IT0_IRQn, 1, 1); // Set FDCAN interrupt priority
+  HAL_NVIC_EnableIRQ(  (canHandle->Instance == FDCAN1) ? FDCAN1_IT0_IRQn : FDCAN2_IT0_IRQn);       // Enable FDCAN interrupt handler line 0 (default)
+}
+
+// Calculate the CAN sample timing, seg1 and seg2, sjw = 1 (no baudrate switching)
+// seg1 range: 2-256, seg2 range: 1-128, SJW = 1, so minimum is 4 clocks per bit
+int FDCAN_calculate_segments(uint32_t *seg1, uint32_t *seg2) {
+
+  uint32_t CAN_clock =  HAL_RCCEx_GetPeriphCLKFreq(RCC_PERIPHCLK_FDCAN);
+
+  float clocks_per_bit = CAN_clock / CAN_BAUDRATE; // Clocks per bit must be a whole number
+
+  if ((clocks_per_bit != int(clocks_per_bit)) || (clocks_per_bit < 4)) // Minimal 4 clocks per bit (1+2+1)
+    return -1; // Baudrate is not possible
+
+ *seg2 = (clocks_per_bit / 8) + 0.5;  // Preferred sample point at 87.5% (7/8)
+ *seg1 = uint32_t(clocks_per_bit) - *seg2 - 1; // SJW = 1;
+
+  return HAL_OK;
 }
 
 HAL_StatusTypeDef CAN_host_stop() {
@@ -605,22 +640,27 @@ HAL_StatusTypeDef CAN_host_start() {
 
   HAL_StatusTypeDef status = HAL_OK;
 
-  // Initialize TxHeader with constant values
-  TxHeader.FDFormat              = FDCAN_CLASSIC_CAN;  // FDCAN_CLASSIC_CAN / FDCAN_FD_CAN
-  TxHeader.TxEventFifoControl    = FDCAN_NO_TX_EVENTS; // FDCAN_NO_TX_EVENTS / FDCAN_STORE_TX_EVENTS
-  TxHeader.MessageMarker         = 0;                  // 0-0xFF for tracking messages in FIFO buffer
-  TxHeader.ErrorStateIndicator   = FDCAN_ESI_ACTIVE;   // FDCAN_ESI_PASSIVE / FDCAN_ESI_ACTIVE (ACTIVE will notify transmission errors)
-  TxHeader.TxFrameType           = FDCAN_DATA_FRAME;   // FDCAN_DATA_FRAME / FDCAN_REMOTE_FRAME
-  TxHeader.IdType                = FDCAN_STANDARD_ID;  // FDCAN_STANDARD_ID / FDCAN_EXTENDED_ID
-  TxHeader.BitRateSwitch         = FDCAN_BRS_OFF;      // FDCAN_BRS_OFF / FDCAN_BRS_ON
-  TxHeader.TxEventFifoControl    = FDCAN_NO_TX_EVENTS; // FDCAN_NO_TX_EVENTS / FDCAN_STORE_TX_EVENTS (Do not store TX events)
+// The FDCAN clock source must to be set early because the sample timing depends on it
+    __HAL_RCC_FDCAN_CONFIG(RCC_FDCANCLKSOURCE_HSE);  // 25MHz, select external crystal clock oscillator
+//  __HAL_RCC_FDCAN_CONFIG(RCC_FDCANCLKSOURCE_PLL);  // 55MHz, select PLL
+//  __HAL_RCC_FDCAN_CONFIG(RCC_FDCANCLKSOURCE_PLL2); // 80MHz, select PLL2
 
-  hCAN1.Instance                 = FDCAN1;                  // The FDCAN device to use
-  hCAN1.Init.FrameFormat         = FDCAN_FRAME_CLASSIC;     // FDCAN_FRAME_CLASSIC / FDCAN_FRAME_FD_BRS / FDCAN_FRAME_FD_NO_BRS (Bit Rate Switching)
-  hCAN1.Init.Mode                = FDCAN_MODE_NORMAL;       // FDCAN_MODE_NORMAL / FDCAN_MODE_EXTERNAL_LOOPBACK / FDCAN_MODE_INTERNAL_LOOPBACK / FDCAN_MODE_BUS_MONITORING / FDCAN_MODE_RESTRICTED_OPERATION
-  hCAN1.Init.AutoRetransmission  = DISABLE;                 // Auto Retransmission of message if error occured, warning: can cause lockup
-  hCAN1.Init.TransmitPause       = DISABLE;                 // Transmit Pause to allow for other device to send message
-  hCAN1.Init.ProtocolException   = DISABLE;                 // ProtocolException handling
+  // Initialize TxHeader with constant values
+  TxHeader.FDFormat              = FDCAN_CLASSIC_CAN;   // FDCAN_CLASSIC_CAN / FDCAN_FD_CAN
+  TxHeader.TxEventFifoControl    = FDCAN_NO_TX_EVENTS;  // FDCAN_NO_TX_EVENTS / FDCAN_STORE_TX_EVENTS
+  TxHeader.MessageMarker         = 0;                   // 0-0xFF for tracking messages in FIFO buffer
+  TxHeader.ErrorStateIndicator   = FDCAN_ESI_ACTIVE;    // FDCAN_ESI_PASSIVE / FDCAN_ESI_ACTIVE (ACTIVE will notify transmission errors)
+  TxHeader.TxFrameType           = FDCAN_DATA_FRAME;    // FDCAN_DATA_FRAME / FDCAN_REMOTE_FRAME
+  TxHeader.IdType                = FDCAN_STANDARD_ID;   // FDCAN_STANDARD_ID / FDCAN_EXTENDED_ID
+  TxHeader.BitRateSwitch         = FDCAN_BRS_OFF;       // FDCAN_BRS_OFF / FDCAN_BRS_ON
+  TxHeader.TxEventFifoControl    = FDCAN_NO_TX_EVENTS;  // FDCAN_NO_TX_EVENTS / FDCAN_STORE_TX_EVENTS (Do not store TX events)
+
+  hCAN1.Instance                 = FDCAN1;              // The FDCAN device to use
+  hCAN1.Init.FrameFormat         = FDCAN_FRAME_CLASSIC; // FDCAN_FRAME_CLASSIC / FDCAN_FRAME_FD_BRS / FDCAN_FRAME_FD_NO_BRS (Bit Rate Switching)
+  hCAN1.Init.Mode                = FDCAN_MODE_NORMAL;   // FDCAN_MODE_NORMAL / FDCAN_MODE_EXTERNAL_LOOPBACK / FDCAN_MODE_INTERNAL_LOOPBACK / FDCAN_MODE_BUS_MONITORING / FDCAN_MODE_RESTRICTED_OPERATION
+  hCAN1.Init.AutoRetransmission  = DISABLE;             // Auto Retransmission of message if error occured, warning: can cause lockup
+  hCAN1.Init.TransmitPause       = DISABLE;             // Transmit Pause to allow for other device to send message
+  hCAN1.Init.ProtocolException   = DISABLE;             // ProtocolException handling
 
   // FDCAN baud rate = FDCAN Clock / Prescaler / (SJW + TSG1 + TSG2)
   // Sample-Point from 50 to 90% (87.5 % is the preferred value used by CANopen and DeviceNet, 75% is the ARINC 825 default)
@@ -633,10 +673,16 @@ HAL_StatusTypeDef CAN_host_start() {
   // PLL2 80MHz: ( 2  1  69  10) ( 4  1  34  5) ( 8  1  16 3) --> 500K baud
   // PLL2 80MHz: ( 4  1  69  10) ( 8  1  34  5) (16  1  16 3) --> 250K baud
 
-  hCAN1.Init.NominalPrescaler     =  1; // Arbitration/data clock prescaler/divider (1-512)
-  hCAN1.Init.NominalSyncJumpWidth =  1; // Arbitration/data Sync Jump Width (1-128 SJW), should be 1
-  hCAN1.Init.NominalTimeSeg1      = 21; // Arbitration/data period 1 (2-256)
-  hCAN1.Init.NominalTimeSeg2      =  3; // Arbitration/data period 2 (2-128)
+  uint32_t seg1, seg2;
+  if (FDCAN_calculate_segments(&seg1, &seg2) != HAL_OK) {
+    SERIAL_ECHOLNPGM("Impossible CAN baudrate, check CAN clock and baudrate");
+    return HAL_ERROR;
+  }
+
+  hCAN1.Init.NominalPrescaler     =    1; // Arbitration/data clock prescaler/divider (1-512)
+  hCAN1.Init.NominalSyncJumpWidth =    1; // Arbitration/data Sync Jump Width (1-128 SJW), should be 1
+  hCAN1.Init.NominalTimeSeg1      = seg1; // Arbitration/data period 1 (2-256) // 21
+  hCAN1.Init.NominalTimeSeg2      = seg2; // Arbitration/data period 2 (2-128)   //  3
 
 /* No bitrate switching, not used:
   hCAN1.Init.DataPrescaler        =  1; // Arbitration/data clock prescaler/divider (1-32)
@@ -732,14 +778,15 @@ HAL_StatusTypeDef CAN_host_start() {
     SERIAL_ECHOLNPGM("FDCAN BAUDRATE: ", baudrate);
 
     if (baudrate != CAN_BAUDRATE) {
-      SERIAL_ECHOLNPGM("Error: Incorrect FDCAN baudrate generated: ", baudrate, "  FDCAN_BAUDRATE=", CAN_BAUDRATE);
+      SERIAL_ECHOLNPGM(">>> Host ", CAN_ERROR_MSG_INVALID_BAUDRATE, ": ", baudrate, "  CAN_BAUDRATE=", CAN_BAUDRATE);
       CAN_host_error_code |= CAN_ERROR_HOST_INVALID_BAUDRATE;
     }
   #endif
 
-  #ifdef FDCAN_LED_PIN
-    pinMode(FDCAN_LED_PIN, OUTPUT);
+  #ifdef CAN_LED_PIN
+    pinMode(CAN_LED_PIN, OUTPUT);
   #endif
+
   status = CAN_host_send_gcode_2params('M', 997, 0, 0, 0, 0); // M997, reset toolhead at host startup
 
   return status;

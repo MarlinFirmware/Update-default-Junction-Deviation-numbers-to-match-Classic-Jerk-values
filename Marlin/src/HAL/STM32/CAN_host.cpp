@@ -45,7 +45,7 @@
 #include "../../feature/controllerfan.h" // For controllerFan settings
 #include "../../libs/numtostr.h"  // For float to string conversion
 
-#include "../shared/CAN_host.h"
+#include "../shared/CAN.h"
 
 // Interrupt handlers controlled by the CAN_IER register
 extern "C" void CAN1_RX0_IRQHandler(void);                                  // CAN1 FIFO0 interrupt handler (new message, full, overrun)
@@ -61,7 +61,14 @@ extern "C" void HAL_CAN_RxFifo1MsgPendingCallback(CAN_HandleTypeDef *hcan); // C
 extern "C" void HAL_CAN_ErrorCallback(CAN_HandleTypeDef *hcan);             // CAN error interrupt callback
 
 #ifndef CAN_BAUDRATE
-  #define CAN_BAUDRATE 1000000
+  #define CAN_BAUDRATE 1000000LU
+#endif
+
+#ifndef CAN_RD_PIN
+  #define CAN_RD_PIN PB8
+#endif
+#ifndef CAN_TD_PIN
+  #define CAN_TD_PIN PB9
 #endif
 
 #if (CAN_BAUDRATE != 1000000) && (CAN_BAUDRATE != 500000) && (CAN_BAUDRATE != 250000) && (CAN_BAUDRATE != 125000)
@@ -576,43 +583,114 @@ void CAN_host_send_position() { // Send the X, Y, Z and E position to the TOOLHE
   CAN_host_send_gcode_2params('G', 92, 'Z', current_position.z, 'E', current_position.e); // M92 E<pos> Z<pos>
 }
 
-// TODO: SETUP HARDWARE BASED ON CAN_RX, CAN_TX PINS
+// Enable a GPIO clock based on the GPIOx address for STM32F4
+void gpio_clock_enable(GPIO_TypeDef *regs)
+{
+    uint32_t pos = ((uint32_t)regs - GPIOA_BASE) >> 10;
+    RCC->AHB1ENR |= (1 << pos);
+    RCC->AHB1ENR;
+}
+
 void HAL_CAN_MspInit(CAN_HandleTypeDef* canHandle) { // Called by HAL_CAN_Init
 
-  if (canHandle->Instance == CAN1) {
-    if (__HAL_RCC_CAN1_IS_CLK_DISABLED())
-      __HAL_RCC_CAN1_CLK_ENABLE();         // Enable CAN1 clock
+  if (canHandle->Instance == CAN1)
+      __HAL_RCC_CAN1_CLK_ENABLE();       // Enable CAN1 clock
+  
+  if (canHandle->Instance == CAN2)
+      __HAL_RCC_CAN2_CLK_ENABLE();       // Enable CAN2 clock
+  
+  // Use some macros to find the required setup info based on the provided CAN pins
+  uint32_t _CAN_RD_pin = digitalPinToPinName(CAN_RD_PIN);
+  uint32_t _CAN_TD_pin = digitalPinToPinName(CAN_TD_PIN);
+  uint32_t _CAN_RD_function = pinmap_find_function(digitalPinToPinName(CAN_RD_PIN), PinMap_CAN_RD);
+  uint32_t _CAN_TD_function = pinmap_find_function(digitalPinToPinName(CAN_TD_PIN), PinMap_CAN_TD);
 
-    if (__HAL_RCC_GPIOB_IS_CLK_DISABLED())
-      __HAL_RCC_GPIOB_CLK_ENABLE();        // Enable GPIO B clock
-    // CAN1 GPIO Configuration
-    // PB8     ------> CAN1_RX
-    // PB9     ------> CAN1_TX
+  // Enable the GPIOx device related to the CAN_RD_pin
+  gpio_clock_enable(get_GPIO_Port(STM_PORT(_CAN_RD_pin)));
 
-    GPIO_InitTypeDef GPIO_InitStruct = { 0 };
-    GPIO_InitStruct.Pin       = GPIO_PIN_8 | GPIO_PIN_9; // Pin PB8 and Pin PB9
-    GPIO_InitStruct.Mode      = GPIO_MODE_AF_PP;
-    GPIO_InitStruct.Pull      = GPIO_NOPULL;
-    GPIO_InitStruct.Speed     = GPIO_SPEED_FREQ_HIGH;
-    GPIO_InitStruct.Alternate = GPIO_AF9_CAN1;           // Alternate function 9
-    HAL_GPIO_Init(GPIOB, &GPIO_InitStruct);              // Port B
+  // CAN1 GPIO Configuration
+  // PB8     ------> CAN1_RX
+  // PB9     ------> CAN1_TX
 
-    // Enable the CAN interrupt handlers
-    HAL_NVIC_SetPriority(CAN1_RX0_IRQn, 1, 1);
-    HAL_NVIC_EnableIRQ(CAN1_RX0_IRQn);                   // Enable CAN1 FIFO0 interrupt handler
+  GPIO_InitTypeDef GPIO_InitStruct = { 0 };
+  GPIO_InitStruct.Mode      = GPIO_MODE_AF_PP;
+  GPIO_InitStruct.Speed     = GPIO_SPEED_FREQ_HIGH;
+  GPIO_InitStruct.Pull      = GPIO_NOPULL;
 
-    HAL_NVIC_SetPriority(CAN1_RX1_IRQn, 1, 1);           // Set CAN interrupt priority
-    HAL_NVIC_EnableIRQ(CAN1_RX1_IRQn);                   // Enable CAN1 FIFO1 interrupt handler
-  }
+  //GPIO_InitStruct.Pin = GPIO_PIN_8; // Pin PB8 and Pin PB9
+  GPIO_InitStruct.Pin = STM_GPIO_PIN(STM_PIN(_CAN_RD_pin));
+  //GPIO_InitStruct.Alternate = GPIO_AF9_CAN1;
+  GPIO_InitStruct.Alternate = STM_PIN_AFNUM(_CAN_RD_function);
+  //HAL_GPIO_Init(GPIOB, &GPIO_InitStruct);
+  HAL_GPIO_Init(get_GPIO_Port(STM_PORT(_CAN_RD_pin)), &GPIO_InitStruct);
+
+  // Split pin initialisation, perhaps not needed
+  gpio_clock_enable(get_GPIO_Port(STM_PORT(_CAN_TD_pin)));
+  //GPIO_InitStruct.Pin = GPIO_PIN_9; // Pin PB8 and Pin PB9
+  GPIO_InitStruct.Pin = STM_GPIO_PIN(STM_PIN(_CAN_TD_pin));;
+  //GPIO_InitStruct.Alternate = GPIO_AF9_CAN1;
+  GPIO_InitStruct.Alternate = STM_PIN_AFNUM(_CAN_TD_function);
+  //HAL_GPIO_Init(GPIOB, &GPIO_InitStruct);
+  HAL_GPIO_Init(get_GPIO_Port(STM_PORT(_CAN_TD_pin)), &GPIO_InitStruct);
+
+  // Enable the CAN interrupt handlers
+  HAL_NVIC_SetPriority(CAN1_RX0_IRQn, 1, 1);
+  HAL_NVIC_EnableIRQ(CAN1_RX0_IRQn);         // Enable CAN1 FIFO0 interrupt handler
+
+  HAL_NVIC_SetPriority(CAN1_RX1_IRQn, 1, 1); // Set CAN interrupt priority
+  HAL_NVIC_EnableIRQ(CAN1_RX1_IRQn);         // Enable CAN1 FIFO1 interrupt handler
 }
 
 HAL_StatusTypeDef CAN_host_stop() {
   return HAL_CAN_Stop(&hCAN1);
 }
 
+int seg1_encode(uint32_t s) { // Ds must be between 1 and 16
+// Timing is encoded in 4 bits with an offset of 1
+// 4 bits:  CAN_BTR_TS1_3 : CAN_BTR_TS1_2 : CAN_BTR_TS1_1 : CAN_BTR_TS1_0
+    return (--s << CAN_BTR_TS1_Pos);
+}
+
+int seg2_encode(uint32_t s) { // Must be between 1 and 8
+// Timing is encoded in 3 bits with an offset of 1
+// 3 bits:  CAN_BTR_TS2_2 : CAN_BTR_TS1_1 : CAN_BTR_TS1_0
+    return (--s << CAN_BTR_TS2_Pos);
+}
+
+// Calculate the CAN sample timing, seg1 and seg2, sjw = 1 (no baudrate switching)
+// seg1 range: 1-16, seg2 range: 1-8, sjw = 1, so minimum is 3, use a max of 19 clocks per bit
+// Will give solutions for all "reasonable" clock rates
+int CAN_calculate_segments(uint32_t *seg1, uint32_t *seg2, uint32_t *prescaler) {
+
+  uint32_t CAN_clock = HAL_RCC_GetPCLK1Freq(); // APB1 clock (=PCLK1 clock)
+  float clocks_per_bit;
+  *prescaler = 1;
+
+  do { // Check seg1 and seg2 range
+    do { // Check prescaler
+      clocks_per_bit = (float)CAN_clock / (*prescaler * CAN_BAUDRATE); // Clocks per bit must be a whole number
+    } while (((clocks_per_bit != (uint32_t)clocks_per_bit) || (clocks_per_bit > 19)) && (clocks_per_bit > 3) && (*prescaler)++);
+
+   if (clocks_per_bit < 4) // Minimal 4 clocks per bit (SJW + SEG1 + SEG2 = 1 + 1 + 1)
+      return -1; // Baudrate is not possible
+
+    *seg2 = (clocks_per_bit / 8) + 0.5;  // Preferred sample point at 87.5% (7/8)
+    *seg1 = (int)clocks_per_bit - *seg2 - 1; // sjw = 1;
+
+  } while ((*seg1 + *seg2 + 1 > 19) && (*prescaler)++); // MAX 16 + 2 + 1 clocks
+
+  *seg1 = (*seg1 - 1) << CAN_BTR_TS1_Pos; // Convert to register values
+  *seg2 = (*seg2 - 1) << CAN_BTR_TS2_Pos; // Convert to register values
+  
+  return HAL_OK;
+}
+
 HAL_StatusTypeDef CAN_host_start() {
 
   HAL_StatusTypeDef status = HAL_OK;
+
+  // The CAN clock must be set first because the sample timing depends on it
+  __HAL_RCC_CAN1_CLK_ENABLE(); 
 
   // Initialize TxHeader with constant values
   TxHeader.ExtId              = 0;
@@ -620,25 +698,31 @@ HAL_StatusTypeDef CAN_host_start() {
   TxHeader.RTR                = CAN_RTR_DATA; // Data transmission type: CAN_RTR_DATA / CAN_RTR_REMOTE
   TxHeader.TransmitGlobalTime = DISABLE;      // Put timestamp in Data[6-7], requires Time Triggered Communication Mode
 
+uint32_t seg1, seg2, prescaler;
+if (CAN_calculate_segments(&seg1, &seg2, &prescaler) != HAL_OK) {
+  SERIAL_ECHOLNPGM("Impossible CAN baudrate, check CAN clock and baudrate");
+  return HAL_ERROR;
+}
+
   // CAN peripheral clock is 42MHz (168Mhz / 4)
   // CAN baud rate = clock frequency / clock divider / prescaler / (1 + TSG1 + TSG2)
   // Baud rate = 42M / 3 / 1 / (1 + 11 + 2) = 1M baud (Sample point = 12/14=86%)
   // Baud rate = 42M / 3 / 2 / (1 + 11 + 2) = 500k baud
   // Baud rate = 42M / 3 / 4 / (1 + 11 + 2) = 250k baud
   hCAN1.Instance                  = CAN1;
-  hCAN1.Init.Prescaler            = 3;               // 1-1024, 42MHz peripheral clock / 3 --> 14MHz -> 1M baud. 6 --> 500K baud. 12 --> 250K baud.
+  hCAN1.Init.Prescaler            = prescaler;       // 1-1024, 42MHz peripheral clock / 3 --> 14MHz -> 1M baud. 6 --> 500K baud. 12 --> 250K baud.
   hCAN1.Init.AutoBusOff           = DISABLE;         // DISABLE: Software controlled Bus-off. ENABLE: Automatic hardware controlled (no send/receive)
   hCAN1.Init.AutoWakeUp           = ENABLE;          // ENABLE: Automatic hardware controlled bus wakeup. DISABLE: Software controlled bus wakeup.
   hCAN1.Init.AutoRetransmission   = ENABLE;          // DISABLE / ENABLE, resend if transmission failed, but locks up if communication fails/cable not connected!!!!!!!!!!!!!!!!!
   hCAN1.Init.SyncJumpWidth        = CAN_SJW_1TQ;     // CAN_SJW_1TQ  (1-4) Should be 1
-  hCAN1.Init.TimeSeg1             = CAN_BS1_11TQ;    // CAN_BS1_11TQ (1-16)
-  hCAN1.Init.TimeSeg2             = CAN_BS2_2TQ;     // CAN_BS2_2TQ  (1-8)
+  hCAN1.Init.TimeSeg1             = seg1;            // CAN_BS1_11TQ (1-16)
+  hCAN1.Init.TimeSeg2             = seg2;            // CAN_BS2_2TQ  (1-8)
   hCAN1.Init.Mode                 = CAN_MODE_NORMAL; // CAN_MODE_NORMAL / CAN_MODE_SILENT / CAN_MODE_LOOPBACK / CAN_MODE_SILENT_LOOPBACK
   hCAN1.Init.TimeTriggeredMode    = DISABLE;         // TTCAN is used to assign timeslot to the devices for real time applications
   hCAN1.Init.ReceiveFifoLocked    = DISABLE;         // Handle RX FIFO overruns. DISABLE: Overwrite previous message with new one. ENABLE: Discard the new message.
   hCAN1.Init.TransmitFifoPriority = ENABLE;          // Handle TX FIFO send order. ENABLE: Chronologically. DISABLE: Transmit lower ID number first.
 
-  status = HAL_CAN_Init(&hCAN1); // Calls HAL_CAN_MspInit
+  status = HAL_CAN_Init(&hCAN1); // Calls HAL_CAN_Init
   if (status != HAL_OK) return status;
 
   CAN_FilterTypeDef  sFilterConfig;
@@ -695,9 +779,6 @@ HAL_StatusTypeDef CAN_host_start() {
     pinMode(CAN_LED_PIN, OUTPUT);
   #endif
 
-  #ifdef FDCAN_LED_PIN
-    pinMode(FDCAN_LED_PIN, OUTPUT);
-  #endif
   status = CAN_host_send_gcode_2params('M', 997, 0, 0, 0, 0); // M997, reset toolhead at host startup
 
   return status;

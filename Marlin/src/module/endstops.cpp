@@ -66,7 +66,7 @@
 #endif
 
 #if ENABLED(CAN_TOOLHEAD)
-  #include "../HAL/shared/CAN_host.h"
+  #include "../HAL/shared/CAN.h"
 #endif
 
 #define DEBUG_OUT ALL(USE_SENSORLESS, DEBUG_LEVELING_FEATURE)

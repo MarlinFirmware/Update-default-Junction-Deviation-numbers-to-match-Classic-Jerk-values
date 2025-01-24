@@ -35,7 +35,7 @@
 #include "HAL/shared/cpu_exception/exception_hook.h"
 
 #if ANY(CAN_HOST, CAN_TOOLHEAD)
-  #include "HAL/shared/CAN_host.h"
+  #include "HAL/shared/CAN.h"
 #endif
 
 #if ENABLED(HAS_ADXL345_ACCELEROMETER)
@@ -1256,8 +1256,7 @@ void setup() {
   #endif
 
   #if ENABLED(CAN_TOOLHEAD)
-    SERIAL_ECHOLN(millis(), 
-      F(">>> CAN Start: "),
+    SERIAL_ECHOLN( F(">>> CAN Start: "),
       CAN_toolhead_start() == HAL_OK ? F("OK") : F("FAILED!")
     );
   #endif

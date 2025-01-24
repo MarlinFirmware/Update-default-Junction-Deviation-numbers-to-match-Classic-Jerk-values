@@ -30,7 +30,7 @@
 #include "../../libs/numtostr.h"
 
 #if ENABLED(CAN_TOOLHEAD)
-  #include "../../HAL/shared/CAN_host.h"
+  #include "../../HAL/shared/CAN.h"
 #endif
 
 /**

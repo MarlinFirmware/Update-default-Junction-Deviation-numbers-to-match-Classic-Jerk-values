@@ -70,7 +70,7 @@ GcodeSuite gcode;
 #endif
 
 #if ENABLED(CAN_HOST)
-  #include "../HAL/shared/CAN_host.h"
+  #include "../HAL/shared/CAN.h"
   #include "../libs/buzzer.h"
 #endif
 

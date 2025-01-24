@@ -34,7 +34,7 @@
 #include "../MarlinCore.h" // for printingIsActive()
 
 #if ENABLED(CAN_HOST)
-  #include "../HAL/shared/CAN_host.h"
+  #include "../HAL/shared/CAN.h"
 #endif
 
 #include "../inc/MarlinConfig.h"

@@ -30,7 +30,7 @@
 #include "Servo.h"
 
 #if ENABLED(CAN_HOST)
-  #include "../shared/CAN_host.h"
+  #include "../shared/CAN.h"
 #endif
 
 static uint_fast8_t servoCount = 0;
