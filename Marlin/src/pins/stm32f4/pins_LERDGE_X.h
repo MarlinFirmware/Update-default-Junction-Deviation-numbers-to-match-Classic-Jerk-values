@@ -37,7 +37,7 @@
 #define I2C_EEPROM
 #define I2C_SCL_PIN                         PB8
 #define I2C_SDA_PIN                         PB9
-#define MARLIN_EEPROM_SIZE               0x10000  // FM24CL64 F-RAM 64K (8Kx8)
+#define MARLIN_EEPROM_SIZE              0x10000U  // FM24CL64 F-RAM 64K (8Kx8)
 
 #define HAS_OTG_USB_HOST_SUPPORT                  // USB Flash Drive support
 

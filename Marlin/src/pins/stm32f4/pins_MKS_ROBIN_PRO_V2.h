@@ -37,7 +37,7 @@
 //#define SRAM_EEPROM_EMULATION                   // Use BackSRAM-based EEPROM emulation
 //#define FLASH_EEPROM_EMULATION                  // Use Flash-based EEPROM emulation
 #define I2C_EEPROM
-#define MARLIN_EEPROM_SIZE                0x1000  // 4K
+#define MARLIN_EEPROM_SIZE               0x1000U  // 4K
 
 #define HAS_OTG_USB_HOST_SUPPORT                  // USB Flash Drive support
 
