@@ -333,15 +333,15 @@
 // SD Support
 //
 
-#ifndef SDCARD_CONNECTION
-  #define SDCARD_CONNECTION              ONBOARD
+#ifndef VOLUME0
+  #define VOLUME0                        ONBOARD
 #endif
 
-#if SD_CONNECTION_IS(LCD) && (ALL(TOUCH_UI_FTDI_EVE, LCD_FYSETC_TFT81050) || IS_TFTGLCD_PANEL)
+#if ANY_VOLUME_IS(LCD) && (ALL(TOUCH_UI_FTDI_EVE, LCD_FYSETC_TFT81050) || IS_TFTGLCD_PANEL)
   #define SD_DETECT_PIN              EXP1_01_PIN
   #define SD_SS_PIN                  EXP1_05_PIN
-#elif SD_CONNECTION_IS(CUSTOM_CABLE)
-  #error "SD CUSTOM_CABLE is not compatible with SKR Mini E3."
+#elif ANY_VOLUME_IS(CUSTOM)
+  #error "SD CUSTOM is not compatible with SKR Mini E3."
 #endif
 
 #define ONBOARD_SPI_DEVICE                     1  // SPI1 -> used only by HAL/STM32F1...

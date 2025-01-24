@@ -33,14 +33,34 @@
 //========================================================
 
 // Support for SD Card and other file storage
-#if ENABLED(SDSUPPORT)
+#ifdef VOLUME0
   #define HAS_MEDIA 1
+  #ifdef VOLUME1
+    #define HAS_MULTI_VOLUME 1
+  #endif
+#endif
+
+//
+// SD Card connection methods
+//
+#if HAS_MEDIA
+  #define _VOLUME_ONBOARD 1
+  #define _VOLUME_LCD     2
+  #define _VOLUME_USBFD   3
+  #define _VOLUME_CUSTOM  4
+  #define _VOLUME_ID(V) _CAT(_VOLUME_, V)
+  #define VOLUME_IS(N,V) (_VOLUME_ID(VOLUME##N) == _VOLUME_ID(V))
+#else
+  #define VOLUME_IS(...) 0
+#endif
+#define ANY_VOLUME_IS(V) (VOLUME_IS(0,V) || VOLUME_IS(1,V) || VOLUME_IS(2,V))
+
+// If the user specified a USB Flash Drive...
+#if ANY_VOLUME_IS(USBFD)
+  #define HAS_USB_FLASH_DRIVE 1
 #endif
 #if ENABLED(MULTI_VOLUME)
   #define HAS_MULTI_VOLUME 1
-#endif
-#if ENABLED(USB_FLASH_DRIVE_SUPPORT)
-  #define HAS_USB_FLASH_DRIVE 1
 #endif
 
 //

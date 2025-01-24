@@ -2669,21 +2669,21 @@
 // @section media
 
 /**
- * SD CARD
+ * Media Drives
  *
- * SD Card support is disabled by default. If your controller has an SD slot,
- * you must uncomment the following option or it won't work.
+ * If your controller has any SD Card readers or
+ * USB Flash Drives set the following options:
  */
-//#define SDSUPPORT
+//#define VOLUME0 ONBOARD
+//#define VOLUME1 LCD
+//#define VOLUME2 USBFD
 
 /**
  * SD CARD: ENABLE CRC
  *
  * Use CRC checks and retries on the SD communication.
  */
-#if ENABLED(SDSUPPORT)
-  //#define SD_CHECK_AND_RETRY
-#endif
+//#define SD_CHECK_AND_RETRY
 
 // @section interface
 

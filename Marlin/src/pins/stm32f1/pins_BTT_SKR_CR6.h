@@ -167,11 +167,11 @@
 // SD Card
 //
 
-#ifndef SDCARD_CONNECTION
-  #define SDCARD_CONNECTION              ONBOARD
+#ifndef VOLUME0
+  #define VOLUME0                        ONBOARD
 #endif
 
-#if SD_CONNECTION_IS(ONBOARD)
+#if ANY_VOLUME_IS(ONBOARD)
   #define SD_DETECT_PIN                     PC4
   #define ONBOARD_SD_CS_PIN                 PA4   // Chip select for "System" SD card
   #define SD_SS_PIN            ONBOARD_SD_CS_PIN

@@ -305,8 +305,8 @@
 // Misc. Functions
 //
 
-#ifndef SDCARD_CONNECTION
-  #define SDCARD_CONNECTION              ONBOARD
+#ifndef VOLUME0
+  #define VOLUME0                        ONBOARD
 #endif
 
 /**               ------                                      ------
@@ -340,12 +340,12 @@
 // Onboard SD card
 // Must use soft SPI because Marlin's default hardware SPI is tied to LCD's EXP2
 //
-#if SD_CONNECTION_IS(LCD)
+#if ANY_VOLUME_IS(LCD)
 
   #define SD_DETECT_PIN              EXP2_07_PIN
   #define SD_SS_PIN                  EXP2_04_PIN
 
-#elif SD_CONNECTION_IS(ONBOARD)
+#elif ANY_VOLUME_IS(ONBOARD)
 
   // The SKR Pro's ONBOARD SD interface is on SPI1.
   // Due to a pull resistor on the clock line, it needs to use SPI Data Mode 3 to
@@ -358,8 +358,8 @@
   #define SD_MOSI_PIN                       PB5
   #define SD_DETECT_PIN                     PB11
 
-#elif SD_CONNECTION_IS(CUSTOM_CABLE)
-  #error "CUSTOM_CABLE is not a supported SDCARD_CONNECTION for this board"
+#elif ANY_VOLUME_IS(CUSTOM)
+  #error "CUSTOM is not a supported DRIVE for this board"
 #endif
 
 #if ENABLED(BTT_MOTOR_EXPANSION)

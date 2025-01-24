@@ -7,8 +7,8 @@
 set -e
 
 restore_configs
-opt_set MOTHERBOARD BOARD_MKS_ROBIN_LITE SERIAL_PORT 1
-opt_enable EEPROM_SETTINGS SDSUPPORT
+opt_set MOTHERBOARD BOARD_MKS_ROBIN_LITE SERIAL_PORT 1 VOLUME0 ONBOARD
+opt_enable EEPROM_SETTINGS
 exec_test $1 $2 "Default Configuration with Fallback SD EEPROM" "$3"
 
 # cleanup

@@ -81,10 +81,10 @@
 // SD Card
 //
 #ifndef SD_DETECT_PIN
-  #if SD_CONNECTION_IS(ONBOARD)
+  #if ANY_VOLUME_IS(ONBOARD)
     //#define HAS_ONBOARD_SD_DETECT               // If the SD_DETECT_PIN is wired up
   #endif
-  #if ENABLED(HAS_ONBOARD_SD_DETECT) || !SD_CONNECTION_IS(ONBOARD)
+  #if ENABLED(HAS_ONBOARD_SD_DETECT) || !ANY_VOLUME_IS(ONBOARD)
     #define SD_DETECT_PIN                     49
   #endif
 #endif

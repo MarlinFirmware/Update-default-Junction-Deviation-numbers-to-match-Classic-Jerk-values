@@ -112,7 +112,7 @@
   #endif
 
   #if HAS_MEDIA
-    #error "SDSUPPORT is not supported by the BIQU BQ111-A4 when an LCD controller is used"
+    #error "VOLUME# is not supported by the BIQU BQ111-A4 when an LCD controller is used."
   #endif
 
 #endif // HAS_WIRED_LCD

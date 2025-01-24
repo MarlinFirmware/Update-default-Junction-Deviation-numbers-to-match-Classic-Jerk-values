@@ -146,16 +146,16 @@
 #define ONBOARD_SD_CS_PIN                   PA4   // Chip select for "System" SD card
 #define SD_SS_PIN              ONBOARD_SD_CS_PIN
 
-#ifndef SDCARD_CONNECTION
-  #define SDCARD_CONNECTION              ONBOARD
+#ifndef VOLUME0
+  #define VOLUME0                        ONBOARD
 #endif
-#if SD_CONNECTION_IS(ONBOARD)
+#if ANY_VOLUME_IS(ONBOARD)
   //#define SD_DETECT_PIN                   PA4
   #define SD_SCK_PIN                        PA5
   #define SD_MISO_PIN                       PA6
   #define SD_MOSI_PIN                       PA7
-#elif SD_CONNECTION_IS(CUSTOM_CABLE)
-  #error "SD CUSTOM_CABLE is not compatible with SKR E3 DIP."
+#elif ANY_VOLUME_IS(CUSTOM)
+  #error "SD CUSTOM is not compatible with SKR E3 DIP."
 #endif
 
 //
@@ -211,7 +211,7 @@
   #define CLCD_MOD_RESET                    PA9
   #define CLCD_SPI_CS                       PB8
 
-  #if SD_CONNECTION_IS(LCD) && ALL(TOUCH_UI_FTDI_EVE, LCD_FYSETC_TFT81050)
+  #if ANY_VOLUME_IS(LCD) && ALL(TOUCH_UI_FTDI_EVE, LCD_FYSETC_TFT81050)
     #define SD_DETECT_PIN                   PA15
     #define SD_SS_PIN                       PA10
   #endif

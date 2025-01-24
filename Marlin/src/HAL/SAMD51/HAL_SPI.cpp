@@ -54,7 +54,7 @@
 #else // !SOFTWARE_SPI
 
   #ifdef ADAFRUIT_GRAND_CENTRAL_M4
-    #if SD_CONNECTION_IS(ONBOARD)
+    #if ANY_VOLUME_IS(ONBOARD)
       #define sdSPI SDCARD_SPI
     #else
       #define sdSPI SPI

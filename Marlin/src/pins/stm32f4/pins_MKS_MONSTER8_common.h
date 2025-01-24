@@ -243,34 +243,29 @@
 //
 // SD Support
 //
-#ifndef SDCARD_CONNECTION
+#if HAS_MEDIA
   #if HAS_WIRED_LCD && DISABLED(NO_LCD_SDCARD)
-    #define SDCARD_CONNECTION                LCD
+    #define VOLUME0                          LCD
   #else
-    #define SDCARD_CONNECTION            ONBOARD
+    #define VOLUME0                      ONBOARD
   #endif
-#endif
-
-//
-// Onboard SD card
-// Must use soft SPI because Marlin's default hardware SPI is tied to LCD's EXP2
-//
-#if SD_CONNECTION_IS(ONBOARD)
-  #define ENABLE_SPI3
-  #define SD_SS_PIN                         PC9
-  #define SD_SCK_PIN                        PC10
-  #define SD_MISO_PIN                       PC11
-  #define SD_MOSI_PIN                       PC12
-  #define SD_DETECT_PIN                     PC4   // SD_DETECT_PIN doesn't work with NO_SD_HOST_DRIVE disabled
-#elif SD_CONNECTION_IS(LCD)
-  #define ENABLE_SPI1
-  #define SD_SS_PIN                  EXP2_04_PIN
-  #define SD_SCK_PIN                 EXP2_02_PIN
-  #define SD_MISO_PIN                EXP2_01_PIN
-  #define SD_MOSI_PIN                EXP2_06_PIN
-  #define SD_DETECT_PIN              EXP2_07_PIN
-#elif SD_CONNECTION_IS(CUSTOM_CABLE)
-  #error "CUSTOM_CABLE is not a supported SDCARD_CONNECTION for BOARD_MKS_MONSTER8_V1/V2."
+  #if ANY_VOLUME_IS(ONBOARD)
+    #define ENABLE_SPI3
+    #define SD_SS_PIN                       PC9
+    #define SD_SCK_PIN                      PC10
+    #define SD_MISO_PIN                     PC11
+    #define SD_MOSI_PIN                     PC12
+    #define SD_DETECT_PIN                   PC4   // SD_DETECT_PIN doesn't work with NO_SD_HOST_DRIVE disabled
+  #elif ANY_VOLUME_IS(LCD)
+    #define ENABLE_SPI1
+    #define SD_SS_PIN                EXP2_04_PIN
+    #define SD_SCK_PIN               EXP2_02_PIN
+    #define SD_MISO_PIN              EXP2_01_PIN
+    #define SD_MOSI_PIN              EXP2_06_PIN
+    #define SD_DETECT_PIN            EXP2_07_PIN
+  #elif ANY_VOLUME_IS(CUSTOM_CABLE)
+    #error "CUSTOM_CABLE is not a supported SDCARD_CONNECTION for BOARD_MKS_MONSTER8_V1/V2."
+  #endif
 #endif
 
 #if HAS_WIRED_LCD
@@ -317,7 +312,7 @@
       #define NEOPIXEL_PIN           EXP1_06_PIN
       #define DOGLCD_MOSI            EXP2_06_PIN
       #define DOGLCD_SCK             EXP2_02_PIN
-      #if SD_CONNECTION_IS(ONBOARD)
+      #if ANY_VOLUME_IS(ONBOARD)
         #define FORCE_SOFT_SPI
       #endif
       //#define LCD_SCREEN_ROTATE            180  // 0, 90, 180, 270

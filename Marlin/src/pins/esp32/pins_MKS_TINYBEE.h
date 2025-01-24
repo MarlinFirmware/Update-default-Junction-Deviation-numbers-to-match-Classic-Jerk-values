@@ -184,7 +184,7 @@
     #define DOGLCD_A0                EXP1_04_PIN
     #define LCD_RESET_PIN            EXP1_05_PIN
     #define NEOPIXEL_PIN             EXP1_06_PIN
-    #if SD_CONNECTION_IS(ONBOARD)
+    #if ANY_VOLUME_IS(ONBOARD)
       #define FORCE_SOFT_SPI
     #endif
     #if ALL(MKS_MINI_12864_V3, HAS_MEDIA)

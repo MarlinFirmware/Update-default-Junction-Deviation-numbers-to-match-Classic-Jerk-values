@@ -60,7 +60,7 @@
 #if ANY(CR10_STOCKDISPLAY, ENDER2_STOCKDISPLAY)
   #if ENABLED(CR10_STOCKDISPLAY)
     #if HAS_MEDIA
-      #error "Cannot have SDSUPPORT with CR10_STOCKDISPLAY on this motherboard." // Hardware SDCARD SCK and MOSI pins are reallocated.
+      #error "Cannot use VOLUME# with CR10_STOCKDISPLAY on this motherboard." // Hardware SDCARD SCK and MOSI pins are reallocated.
     #endif
     #define LCD_PINS_RS              EXP1_07_PIN  // ST9720 CS
     #define LCD_PINS_EN              EXP1_08_PIN  // ST9720 DAT

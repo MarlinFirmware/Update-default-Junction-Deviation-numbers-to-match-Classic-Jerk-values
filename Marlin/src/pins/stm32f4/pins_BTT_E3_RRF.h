@@ -369,16 +369,16 @@
 // SD Support
 //
 
-#ifndef SDCARD_CONNECTION
-  #define SDCARD_CONNECTION              ONBOARD
+#ifndef VOLUME0
+  #define VOLUME0                        ONBOARD
 #endif
 
-#if SD_CONNECTION_IS(ONBOARD)
+#if ANY_VOLUME_IS(ONBOARD)
   #define ONBOARD_SDIO                            // Use SDIO for onboard SD
   //#define SDIO_CLOCK                  48000000
   #define SD_DETECT_PIN                     PC4
-#elif SD_CONNECTION_IS(CUSTOM_CABLE)
-  #error "SD CUSTOM_CABLE is not compatible with BTT E3 RRF."
+#elif ANY_VOLUME_IS(CUSTOM)
+  #error "SD CUSTOM is not compatible with BTT E3 RRF."
 #endif
 
 #if ENABLED(WIFISUPPORT)

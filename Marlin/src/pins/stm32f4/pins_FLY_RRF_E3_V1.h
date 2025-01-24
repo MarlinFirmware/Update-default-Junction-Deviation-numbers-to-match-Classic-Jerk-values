@@ -298,14 +298,14 @@
 //
 
 #ifndef SDCARD_CONNECTION
-  #define SDCARD_CONNECTION              ONBOARD
+  #define VOLUME0                        ONBOARD
 #endif
 
-#if SD_CONNECTION_IS(ONBOARD)
+#if ANY_VOLUME_IS(ONBOARD)
   #define ONBOARD_SDIO                            // Use SDIO for onboard SD
   //#define SDIO_CLOCK                  48000000
   #define SD_DETECT_PIN                     PA15
-#elif SD_CONNECTION_IS(CUSTOM_CABLE)
+#elif ANY_VOLUME_IS(CUSTOM_CABLE)
   #error "SD CUSTOM_CABLE is not compatible with Fly RRF E3 V1."
 #endif
 

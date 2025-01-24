@@ -247,12 +247,12 @@
 //
 // SD Card
 //
-#ifndef SDCARD_CONNECTION
-  #define SDCARD_CONNECTION              ONBOARD
+#ifndef VOLUME0
+  #define VOLUME0                        ONBOARD
 #endif
 
 // Use the on-board card socket labeled SD_Extender
-#if SD_CONNECTION_IS(CUSTOM_CABLE)
+#if ANY_VOLUME_IS(CUSTOM)
   #define SD_SCK_PIN                        PC12
   #define SD_MISO_PIN                       PC8
   #define SD_MOSI_PIN                       PD2

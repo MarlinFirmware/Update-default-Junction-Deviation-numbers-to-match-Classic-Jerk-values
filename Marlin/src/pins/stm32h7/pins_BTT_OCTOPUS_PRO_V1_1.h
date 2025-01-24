@@ -37,6 +37,17 @@
 #define HEATER_2_PIN                        PB0   // Heater2
 
 //
+// SD Support
+//
+#ifndef VOLUME0
+  #if HAS_WIRED_LCD && DISABLED(NO_LCD_SDCARD)
+    #define VOLUME0                          LCD
+  #else
+    #define VOLUME0                      ONBOARD
+  #endif
+#endif
+
+//
 // NeoPixel LED
 //
 #ifndef NEOPIXEL_PIN

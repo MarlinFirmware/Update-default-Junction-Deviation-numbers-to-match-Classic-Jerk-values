@@ -200,7 +200,7 @@
 // SD Card
 //
 #define SD_DETECT_PIN                       PC1
-#define SDCARD_CONNECTION                ONBOARD
+#define VOLUME0                          ONBOARD
 #define ONBOARD_SDIO
 #define SDIO_CLOCK                       4500000
 #define SDIO_READ_RETRIES                     16

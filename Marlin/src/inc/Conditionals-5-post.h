@@ -518,13 +518,15 @@
  */
 #if HAS_MEDIA
 
-  #if HAS_SD_HOST_DRIVE && SD_CONNECTION_IS(ONBOARD) && DISABLED(KEEP_SD_DETECT)
+  #if HAS_SD_HOST_DRIVE && ANY_VOLUME_IS(ONBOARD)
     //
     // The external SD card is not used. Hardware SPI is used to access the card.
     // When sharing the SD card with a PC we want the menu options to
     // mount/unmount the card and refresh it. So we disable card detect.
     //
-    #undef SD_DETECT_PIN
+    #if DISABLED(KEEP_SD_DETECT)
+      #undef SD_DETECT_PIN
+    #endif
     #define HAS_SHARED_MEDIA 1
   #endif
 
@@ -534,7 +536,7 @@
   #endif
 
   // Not onboard or custom cable
-  #if SD_CONNECTION_IS(LCD) || !defined(SDCARD_CONNECTION)
+  #if VOLUME_IS(1, LCD) || !defined(VOLUME0)
     #define SD_CONNECTION_TYPICAL 1
   #endif
 
@@ -550,12 +552,11 @@
     #endif
   #endif
 
-  #if !HAS_USB_FLASH_DRIVE || ALL(HAS_MULTI_VOLUME, VOLUME_SD_ONBOARD)
-    #if ENABLED(ONBOARD_SDIO)
-      #define NEED_SD2CARD_SDIO 1
-    #else
-      #define NEED_SD2CARD_SPI 1
-    #endif
+  #if ANY_VOLUME_IS(LCD) || (ANY_VOLUME_IS(ONBOARD) && DISABLED(ONBOARD_SDIO))
+    #define NEED_SD2CARD_SPI 1
+  #endif
+  #if ANY_VOLUME_IS(ONBOARD) && ENABLED(ONBOARD_SDIO)
+    #define NEED_SD2CARD_SDIO 1
   #endif
 
   #if HAS_SD_DETECT && NONE(HAS_GRAPHICAL_TFT, LCD_USE_DMA_FSMC, HAS_FSMC_GRAPHICAL_TFT, HAS_SPI_GRAPHICAL_TFT, IS_DWIN_MARLINUI, EXTENSIBLE_UI, HAS_DWIN_E3V2, HAS_U8GLIB_I2C_OLED)

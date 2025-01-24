@@ -37,7 +37,7 @@
  *
  * Using multiple cards costs 400 - 500  bytes of flash.
  *
- * Each card requires about 550 bytes of SRAM so use of a Mega is recommended.
+ * Each card requires about 550 bytes of SRAM
  */
 #define USE_MULTIPLE_CARDS 0 // TODO? HAS_MULTI_VOLUME
 

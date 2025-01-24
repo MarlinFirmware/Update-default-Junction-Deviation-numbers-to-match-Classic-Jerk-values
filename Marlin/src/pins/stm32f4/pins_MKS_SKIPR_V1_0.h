@@ -243,20 +243,20 @@
 // Onboard SD card use hardware SPI3 (defined in variant), LCD SD card use hardware SPI1
 //
 #if HAS_MEDIA
-  #ifndef SDCARD_CONNECTION
+  #ifndef VOLUME0
     #if ENABLED(NO_LCD_SDCARD)
-      #define SDCARD_CONNECTION          ONBOARD
+      #define VOLUME0                    ONBOARD
     #else
-      #define SDCARD_CONNECTION              LCD
+      #define VOLUME0                        LCD
     #endif
   #endif
-  #if SD_CONNECTION_IS(ONBOARD)
+  #if ANY_VOLUME_IS(ONBOARD)
     //#define SOFTWARE_SPI
     //#define SD_SPI_SPEED        SPI_HALF_SPEED
     #undef SD_DETECT_STATE
     #define SD_DETECT_STATE                  LOW
     #define SD_DETECT_PIN                   PC4
-  #elif SD_CONNECTION_IS(LCD)
+  #elif ANY_VOLUME_IS(LCD)
     //#define SOFTWARE_SPI
     //#define SD_SPI_SPEED     SPI_QUARTER_SPEED
     #define SD_SS_PIN                EXP2_04_PIN
@@ -264,8 +264,8 @@
     #define SD_MISO_PIN              EXP2_01_PIN
     #define SD_MOSI_PIN              EXP2_06_PIN
     #define SD_DETECT_PIN            EXP2_07_PIN
-  #elif SD_CONNECTION_IS(CUSTOM_CABLE)
-    #error "CUSTOM_CABLE is not a supported SDCARD_CONNECTION for this board"
+  #elif ANY_VOLUME_IS(CUSTOM)
+    #error "CUSTOM is not a supported DRIVE for this board"
   #endif
 #endif
 

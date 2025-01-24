@@ -89,22 +89,22 @@
  * M17  - Enable/Power all stepper motors
  * M18  - Disable all stepper motors; same as M84
  *
- *** Print from Media (SDSUPPORT) ***
- * M20  - List SD card. (Requires SDSUPPORT)
- * M21  - Init SD card. (Requires SDSUPPORT) With MULTI_VOLUME select a drive with `M21 Pn` / 'M21 S' / 'M21 U'.
- * M22  - Release SD card. (Requires SDSUPPORT)
- * M23  - Select SD file: "M23 /path/file.gco". (Requires SDSUPPORT)
- * M24  - Start/resume SD print. (Requires SDSUPPORT)
- * M25  - Pause SD print. (Requires SDSUPPORT)
- * M26  - Set SD position in bytes: "M26 S12345". (Requires SDSUPPORT)
- * M27  - Report SD print status. (Requires SDSUPPORT)
+ *** Print from Media (VOLUME#) ***
+ * M20  - List SD card. (Requires VOLUME#)
+ * M21  - Init SD card. (Requires VOLUME#) If multiple volumes exist, select a drive with 'Pn' / 'O' / 'S' / 'U'.
+ * M22  - Release SD card. (Requires VOLUME#)
+ * M23  - Select SD file: "M23 /path/file.gco". (Requires VOLUME#)
+ * M24  - Start/resume SD print. (Requires VOLUME#)
+ * M25  - Pause SD print. (Requires VOLUME#)
+ * M26  - Set SD position in bytes: "M26 S12345". (Requires VOLUME#)
+ * M27  - Report SD print status. (Requires VOLUME#)
  *        OR, with 'S<seconds>' set the SD status auto-report interval. (Requires AUTO_REPORT_SD_STATUS)
  *        OR, with 'C' get the current filename.
- * M28  - Start SD write: "M28 /path/file.gco". (Requires SDSUPPORT)
- * M29  - Stop SD write. (Requires SDSUPPORT)
- * M30  - Delete file from SD: "M30 /path/file.gco" (Requires SDSUPPORT)
+ * M28  - Start SD write: "M28 /path/file.gco". (Requires VOLUME#)
+ * M29  - Stop SD write. (Requires VOLUME#)
+ * M30  - Delete file from SD: "M30 /path/file.gco" (Requires VOLUME#)
  * M31  - Report time since last M109 or SD card start to serial.
- * M32  - Select file and start SD print: "M32 [S<bytepos>] !/path/file.gco#". (Requires SDSUPPORT)
+ * M32  - Select file and start SD print: "M32 [S<bytepos>] !/path/file.gco#". (Requires VOLUME#)
  *        Use P to run other files as sub-programs: "M32 P !filename#"
  *        The '#' is necessary when calling from within sd files, as it stops buffer prereading
  * M33  - Get the longname version of a path. (Requires LONG_FILENAME_HOST_SUPPORT)
@@ -259,7 +259,7 @@
  * M510 - Lock Printer (Requires PASSWORD_FEATURE)
  * M511 - Unlock Printer (Requires PASSWORD_UNLOCK_GCODE)
  * M512 - Set/Change/Remove Password (Requires PASSWORD_CHANGE_GCODE)
- * M524 - Abort the current SD print job started with M24. (Requires SDSUPPORT)
+ * M524 - Abort the current SD print job started with M24. (Requires VOLUME#)
  * M540 - Enable/disable SD card abort on endstop hit: "M540 S<state>". (Requires SD_ABORT_ON_ENDSTOP_HIT)
  * M552 - Get or set IP address. Enable/disable network interface. (Requires enabled Ethernet port)
  * M553 - Get or set IP netmask. (Requires enabled Ethernet port)
@@ -332,7 +332,7 @@
  *
  *** Custom codes (can be changed to suit future G-code standards) ***
  * G425 - Calibrate using a conductive object. (Requires CALIBRATION_GCODE)
- * M928 - Start SD logging: "M928 filename.gco". Stop with M29. (Requires SDSUPPORT)
+ * M928 - Start SD logging: "M928 filename.gco". Stop with M29. (Requires VOLUME#)
  * M993 - Backup SPI Flash to SD
  * M994 - Load a Backup from SD to SPI Flash
  * M995 - Touch screen calibration for TFT display

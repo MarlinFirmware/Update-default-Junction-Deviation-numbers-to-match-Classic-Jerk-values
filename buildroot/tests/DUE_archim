@@ -16,7 +16,7 @@ exec_test $1 $2 "Archim 1 base configuration" "$3"
 # Test Archim 2
 #
 use_example_configs UltiMachine/Archim2
-opt_enable USB_FLASH_DRIVE_SUPPORT
+opt_set VOLUME0 USBFD
 exec_test $1 $2 "Archim 2 base configuration" "$3"
 
 restore_configs
