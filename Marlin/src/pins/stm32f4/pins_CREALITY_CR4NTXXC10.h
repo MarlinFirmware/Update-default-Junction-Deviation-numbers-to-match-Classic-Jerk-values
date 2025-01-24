@@ -19,6 +19,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  *
  */
+#pragma once
 
 /**
  * Creality CREALITY_CR4NTXXC10 (STM32F401RET6) board pin assignments

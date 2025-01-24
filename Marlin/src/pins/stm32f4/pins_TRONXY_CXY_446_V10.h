@@ -19,14 +19,13 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  *
  */
+#pragma once
 
 /**
  * BOARD_TRONXY_CXY_446_V10
  *
  * CXY-V6-191121 / CXY-446-V10-220413
  */
-
-#pragma once
 
 #include "env_validate.h"
 
