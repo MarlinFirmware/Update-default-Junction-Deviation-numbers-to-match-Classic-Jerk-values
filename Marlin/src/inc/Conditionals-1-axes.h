@@ -209,6 +209,22 @@
   #ifndef HOTEND_OFFSET_Z
     #define HOTEND_OFFSET_Z { 0 } // Z offsets for each extruder
   #endif
+#endif
+
+
+/**
+ * The number of selectable tools. 
+ * This includes extruders/hotends, laser and spindle tools.
+ */
+#ifndef TOOLS
+  #if (HOTENDS >= EXTRUDERS)
+    #define TOOLS HOTENDS
+  #else
+    #define TOOLS EXTRUDERS
+  #endif
+#endif
+#if TOOLS > 1
+  #define HAS_MULTI_TOOLS 1
 #else
   #undef HOTEND_OFFSET_X
   #undef HOTEND_OFFSET_Y
