@@ -780,13 +780,13 @@
 #elif MB(LERDGE_X)
   #include "stm32f4/pins_LERDGE_X.h"                // STM32F4                              env:LERDGEX env:LERDGEX_usb_flash_drive
 #elif MB(FYSETC_S6)
-  #include "stm32f4/pins_FYSETC_S6.h"               // STM32F4                              env:FYSETC_S6 env:FYSETC_S6_8000
+  #include "stm32f4/pins_FYSETC_S6.h"               // STM32F4                              env:STM32F446VE_fysetc env:STM32F446VE_fysetc_32k_bootloader
 #elif MB(FYSETC_S6_V2_0)
-  #include "stm32f4/pins_FYSETC_S6_V2_0.h"          // STM32F4                              env:FYSETC_S6 env:FYSETC_S6_8000
+  #include "stm32f4/pins_FYSETC_S6_V2_0.h"          // STM32F4                              env:STM32F446VE_fysetc env:STM32F446VE_fysetc_32k_bootloader
 #elif MB(FYSETC_SPIDER)
-  #include "stm32f4/pins_FYSETC_SPIDER.h"           // STM32F4                              env:FYSETC_S6 env:FYSETC_S6_8000
+  #include "stm32f4/pins_FYSETC_SPIDER.h"           // STM32F4                              env:STM32F446VE_fysetc env:STM32F446VE_fysetc_32k_bootloader
 #elif MB(FYSETC_SPIDER_V2_2)
-  #include "stm32f4/pins_FYSETC_SPIDER_V2_2.h"      // STM32F4                              env:FYSETC_S6 env:FYSETC_S6_8000
+  #include "stm32f4/pins_FYSETC_SPIDER_V2_2.h"      // STM32F4                              env:STM32F446VE_fysetc_32k_bootloader
 #elif MB(FLYF407ZG)
   #include "stm32f4/pins_FLYF407ZG.h"               // STM32F4                              env:FLYF407ZG
 #elif MB(MKS_ROBIN2)
