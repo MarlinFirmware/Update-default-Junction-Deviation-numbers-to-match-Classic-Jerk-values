@@ -348,7 +348,7 @@ void GCodeParser::parse(char *p) {
       if (!has_val && !string_arg) {            // No value? First time, keep as string_arg
         string_arg = p - 1;
         #if ENABLED(DEBUG_GCODE_PARSER)
-          if (debug) SERIAL_ECHOPGM(" string_arg: ", hex_address((void*)string_arg)); // DEBUG
+          if (debug) SERIAL_ECHOPGM(" string_arg: ", hex_address(string_arg)); // DEBUG
         #endif
       }
 
@@ -359,7 +359,7 @@ void GCodeParser::parse(char *p) {
     else if (!string_arg) {                     // Not A-Z? First time, keep as the string_arg
       string_arg = p - 1;
       #if ENABLED(DEBUG_GCODE_PARSER)
-        if (debug) SERIAL_ECHOPGM(" string_arg: ", hex_address((void*)string_arg)); // DEBUG
+        if (debug) SERIAL_ECHOPGM(" string_arg: ", hex_address(string_arg)); // DEBUG
       #endif
     }
 

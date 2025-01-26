@@ -1089,7 +1089,7 @@ const char* CardReader::diveToFile(const bool update_cwd, MediaFile* &inDirPtr, 
   if (path[0] == '/') {               // Starting at the root directory?
     inDirPtr = &root;
     atom_ptr++;
-    DEBUG_ECHOLNPGM(" CWD to root: ", hex_address((void*)inDirPtr));
+    DEBUG_ECHOLNPGM(" CWD to root: ", hex_address(inDirPtr));
     if (update_cwd) workDirDepth = 0; // The cwd can be updated for the benefit of sub-programs
   }
   else
@@ -1097,7 +1097,7 @@ const char* CardReader::diveToFile(const bool update_cwd, MediaFile* &inDirPtr, 
 
   startDirPtr = inDirPtr;
 
-  DEBUG_ECHOLNPGM(" startDirPtr = ", hex_address((void*)startDirPtr));
+  DEBUG_ECHOLNPGM(" startDirPtr = ", hex_address(startDirPtr));
 
   while (atom_ptr) {
     // Find next subdirectory delimiter
@@ -1113,7 +1113,7 @@ const char* CardReader::diveToFile(const bool update_cwd, MediaFile* &inDirPtr, 
 
     if (echo) SERIAL_ECHOLN(dosSubdirname);
 
-    DEBUG_ECHOLNPGM(" sub = ", hex_address((void*)sub));
+    DEBUG_ECHOLNPGM(" sub = ", hex_address(sub));
 
     // Open inDirPtr (closing first)
     sub->close();
@@ -1125,13 +1125,13 @@ const char* CardReader::diveToFile(const bool update_cwd, MediaFile* &inDirPtr, 
 
     // Close inDirPtr if not at starting-point
     if (inDirPtr != startDirPtr) {
-      DEBUG_ECHOLNPGM(" closing inDirPtr: ", hex_address((void*)inDirPtr));
+      DEBUG_ECHOLNPGM(" closing inDirPtr: ", hex_address(inDirPtr));
       inDirPtr->close();
     }
 
     // inDirPtr now subDir
     inDirPtr = sub;
-    DEBUG_ECHOLNPGM(" inDirPtr = sub: ", hex_address((void*)inDirPtr));
+    DEBUG_ECHOLNPGM(" inDirPtr = sub: ", hex_address(inDirPtr));
 
     // Update workDirParents and workDirDepth
     if (update_cwd) {
@@ -1142,7 +1142,7 @@ const char* CardReader::diveToFile(const bool update_cwd, MediaFile* &inDirPtr, 
 
     // Point sub at the other scratch object
     sub = (inDirPtr != &newDir1) ? &newDir1 : &newDir2;
-    DEBUG_ECHOLNPGM(" swapping sub = ", hex_address((void*)sub));
+    DEBUG_ECHOLNPGM(" swapping sub = ", hex_address(sub));
 
     // Next path atom address
     atom_ptr = name_end + 1;
@@ -1150,7 +1150,7 @@ const char* CardReader::diveToFile(const bool update_cwd, MediaFile* &inDirPtr, 
 
   if (update_cwd) {
     workDir = *inDirPtr;
-    DEBUG_ECHOLNPGM(" final workDir = ", hex_address((void*)inDirPtr));
+    DEBUG_ECHOLNPGM(" final workDir = ", hex_address(inDirPtr));
     flag.workDirIsRoot = (workDirDepth == 0);
     TERN_(SDCARD_SORT_ALPHA, presort());
   }
