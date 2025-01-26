@@ -87,8 +87,8 @@ class MarlinSettings {
 
       #if ENABLED(AUTO_BED_LEVELING_UBL) // Eventually make these available if any leveling system
                                          // That can store is enabled
-        static uint32_t meshes_start_index();
-        FORCE_INLINE static uint32_t meshes_end_index() { return meshes_end; }
+        static uint16_t meshes_start_index();
+        FORCE_INLINE static uint16_t meshes_end_index() { return meshes_end; }
         static uint16_t calc_num_meshes();
         static int mesh_slot_offset(const int8_t slot);
         static void store_mesh(const int8_t slot);

@@ -1795,14 +1795,14 @@ void unified_bed_leveling::smart_fill_mesh() {
     SERIAL_ECHOLNPGM("ubl_state_at_invocation :", ubl_state_at_invocation, "\nubl_state_recursion_chk :", ubl_state_recursion_chk);
     serial_delay(50);
 
-    SERIAL_ECHOLNPGM("Meshes go from ", hex_address((void*)settings.meshes_start_index()), " to ", hex_address((void*)settings.meshes_end_index()));
+    SERIAL_ECHOLNPGM("Meshes go from ", _hex_word(settings.meshes_start_index()), " to ", _hex_word(settings.meshes_end_index()));
     serial_delay(50);
 
     SERIAL_ECHOLNPGM("sizeof(unified_bed_leveling) :  ", sizeof(unified_bed_leveling));
     SERIAL_ECHOLNPGM("z_value[][] size: ", sizeof(z_values));
     serial_delay(25);
 
-    SERIAL_ECHOLNPGM("EEPROM free for UBL: ", hex_address((void*)(settings.meshes_end_index() - settings.meshes_start_index())));
+    SERIAL_ECHOLNPGM("EEPROM free for UBL: ", _hex_word(settings.meshes_end_index() - settings.meshes_start_index()));
     serial_delay(50);
 
     SERIAL_ECHOLNPGM("EEPROM can hold ", settings.calc_num_meshes(), " meshes.\n");
