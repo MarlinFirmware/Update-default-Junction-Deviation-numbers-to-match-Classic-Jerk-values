@@ -1498,6 +1498,12 @@ void Stepper::apply_directions() {
  */
 
 HAL_STEP_TIMER_ISR() {
+  #ifndef __AVR__
+    // Disable interrupts, to avoid ISR preemption while we reprogram the period
+    // (AVR enters the ISR with global interrupts disabled, so no need to do it here)
+    hal.isr_off();
+  #endif
+
   HAL_timer_isr_prologue(MF_TIMER_STEP);
 
   Stepper::isr();
@@ -1514,12 +1520,6 @@ HAL_STEP_TIMER_ISR() {
 void Stepper::isr() {
 
   static hal_timer_t nextMainISR = 0;  // Interval until the next main Stepper Pulse phase (0 = Now)
-
-  #ifndef __AVR__
-    // Disable interrupts, to avoid ISR preemption while we reprogram the period
-    // (AVR enters the ISR with global interrupts disabled, so no need to do it here)
-    hal.isr_off();
-  #endif
 
   // Program timer compare for the maximum period, so it does NOT
   // flag an interrupt while this ISR is running - So changes from small
@@ -1542,8 +1542,6 @@ void Stepper::isr() {
   // We need this variable here to be able to use it in the following loop
   hal_timer_t min_ticks;
   do {
-    // Enable ISRs to reduce USART processing latency
-    hal.isr_on();
 
     hal_timer_t interval = 0;
 
@@ -1559,6 +1557,10 @@ void Stepper::isr() {
             ftMotion_nextAuxISR = (STEPPER_TIMER_RATE) / 400;
           }
         }
+
+        // Enable ISRs to reduce latency for higher priority ISRs, or all ISRs if no prioritization.
+        hal.isr_on();
+
         interval = _MIN(nextMainISR, ftMotion_nextAuxISR);
         nextMainISR -= interval;
         ftMotion_nextAuxISR -= interval;
@@ -1585,6 +1587,9 @@ void Stepper::isr() {
         const bool is_babystep = (nextBabystepISR == 0);  // 0 = Do Babystepping (XY)Z pulses
         if (is_babystep) nextBabystepISR = babystepping_isr();
       #endif
+
+      // Enable ISRs to reduce latency for higher priority ISRs, or all ISRs if no prioritization.
+      hal.isr_on();
 
       // ^== Time critical. NOTHING besides pulse generation should be above here!!!
 

@@ -40,8 +40,6 @@
 #include "../../marlinui.h"
 #include "../../extui/ui_api.h"
 #include "../../../MarlinCore.h"
-#include "../../../core/serial.h"
-#include "../../../core/macros.h"
 #include "../../../module/temperature.h"
 #include "../../../module/printcounter.h"
 #include "../../../module/motion.h"
@@ -2209,6 +2207,13 @@ void setMoveX() { hmiValue.axis = X_AXIS; setPFloatOnClick(X_MIN_POS, X_MAX_POS,
 void setMoveY() { hmiValue.axis = Y_AXIS; setPFloatOnClick(Y_MIN_POS, Y_MAX_POS, UNITFDIGITS, applyMove, liveMove); }
 void setMoveZ() { hmiValue.axis = Z_AXIS; setPFloatOnClick(Z_MIN_POS, Z_MAX_POS, UNITFDIGITS, applyMove, liveMove); }
 
+#if ENABLED(Z_STEPPER_AUTO_ALIGN)
+  void autoZAlign() {
+    LCD_MESSAGE(MSG_AUTO_Z_ALIGN);
+    queue.inject(F("G34"));
+  }
+#endif
+
 #if HAS_HOTEND
   void setMoveE() {
     const float e_min = current_position.e - (EXTRUDE_MAXLENGTH),
@@ -4103,6 +4108,9 @@ void drawMaxAccelMenu() {
       #endif
       #if HAS_Z_AXIS
         MENU_ITEM(ICON_HomeZ, MSG_AUTO_HOME_Z, onDrawMenuItem, homeZ);
+      #endif
+      #if ENABLED(Z_STEPPER_AUTO_ALIGN)
+        MENU_ITEM(ICON_HomeZ, MSG_AUTO_Z_ALIGN, onDrawMenuItem, autoZAlign);
       #endif
       #if ENABLED(MESH_BED_LEVELING)
         EDIT_ITEM(ICON_ZAfterHome, MSG_Z_AFTER_HOME, onDrawPInt8Menu, setZAfterHoming, &hmiData.zAfterHoming);

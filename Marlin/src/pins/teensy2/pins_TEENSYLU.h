@@ -139,7 +139,7 @@
 //
 // Misc. Functions
 //
-#define SDSS                                  20  // B0 JP31-6
+#define SD_SS_PIN                             20  // B0 JP31-6
 
 #ifndef CASE_LIGHT_PIN
   #define CASE_LIGHT_PIN                       0  // D0 IO-14  PWM0B
@@ -157,7 +157,7 @@
     #define BTN_EN1                            3  // D3 IO-8
     #define BTN_EN2                            2  // D2 IO-10
     #define BTN_ENC                           41  // F3 IO-7
-    #define SDSS                              38  // F0 IO-13 use SD card on Panelolu2
+    #define SD_SS_PIN                         38  // F0 IO-13 use SD card on Panelolu2
   #endif
 
   #define SD_DETECT_PIN                       -1

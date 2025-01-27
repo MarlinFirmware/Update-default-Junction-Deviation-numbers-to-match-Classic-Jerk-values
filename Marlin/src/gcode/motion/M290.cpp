@@ -29,10 +29,6 @@
 #include "../../module/probe.h"
 #include "../../module/planner.h"
 
-#if ENABLED(BABYSTEP_ZPROBE_OFFSET)
-  #include "../../core/serial.h"
-#endif
-
 #if ENABLED(MESH_BED_LEVELING)
   #include "../../feature/bedlevel/bedlevel.h"
 #endif

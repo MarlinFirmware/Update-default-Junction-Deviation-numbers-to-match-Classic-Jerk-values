@@ -533,9 +533,12 @@ namespace LanguageNarrow_sk {
   LSTR MSG_FILAMENTUNLOAD                 = _UxGT("Vysunúť filament");
   LSTR MSG_FILAMENTUNLOAD_E               = _UxGT("Vysunúť filament *");
   LSTR MSG_FILAMENTUNLOAD_ALL             = _UxGT("Vysunúť všetko");
-  LSTR MSG_ATTACH_MEDIA                   = _UxGT("Načítať kartu");
-  LSTR MSG_ATTACH_SD_MEDIA                = _UxGT("Načítať SD kartu");
-  LSTR MSG_ATTACH_USB_MEDIA               = _UxGT("Načítať USB disk");
+  #if HAS_MULTI_VOLUME
+    LSTR MSG_ATTACH_SD_MEDIA              = _UxGT("Načítať SD kartu");
+    LSTR MSG_ATTACH_USB_MEDIA             = _UxGT("Načítať USB disk");
+  #else
+    LSTR MSG_ATTACH_MEDIA                 = _UxGT("Načítať SD kartu");
+  #endif
   LSTR MSG_CHANGE_MEDIA                   = _UxGT("Vymeniť kartu");
   LSTR MSG_RELEASE_MEDIA                  = _UxGT("Odpojiť kartu");
   LSTR MSG_ZPROBE_OUT                     = _UxGT("Sonda Z mimo podl.");

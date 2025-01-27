@@ -41,7 +41,7 @@ if pioutil.is_pio_build():
         except:
             print("Can't detect PlatformIO Version")
 
-    def blab(str,level=1):
+    def blab(str, level=1):
         if verbose >= level:
             print("[deps] %s" % str)
 
@@ -206,6 +206,7 @@ if pioutil.is_pio_build():
                         else:
                             blab("Added src file %s " % relp, 3)
                         cur_srcs.add(relp)
+
                 # Special rule: If a direct folder is specified add all files within.
                 fullplain = os.path.join(marlinbasedir, plain)
                 if os.path.isdir(fullplain):
@@ -218,6 +219,7 @@ if pioutil.is_pio_build():
                     def srepl(matchi):
                         g0 = matchi.group(0)
                         return r"**" + g0[1:]
+
                     gpattern = re.sub(r'[*]($|[^*])', srepl, plain)
                     gpattern = os.path.join(marlinbasedir, gpattern)
 
@@ -230,14 +232,17 @@ if pioutil.is_pio_build():
                         blab("Removed src file %s (%s)" % (relp, str(info)), 3)
                     else:
                         blab("Removed src file %s " % relp, 3)
+
                 fullplain = os.path.join(marlinbasedir, plain)
                 if os.path.isdir(fullplain):
                     blab("Directory content removal for %s " % plain, 2)
+
                     def filt(x):
                         common = os.path.commonpath([plain, x])
                         if not common == os.path.normpath(plain): return True
                         onremove(x, "dcr")
                         return False
+
                     cur_srcs = set(filter(filt, cur_srcs))
                 else:
                     # Remove matching source entries.
@@ -245,6 +250,7 @@ if pioutil.is_pio_build():
                         if not fnmatch.fnmatch(x, plain): return True
                         onremove(x)
                         return False
+
                     cur_srcs = set(filter(filt, cur_srcs))
         # Transform the resulting set into a string.
         for x in cur_srcs:

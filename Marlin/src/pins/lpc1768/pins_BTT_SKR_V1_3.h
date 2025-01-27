@@ -472,7 +472,7 @@
     #define LCD_PINS_EN              EXP1_03_PIN
     #define LCD_PINS_D4              EXP1_05_PIN
 
-    #define LCD_SDSS                 EXP2_04_PIN  // (16) J3-7 & AUX-4
+    #define LCD_SDSS_PIN             EXP2_04_PIN  // (16) J3-7 & AUX-4
     #define SD_DETECT_PIN            EXP2_07_PIN  // (49) (NOT 5V tolerant)
 
     #if ENABLED(FYSETC_MINI_12864)

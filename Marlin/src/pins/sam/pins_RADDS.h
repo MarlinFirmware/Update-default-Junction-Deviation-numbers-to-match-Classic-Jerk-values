@@ -34,7 +34,7 @@
 //
 #if ANY(NO_EEPROM_SELECTED, I2C_EEPROM)
   #define I2C_EEPROM
-  #define MARLIN_EEPROM_SIZE              0x2000  // 8K
+  #define MARLIN_EEPROM_SIZE             0x2000U  // 8K
 #endif
 
 //
@@ -244,7 +244,7 @@
 
     #define BTN_BACK                          71
 
-    #define SDSS                              10
+    #define SD_SS_PIN                         10
     #define SD_DETECT_PIN                     14
 
   #elif IS_RRD_FG_SC
@@ -262,7 +262,7 @@
     #define BTN_EN2                           52
     #define BTN_ENC                           48
 
-    #define SDSS                              10
+    #define SD_SS_PIN                         10
     #define SD_DETECT_PIN                     14
 
   #elif HAS_U8GLIB_I2C_OLED
@@ -271,7 +271,7 @@
     #define BTN_EN2                           52
     #define BTN_ENC                           48
     #define BEEPER_PIN                        41
-    #define LCD_SDSS                          10
+    #define LCD_SDSS_PIN                      10
     #define SD_DETECT_PIN                     14
 
   #elif ENABLED(SPARK_FULL_GRAPHICS)
@@ -293,5 +293,5 @@
 #endif // HAS_WIRED_LCD
 
 #ifndef SDSS
-  #define SDSS                                 4
+  #define SD_SS_PIN                            4
 #endif

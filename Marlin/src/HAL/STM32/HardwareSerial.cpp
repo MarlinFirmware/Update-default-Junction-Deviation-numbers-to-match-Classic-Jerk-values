@@ -37,7 +37,17 @@
 #include "HardwareSerial.h"
 #include "uart.h"
 
-// USART/UART PIN MAPPING FOR STM32F0/F1/F2/F4/F7
+// Prevent selection of LPUART1 on STM32H7xx
+#if defined(STM32H7xx) && (PIN_SERIAL1_TX == PA_9)
+  #undef PIN_SERIAL1_TX
+  #define PIN_SERIAL1_TX PA_9_ALT1
+#endif
+#if defined(STM32H7xx) && (PIN_SERIAL1_RX == PA_10)
+  #undef PIN_SERIAL1_RX
+  #define PIN_SERIAL1_RX PA_10_ALT1
+#endif
+
+// USART/UART pin mapping for STM32F0/F1/F2/F4/F7/H7
 #ifndef PIN_SERIAL1_TX
   #define PIN_SERIAL1_TX  PA9
 #endif
@@ -74,46 +84,6 @@
 #ifndef PIN_SERIAL6_RX
   #define PIN_SERIAL6_RX  PC7
 #endif
-
-// TODO: Get from include file
-
-#if ANY(STM32F2xx, STM32F4xx, STM32F7xx)
-
-  #define RCC_AHB1Periph_DMA1 ((uint32_t)0x00200000)
-  #define RCC_AHB1Periph_DMA2 ((uint32_t)0x00400000)
-
-  void RCC_AHB1PeriphClockCmd(uint32_t RCC_AHB1Periph, FunctionalState NewState) {
-    // Check the parameters
-    assert_param(IS_RCC_AHB1_CLOCK_PERIPH(RCC_AHB1Periph));
-
-    assert_param(IS_FUNCTIONAL_STATE(NewState));
-    if (NewState != DISABLE)
-      RCC->AHB1ENR |= RCC_AHB1Periph;
-    else
-      RCC->AHB1ENR &= ~RCC_AHB1Periph;
-  }
-
-#endif
-
-#if ANY(STM32F0xx, STM32F1xx)
-
-  #define RCC_AHBPeriph_DMA1 ((uint32_t)0x00000001)
-  #define RCC_AHBPeriph_DMA2 ((uint32_t)0x00000002)
-
-  void RCC_AHBPeriphClockCmd(uint32_t RCC_AHBPeriph, FunctionalState NewState) {
-    /* Check the parameters */
-    assert_param(IS_RCC_AHB_PERIPH(RCC_AHBPeriph));
-    assert_param(IS_FUNCTIONAL_STATE(NewState));
-
-    if (NewState != DISABLE)
-      RCC->AHBENR |= RCC_AHBPeriph;
-    else
-      RCC->AHBENR &= ~RCC_AHBPeriph;
-  }
-
-#endif
-
-// END OF TODO------------------------------------------------------
 
 // SerialEvent functions are weak, so when the user doesn't define them,
 // the linker just sets their address to 0 (which is checked below).
@@ -161,11 +131,12 @@ HAL_HardwareSerial::HAL_HardwareSerial(void *peripheral) {
     setRx(PIN_SERIAL1_RX);
     setTx(PIN_SERIAL1_TX);
     _uart_index = 0;
-    #ifdef DMA2_Stream2
-      RX_DMA = { USART1, RCC_AHB1Periph_DMA2, 4, DMA2_Stream2 };
+
+    #ifdef DMA2_Stream2 // F2 / F4 / F7 / H7
+      RX_DMA = { USART1, 2, DMA2_Stream2 }; // USART, DMA controller no., DMA stream
     #endif
-    #ifdef DMA1_Channel5
-      RX_DMA = { USART1, RCC_AHBPeriph_DMA1, DMA1, DMA1_Channel5 };
+    #ifdef DMA1_Channel5 // F0 / F1
+      RX_DMA = { USART1, 1, DMA1_Channel5 }; // USART, DMA controller no., DMA channel
     #endif
   }
   else if (peripheral == USART2) {
@@ -173,10 +144,10 @@ HAL_HardwareSerial::HAL_HardwareSerial(void *peripheral) {
     setTx(PIN_SERIAL2_TX);
     _uart_index = 1;
     #ifdef DMA1_Stream5
-      RX_DMA = { USART2, RCC_AHB1Periph_DMA1, 4, DMA1_Stream5 };
+      RX_DMA = { USART2, 1, DMA1_Stream5 };
     #endif
     #ifdef DMA1_Channel6
-      RX_DMA = { USART2, RCC_AHBPeriph_DMA1, DMA1, DMA1_Channel6 };
+      RX_DMA = { USART2, 1, DMA1_Channel6 };
     #endif
   }
   else if (peripheral == USART3) {
@@ -184,17 +155,17 @@ HAL_HardwareSerial::HAL_HardwareSerial(void *peripheral) {
     setTx(PIN_SERIAL3_TX);
     _uart_index = 2;
     #ifdef DMA1_Stream1
-      RX_DMA = { USART3, RCC_AHB1Periph_DMA1, 4, DMA1_Stream1 };
+      RX_DMA = { USART3, 1, DMA1_Stream1 };
     #endif
     #ifdef DMA1_Channel3 // F0 has no support for UART3, requires system remapping
-      RX_DMA = { USART3, RCC_AHBPeriph_DMA1, DMA1, DMA1_Channel3 };
+      RX_DMA = { USART3, 1, DMA1_Channel3 };
     #endif
   }
 
   #ifdef USART4 // Only F2 / F4 / F7
     else if (peripheral == USART4) {
       #ifdef DMA1_Stream2
-        RX_DMA = { USART4, RCC_AHB1Periph_DMA1, 4, DMA1_Stream2 };
+        RX_DMA = { USART4, 1, DMA1_Stream2 };
       #endif
       setRx(PIN_SERIAL4_RX);
       setTx(PIN_SERIAL4_TX);
@@ -205,10 +176,10 @@ HAL_HardwareSerial::HAL_HardwareSerial(void *peripheral) {
   #ifdef UART4
     else if (peripheral == UART4) {
       #ifdef DMA1_Stream2
-        RX_DMA = { UART4, RCC_AHB1Periph_DMA1, 4, DMA1_Stream2 };
+        RX_DMA = { UART4, 1, DMA1_Stream2 };
       #endif
       #ifdef DMA2_Channel3 // STM32F0xx has only 3 UARTs
-        RX_DMA = { UART4, RCC_AHBPeriph_DMA2, DMA2, DMA2_Channel3 };
+        RX_DMA = { UART4, 2, DMA2_Channel3 };
       #endif
       setRx(PIN_SERIAL4_RX);
       setTx(PIN_SERIAL4_TX);
@@ -216,10 +187,10 @@ HAL_HardwareSerial::HAL_HardwareSerial(void *peripheral) {
     }
   #endif
 
-  #ifdef UART5 // Only F2 / F4 / F7
+  #ifdef UART5 // Only F2 / F4 / F7 / H7
     else if (peripheral == UART5) {
       #ifdef DMA1_Stream0
-        RX_DMA = { UART5, RCC_AHB1Periph_DMA1, 4, DMA1_Stream0 };
+        RX_DMA = { UART5, 1, DMA1_Stream0 };
       #endif
       setRx(PIN_SERIAL5_RX);
       setTx(PIN_SERIAL5_TX);
@@ -227,10 +198,10 @@ HAL_HardwareSerial::HAL_HardwareSerial(void *peripheral) {
     }
   #endif
 
-  #ifdef USART6 // Only F2 / F4 / F7
+  #ifdef USART6 // Only F2 / F4 / F7 / H7
     else if (peripheral == USART6) {
       #ifdef DMA2_Stream1
-        RX_DMA = { USART6, RCC_AHB1Periph_DMA2, 4, DMA2_Stream1 };
+        RX_DMA = { USART6, 2, DMA2_Stream1 };
       #endif
       setRx(PIN_SERIAL6_RX);
       setTx(PIN_SERIAL6_TX);
@@ -271,14 +242,34 @@ void HAL_HardwareSerial::init(PinName _rx, PinName _tx) {
  * @param  obj : pointer to serial_t structure
  * @retval last character received
  */
-int HAL_HardwareSerial::_tx_complete_irq(serial_t *obj) {
-  // If interrupts are enabled, there must be more data in the output buffer. Send the next byte
-  obj->tx_tail = (obj->tx_tail + 1) % TX_BUFFER_SIZE;
 
-  if (obj->tx_head == obj->tx_tail) return -1;
+#if DISABLED(STM32H7xx)
 
-  return 0;
-}
+  int HAL_HardwareSerial::_tx_complete_irq(serial_t *obj) {
+    // If interrupts are enabled, there must be more data in the output buffer. Send the next byte
+    obj->tx_tail = (obj->tx_tail + 1) % TX_BUFFER_SIZE;
+    if (obj->tx_head == obj->tx_tail)
+      return -1;
+
+    return 0;
+  }
+
+#else // STM32H7xx, has different uart_attach_tx_callback
+
+  int HAL_HardwareSerial::_tx_complete_irq(serial_t *obj) {
+    // If interrupts are enabled, there must be more data in the output buffer. Send the next byte
+    obj->tx_tail = (obj->tx_tail + obj->tx_size) % TX_BUFFER_SIZE;
+
+    if (obj->tx_head != obj->tx_tail) {
+      size_t remaining_data = (TX_BUFFER_SIZE + obj->tx_head - obj->tx_tail) % TX_BUFFER_SIZE;
+      obj->tx_size = min(remaining_data, (size_t)(TX_BUFFER_SIZE - obj->tx_tail));
+      uart_attach_tx_callback(obj, _tx_complete_irq, obj->tx_size);
+      return -1;
+    }
+    return 0;
+  }
+
+#endif
 
 // Public Methods //////////////////////////////////////////////////////////////
 
@@ -340,7 +331,7 @@ void HAL_HardwareSerial::update_rx_head() {
     }
   #endif
 
-  #if ANY(STM32F2xx, STM32F4xx, STM32F7xx)
+  #if ANY(STM32F2xx, STM32F4xx, STM32F7xx, STM32H7xx)
     _serial.rx_head = RX_BUFFER_SIZE - RX_DMA.dma_streamRX->NDTR;
   #endif
 
@@ -352,18 +343,22 @@ void HAL_HardwareSerial::update_rx_head() {
 
 int HAL_HardwareSerial::available() {
   update_rx_head();
+
   return ((unsigned int)(RX_BUFFER_SIZE + _serial.rx_head - _serial.rx_tail)) % RX_BUFFER_SIZE;
 }
 
 int HAL_HardwareSerial::peek() {
   update_rx_head();
-  if (_serial.rx_head == _serial.rx_tail) return -1;
+  if (_serial.rx_head == _serial.rx_tail)
+    return -1;
+
   return _serial.rx_buff[_serial.rx_tail];
 }
 
 int HAL_HardwareSerial::read() {
   update_rx_head();
-  if (_serial.rx_head == _serial.rx_tail) return -1;  // No chars if the head isn't ahead of the tail
+  if (_serial.rx_head == _serial.rx_tail)
+    return -1;  // No chars if the head isn't ahead of the tail
 
   unsigned char c = _serial.rx_buff[_serial.rx_tail];
   _serial.rx_tail = (rx_buffer_index_t)(_serial.rx_tail + 1) % RX_BUFFER_SIZE;
@@ -380,8 +375,18 @@ size_t HAL_HardwareSerial::write(uint8_t c) {             // Interrupt based wri
   _serial.tx_buff[_serial.tx_head] = c;
   _serial.tx_head = i;
 
-  if (!serial_tx_active(&_serial))
-    uart_attach_tx_callback(&_serial, _tx_complete_irq);  // Write next byte, launch interrupt
+  #ifdef STM32H7xx // Support STM32H7xx with different uart_attach_tx_callback
+    if ((!serial_tx_active(&_serial)) && (_serial.tx_head != _serial.tx_tail)) {
+      size_t remaining_data = (TX_BUFFER_SIZE + _serial.tx_head -_serial.tx_tail) % TX_BUFFER_SIZE;
+      _serial.tx_size = min(remaining_data, (size_t)(TX_BUFFER_SIZE - _serial.tx_tail));
+      uart_attach_tx_callback(&_serial, _tx_complete_irq, _serial.tx_size);
+
+      return -1;
+    }
+  #else
+    if (!serial_tx_active(&_serial))
+      uart_attach_tx_callback(&_serial, _tx_complete_irq);  // Write next byte, launch interrupt
+  #endif
 
   return 1;
 }
@@ -390,57 +395,132 @@ void HAL_HardwareSerial::flush() {
   while ((_serial.tx_head != _serial.tx_tail)) { /* nada */ } // nop, the interrupt handler will free up space for us
 }
 
-#if ANY(STM32F2xx, STM32F4xx, STM32F7xx)
+#if ANY(STM32F2xx, STM32F4xx, STM32F7xx, STM32H7xx)
 
   void HAL_HardwareSerial::Serial_DMA_Read_Enable() {
-    RCC_AHB1PeriphClockCmd(RX_DMA.dma_rcc, ENABLE);             // Enable DMA clock
 
-    #ifdef STM32F7xx
-      RX_DMA.dma_streamRX->PAR = (uint32_t)(&RX_DMA.uart->RDR); // RX peripheral receive address (usart) F7
+    if (RX_DMA.DMA_ID == 1)
+      __HAL_RCC_DMA1_CLK_ENABLE(); // Enable DMA1 clock
+    else
+      __HAL_RCC_DMA2_CLK_ENABLE(); // Enable DMA2 clock
+
+    // Reset DMA, wait if needed to complete the running process
+    RX_DMA.dma_streamRX->CR = 0;                             // DMA stream clear/disable
+    while (RX_DMA.dma_streamRX->CR & DMA_SxCR_EN)  { /* just wait for DMA to complete */ }
+
+    // UART clear/disable
+    RX_DMA.uart->CR1 = 0;
+
+    // Configure DMA
+    #if ANY(STM32F7xx, STM32H7xx) // F7 and H7 use RDR (Receive Data Register)
+      RX_DMA.dma_streamRX->PAR = (uint32_t)(&RX_DMA.uart->RDR); // DMA stream Peripheral Address Register = USART Data Register
     #else
-      RX_DMA.dma_streamRX->PAR = (uint32_t)(&RX_DMA.uart->DR);  // RX peripheral address (usart) F2 / F4
+      RX_DMA.dma_streamRX->PAR = (uint32_t)(&RX_DMA.uart->DR);  // DMA stream Peripheral Address Register = USART Data Register
     #endif
-    RX_DMA.dma_streamRX->M0AR = (uint32_t)_serial.rx_buff;      // RX destination address (memory)
-    RX_DMA.dma_streamRX->NDTR = RX_BUFFER_SIZE;                 // RX buffer size
 
-    RX_DMA.dma_streamRX->CR = (RX_DMA.dma_channel << 25);       // RX channel selection, set to 0 all the other CR bits
+    RX_DMA.dma_streamRX->M0AR = (uint32_t)_serial.rx_buff;      // DMA stream Memory 0 Adress Register = RX buffer address
+    RX_DMA.dma_streamRX->NDTR = RX_BUFFER_SIZE;                 // DMA stream Number of Data Transfer Register
 
-    RX_DMA.dma_streamRX->CR |= (3 << 16);                       // RX priority level: Very High
+    #if DISABLED(STM32H7xx) // Select channel via CR register
 
-    //RX_DMA.dma_streamRX->CR &= ~(3 << 13);                    // RX memory data size: 8 bit
-    //RX_DMA.dma_streamRX->CR &= ~(3 << 11);                    // RX peripheral data size: 8 bit
-    RX_DMA.dma_streamRX->CR |= (1 << 10);                       // RX memory increment mode
-    //RX_DMA.dma_streamRX->CR &= ~(1 << 9);                     // RX peripheral no increment mode
-    RX_DMA.dma_streamRX->CR |= (1 << 8);                        // RX circular mode enabled
-    //RX_DMA.dma_streamRX->CR &= ~(1 << 6);                     // RX data transfer direction: Peripheral-to-memory
-    RX_DMA.uart->CR3        |= (1 << 6);                        // Enable DMA receiver (DMAR)
-    RX_DMA.dma_streamRX->CR |= (1 << 0);                        // RX enable DMA
+      RX_DMA.dma_streamRX->CR = 4 << DMA_SxCR_CHSEL_Pos;        // DMA stream Channel Selection, always use channel 4
+
+    #else // STM32H7xx, select channel with DMAMUX1, channel DMA1 is channel DMAMUX, channel DMA2 is channel DMAMUX + 8
+
+      if (RX_DMA.uart == USART1) DMAMUX1_Channel10->CCR |= DMA_REQUEST_USART1_RX;   // DMA2, Stream 2
+      if (RX_DMA.uart == USART2) DMAMUX1_Channel5->CCR |= DMA_REQUEST_USART2_RX;    // DMA1, Stream 5
+      if (RX_DMA.uart == USART3) DMAMUX1_Channel1->CCR |= DMA_REQUEST_USART3_RX;    // DMA1, Stream 1
+      #ifdef UART4
+        if (RX_DMA.uart == UART4) DMAMUX1_Channel2->CCR |= DMA_REQUEST_UART4_RX;    // DMA1, Stream 2
+      #endif
+      #ifdef USART4
+        if (RX_DMA.uart == USART4) DMAMUX1_Channel2->CCR |= DMA_REQUEST_USART4_RX;  // DMA1, Stream 2
+      #endif
+      #ifdef UART5
+        if (RX_DMA.uart == UART5) DMAMUX1_Channel0->CCR |= DMA_REQUEST_UART5_RX;    // DMA1, Stream 0
+      #endif
+      #ifdef USART6
+        if (RX_DMA.uart == USART6) DMAMUX1_Channel9->CCR |= DMA_REQUEST_USART6_RX;  // DMA2, Stream 1
+      #endif
+
+    #endif // !STM32H7xx
+
+    // Configure DMA
+    //RX_DMA.dma_streamRX->CR |= DMA_MBURST_SINGLE;             // DMA stream Memory Burst transfer: single transfer = 0b00
+    //RX_DMA.dma_streamRX->CR |= DMA_PBURST_SINGLE;             // DMA stream Peripheral Burst transfer: single transfer = 0b00
+
+    #if ENABLED(STM32H7xx)
+      RX_DMA.dma_streamRX->CR |= DMA_SxCR_TRBUFF;               // DMA stream Transfer handle bufferable (required for UART/USART)
+    #endif
+
+    //RX_DMA.dma_streamRX->CR &= ~DMA_SxCR_CT;                  // DMA stream Current Target (only in double buffer mode)
+    //RX_DMA.dma_streamRX->CR &= ~DMA_SxCR_DBM;                 // DMA stream Double Buffer Mode
+    //RX_DMA.dma_streamRX->CR |= DMA_PRIORITY_LOW;              // DMA stream Priority Level Low = 0b00
+    //RX_DMA.dma_streamRX->CR &= ~DMA_SxCR_PINCOS;              // DMA stream Peripheral Increment Offset Size
+    //RX_DMA.dma_streamRX->CR &= ~DMA_SxCR_MSIZE;               // DMA stream Memory data Size: 8 bit = 0b00
+    //RX_DMA.dma_streamRX->CR &= ~DMA_SxCR_PSIZE;               // DMA stream Peripheral data Size: 8 bit = 0b00
+    RX_DMA.dma_streamRX->CR   |= DMA_SxCR_MINC;                 // DMA stream Memory Increment enable
+    //RX_DMA.dma_streamRX->CR &= ~DMA_SxCR_PINC;                // DMA stream Peripheral increment
+    RX_DMA.dma_streamRX->CR   |= DMA_SxCR_CIRC;                 // DMA stream Circular mode enable
+    //RX_DMA.dma_streamRX->CR |= DMA_PERIPH_TO_MEMORY;          // DMA stream transfer Direction: Peripheral-to-memory = b00
+    //RX_DMA.dma_streamRX->CR &= ~DMA_SxCR_PFCTRL;              // DMA stream Peripheral Flow Controller: DMA = 0
+    //RX_DMA.dma_streamRX->CR &= ~DMA_SxCR_TCIE;                // DMA stream Transfer Complete Interrupt
+    //RX_DMA.dma_streamRX->CR &= ~DMA_SxCR_HTIE;                // DMA stream Half Transfer Interrupt
+    //RX_DMA.dma_streamRX->CR &= ~DMA_SxCR_TEIE;                // DMA stream Transfer Error Interrupt
+    //RX_DMA.dma_streamRX->CR &= ~DMA_SxCR_DMEIE;               // DMA stream Direct Mode Error Interrupt
+    RX_DMA.dma_streamRX->CR   |= DMA_SxCR_EN;                   // DMA stream Enable
+
+    // Configure UART/USART
+    RX_DMA.uart->CR3          |= USART_CR3_DMAR;                // UART DMA Receiver
+    RX_DMA.uart->CR1          |= USART_CR1_TE;                  // UART Transmitter Enable
+    RX_DMA.uart->CR1          |= USART_CR1_RE;                  // UART Receiver Enable
+    RX_DMA.uart->CR1          |= USART_CR1_UE;                  // UART Enable
   }
 
-#endif // STM32F2xx || STM32F4xx || STM32F7xx
+#endif // STM32F2xx || STM32F4xx || STM32F7xx || STM32H7xx
 
 #if ANY(STM32F0xx, STM32F1xx)
 
   void HAL_HardwareSerial::Serial_DMA_Read_Enable() {
-    RCC_AHBPeriphClockCmd(RX_DMA.dma_rcc, ENABLE);              // enable DMA clock
 
-    RX_DMA.dma_channelRX->CPAR = (uint32_t)(&RX_DMA.uart->DR);  // RX peripheral address (usart)
-    RX_DMA.dma_channelRX->CMAR = (uint32_t)_serial.rx_buff;     // RX destination address (memory)
-    RX_DMA.dma_channelRX->CNDTR = RX_BUFFER_SIZE;               // RX buffer size
+    if (RX_DMA.DMA_ID == 1)
+      __HAL_RCC_DMA1_CLK_ENABLE(); // enable DMA1 clock
+    else
+      __HAL_RCC_DMA2_CLK_ENABLE(); // enable DMA2 clock
 
-    RX_DMA.dma_channelRX->CCR = 0;                              // RX channel selection, set to 0 all the other CR bits
+    RX_DMA.dma_channelRX->CCR &= ~USART_CR1_UE;                   // DMA stream clear/disable
+    while (RX_DMA.dma_channelRX->CCR & DMA_CCR_EN) { /* just wait for DMA to complete */ }
 
-    RX_DMA.dma_channelRX->CCR  |= (3<<12);                      // RX priority level: Very High
+    // Clear/disable UART and DMA
+    RX_DMA.uart->CR1             = 0;                             // UART clear CR1, disable DMA
 
-    //RX_DMA.dma_channelRX->CCR &= ~(1<<10);                    // RX memory data size: 8 bit
-    //RX_DMA.dma_channelRX->CCR &= ~(1<<8);                     // RX peripheral data size: 8 bit
-    RX_DMA.dma_channelRX->CCR |=  (1<<7);                       // RX memory increment mode
-    //RX_DMA.dma_channelRX->CCR &= ~(1<<6);                     // RX peripheral no increment mode
-    RX_DMA.dma_channelRX->CCR |=  (1<<5);                       // RX circular mode enabled
-    //RX_DMA.dma_channelRX->CCR &= ~(1<<4);                     // RX data transfer direction: Peripheral-to-memory
+    // Configure DMA
 
-    RX_DMA.uart->CR3          |=  (1<<6);                       // enable DMA receiver (DMAR)
-    RX_DMA.dma_channelRX->CCR |=  (1<<0);                       // RX enable DMA
+    #ifdef STM32F0xx
+      RX_DMA.dma_channelRX->CPAR   = (uint32_t)(&RX_DMA.uart->RDR); // DMA channel Peripheral Address Register = USART Data Register
+    #else
+      RX_DMA.dma_channelRX->CPAR   = (uint32_t)(&RX_DMA.uart->DR);  // DMA channel Peripheral Address Register = USART Data Register
+    #endif
+
+    RX_DMA.dma_channelRX->CMAR   = (uint32_t)_serial.rx_buff;     // DMA channel Memory Address Register
+    RX_DMA.dma_channelRX->CNDTR  = RX_BUFFER_SIZE;                // DMA channel Number of Data Transfer Register
+    //RX_DMA.dma_channelRX->CCR |= (0b00 << DMA_CCR_PL_Pos);      // DMA channel Priority Level: Low = 0b00
+    //RX_DMA.dma_channelRX->CCR &= ~DMA_CCR_MSIZE;                // DMA channel Data Size: 8 bit = 0
+    //RX_DMA.dma_channelRX->CCR &= ~DMA_CCR_PSIZE;                // DMA channel Peripheral data size: 8 bit = 0
+    RX_DMA.dma_channelRX->CCR   |= DMA_CCR_MINC;                  // DMA channel Memory Increment enable
+    //RX_DMA.dma_channelRX->CCR &= ~DMA_CCR_PINC;                 // DMA channel Peripheral Increment disable
+    RX_DMA.dma_channelRX->CCR   |= DMA_CCR_CIRC;                  // DMA channel Circular mode enable
+    //RX_DMA.dma_channelRX->CCR &= ~DMA_CCR_DIR;                  // DMA channel Data Transfer direction: 0=Read peripheral, 1=Read memory
+    //RX_DMA.dma_channelRX->CCR &= ~DMA_CCR_TEIE;                 // DMA channel Transfer Error Interrupt
+    //RX_DMA.dma_channelRX->CCR &= ~DMA_CCR_HTIE;                 // DMA channel Half Transfer Interrupt
+    //RX_DMA.dma_channelRX->CCR &= ~DMA_CCR_TCIE;                 // DMA channel Transfer Complete Interrupt
+    RX_DMA.dma_channelRX->CCR   |= DMA_CCR_EN;                    // DMA channel enable
+
+    // Configure UART/USART
+    RX_DMA.uart->CR3            |= USART_CR3_DMAR;                // UART DMA Receiver enabled
+    RX_DMA.uart->CR1            |= USART_CR1_TE;                  // UART Transmitter Enable
+    RX_DMA.uart->CR1            |= USART_CR1_RE;                  // UART Receiver Enable
+    RX_DMA.uart->CR1            |= USART_CR1_UE;                  // UART Enable
   }
 
 #endif // STM32F0xx || STM32F1xx

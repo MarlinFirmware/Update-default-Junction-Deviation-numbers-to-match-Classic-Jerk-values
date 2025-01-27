@@ -30,7 +30,7 @@
 
 #define Z_ENABLE_PIN                          14
 
-#define LCD_SDSS                              -1
+#define LCD_SDSS_PIN                          -1
 
 #if ANY(CR10_STOCKDISPLAY, LCD_FOR_MELZI)
   #define BTN_ENC                             26

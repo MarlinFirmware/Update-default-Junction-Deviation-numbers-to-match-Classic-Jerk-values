@@ -54,7 +54,7 @@
 
 #if ANY(NO_EEPROM_SELECTED, I2C_EEPROM)
   #define I2C_EEPROM                              // EEPROM on I2C-0
-  #define MARLIN_EEPROM_SIZE              0x1000  // 4K
+  #define MARLIN_EEPROM_SIZE             0x1000U  // 4K
 #endif
 
 //
@@ -79,6 +79,10 @@
 #define Y_STOP_PIN                          PA12
 #define Z_MIN_PIN                           PA11
 #define Z_MAX_PIN                           PC4
+
+#ifndef FIL_RUNOUT_PIN
+  #define FIL_RUNOUT_PIN                    PA4   // MT_DET
+#endif
 
 //
 // Probe enable
@@ -187,8 +191,9 @@
     #define KILL_PIN_STATE                  HIGH
   #endif
 
-  #define MT_DET_1_PIN                      PA4
-  #define MT_DET_PIN_STATE                  LOW
+  #ifndef FIL_RUNOUT_STATE
+    #define FIL_RUNOUT_STATE                LOW
+  #endif
 
   #define WIFI_IO0_PIN                      PC13
   #define WIFI_IO1_PIN                      PC7
@@ -205,7 +210,6 @@
 #else
   //#define POWER_LOSS_PIN                  PA2   // PW_DET
   //#define PS_ON_PIN                       PB2   // PW_OFF
-  #define FIL_RUNOUT_PIN                    PA4
 #endif
 
 //#define LED_PIN                           PB2
@@ -252,7 +256,7 @@
   #define ONBOARD_SD_CS_PIN                 PC11
 #elif SD_CONNECTION_IS(LCD)
   #define ENABLE_SPI1
-  #define SDSS                       EXP2_04_PIN
+  #define SD_SS_PIN                  EXP2_04_PIN
   #define SD_SCK_PIN                 EXP2_02_PIN
   #define SD_MISO_PIN                EXP2_01_PIN
   #define SD_MOSI_PIN                EXP2_06_PIN

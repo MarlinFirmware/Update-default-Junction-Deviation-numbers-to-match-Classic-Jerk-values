@@ -109,8 +109,8 @@
  * If you encounter issues with these pins, upgrade your
  * Sanguino libraries! See #368.
  */
-//#define SDSS                                24
-#define SDSS                             AUX1_09
+//#define SD_SS_PIN                           24
+#define SD_SS_PIN                        AUX1_09
 
 #if IS_MELZI
   #define LED_PIN                        AUX1_01
@@ -243,8 +243,8 @@
 
     #if IS_MELZI
       #define BTN_ENC                    AUX1_05
-      #ifndef LCD_SDSS
-        #define LCD_SDSS                 AUX1_07  // Panelolu2 SD card reader rather than the Melzi
+      #ifndef LCD_SDSS_PIN
+        #define LCD_SDSS_PIN             AUX1_07  // Panelolu2 SD card reader rather than the Melzi
       #endif
     #else
       #define BTN_ENC                    AUX1_07
@@ -254,8 +254,8 @@
   #else // !LCD_FOR_MELZI && !ZONESTAR_LCD && !LCD_I2C_PANELOLU2
 
     #define BTN_ENC                      AUX1_02
-    #ifndef LCD_SDSS
-      #define LCD_SDSS                   AUX1_03  // Smart Controller SD card reader rather than the Melzi
+    #ifndef LCD_SDSS_PIN
+      #define LCD_SDSS_PIN               AUX1_03  // Smart Controller SD card reader rather than the Melzi
     #endif
 
   #endif

@@ -170,7 +170,12 @@ namespace LanguageNarrow_el_gr {
   LSTR MSG_AUTORETRACT                    = _UxGT("Αυτόματη ανάσυρση");
   LSTR MSG_FILAMENTCHANGE                 = _UxGT("Αλλαγή νήματος");
   LSTR MSG_FILAMENTCHANGE_E               = _UxGT("Αλλαγή νήματος *");
-  LSTR MSG_ATTACH_MEDIA                   = _UxGT("Προετοιμασία κάρτας SD");
+  #if HAS_MULTI_VOLUME
+    LSTR MSG_ATTACH_SD_MEDIA              = _UxGT("Προετοιμασία SD");
+    LSTR MSG_ATTACH_USB_MEDIA             = _UxGT("Προετοιμασία USB");
+  #else
+    LSTR MSG_ATTACH_MEDIA                 = _UxGT("Προετοιμασία SD");
+  #endif
   LSTR MSG_CHANGE_MEDIA                   = _UxGT("Αλλαγή κάρτας SD");
   LSTR MSG_ZPROBE_OUT                     = _UxGT("Διερεύνηση Z εκτός κλίνης");
   LSTR MSG_YX_UNHOMED                     = _UxGT("Επαναφορά Χ/Υ πριν από Z");

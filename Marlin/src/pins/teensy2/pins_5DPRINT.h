@@ -139,7 +139,7 @@
 //
 // Misc. Functions
 //
-#define SDSS                                  20  // B0
+#define SD_SS_PIN                             20  // B0
 
 //DIGIPOTS slave addresses
 #ifndef DIGIPOT_I2C_ADDRESS_A

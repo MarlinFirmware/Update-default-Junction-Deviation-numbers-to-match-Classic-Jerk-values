@@ -107,7 +107,7 @@ void MarlinHAL::init() {
     #if HAS_SD_DETECT && SD_CONNECTION_IS(ONBOARD)
       SET_INPUT_PULLUP(SD_DETECT_PIN);
     #endif
-    OUT_WRITE(SDSS, HIGH);  // Try to set SDSS inactive before any other SPI users start up
+    OUT_WRITE(SD_SS_PIN, HIGH);  // Try to set SDSS inactive before any other SPI users start up
   #endif
 }
 

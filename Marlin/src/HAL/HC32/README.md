@@ -11,7 +11,7 @@ The HC32F460 HAL is designed to be generic enough for any HC32F460-based board. 
    - Examine the board's main processor. (Refer the naming key in `hc32.ini`.)
    - Extend the `HC32F460C_common` base env for 256K, or `HC32F460E_common` for 512K.
 3. Determine your board's application start address (see [below](#finding-the-application-start-address))
-4. Set `board_build.ld_args.flash_start` to the app start address once you've found it. If your board doesn't use a bootloader, you may be able to use the "ICSP" header or DFU. This document will be updated once we have more information about flashing without a bootloader.
+4. Set `board_upload.offset_address` to the app start address once you've found it. If your board doesn't use a bootloader, you may be able to use the "ICSP" header or DFU. This document will be updated once we have more information about flashing without a bootloader.
 
 ### Finding the application start address
 

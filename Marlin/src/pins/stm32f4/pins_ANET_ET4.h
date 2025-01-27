@@ -50,7 +50,7 @@
   #define IIC_EEPROM_SDA                    PB11
   #define IIC_EEPROM_SCL                    PB10
   #define EEPROM_DEVICE_ADDRESS             0xA0
-  #define MARLIN_EEPROM_SIZE              0x1000  // 4K
+  #define MARLIN_EEPROM_SIZE             0x1000U  // 4K
 #endif
 
 //
@@ -206,8 +206,7 @@
 
   #if DISABLED(ONBOARD_SDIO)
     #define SOFTWARE_SPI
-    #define SDSS                            PC11
-    #define SD_SS_PIN                       SDSS
+    #define SD_SS_PIN                       PC11
     #define SD_SCK_PIN                      PC12
     #define SD_MISO_PIN                     PC8
     #define SD_MOSI_PIN                     PD2

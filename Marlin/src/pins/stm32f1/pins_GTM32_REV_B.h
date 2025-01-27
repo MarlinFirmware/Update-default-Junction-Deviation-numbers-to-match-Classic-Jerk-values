@@ -53,7 +53,7 @@
 // Enable EEPROM Emulation for this board as it doesn't have EEPROM
 #if ANY(NO_EEPROM_SELECTED, FLASH_EEPROM_EMULATION)
   #define FLASH_EEPROM_EMULATION
-  #define MARLIN_EEPROM_SIZE              0x1000  // 4K
+  #define MARLIN_EEPROM_SIZE             0x1000U  // 4K
 #endif
 
 //
@@ -221,8 +221,6 @@
   #define SD_MISO_PIN                       PA6   // PA6
   #define SD_DETECT_PIN                     -1    // Card detect is not connected
 #endif
-
-#define SDSS                           SD_SS_PIN
 
 #if ENABLED(WIFISUPPORT)
   //

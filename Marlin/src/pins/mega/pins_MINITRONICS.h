@@ -92,7 +92,7 @@
 //
 // Misc. Functions
 //
-#define SDSS                                  16
+#define SD_SS_PIN                             16
 #define LED_PIN                               46
 
 //

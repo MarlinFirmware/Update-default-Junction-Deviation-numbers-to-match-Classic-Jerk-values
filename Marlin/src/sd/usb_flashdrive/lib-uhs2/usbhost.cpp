@@ -25,10 +25,10 @@
 
 #include "../../../inc/MarlinConfigPre.h"
 
-#if ENABLED(USB_FLASH_DRIVE_SUPPORT) && DISABLED(USE_UHS3_USB)
+#if HAS_USB_FLASH_DRIVE && DISABLED(USE_UHS3_USB)
 
 #if !PINS_EXIST(USB_CS, USB_INTR)
-  #error "USB_FLASH_DRIVE_SUPPORT requires USB_CS_PIN and USB_INTR_PIN to be defined."
+  #error "USB_FLASH_DRIVE_SUPPORT requires USB_CS_PIN and USB_INTR_PIN (or USE_UHS3_USB) to be defined."
 #endif
 
 #include "Usb.h"
@@ -203,4 +203,4 @@ uint8_t MAX3421e::IntHandler() {
   return HIRQ_sendback;
 }
 
-#endif // USB_FLASH_DRIVE_SUPPORT
+#endif // HAS_USB_FLASH_DRIVE && !USE_UHS3_USB

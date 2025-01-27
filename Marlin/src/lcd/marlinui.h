@@ -514,6 +514,11 @@ public:
 
   #if HAS_DISPLAY
 
+    static void init_lcd();
+
+    // Erase the LCD contents. Do the lowest-level thing required to clear the LCD.
+    static void clear_lcd();
+
     // Clear the LCD before new drawing. Some LCDs do nothing because they redraw frequently.
     static void clear_for_drawing();
 
@@ -627,6 +632,8 @@ public:
 
   #else // No LCD
 
+    static void init_lcd() {}
+    static void clear_lcd() {}
     static void clear_for_drawing() {}
     static void kill_screen(FSTR_P const, FSTR_P const) {}
 

@@ -206,7 +206,7 @@
 //
 // Misc. Functions
 //
-#define SDSS                                  53  // EXP2-4
+#define SD_SS_PIN                             53  // EXP2-4
 #define LED_PIN                               13
 
 //#ifndef FILWIDTH_PIN
@@ -421,7 +421,7 @@
       #define BTN_EN1                         47
       #define BTN_EN2                         43
       #define BTN_ENC                         32
-      #define LCD_SDSS               EXP2_04_PIN
+      #define LCD_SDSS_PIN           EXP2_04_PIN
       //#define KILL_PIN                      41
       #undef LCD_PINS_EN                          // not used, causes false pin conflict report
 
@@ -431,7 +431,7 @@
       #define BTN_EN2                          7  // 22/7 are unused on RAMPS_14. 22 is unused and 7 the SERVO0_PIN on RAMPS_13.
       #define BTN_ENC                         -1
 
-      #define LCD_SDSS               EXP2_04_PIN
+      #define LCD_SDSS_PIN           EXP2_04_PIN
       #define SD_DETECT_PIN          EXP2_07_PIN
 
     #elif ANY(VIKI2, miniVIKI)
@@ -447,7 +447,7 @@
       #define BTN_EN2                          7
       #define BTN_ENC                         39
 
-      #define SDSS                   EXP2_04_PIN
+      #define SD_SS_PIN              EXP2_04_PIN
       #define SD_DETECT_PIN                   -1  // Pin 49 for display SD interface, 72 for easy adapter board
       //#define KILL_PIN                      31
 
@@ -465,7 +465,7 @@
       #define BTN_EN2                         37
       #define BTN_ENC                         31
 
-      #define LCD_SDSS               EXP2_04_PIN
+      #define LCD_SDSS_PIN           EXP2_04_PIN
       #define SD_DETECT_PIN          EXP2_07_PIN
       //#define KILL_PIN                      41
 
@@ -481,7 +481,7 @@
       #define BTN_EN1                         31
       #define BTN_EN2                         33
       #define BTN_ENC                         35
-      //#define SDSS                 EXP2_04_PIN
+      //#define SD_SS_PIN            EXP2_04_PIN
       #define SD_DETECT_PIN          EXP2_07_PIN
       //#define KILL_PIN                      64
 
@@ -501,7 +501,7 @@
       #define BTN_EN2                         63
       #define BTN_ENC                         59
 
-      #define SDSS                   EXP2_04_PIN
+      #define SD_SS_PIN              EXP2_04_PIN
       #define SD_DETECT_PIN          EXP2_07_PIN
       //#define KILL_PIN                      64
 
