@@ -881,7 +881,8 @@ G29_TYPE GcodeSuite::G29() {
       else {
         bedlevel.set_grid(abl.gridSpacing, abl.probe_position_lf);
         COPY(bedlevel.z_values, abl.z_values);
-        TERN_(IS_KINEMATIC, bedlevel.extrapolate_unprobed_bed_level());
+        if (parser.boolval('K')) bedlevel.extrapolate_unprobed_bed_level();
+        else if (ENABLED(DWIN_LCD_PROUI) || ENABLED(IS_KINEMATIC)) bedlevel.extrapolate_unprobed_bed_level();
         bedlevel.refresh_bed_level();
 
         bedlevel.print_leveling_grid();
@@ -1017,7 +1018,7 @@ G29_TYPE GcodeSuite::G29() {
   // Restore state after probing
   if (!faux) restore_feedrate_and_scaling();
 
-  TERN_(HAS_BED_PROBE, probe.move_z_after_probing());
+  TERN_(Z_AFTER_PROBING, probe.move_z_after_probing());
 
   #ifdef EVENT_GCODE_AFTER_G29
     if (DEBUGGING(LEVELING)) DEBUG_ECHOLNPGM("After G29 G-code: ", EVENT_GCODE_AFTER_G29);

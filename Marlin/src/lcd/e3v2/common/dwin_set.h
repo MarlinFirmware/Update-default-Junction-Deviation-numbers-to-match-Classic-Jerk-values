@@ -156,6 +156,7 @@
 #define ICON_ProbeOffsetZ ICON_StepZ
 #define ICON_PIDNozzle    ICON_HotendTemp
 #define ICON_PIDBed       ICON_BedTemp
+#define ICON_PIDChamber   ICON_PrintSize
 #define ICON_FWRetract    ICON_StepE
 #define ICON_FWRetLength  ICON_StepE
 #define ICON_FWRetSpeed   ICON_Setspeed
