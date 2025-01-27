@@ -148,7 +148,7 @@
 // Misc. Functions
 //
 #if 0
-  #define SDSS                              PA4
+  #define SD_SS_PIN                         PA4
   #define SD_DETECT_PIN                     PC3
 #endif
 
@@ -209,7 +209,7 @@
 #define SD_MISO_PIN                  EXP2_10_PIN
 #define SD_MOSI_PIN                  EXP2_05_PIN
 
-#define SDSS                         EXP2_07_PIN
+#define SD_SS_PIN                    EXP2_07_PIN
 #define SD_DETECT_PIN                EXP2_04_PIN
 
 #if HAS_WIRED_LCD

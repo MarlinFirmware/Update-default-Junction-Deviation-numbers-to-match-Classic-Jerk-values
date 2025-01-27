@@ -35,7 +35,7 @@
  *  P1 or U - Change to the USB Drive and mount it
  */
 void GcodeSuite::M21() {
-  #if ENABLED(MULTI_VOLUME)
+  #if HAS_MULTI_VOLUME
     const int8_t vol = parser.intval('P', -1);
     if (vol == 0 || parser.seen_test('S'))       // "S" for SD Card
       card.changeMedia(&card.media_driver_sdcard);

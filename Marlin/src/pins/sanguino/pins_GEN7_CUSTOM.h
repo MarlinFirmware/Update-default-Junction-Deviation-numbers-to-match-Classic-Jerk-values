@@ -85,7 +85,7 @@
 //
 // Misc. Functions
 //
-#define SDSS                                  31  // SCL pin of I2C header || CS Pin for SD Card support
+#define SD_SS_PIN                             31  // SCL pin of I2C header || CS Pin for SD Card support
 #define PS_ON_PIN                             19
 
 #ifndef CASE_LIGHT_PIN

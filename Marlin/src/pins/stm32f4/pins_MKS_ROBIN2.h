@@ -102,8 +102,6 @@
 //
 // Misc. Functions
 //
-#define SDSS                                -1    // PB12
-
 #define SD_DETECT_PIN                       PF9
 #define BEEPER_PIN                          PG2
 

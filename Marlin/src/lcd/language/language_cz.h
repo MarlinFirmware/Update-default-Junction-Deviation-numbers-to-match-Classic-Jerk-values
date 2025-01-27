@@ -359,7 +359,12 @@ namespace LanguageNarrow_cz {
   LSTR MSG_FILAMENTUNLOAD_E               = _UxGT("Vysunout filament *");
   LSTR MSG_FILAMENTUNLOAD_ALL             = _UxGT("Vysunout vše");
 
-  LSTR MSG_ATTACH_MEDIA                   = _UxGT("Načíst médium");
+  #if HAS_MULTI_VOLUME
+    LSTR MSG_ATTACH_SD_MEDIA              = _UxGT("Načíst SD");
+    LSTR MSG_ATTACH_USB_MEDIA             = _UxGT("Načíst USB");
+  #else
+    LSTR MSG_ATTACH_MEDIA                 = _UxGT("Načíst SD");
+  #endif
   LSTR MSG_CHANGE_MEDIA                   = _UxGT("Vyměnit médium");
   LSTR MSG_RELEASE_MEDIA                  = _UxGT("Vysunout médium");
   LSTR MSG_ZPROBE_OUT                     = _UxGT("Sonda Z mimo podl");

@@ -30,7 +30,6 @@
 #include "temp_soc.h"
 #include "fastio.h"
 #include "Servo.h"
-#include "MarlinSerial.h"
 
 #include "../../inc/MarlinConfigPre.h"
 
@@ -43,87 +42,11 @@
 #define CPU_ST7920_DELAY_2  40
 #define CPU_ST7920_DELAY_3 340
 
-// ------------------------
-// Serial ports
-// ------------------------
-#ifdef USBCON
-  #include <USBSerial.h>
-  #include "../../core/serial_hook.h"
-  typedef ForwardSerial1Class< decltype(SerialUSB) > DefaultSerial1;
-  extern DefaultSerial1 MSerialUSB;
-#endif
+//
+// Serial Ports
+//
 
-#define _MSERIAL(X) MSerial##X
-#define MSERIAL(X) _MSERIAL(X)
-
-#if WITHIN(SERIAL_PORT, 1, 9)
-  #define MYSERIAL1 MSERIAL(SERIAL_PORT)
-#elif !defined(USBCON)
-  #error "SERIAL_PORT must be from 1 to 9."
-#elif SERIAL_PORT == -1
-  #define MYSERIAL1 MSerialUSB
-#else
-  #error "SERIAL_PORT must be from 1 to 9, or -1 for Native USB."
-#endif
-
-#ifdef SERIAL_PORT_2
-  #if WITHIN(SERIAL_PORT_2, 1, 9)
-    #define MYSERIAL2 MSERIAL(SERIAL_PORT_2)
-  #elif !defined(USBCON)
-    #error "SERIAL_PORT_2 must be from 1 to 9."
-  #elif SERIAL_PORT_2 == -1
-    #define MYSERIAL2 MSerialUSB
-  #else
-    #error "SERIAL_PORT_2 must be from 1 to 9, or -1 for Native USB."
-  #endif
-#endif
-
-#ifdef SERIAL_PORT_3
-  #if WITHIN(SERIAL_PORT_3, 1, 9)
-    #define MYSERIAL3 MSERIAL(SERIAL_PORT_3)
-  #elif !defined(USBCON)
-    #error "SERIAL_PORT_3 must be from 1 to 9."
-  #elif SERIAL_PORT_3 == -1
-    #define MYSERIAL3 MSerialUSB
-  #else
-    #error "SERIAL_PORT_3 must be from 1 to 9, or -1 for Native USB."
-  #endif
-#endif
-
-#ifdef MMU_SERIAL_PORT
-  #if WITHIN(MMU_SERIAL_PORT, 1, 9)
-    #define MMU_SERIAL MSERIAL(MMU_SERIAL_PORT)
-  #elif !defined(USBCON)
-    #error "MMU_SERIAL_PORT must be from 1 to 9."
-  #elif MMU_SERIAL_PORT == -1
-    #define MMU_SERIAL MSerialUSB
-  #else
-    #error "MMU_SERIAL_PORT must be from 1 to 9, or -1 for Native USB."
-  #endif
-#endif
-
-#ifdef LCD_SERIAL_PORT
-  #if WITHIN(LCD_SERIAL_PORT, 1, 9)
-    #define LCD_SERIAL MSERIAL(LCD_SERIAL_PORT)
-  #elif !defined(USBCON)
-    #error "LCD_SERIAL_PORT must be from 1 to 9."
-  #elif LCD_SERIAL_PORT == -1
-    #define LCD_SERIAL MSerialUSB
-  #else
-    #error "LCD_SERIAL_PORT must be from 1 to 9, or -1 for Native USB."
-  #endif
-  #if ANY(HAS_DGUS_LCD, EXTENSIBLE_UI)
-    #define LCD_SERIAL_TX_BUFFER_FREE() LCD_SERIAL.availableForWrite()
-  #endif
-#endif
-
-#ifdef RS485_SERIAL_PORT
-  #if WITHIN(RS485_SERIAL_PORT, 1, 9)
-    #define RS485_SERIAL MSERIAL(RS485_SERIAL_PORT)
-  #else
-    #error "RS485_SERIAL_PORT must be from 1 to 9."
-  #endif
-#endif
+#include "MarlinSerial.h"
 
 /**
  * TODO: review this to return 1 for pins that are not analog input

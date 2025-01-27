@@ -358,7 +358,12 @@ namespace LanguageNarrow_pl {
   LSTR MSG_FILAMENTUNLOAD                 = _UxGT("Wysuń Filament");
   LSTR MSG_FILAMENTUNLOAD_E               = _UxGT("Wysuń Filament *");
   LSTR MSG_FILAMENTUNLOAD_ALL             = _UxGT("Wysuń wszystkie");
-  LSTR MSG_ATTACH_MEDIA                   = _UxGT("Inicjal. karty SD");
+  #if HAS_MULTI_VOLUME
+    LSTR MSG_ATTACH_SD_MEDIA              = _UxGT("Inicjal. karty SD");
+    LSTR MSG_ATTACH_USB_MEDIA             = _UxGT("Inicjal. dysk flash");
+  #else
+    LSTR MSG_ATTACH_MEDIA                 = _UxGT("Inicjal. karty SD");
+  #endif
   LSTR MSG_CHANGE_MEDIA                   = _UxGT("Zmiana karty SD");
   LSTR MSG_RELEASE_MEDIA                  = _UxGT("Zwolnienie karty");
   LSTR MSG_ZPROBE_OUT                     = _UxGT("Sonda Z za stołem");

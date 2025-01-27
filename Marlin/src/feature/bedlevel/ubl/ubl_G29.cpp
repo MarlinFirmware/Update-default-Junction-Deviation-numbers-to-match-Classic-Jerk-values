@@ -48,6 +48,10 @@
   #include "../hilbert_curve.h"
 #endif
 
+#if FT_MOTION_DISABLE_FOR_PROBING
+  #include "../../../module/ft_motion.h"
+#endif
+
 #include <math.h>
 
 #define UBL_G29_P31
@@ -297,11 +301,21 @@ G29_parameters_t unified_bed_leveling::param;
 
 void unified_bed_leveling::G29() {
 
-  bool probe_deployed = false;
+  #ifdef EVENT_GCODE_AFTER_G29
+    bool probe_deployed = false;
+    #define SET_PROBE_DEPLOYED(N) probe_deployed = N
+  #else
+    #define SET_PROBE_DEPLOYED(N)
+  #endif
+
   if (G29_parse_parameters()) return; // Abort on parameter error
 
   const uint8_t p_val = parser.byteval('P');
   const bool may_move = p_val == 1 || p_val == 2 || p_val == 4 || parser.seen_test('J');
+
+  #if FT_MOTION_DISABLE_FOR_PROBING
+    FTMotionDisableInScope FT_Disabler; // Disable Fixed-Time Motion for probing
+  #endif
 
   // Check for commands that require the printer to be homed
   if (may_move) {
@@ -315,6 +329,11 @@ void unified_bed_leveling::G29() {
       if (axes_should_home() || parser.seen_test('N')) gcode.home_all_axes();
     #endif
     probe.use_probing_tool();
+
+    #ifdef EVENT_GCODE_BEFORE_G29
+      if (DEBUGGING(LEVELING)) DEBUG_ECHOLNPGM("Before G29 G-code: ", EVENT_GCODE_BEFORE_G29);
+      gcode.process_subcommands_now(F(EVENT_GCODE_BEFORE_G29));
+    #endif
 
     // Position bed horizontally and Z probe vertically.
     #if HAS_SAFE_BED_LEVELING
@@ -430,7 +449,7 @@ void unified_bed_leveling::G29() {
         do_blocking_move_to_xy(0.5f * ((MESH_MIN_X) + (MESH_MAX_X)), 0.5f * ((MESH_MIN_Y) + (MESH_MAX_Y)));
       #endif
       report_current_position();
-      probe_deployed = true;
+      SET_PROBE_DEPLOYED(true);
     }
 
   #endif // HAS_BED_PROBE
@@ -465,7 +484,7 @@ void unified_bed_leveling::G29() {
           probe_entire_mesh(param.XY_pos, parser.seen_test('T'), parser.seen_test('E'), parser.seen_test('U'));
 
           report_current_position();
-          probe_deployed = true;
+          SET_PROBE_DEPLOYED(true);
         } break;
 
       #endif // HAS_BED_PROBE
@@ -503,7 +522,7 @@ void unified_bed_leveling::G29() {
               SERIAL_ECHOLNPGM("?Error in Business Card measurement.");
               return;
             }
-            probe_deployed = true;
+            SET_PROBE_DEPLOYED(true);
           }
 
           if (!position_is_reachable(param.XY_pos)) {
@@ -681,13 +700,11 @@ void unified_bed_leveling::G29() {
   #endif
 
   #ifdef EVENT_GCODE_AFTER_G29
-    if (DEBUGGING(LEVELING)) DEBUG_ECHOLNPGM("Z Probe End Script: ", EVENT_GCODE_AFTER_G29);
+    if (DEBUGGING(LEVELING)) DEBUG_ECHOLNPGM("After G29 G-code: ", EVENT_GCODE_AFTER_G29);
     if (probe_deployed) {
       planner.synchronize();
       gcode.process_subcommands_now(F(EVENT_GCODE_AFTER_G29));
     }
-  #else
-    UNUSED(probe_deployed);
   #endif
 
   probe.use_probing_tool(false);
@@ -1778,14 +1795,14 @@ void unified_bed_leveling::smart_fill_mesh() {
     SERIAL_ECHOLNPGM("ubl_state_at_invocation :", ubl_state_at_invocation, "\nubl_state_recursion_chk :", ubl_state_recursion_chk);
     serial_delay(50);
 
-    SERIAL_ECHOLNPGM("Meshes go from ", hex_address((void*)settings.meshes_start_index()), " to ", hex_address((void*)settings.meshes_end_index()));
+    SERIAL_ECHOLNPGM("Meshes go from ", _hex_word(settings.meshes_start_index()), " to ", _hex_word(settings.meshes_end_index()));
     serial_delay(50);
 
     SERIAL_ECHOLNPGM("sizeof(unified_bed_leveling) :  ", sizeof(unified_bed_leveling));
     SERIAL_ECHOLNPGM("z_value[][] size: ", sizeof(z_values));
     serial_delay(25);
 
-    SERIAL_ECHOLNPGM("EEPROM free for UBL: ", hex_address((void*)(settings.meshes_end_index() - settings.meshes_start_index())));
+    SERIAL_ECHOLNPGM("EEPROM free for UBL: ", _hex_word(settings.meshes_end_index() - settings.meshes_start_index()));
     serial_delay(50);
 
     SERIAL_ECHOLNPGM("EEPROM can hold ", settings.calc_num_meshes(), " meshes.\n");

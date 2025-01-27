@@ -27,14 +27,14 @@
 #include "game.h"
 
 #define BRICK_H      5
-#define BRICK_TOP    MENU_FONT_ASCENT
+#define BRICK_TOP    GAME_FONT_ASCENT
 
 #define PADDLE_H     2
 #define PADDLE_VEL   3
-#define PADDLE_W    ((LCD_PIXEL_WIDTH) / 8)
-#define PADDLE_Y    (LCD_PIXEL_HEIGHT - 1 - PADDLE_H)
+#define PADDLE_W    ((GAME_WIDTH) / 8)
+#define PADDLE_Y    (GAME_HEIGHT - 1 - PADDLE_H)
 
-#define BRICK_W     ((LCD_PIXEL_WIDTH) / (BRICK_COLS))
+#define BRICK_W     ((GAME_WIDTH) / (BRICK_COLS))
 #define BRICK_BOT   (BRICK_TOP + BRICK_H * BRICK_ROWS - 1)
 
 #define BRICK_COL(X) ((X) / (BRICK_W))
@@ -53,7 +53,7 @@ void reset_ball() {
   bdat.ballv = FTOF(1.3f);
   bdat.ballh = -FTOF(1.25f);
   uint8_t bx = bdat.paddle_x + (PADDLE_W) / 2 + ball_dist;
-  if (bx >= LCD_PIXEL_WIDTH - 10) { bx -= ball_dist * 2; bdat.ballh = -bdat.ballh; }
+  if (bx >= GAME_WIDTH - 10) { bx -= ball_dist * 2; bdat.ballh = -bdat.ballh; }
   bdat.ballx = BTOF(bx);
   bdat.hit_dir = -1;
 }
@@ -61,7 +61,7 @@ void reset_ball() {
 void BrickoutGame::game_screen() {
   if (game_frame()) {     // Run logic twice for finer resolution
     // Update Paddle Position
-    bdat.paddle_x = constrain(int8_t(ui.encoderPosition), 0, (LCD_PIXEL_WIDTH - (PADDLE_W)) / (PADDLE_VEL));
+    bdat.paddle_x = constrain(int8_t(ui.encoderPosition), 0, (GAME_WIDTH - (PADDLE_W)) / (PADDLE_VEL));
     ui.encoderPosition = bdat.paddle_x;
     bdat.paddle_x *= (PADDLE_VEL);
 
@@ -70,7 +70,7 @@ void BrickoutGame::game_screen() {
 
       // Provisionally update the ball position
       const fixed_t newx = bdat.ballx + bdat.ballh, newy = bdat.bally + bdat.ballv;  // current next position
-      if (!WITHIN(newx, 0, BTOF(LCD_PIXEL_WIDTH - 1))) {    // out in x?
+      if (!WITHIN(newx, 0, BTOF(GAME_WIDTH - 1))) {    // out in x?
         bdat.ballh = -bdat.ballh; _BUZZ(5, 220);            // bounce x
       }
       if (newy < 0) {                                       // out in y?
@@ -78,7 +78,7 @@ void BrickoutGame::game_screen() {
         bdat.hit_dir = 1;
       }
       // Did the ball go below the bottom?
-      else if (newy > BTOF(LCD_PIXEL_HEIGHT)) {
+      else if (newy > BTOF(GAME_HEIGHT)) {
         _BUZZ(500, 75);
         if (--bdat.balls_left) reset_ball(); else game_state = 0;
         break; // done
@@ -134,32 +134,51 @@ void BrickoutGame::game_screen() {
     } while (false);
   }
 
-  u8g.setColorIndex(1);
+  frame_start();
 
-  // Draw bricks
+  // Draw bricks, cycling through colors for each brick
+  #if IS_DWIN_MARLINUI
+    const color brick_colors[] = { color::RED, color::CYAN, color::GREEN, color::YELLOW, color::MAGENTA, color::BLUE };
+    int color_index = 0;
+  #endif
   if (PAGE_CONTAINS(BRICK_TOP, BRICK_BOT)) {
     for (uint8_t y = 0; y < BRICK_ROWS; ++y) {
       const uint8_t yy = y * BRICK_H + BRICK_TOP;
       if (PAGE_CONTAINS(yy, yy + BRICK_H - 1)) {
         for (uint8_t x = 0; x < BRICK_COLS; ++x) {
+          #if IS_DWIN_MARLINUI
+            // Cycle through colors, even if the brick is gone.
+            // Otherwise, bricks would change color if their neighbor is hit
+            set_color(brick_colors[color_index++ % COUNT(brick_colors)]);
+          #endif
+
+          // Draw brick if it's still there
           if (TEST(bdat.bricks[y], x)) {
             const uint8_t xx = x * BRICK_W;
-            for (uint8_t v = 0; v < BRICK_H - 1; ++v)
-              if (PAGE_CONTAINS(yy + v, yy + v))
-                u8g.drawHLine(xx, yy + v, BRICK_W - 1);
+            #if IS_DWIN_MARLINUI
+              if (PAGE_CONTAINS(yy, yy + BRICK_H - 1))
+                draw_box(xx, yy, BRICK_W - 1, BRICK_H - 1);
+            #else
+              for (uint8_t v = 0; v < BRICK_H - 1; ++v)
+                if (PAGE_CONTAINS(yy + v, yy + v))
+                  u8g.drawHLine(xx, yy + v, BRICK_W - 1);
+            #endif
           }
         }
       }
     }
   }
 
+  // Everything else is white
+  TERN_(IS_DWIN_MARLINUI, set_color(color::WHITE));
+
   // Draw paddle
   if (PAGE_CONTAINS(PADDLE_Y-1, PADDLE_Y)) {
-    u8g.drawHLine(bdat.paddle_x, PADDLE_Y, PADDLE_W);
+    draw_hline(bdat.paddle_x, PADDLE_Y, PADDLE_W);
     #if PADDLE_H > 1
-      u8g.drawHLine(bdat.paddle_x, PADDLE_Y-1, PADDLE_W);
+      draw_hline(bdat.paddle_x, PADDLE_Y-1, PADDLE_W);
       #if PADDLE_H > 2
-        u8g.drawHLine(bdat.paddle_x, PADDLE_Y-2, PADDLE_W);
+        draw_hline(bdat.paddle_x, PADDLE_Y-2, PADDLE_W);
       #endif
     #endif
   }
@@ -168,29 +187,30 @@ void BrickoutGame::game_screen() {
   if (game_state) {
     const uint8_t by = FTOB(bdat.bally);
     if (PAGE_CONTAINS(by, by+1))
-      u8g.drawFrame(FTOB(bdat.ballx), by, 2, 2);
+      draw_frame(FTOB(bdat.ballx), by, 2, 2);
   }
   // Or draw GAME OVER
   else
     draw_game_over();
 
-  if (PAGE_UNDER(MENU_FONT_ASCENT)) {
+  if (PAGE_UNDER(GAME_FONT_ASCENT)) {
     // Score Digits
-    //const uint8_t sx = (LCD_PIXEL_WIDTH - (score >= 10 ? score >= 100 ? score >= 1000 ? 4 : 3 : 2 : 1) * MENU_FONT_WIDTH) / 2;
+    //const uint8_t sx = (GAME_WIDTH - (score >= 10 ? score >= 100 ? score >= 1000 ? 4 : 3 : 2 : 1) * GAME_FONT_WIDTH) / 2;
     constexpr uint8_t sx = 0;
-    lcd_put_int(sx, MENU_FONT_ASCENT - 1, score);
+    draw_int(sx, GAME_FONT_ASCENT - 1, score);
 
     // Balls Left
-    lcd_moveto(LCD_PIXEL_WIDTH - MENU_FONT_WIDTH * 3, MENU_FONT_ASCENT - 1);
     PGM_P const ohs = PSTR("ooo\0\0");
-    lcd_put_u8str_P(ohs + 3 - bdat.balls_left);
+    draw_string(GAME_WIDTH - GAME_FONT_WIDTH * 3, GAME_FONT_ASCENT - 1, ohs + 3 - bdat.balls_left);
   }
+
+  frame_end();
 
   // A click always exits this game
   if (ui.use_click()) exit_game();
 }
 
-#define SCREEN_M ((LCD_PIXEL_WIDTH) / 2)
+#define SCREEN_M ((GAME_WIDTH) / 2)
 
 void BrickoutGame::enter_game() {
   init_game(2, game_screen); // 2 = reset bricks on paddle hit

@@ -41,7 +41,7 @@
 #undef INVERTED_FAN_PINS
 
 #define I2C_EEPROM
-#define MARLIN_EEPROM_SIZE 0x10000 // 64K in a 24C512
+#define MARLIN_EEPROM_SIZE              0x10000U  // 64K in a 24C512
 
 #ifndef PS_ON_PIN
   #define PS_ON_PIN                           12

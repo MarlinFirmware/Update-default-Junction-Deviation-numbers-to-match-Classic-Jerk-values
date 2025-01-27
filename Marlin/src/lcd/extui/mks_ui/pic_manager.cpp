@@ -197,7 +197,7 @@ static FSTR_P const assets[] = {
     F("bmp_cloud.bin"),
   #endif
 
-  #if ENABLED(MULTI_VOLUME)
+  #if HAS_MULTI_VOLUME
     F("bmp_usb_disk.bin"),
     //F("bmp_usb_disk_sel.bin"),
     F("bmp_sd.bin"),

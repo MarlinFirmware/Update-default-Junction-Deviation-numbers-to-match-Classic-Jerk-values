@@ -457,12 +457,12 @@
 #define BOARD_FYSETC_CHEETAH_V30      5235  // FYSETC Cheetah V3.0 (STM32F446RC)
 #define BOARD_TH3D_EZBOARD_V2         5236  // TH3D EZBoard v2.0 (STM32F405RG)
 #define BOARD_OPULO_LUMEN_REV3        5237  // Opulo Lumen PnP Controller REV3 (STM32F407VE / STM32F407VG)
-#define BOARD_MKS_ROBIN_NANO_V1_3_F4  5238  // MKS Robin Nano V1.3 and MKS Robin Nano-S V1.3 (STM32F407VE)
-#define BOARD_MKS_EAGLE               5239  // MKS Eagle (STM32F407VE)
-#define BOARD_ARTILLERY_RUBY          5240  // Artillery Ruby (STM32F401RC)
-#define BOARD_CREALITY_V24S1_301F4    5241  // Creality v2.4.S1_301F4 (STM32F401RC) as found in the Ender-3 S1 F4
-#define BOARD_CREALITY_CR4NTXXC10     5242  // Creality E3 Free-runs Silent Motherboard (STM32F401RET6)
-#define BOARD_OPULO_LUMEN_REV4        5243  // Opulo Lumen PnP Controller REV4 (STM32F407VE / STM32F407VG)
+#define BOARD_OPULO_LUMEN_REV4        5238  // Opulo Lumen PnP Controller REV4 (STM32F407VE / STM32F407VG)
+#define BOARD_MKS_ROBIN_NANO_V1_3_F4  5239  // MKS Robin Nano V1.3 and MKS Robin Nano-S V1.3 (STM32F407VE)
+#define BOARD_MKS_EAGLE               5240  // MKS Eagle (STM32F407VE)
+#define BOARD_ARTILLERY_RUBY          5241  // Artillery Ruby (STM32F401RC)
+#define BOARD_CREALITY_V24S1_301F4    5242  // Creality v2.4.S1_301F4 (STM32F401RC) as found in the Ender-3 S1 F4
+#define BOARD_CREALITY_CR4NTXXC10     5243  // Creality E3 Free-runs Silent Motherboard (STM32F401RET6)
 #define BOARD_FYSETC_SPIDER_KING407   5244  // FYSETC Spider King407 (STM32F407ZG)
 #define BOARD_MKS_SKIPR_V1            5245  // MKS SKIPR v1.0 all-in-one board (STM32F407VE)
 #define BOARD_TRONXY_CXY_446_V10      5246  // TRONXY CXY-446-V10-220413/CXY-V6-191121 (STM32F446ZE)
@@ -473,6 +473,10 @@
 #define BOARD_BLACKBEEZMINI_V1        5251  // BlackBeezMini V1 (STM32F401CCU6)
 #define BOARD_XTLW_CLIMBER_8TH        5252  // XTLW Climber-8th (STM32F407VGT6)
 #define BOARD_FLY_RRF_E3_V1           5253  // Fly RRF E3 V1.0 (STM32F407VG)
+#define BOARD_ZNP_ROBIN_NANO          5254  // Elegoo Neptune 2 v1.2 board
+#define BOARD_ZNP_ROBIN_NANO_V1_3     5255  // Elegoo Neptune 2 v1.3 board
+#define BOARD_MKS_NEPTUNE_X           5256  // Elegoo Neptune X
+#define BOARD_MKS_NEPTUNE_3           5257  // Elegoo Neptune 3
 
 //
 // Other ARM Cortex-M4

@@ -966,7 +966,7 @@ void clear_cur_ui() {
     #if ENABLED(TOUCH_SCREEN_CALIBRATION)
       case TOUCH_CALIBRATION_UI:      lv_clear_touch_calibration_screen(); break;
     #endif
-    #if ENABLED(MULTI_VOLUME)
+    #if HAS_MULTI_VOLUME
       case MEDIA_SELECT_UI:           lv_clear_media_select(); break;
     #endif
     default: break;

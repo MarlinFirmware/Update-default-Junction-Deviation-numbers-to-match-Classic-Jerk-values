@@ -103,7 +103,7 @@
 // Misc. Functions
 //
 #define SDPOWER_PIN                           48
-#define SDSS                                  53
+#define SD_SS_PIN                             53
 #define LED_PIN                               13
 
 #ifndef CASE_LIGHT_PIN

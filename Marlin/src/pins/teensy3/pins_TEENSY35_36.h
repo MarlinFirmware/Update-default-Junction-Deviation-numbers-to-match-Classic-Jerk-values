@@ -128,7 +128,7 @@
 //
 // SD Card
 //
-#define SDSS                                  39  // 8
+#define SD_SS_PIN                             39  // 8
 
 #if HAS_WIRED_LCD
   #define LCD_PINS_RS                         40

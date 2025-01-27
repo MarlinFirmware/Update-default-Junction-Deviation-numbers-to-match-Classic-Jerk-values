@@ -284,8 +284,8 @@
 //
 // Misc. Functions
 //
-#ifndef SDSS
-  #define SDSS                           AUX3_06
+#ifndef SD_SS_PIN
+  #define SD_SS_PIN                      AUX3_06
 #endif
 #define LED_PIN                               13
 
@@ -750,7 +750,7 @@
       #define BTN_EN1                    AUX4_04
       #define BTN_EN2                    AUX4_06
       #define BTN_ENC                    AUX4_03
-      #define LCD_SDSS                      SDSS
+      #define LCD_SDSS_PIN             SD_SS_PIN
       #define KILL_PIN               EXP2_08_PIN
       #undef LCD_PINS_EN                          // not used, causes false pin conflict report
 
@@ -760,7 +760,7 @@
       #define BTN_EN2                    AUX2_08
       #define BTN_ENC                         -1
 
-      #define LCD_SDSS                      SDSS
+      #define LCD_SDSS_PIN             SD_SS_PIN
       #ifndef SD_DETECT_PIN
         #define SD_DETECT_PIN        EXP2_07_PIN
       #endif
@@ -800,7 +800,7 @@
       #define BTN_EN2                EXP1_01_PIN
       #define BTN_ENC                EXP2_03_PIN
 
-      #define LCD_SDSS                      SDSS
+      #define LCD_SDSS_PIN             SD_SS_PIN
       #ifndef SD_DETECT_PIN
         #define SD_DETECT_PIN        EXP2_07_PIN
       #endif

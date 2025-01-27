@@ -45,7 +45,7 @@
   #define FLASH_EEPROM_EMULATION
   #define FLASH_EEPROM_LEVELING
   #define FLASH_SECTOR          (FLASH_SECTOR_TOTAL - 1)
-  #define FLASH_UNIT_SIZE       0x4000                                           // 16kB
+  #define FLASH_UNIT_SIZE               0x4000U  // 16K
   #define MARLIN_EEPROM_SIZE    FLASH_UNIT_SIZE
   #undef NO_EEPROM_SELECTED
 #endif
@@ -100,7 +100,7 @@
 //
 // SD Card
 //
-#define SDSS                                PA4
+#define SD_SS_PIN                           PA4
 #define SD_DETECT_PIN                       -1
 #define SD_SCK_PIN                          PA5
 #define SD_MISO_PIN                         PA6

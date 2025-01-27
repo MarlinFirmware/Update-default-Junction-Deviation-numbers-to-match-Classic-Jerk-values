@@ -417,7 +417,12 @@ namespace LanguageNarrow_sv {
   LSTR MSG_FILAMENTUNLOAD                 = _UxGT("Lossa Tråd");
   LSTR MSG_FILAMENTUNLOAD_E               = _UxGT("Lossa *");
   LSTR MSG_FILAMENTUNLOAD_ALL             = _UxGT("Lossa All");
-  LSTR MSG_ATTACH_MEDIA                   = _UxGT("Bifoga Media");
+  #if HAS_MULTI_VOLUME
+    LSTR MSG_ATTACH_SD_MEDIA              = _UxGT("Bifoga SD-kort");
+    LSTR MSG_ATTACH_USB_MEDIA             = _UxGT("Bifoga USB-minne");
+  #else
+    LSTR MSG_ATTACH_MEDIA                 = _UxGT("Bifoga SD-kort");
+  #endif
   LSTR MSG_CHANGE_MEDIA                   = _UxGT("Byt Media");
   LSTR MSG_RELEASE_MEDIA                  = _UxGT("Släpp Media");
   LSTR MSG_ZPROBE_OUT                     = _UxGT("Z Sond Utanför Bädd");
