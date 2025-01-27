@@ -431,7 +431,12 @@ namespace LanguageNarrow_hu {
   LSTR MSG_FILAMENTUNLOAD                 = _UxGT("Szál eltávolítás");
   LSTR MSG_FILAMENTUNLOAD_E               = _UxGT("Szál eltávolítás *");
   LSTR MSG_FILAMENTUNLOAD_ALL             = _UxGT("Mindet eltávolít");
-  LSTR MSG_ATTACH_MEDIA                   = _UxGT("Tároló");
+  #if HAS_MULTI_VOLUME
+    LSTR MSG_ATTACH_SD_MEDIA              = _UxGT("Tároló SD");
+    LSTR MSG_ATTACH_USB_MEDIA             = _UxGT("Tároló USB");
+  #else
+    LSTR MSG_ATTACH_MEDIA                 = _UxGT("Tároló SD");
+  #endif
   LSTR MSG_CHANGE_MEDIA                   = _UxGT("Tároló csere");
   LSTR MSG_RELEASE_MEDIA                  = _UxGT("Tároló Kiadása");
   LSTR MSG_ZPROBE_OUT                     = _UxGT("Z szonda tálcán kivül");

@@ -239,7 +239,7 @@
 #define BEEPER_PIN                            44
 
 #if HAS_MEDIA
-  #define SDSS                                53
+  #define SD_SS_PIN                           53
   #define SD_DETECT_PIN                       49
 #endif
 

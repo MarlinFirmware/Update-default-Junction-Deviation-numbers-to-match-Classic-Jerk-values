@@ -104,7 +104,7 @@
 //
 // Misc. Functions
 //
-#define SDSS                                  53
+#define SD_SS_PIN                             53
 #define SD_DETECT_PIN                         39
 
 #if ENABLED(CASE_LIGHT_ENABLE)

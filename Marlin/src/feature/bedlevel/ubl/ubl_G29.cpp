@@ -48,6 +48,10 @@
   #include "../hilbert_curve.h"
 #endif
 
+#if FT_MOTION_DISABLE_FOR_PROBING
+  #include "../../../module/ft_motion.h"
+#endif
+
 #include <math.h>
 
 #define UBL_G29_P31
@@ -308,6 +312,10 @@ void unified_bed_leveling::G29() {
 
   const uint8_t p_val = parser.byteval('P');
   const bool may_move = p_val == 1 || p_val == 2 || p_val == 4 || parser.seen_test('J');
+
+  #if FT_MOTION_DISABLE_FOR_PROBING
+    FTMotionDisableInScope FT_Disabler; // Disable Fixed-Time Motion for probing
+  #endif
 
   // Check for commands that require the printer to be homed
   if (may_move) {
@@ -1787,14 +1795,14 @@ void unified_bed_leveling::smart_fill_mesh() {
     SERIAL_ECHOLNPGM("ubl_state_at_invocation :", ubl_state_at_invocation, "\nubl_state_recursion_chk :", ubl_state_recursion_chk);
     serial_delay(50);
 
-    SERIAL_ECHOLNPGM("Meshes go from ", hex_address((void*)settings.meshes_start_index()), " to ", hex_address((void*)settings.meshes_end_index()));
+    SERIAL_ECHOLNPGM("Meshes go from ", _hex_word(settings.meshes_start_index()), " to ", _hex_word(settings.meshes_end_index()));
     serial_delay(50);
 
     SERIAL_ECHOLNPGM("sizeof(unified_bed_leveling) :  ", sizeof(unified_bed_leveling));
     SERIAL_ECHOLNPGM("z_value[][] size: ", sizeof(z_values));
     serial_delay(25);
 
-    SERIAL_ECHOLNPGM("EEPROM free for UBL: ", hex_address((void*)(settings.meshes_end_index() - settings.meshes_start_index())));
+    SERIAL_ECHOLNPGM("EEPROM free for UBL: ", _hex_word(settings.meshes_end_index() - settings.meshes_start_index()));
     serial_delay(50);
 
     SERIAL_ECHOLNPGM("EEPROM can hold ", settings.calc_num_meshes(), " meshes.\n");

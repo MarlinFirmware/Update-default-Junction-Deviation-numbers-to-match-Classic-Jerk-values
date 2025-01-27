@@ -30,7 +30,7 @@
 #if ANY(NO_EEPROM_SELECTED, I2C_EEPROM)
   #undef NO_EEPROM_SELECTED
   #define I2C_EEPROM
-  #define MARLIN_EEPROM_SIZE              0x1000  // 4K (AT24C32)
+  #define MARLIN_EEPROM_SIZE             0x1000U  // 4K (AT24C32)
   #define SOFT_I2C_EEPROM                         // Force the use of Software I2C
   #define I2C_SCL_PIN                       PB8
   #define I2C_SDA_PIN                       PB9
@@ -349,8 +349,7 @@
   #define SD_DETECT_PIN                     PC14
 #elif SD_CONNECTION_IS(LCD)
 
-  #define SDSS                              PA4
-  #define SD_SS_PIN                         SDSS
+  #define SD_SS_PIN                         PA4
   #define SD_SCK_PIN                        PA5
   #define SD_MISO_PIN                       PA6
   #define SD_MOSI_PIN                       PA7

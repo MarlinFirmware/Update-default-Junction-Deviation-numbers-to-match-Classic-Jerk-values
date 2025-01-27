@@ -42,7 +42,7 @@
 
 //#define I2C_EEPROM
 #define SRAM_EEPROM_EMULATION
-#define MARLIN_EEPROM_SIZE                0x2000  // 8K
+#define MARLIN_EEPROM_SIZE               0x2000U  // 8K
 
 //
 // Servos
@@ -148,7 +148,7 @@
   #define ONBOARD_SDIO                            // Use SDIO for onboard SD
   #if DISABLED(ONBOARD_SDIO)
     #define SOFTWARE_SPI                          // Use soft SPI for onboard SD
-    #define SDSS                            PC11
+    #define SD_SS_PIN                       PC11
     #define SD_SCK_PIN                      PC12
     #define SD_MISO_PIN                     PC8
     #define SD_MOSI_PIN                     PD2

@@ -39,7 +39,7 @@
 
 // Store settings in the last two pages
 #ifndef MARLIN_EEPROM_SIZE
-  #define MARLIN_EEPROM_SIZE ((EEPROM_PAGE_SIZE) * 2)
+  #define MARLIN_EEPROM_SIZE ((EEPROM_PAGE_SIZE) * 2UL)
 #endif
 size_t PersistentStore::capacity() { return MARLIN_EEPROM_SIZE - eeprom_exclude_size; }
 

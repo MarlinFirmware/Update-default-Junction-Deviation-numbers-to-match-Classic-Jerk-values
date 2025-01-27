@@ -172,6 +172,14 @@ if ((AUTO_BUILD)); then
   BDESC=$( sed -E 's/^.+\/\/ *(.+)$/\1/' <<<"$BLINE" )
   [[ -z $BNUM ]] && { echo "Error - Can't find BOARD_$MB in core/boards.h." ; exit 1 ; }
   ENVS=( $( grep -EA1 "MB\(.*\b$MB\b.*\)" Marlin/src/pins/pins.h | grep -E "#include.+//.+(env|$SYS):[^ ]+" | grep -oE "(env|$SYS):[^ ]+" | sed -E "s/(env|$SYS)://" ) )
+  # If AUTO_BUILD is not 2 (upload), strip envs ending in '_xfer' from $ENVS
+  if [[ $AUTO_BUILD != 2 ]]; then
+    OENV=()
+    for env in "${ENVS[@]}"; do
+      [[ ! $env =~ _xfer$ ]] && OENV+=( "$env" )
+    done
+    ENVS=( "${OENV[@]}" )
+  fi
   [[ -z $ENVS ]] && { errout "Error - Can't find target(s) for $MB ($BNUM)." ; exit 1 ; }
   ECOUNT=${#ENVS[*]}
 

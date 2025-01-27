@@ -117,7 +117,12 @@ namespace LanguageNarrow_hr {
   LSTR MSG_STOPPED                        = _UxGT("ZAUSTAVLJEN. ");
   LSTR MSG_FILAMENTCHANGE                 = _UxGT("Promijeni filament");
   LSTR MSG_FILAMENTCHANGE_E               = _UxGT("Promijeni filament *");
-  LSTR MSG_ATTACH_MEDIA                   = _UxGT("Init. SD karticu");
+  #if HAS_MULTI_VOLUME
+    LSTR MSG_ATTACH_SD_MEDIA              = _UxGT("Init. SD karticu");
+    LSTR MSG_ATTACH_USB_MEDIA             = _UxGT("Init. USB pogon");
+  #else
+    LSTR MSG_ATTACH_MEDIA                 = _UxGT("Init. SD karticu");
+  #endif
   LSTR MSG_CHANGE_MEDIA                   = _UxGT("Promijeni SD karticu");
   LSTR MSG_ERR_HEATING_FAILED             = _UxGT("Grijanje neuspješno");
   LSTR MSG_HEATING                        = _UxGT("Grijanje...");

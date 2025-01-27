@@ -59,6 +59,10 @@
 #define DEBUG_OUT ENABLED(DEBUG_LEVELING_FEATURE)
 #include "../../../core/debug_out.h"
 
+#if DISABLED(PROBE_MANUALLY) && FT_MOTION_DISABLE_FOR_PROBING
+  #include "../../../module/ft_motion.h"
+#endif
+
 #if ABL_USES_GRID
   #if ENABLED(PROBE_Y_FIRST)
     #define PR_OUTER_VAR  abl.meshCount.x
@@ -279,6 +283,10 @@ G29_TYPE GcodeSuite::G29() {
 
   // Set and report "probing" state to host
   TERN_(FULL_REPORT_TO_HOST_FEATURE, set_and_report_grblstate(M_PROBE, false));
+
+  #if DISABLED(PROBE_MANUALLY) && FT_MOTION_DISABLE_FOR_PROBING
+    FTMotionDisableInScope FT_Disabler; // Disable Fixed-Time Motion for probing
+  #endif
 
   /**
    * On the initial G29 fetch command parameters.

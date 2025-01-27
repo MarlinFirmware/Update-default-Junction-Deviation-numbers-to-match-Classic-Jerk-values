@@ -48,7 +48,7 @@
   // 128 kB sector allocated for EEPROM emulation.
   #define FLASH_EEPROM_LEVELING
 #elif ENABLED(I2C_EEPROM)
-  #define MARLIN_EEPROM_SIZE              0x1000  // 4K
+  #define MARLIN_EEPROM_SIZE             0x1000U  // 4K
 #endif
 
 //
@@ -185,7 +185,7 @@
 #define SD_MISO_PIN                  EXP2_01_PIN
 #define SD_MOSI_PIN                  EXP2_06_PIN
 
-#define SDSS                         EXP2_04_PIN
+#define SD_SS_PIN                    EXP2_04_PIN
 #define SD_DETECT_PIN                EXP2_07_PIN
 
 //
@@ -232,7 +232,7 @@
     #define BTN_EN1                  EXP2_03_PIN
     #define BTN_EN2                  EXP2_05_PIN
 
-    #define LCD_SDSS                 EXP2_04_PIN
+    #define LCD_SDSS_PIN             EXP2_04_PIN
 
     #define LCD_PINS_EN              EXP1_03_PIN
     #define LCD_PINS_D4              EXP1_05_PIN

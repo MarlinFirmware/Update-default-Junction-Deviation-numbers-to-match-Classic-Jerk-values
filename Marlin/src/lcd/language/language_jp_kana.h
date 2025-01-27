@@ -168,7 +168,12 @@ namespace LanguageNarrow_jp_kana {
   LSTR MSG_CONTROL_RETRACT_RECOVERF       = _UxGT("ホショウソクド mm/s"); // "Unretract V"
   LSTR MSG_AUTORETRACT                    = _UxGT("ジドウヒキコミ"); // "Auto-Retract"
   LSTR MSG_FILAMENTCHANGE                 = _UxGT("フィラメントコウカン"); // "Change filament"
-  LSTR MSG_ATTACH_MEDIA                   = _UxGT("メディアサイヨミコミ"); // "Init. SD card"
+  #if HAS_MULTI_VOLUME
+    LSTR MSG_ATTACH_SD_MEDIA              = _UxGT("SDカードをマウントする"); // "Attach SD Card"
+    LSTR MSG_ATTACH_USB_MEDIA             = _UxGT("USBメモリをマウントする"); // "Attach USB Drive"
+  #else
+    LSTR MSG_ATTACH_MEDIA                 = _UxGT("SDカードをマウントする"); // "Attach SD Card"
+  #endif
   LSTR MSG_CHANGE_MEDIA                   = _UxGT("メディアコウカン"); // "Change SD card"
   LSTR MSG_ZPROBE_OUT                     = _UxGT("Zプローブ ベッドガイ"); // "Z probe out. bed"
   LSTR MSG_BLTOUCH_SELFTEST               = _UxGT("BLTouch ジコシンダン"); // "BLTouch Self-Test"

@@ -114,7 +114,7 @@
 //
 // Misc. Functions
 //
-#define SDSS                                  53
+#define SD_SS_PIN                             53
 #define SD_DETECT_PIN                         39
 #define LED_PIN                                8
 //#define SAFETY_TRIGGERED_PIN                28  // PIN to detect the safety circuit has triggered

@@ -169,7 +169,6 @@
   #define SD_MISO_PIN                       PC8
   #define SD_MOSI_PIN                       PD2
   #define SD_SS_PIN                         PC11
-  #define SDSS                              PC11
 #endif
 
 //

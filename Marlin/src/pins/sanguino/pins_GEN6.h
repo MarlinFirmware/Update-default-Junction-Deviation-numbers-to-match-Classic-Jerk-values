@@ -88,7 +88,7 @@
 //
 // Misc. Functions
 //
-#define SDSS                                  17
+#define SD_SS_PIN                             17
 #define DEBUG_PIN                              0
 
 #ifndef CASE_LIGHT_PIN

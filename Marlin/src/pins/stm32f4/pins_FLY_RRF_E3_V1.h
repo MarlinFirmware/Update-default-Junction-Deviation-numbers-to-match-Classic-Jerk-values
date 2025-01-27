@@ -32,7 +32,7 @@
 #if NO_EEPROM_SELECTED
   #define FLASH_EEPROM_EMULATION
 #endif
-#define MARLIN_EEPROM_SIZE 0x1000                 // 4K
+#define MARLIN_EEPROM_SIZE               0x1000U  // 4K
 
 //
 // Servos

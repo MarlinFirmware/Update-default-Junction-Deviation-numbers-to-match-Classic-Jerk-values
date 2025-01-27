@@ -87,7 +87,7 @@
   #define LCD_PINS_EN                         23
   #define LCD_PINS_D4                         37
 
-  #define LCD_SDSS                            53
+  #define LCD_SDSS_PIN                        53
   #define SD_DETECT_PIN                       49
 
   #define BTN_EN1                             29

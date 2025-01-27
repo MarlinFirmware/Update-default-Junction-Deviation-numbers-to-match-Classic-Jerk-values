@@ -50,7 +50,7 @@ extern const char M23_STR[], M24_STR[];
 #include "SdFile.h"
 #include "disk_io_driver.h"
 
-#if ENABLED(USB_FLASH_DRIVE_SUPPORT)
+#if HAS_USB_FLASH_DRIVE
   #include "usb_flashdrive/Sd2Card_FlashDrive.h"
 #endif
 
@@ -60,7 +60,7 @@ extern const char M23_STR[], M24_STR[];
   #include "Sd2Card.h"
 #endif
 
-#if ENABLED(MULTI_VOLUME)
+#if HAS_MULTI_VOLUME
   #define SV_SD_ONBOARD      1
   #define SV_USB_FLASH_DRIVE 2
   #define _VOLUME_ID(N) _CAT(SV_, N)
@@ -257,7 +257,7 @@ public:
     static AutoReporter<AutoReportSD> auto_reporter;
   #endif
 
-  #if SHARED_VOLUME_IS(USB_FLASH_DRIVE) || ENABLED(USB_FLASH_DRIVE_SUPPORT)
+  #if SHARED_VOLUME_IS(USB_FLASH_DRIVE) || HAS_USB_FLASH_DRIVE
     #define HAS_USB_FLASH_DRIVE 1
     static DiskIODriver_USBFlash media_driver_usbFlash;
   #endif
@@ -363,7 +363,7 @@ private:
   #endif
 };
 
-#if ENABLED(USB_FLASH_DRIVE_SUPPORT)
+#if HAS_USB_FLASH_DRIVE
   #define IS_SD_INSERTED() DiskIODriver_USBFlash::isInserted()
 #elif HAS_SD_DETECT
   #define IS_SD_INSERTED() (READ(SD_DETECT_PIN) == SD_DETECT_STATE)

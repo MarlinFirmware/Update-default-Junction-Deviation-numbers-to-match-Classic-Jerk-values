@@ -125,7 +125,7 @@
 // Use the RAMPS 1.4 Analog input 5 on the AUX2 connector
 //#define FILWIDTH_PIN                         5  // Analog Input
 
-#define SDSS                                  53
+#define SD_SS_PIN                             53
 #define SD_DETECT_PIN                         49
 
 //
