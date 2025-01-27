@@ -88,13 +88,13 @@ static uint32_t clock_to_divider(uint32_t clk) {
 void HAL_SD_MspInit(SD_HandleTypeDef *hsd) {
   UNUSED(hsd);
   #ifdef SDIO_FOR_STM32H7
-    pinmap_pinout(PC_12, PinMap_SD);
-    pinmap_pinout(PD_2,  PinMap_SD);
-    pinmap_pinout(PC_8,  PinMap_SD);
+    pinmap_pinout(PC_12, PinMap_SD_CK);
+    pinmap_pinout(PD_2,  PinMap_SD_CMD);
+    pinmap_pinout(PC_8,  PinMap_SD_DATA0);
     #if PINS_EXIST(SDIO_D1, SDIO_D2, SDIO_D3)  // Define D1-D3 only for 4-bit wide SDIO bus
-      pinmap_pinout(PC_9,  PinMap_SD);
-      pinmap_pinout(PC_10, PinMap_SD);
-      pinmap_pinout(PC_11, PinMap_SD);
+      pinmap_pinout(PC_9,  PinMap_SD_DATA1);
+      pinmap_pinout(PC_10, PinMap_SD_DATA2);
+      pinmap_pinout(PC_11, PinMap_SD_DATA3);
     #endif
     __HAL_RCC_SDMMC1_CLK_ENABLE();
     HAL_NVIC_EnableIRQ(SDMMC1_IRQn);
