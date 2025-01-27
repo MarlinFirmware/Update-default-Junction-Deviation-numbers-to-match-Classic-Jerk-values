@@ -244,7 +244,7 @@
   #define BTN_ENC                    EXP1_02_PIN
 
   #define LCD_PINS_RS                EXP1_04_PIN
-  #define LCD_SDSS                   EXP2_04_PIN
+  #define LCD_SDSS_PIN               EXP2_04_PIN
   #define LCD_PINS_EN                EXP1_03_PIN
   #define LCD_PINS_D4                EXP1_05_PIN
 

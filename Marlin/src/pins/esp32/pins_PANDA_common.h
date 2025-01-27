@@ -111,7 +111,7 @@
   #define SD_MOSI_PIN                EXP2_06_PIN
   #define SD_MISO_PIN                EXP2_01_PIN
   #define SD_SCK_PIN                 EXP2_02_PIN
-  #define SDSS                       EXP2_04_PIN
+  #define SD_SS_PIN                  EXP2_04_PIN
   #define SD_DETECT_PIN              EXP2_07_PIN
 #endif
 

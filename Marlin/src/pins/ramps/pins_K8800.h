@@ -85,7 +85,7 @@
 //
 // SD Card
 //
-#define SDSS                                  25
+#define SD_SS_PIN                             25
 #define SD_DETECT_PIN                         21  // PD0
 
 //
@@ -95,7 +95,7 @@
 
 #if HAS_WIRED_LCD
 
-  #define LCD_SDSS                            53
+  #define LCD_SDSS_PIN                        53
 
   #define DOGLCD_CS                           29
   #define DOGLCD_A0                           27

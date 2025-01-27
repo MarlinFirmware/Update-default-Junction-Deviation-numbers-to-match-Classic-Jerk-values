@@ -129,7 +129,7 @@ A stepper for E0 extruder
 //
 // Misc. Functions
 //
-#define SDSS                                  52
+#define SD_SS_PIN                             52
 
 #if ENABLED(ZONESTAR_LCD)
 

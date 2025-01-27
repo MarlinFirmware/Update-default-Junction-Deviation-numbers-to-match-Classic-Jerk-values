@@ -85,4 +85,4 @@
 #define HEATER_BED_PIN                         4
 
 // SPI
-#define SDSS                                   5
+#define SD_SS_PIN                              5

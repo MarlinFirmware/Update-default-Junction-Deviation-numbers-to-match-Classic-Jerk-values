@@ -398,7 +398,12 @@ namespace LanguageNarrow_zh_CN {
   LSTR MSG_FILAMENTUNLOAD                 = _UxGT("卸载丝料"); // "Unload filament"
   LSTR MSG_FILAMENTUNLOAD_E               = _UxGT("卸载丝料 *"); // "Unload filament"
   LSTR MSG_FILAMENTUNLOAD_ALL             = _UxGT("卸载全部"); // "Unload All"
-  LSTR MSG_ATTACH_MEDIA                   = _UxGT("初始化存储卡"); // "Init. SD card"
+  #if HAS_MULTI_VOLUME
+    LSTR MSG_ATTACH_SD_MEDIA              = _UxGT("挂载存储卡"); // "Attach SD Card"
+    LSTR MSG_ATTACH_USB_MEDIA             = _UxGT("挂载U盘"); // "Attach USB Drive"
+  #else
+    LSTR MSG_ATTACH_MEDIA                 = _UxGT("挂载存储卡"); // "Attach SD Card"
+  #endif
   LSTR MSG_CHANGE_MEDIA                   = _UxGT("更换存储卡"); // "Change SD card"
   LSTR MSG_RELEASE_MEDIA                  = _UxGT("释放存储卡");
   LSTR MSG_ZPROBE_OUT                     = _UxGT("Z探针在热床之外"); // "Z probe out. bed" Z probe is not within the physical limits

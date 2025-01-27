@@ -30,7 +30,7 @@
 
 // Onboard I2C EEPROM
 #define I2C_EEPROM
-#define MARLIN_EEPROM_SIZE                0x1000  // 4K (24C32)
+#define MARLIN_EEPROM_SIZE               0x1000U  // 4K (24C32)
 
 #define HAS_OTG_USB_HOST_SUPPORT                  // USB Flash Drive support
 //#define SWD_DEBUG                               // Use pins PA13 and PA14 on STM32H7 for the SWD debugger
@@ -258,8 +258,7 @@
 #endif
 
 #define SOFTWARE_SPI
-#define SDSS                                PA15
-#define SD_SS_PIN                           SDSS
+#define SD_SS_PIN                           PA15
 #define SD_SCK_PIN                          PC10
 #define SD_MISO_PIN                         PC11
 #define SD_MOSI_PIN                         PC12

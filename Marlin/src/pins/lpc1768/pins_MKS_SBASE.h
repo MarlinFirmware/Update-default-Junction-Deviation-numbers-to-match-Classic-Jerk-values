@@ -25,6 +25,7 @@
  * Makerbase MKS SBASE pin assignments
  */
 
+#define ALLOW_LPC1768_OR_9
 #include "env_validate.h"
 
 #ifndef BOARD_INFO_NAME
@@ -245,7 +246,7 @@
   #define BTN_EN1                    EXP2_05_PIN
   #define BTN_EN2                    EXP2_03_PIN
   #define LCD_PINS_RS                EXP1_04_PIN
-  #define LCD_SDSS                   EXP2_04_PIN
+  #define LCD_SDSS_PIN               EXP2_04_PIN
   #define LCD_PINS_EN                EXP1_03_PIN
   #define LCD_PINS_D4                EXP1_05_PIN
   #if ANY(VIKI2, miniVIKI)

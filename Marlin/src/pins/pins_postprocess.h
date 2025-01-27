@@ -564,8 +564,8 @@
 #ifndef SDPOWER_PIN
   #define SDPOWER_PIN -1
 #endif
-#ifndef SDSS
-  #define SDSS -1
+#ifndef SD_SS_PIN
+  #define SD_SS_PIN -1
 #endif
 #ifndef LED_PIN
   #define LED_PIN -1

@@ -138,7 +138,7 @@
 #define EXP2_07_PIN                           38  // SD_DET
 #define EXP2_08_PIN                           -1  // RESET
 
-#define SDSS                         EXP2_04_PIN
+#define SD_SS_PIN                    EXP2_04_PIN
 #define LED_PIN                               13
 
 #if HAS_WIRED_LCD

@@ -44,7 +44,7 @@
  */
 //#define FLASH_EEPROM_EMULATION
 //#define I2C_EEPROM                              // EEPROM on I2C-0
-#define MARLIN_EEPROM_SIZE                   500  // 4000 bytes
+#define MARLIN_EEPROM_SIZE                  500U  // 4000 bytes
 
 //This its another option to emulate an EEPROM, but its more efficient to dont loose the data the first One.
 //#define SDCARD_EEPROM_EMULATION
@@ -313,7 +313,7 @@
       //#define BTN_EN1                       47
       //#define BTN_EN2              EXP2_03_PIN
       //#define BTN_ENC                       32
-      //#define LCD_SDSS                    SDSS
+      //#define LCD_SDSS_PIN           SD_SS_PIN
       //#define KILL_PIN             EXP1_01_PIN
       //#undef LCD_PINS_EN                        // not used, causes false pin conflict report
 
@@ -324,7 +324,7 @@
       //#define BTN_EN2              EXP2_05_PIN
       //#define BTN_ENC                       -1
 
-      //#define LCD_SDSS                    SDSS
+      //#define LCD_SDSS_PIN           SD_SS_PIN
       //#define SD_DETECT_PIN        EXP2_10_PIN
 
     #elif ANY(VIKI2, miniVIKI)
@@ -358,7 +358,7 @@
       //#define BTN_EN2              EXP1_06_PIN
       //#define BTN_ENC                       31
 
-      //#define LCD_SDSS                    SDSS
+      //#define LCD_SDSS_PIN           SD_SS_PIN
       //#define SD_DETECT_PIN        EXP2_10_PIN
       //#define KILL_PIN             EXP1_01_PIN
 
@@ -500,7 +500,7 @@
 // SD Support
 //
 
-#define SDSS                                   2
+#define SD_SS_PIN                              2
 #undef SD_DETECT_PIN
 #define SD_DETECT_PIN                         22
 

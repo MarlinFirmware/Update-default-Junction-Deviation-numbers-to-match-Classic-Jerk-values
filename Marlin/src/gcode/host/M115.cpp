@@ -194,7 +194,7 @@ void GcodeSuite::M115() {
 
     // MULTI_VOLUME (M21 S/M21 U)
     #if HAS_MEDIA
-      cap_line(F("MULTI_VOLUME"), ENABLED(MULTI_VOLUME));
+      cap_line(F("MULTI_VOLUME"), ENABLED(HAS_MULTI_VOLUME));
     #endif
 
     // REPEAT (M808)

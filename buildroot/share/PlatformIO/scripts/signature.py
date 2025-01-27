@@ -75,8 +75,8 @@ def get_file_sha256sum(filepath):
 #
 import zipfile
 def compress_file(filepath, storedname, outpath):
-    with zipfile.ZipFile(outpath, 'w', compression=zipfile.ZIP_BZIP2, compresslevel=9) as zipf:
-        zipf.write(filepath, arcname=storedname, compress_type=zipfile.ZIP_BZIP2, compresslevel=9)
+    with zipfile.ZipFile(outpath, 'w', compression=zipfile.ZIP_DEFLATED, allowZip64=False, compresslevel=9) as zipf:
+        zipf.write(filepath, arcname=storedname)
 
 ignore = ('CONFIGURATION_H_VERSION', 'CONFIGURATION_ADV_H_VERSION', 'CONFIG_EXAMPLES_DIR', 'CONFIG_EXPORT')
 
@@ -161,7 +161,8 @@ def compute_build_signature(env):
     #
     # Continue to gather data for CONFIGURATION_EMBEDDING or CONFIG_EXPORT
     #
-    if not ('CONFIGURATION_EMBEDDING' in build_defines or 'CONFIG_EXPORT' in build_defines):
+    is_embed = 'CONFIGURATION_EMBEDDING' in build_defines
+    if not (is_embed or 'CONFIG_EXPORT' in build_defines):
         return
 
     # Filter out useless macros from the output
@@ -450,7 +451,7 @@ f'''#
     # Produce a JSON file for CONFIGURATION_EMBEDDING or CONFIG_EXPORT == 1 or 101
     # Skip if an identical JSON file was already present.
     #
-    if not same_hash and (config_dump == 1 or 'CONFIGURATION_EMBEDDING' in build_defines):
+    if not same_hash and (config_dump == 1 or is_embed):
         with marlin_json.open('w') as outfile:
 
             json_data = {}
@@ -460,16 +461,19 @@ f'''#
                     confs = real_config[header]
                     json_data[header] = {}
                     for name in confs:
+                        if name in ignore: continue
                         c = confs[name]
                         s = c['section']
                         if s not in json_data[header]: json_data[header][s] = {}
                         json_data[header][s][name] = c['value']
             else:
                 for header in real_config:
+                    json_data[header] = {}
                     conf = real_config[header]
                     #print(f"real_config[{header}]", conf)
                     for name in conf:
-                        json_data[name] = conf[name]['value']
+                        if name in ignore: continue
+                        json_data[header][name] = conf[name]['value']
 
             json_data['__INITIAL_HASH'] = hashes
 
@@ -489,7 +493,7 @@ f'''#
     #
     # The rest only applies to CONFIGURATION_EMBEDDING
     #
-    if not 'CONFIGURATION_EMBEDDING' in build_defines:
+    if not is_embed:
         (build_path / 'mc.zip').unlink(missing_ok=True)
         return
 

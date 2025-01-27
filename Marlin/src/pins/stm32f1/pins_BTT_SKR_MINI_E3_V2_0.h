@@ -31,7 +31,7 @@
 #if NO_EEPROM_SELECTED
   #define I2C_EEPROM
   #define SOFT_I2C_EEPROM
-  #define MARLIN_EEPROM_SIZE              0x1000  // 4K
+  #define MARLIN_EEPROM_SIZE             0x1000U  // 4K
   #define I2C_SDA_PIN                       PB7
   #define I2C_SCL_PIN                       PB6
   #undef NO_EEPROM_SELECTED

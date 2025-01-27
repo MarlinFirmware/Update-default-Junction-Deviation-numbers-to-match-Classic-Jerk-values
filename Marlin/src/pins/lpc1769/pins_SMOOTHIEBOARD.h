@@ -26,6 +26,7 @@
  * See https://smoothieware.github.io/Webif-pack/documentation/web/html/smoothieboard.html
  */
 
+#define ALLOW_LPC1768_OR_9
 #include "env_validate.h"
 
 #define BOARD_INFO_NAME   "Smoothieboard"
@@ -104,7 +105,7 @@
   #define BTN_ENC                          P1_30
 
   #define SD_DETECT_PIN                    P1_18
-  #define SDSS                             P1_21
+  #define SD_SS_PIN                        P1_21
 
   #define STAT_LED_RED_PIN                 P1_19
   #define STAT_LED_BLUE_PIN                P1_20

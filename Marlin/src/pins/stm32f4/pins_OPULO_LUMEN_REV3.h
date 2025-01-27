@@ -40,7 +40,7 @@
  */
 
 #define SRAM_EEPROM_EMULATION
-#define MARLIN_EEPROM_SIZE                0x2000  // 8K
+#define MARLIN_EEPROM_SIZE               0x2000U  // 8K
 
 // I2C MCP3426 (16-Bit, 240SPS, dual-channel ADC)
 #define HAS_MCP3426_ADC
@@ -155,13 +155,9 @@
 //
 // SPI
 //
-#define MISO_PIN                            PB4
-#define MOSI_PIN                            PB5
-#define SCK_PIN                             PB3
-
-#define TMC_SPI_MISO                    MISO_PIN
-#define TMC_SPI_MOSI                    MOSI_PIN
-#define TMC_SPI_SCK                      SCK_PIN
+#define TMC_SPI_MISO                PIN_SPI_MISO
+#define TMC_SPI_MOSI                PIN_SPI_MOSI
+#define TMC_SPI_SCK                  PIN_SPI_SCK
 
 //
 // I2C

@@ -48,7 +48,7 @@
   #define I2C_EEPROM
   #define I2C_SCL_PIN                       PF1
   #define I2C_SDA_PIN                       PF0
-  #define MARLIN_EEPROM_SIZE             0x1000  // 4KB
+  #define MARLIN_EEPROM_SIZE             0x1000U  // 4KB
 #endif
 
 //
@@ -255,7 +255,7 @@
 #define SD_MISO_PIN                  EXP2_10_PIN
 #define SD_MOSI_PIN                  EXP2_05_PIN
 
-#define SDSS                         EXP2_07_PIN
+#define SD_SS_PIN                    EXP2_07_PIN
 #define SD_DETECT_PIN                EXP2_04_PIN
 
 //
@@ -291,7 +291,7 @@
   #define BTN_EN1                    EXP2_08_PIN
   #define BTN_EN2                    EXP2_06_PIN
 
-  #define LCD_SDSS                   EXP2_07_PIN
+  #define LCD_SDSS_PIN               EXP2_07_PIN
 
   #define LCD_PINS_EN                EXP1_08_PIN
   #define LCD_PINS_D4                EXP1_06_PIN

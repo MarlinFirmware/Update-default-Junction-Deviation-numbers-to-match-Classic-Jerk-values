@@ -109,7 +109,7 @@
   #define BTN_EN2                    EXP2_05_PIN
   #define BTN_ENC                    EXP1_02_PIN
 
-  #define LCD_SDSS                   EXP2_04_PIN
+  #define LCD_SDSS_PIN               EXP2_04_PIN
   #define LCD_PINS_RS                EXP1_04_PIN
   #define LCD_PINS_EN                EXP2_06_PIN
   #define LCD_PINS_D4                EXP2_02_PIN
@@ -229,9 +229,9 @@
       // We use SD_DETECT_PIN for E0
       #undef SD_DETECT_PIN
       #define E0_CS_PIN              EXP2_07_PIN
-      // We use LCD_SDSS pin for E1
-      #undef LCD_SDSS
-      #define LCD_SDSS                     -1
+      // We use LCD_SDSS_PIN pin for E1
+      #undef LCD_SDSS_PIN
+      #define LCD_SDSS_PIN                 -1
       #define E1_CS_PIN              EXP2_04_PIN
     #endif
 

@@ -343,7 +343,7 @@
 #if SD_CONNECTION_IS(LCD)
 
   #define SD_DETECT_PIN              EXP2_07_PIN
-  #define SDSS                       EXP2_04_PIN
+  #define SD_SS_PIN                  EXP2_04_PIN
 
 #elif SD_CONNECTION_IS(ONBOARD)
 
@@ -352,7 +352,7 @@
   // function with Hardware SPI. This is not currently configurable in the HAL,
   // so force Software SPI to work around this issue.
   #define SOFTWARE_SPI
-  #define SDSS                              PA4
+  #define SD_SS_PIN                         PA4
   #define SD_SCK_PIN                        PA5
   #define SD_MISO_PIN                       PA6
   #define SD_MOSI_PIN                       PB5

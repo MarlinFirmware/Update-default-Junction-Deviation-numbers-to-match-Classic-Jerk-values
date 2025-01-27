@@ -121,7 +121,7 @@ static_assert(DISABLED(BAUD_RATE_GCODE), "BAUD_RATE_GCODE is not yet supported o
     #if IS_TX1(BTN_EN2) || IS_RX1(BTN_EN1)
       #error "Serial port pins (1) conflict with Encoder Buttons!"
     #elif ANY_TX(1, SD_SCK_PIN, LCD_PINS_D4, DOGLCD_SCK, LCD_RESET_PIN, LCD_PINS_RS, SHIFT_CLK_PIN) \
-       || ANY_RX(1, LCD_SDSS, LCD_PINS_RS, SD_MISO_PIN, DOGLCD_A0, SD_SS_PIN, LCD_SDSS, DOGLCD_CS, LCD_RESET_PIN, LCD_BACKLIGHT_PIN)
+       || ANY_RX(1, LCD_SDSS_PIN, LCD_PINS_RS, SD_MISO_PIN, DOGLCD_A0, SD_SS_PIN, DOGLCD_CS, LCD_RESET_PIN, LCD_BACKLIGHT_PIN)
       #error "Serial port pins (1) conflict with LCD pins!"
     #endif
   #endif
@@ -211,8 +211,8 @@ static_assert(DISABLED(BAUD_RATE_GCODE), "BAUD_RATE_GCODE is not yet supported o
       #error "SCL0 overlaps with Encoder Button!"
     #elif IS_SCL0(SD_SS_PIN)
       #error "SCL0 overlaps with SD_SS_PIN!"
-    #elif IS_SCL0(LCD_SDSS)
-      #error "SCL0 overlaps with LCD_SDSS!"
+    #elif IS_SCL0(LCD_SDSS_PIN)
+      #error "SCL0 overlaps with LCD_SDSS_PIN!"
     #endif
     #undef PIN_IS_SDA0
     #undef IS_SCL0

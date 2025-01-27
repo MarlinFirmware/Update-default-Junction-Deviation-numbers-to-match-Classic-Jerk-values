@@ -59,11 +59,8 @@ void MarlinHAL::init() {
   constexpr int cpuFreq = F_CPU;
   UNUSED(cpuFreq);
 
-  #undef SDSS
-  #define SDSS 2
-  #define PIN_EXISTS_(P1,P2) (defined(P1##P2) && P1##P2 >= 0)
-  #if HAS_MEDIA && DISABLED(SDIO_SUPPORT) && PIN_EXISTS_(SDSS,)
-    OUT_WRITE(SDSS, HIGH); // Try to set SDSS inactive before any other SPI users start up
+  #if HAS_MEDIA && DISABLED(SDIO_SUPPORT) && PIN_EXISTS(SD_SS)
+    OUT_WRITE(SD_SS_PIN, HIGH); // Try to set SD_SS_PIN inactive before any other SPI users start up
   #endif
 
   #if PIN_EXISTS(LED)

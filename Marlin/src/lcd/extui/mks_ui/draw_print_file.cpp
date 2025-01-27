@@ -168,7 +168,7 @@ static void event_handler(lv_obj_t *obj, lv_event_t event) {
     }
     else {
       lv_clear_print_file();
-      TERN(MULTI_VOLUME, lv_draw_media_select(), lv_draw_ready_print());
+      TERN(HAS_MULTI_VOLUME, lv_draw_media_select(), lv_draw_ready_print());
     }
   }
   else {

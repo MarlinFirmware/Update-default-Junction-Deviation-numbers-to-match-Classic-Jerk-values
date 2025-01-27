@@ -19,13 +19,13 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  *
  */
+#pragma once
 
 /**
  * Based on WEEDO 62A pin configuration
  * Copyright (c) 2019 WEEDO3D Perron
  * ATmega2560
  */
-#pragma once
 
 #include "env_validate.h"
 
@@ -85,7 +85,7 @@
 // SD Support
 //
 #if HAS_MEDIA
-  #define SDSS                                53
+  #define SD_SS_PIN                           53
   #define SD_DETECT_PIN                       49
 #endif
 

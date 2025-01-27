@@ -152,7 +152,7 @@
 #define SD_MISO_PIN                           68  // set to unused pins for now
 #define SD_MOSI_PIN                           69  // set to unused pins for now
 #define SD_SCK_PIN                            70  // set to unused pins for now
-#define SDSS                                  71  // set to unused pins for now
+#define SD_SS_PIN                             71  // set to unused pins for now
 
 /**
  * G2 uses 8 pins that are not available in the DUE environment:
