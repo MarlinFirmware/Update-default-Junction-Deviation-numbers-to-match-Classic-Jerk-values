@@ -19,14 +19,13 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  *
  */
+#pragma once
 
 /**
  * BOARD_TRONXY_CXY_446_V10
  *
  * CXY-V6-191121 / CXY-446-V10-220413
  */
-
-#pragma once
 
 #include "env_validate.h"
 
@@ -50,11 +49,11 @@
 #endif
 
 #if ENABLED(FLASH_EEPROM_EMULATION)
-  #define EEPROM_START_ADDRESS                (0x8000000UL + (512 * 1024) - 2 * EEPROM_PAGE_SIZE)
-  #define EEPROM_PAGE_SIZE                    (0x800U)  // 2K, but will use 2x more (4K)
-  #define MARLIN_EEPROM_SIZE                  EEPROM_PAGE_SIZE
+  #define EEPROM_PAGE_SIZE                0x800U  // 2K
+  #define EEPROM_START_ADDRESS (0x8000000UL + (STM32_FLASH_SIZE) * 1024UL - (EEPROM_PAGE_SIZE) * 2UL)
+  #define MARLIN_EEPROM_SIZE     EEPROM_PAGE_SIZE
 #else
-  #define MARLIN_EEPROM_SIZE                  0x800  // 2K (FT24C16A)
+  #define MARLIN_EEPROM_SIZE              0x800U  // 2K (FT24C16A)
 #endif
 
 //
@@ -62,7 +61,7 @@
 //
 #define SPI_FLASH                                 // W25Q16
 #if ENABLED(SPI_FLASH)
-  #define SPI_FLASH_SIZE                      0x1000000  // 16MB
+  #define SPI_FLASH_SIZE               0x1000000  // 16MB
   #define SPI_FLASH_CS_PIN                  PG15
   #define SPI_FLASH_MOSI_PIN                PB5
   #define SPI_FLASH_MISO_PIN                PB4
@@ -79,7 +78,7 @@
 //
 #define ONBOARD_SDIO
 #define SD_DETECT_PIN                       -1
-#define SDIO_CLOCK                            4500000
+#define SDIO_CLOCK                       4500000
 #define SDIO_READ_RETRIES                     16
 
 #define SDIO_D0_PIN                         PC8

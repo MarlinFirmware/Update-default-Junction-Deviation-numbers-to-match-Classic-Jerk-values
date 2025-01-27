@@ -159,7 +159,7 @@
 // SD card
 //
 #if HAS_MEDIA
-  #define SDSS                                 4
+  #define SD_SS_PIN                            4
 #endif
 #define SD_DETECT_PIN                         -1
 
@@ -191,7 +191,7 @@
   //
   #define LCDSCREEN_NAME "ZONESTAR_12864LCD"
   #define FORCE_SOFT_SPI
-  //#define LCD_SDSS                 EXP1_03_PIN
+  //#define LCD_SDSS_PIN             EXP1_03_PIN
   #define LCD_PINS_RS                EXP1_03_PIN  // ST7920 CS  (LCD-4)
   #define LCD_PINS_EN                EXP1_06_PIN  // ST7920 DAT (LCD-5)
   #define LCD_PINS_D4                EXP1_04_PIN  // ST7920 CLK (LCD-6)

@@ -43,7 +43,7 @@
 //
 // Servos
 //
-#define SERVO0_PIN                             2  // 3D TOUCH
+#define SERVO0_PIN                             2  // 3D TOUCH, Pin is level-shifted to 5V, and cannot be used as an INPUT pin!
 
 //
 // Limit Switches
@@ -121,14 +121,17 @@
 #define ADC_REFERENCE_VOLTAGE                  2.565  // 2.5V reference VDDA
 
 /**
- *                ------                                 ------
- *  (BEEPER) 149 | 1  2 | 13 (BTN_ENC)    (SPI MISO) 19 | 1  2 | 18 (SPI SCK)
- *  (LCD_EN)  21 | 3  4 |  4 (LCD_RS)      (BTN_EN1) 14 | 3  4 |  5 (SPI CS)
- *  (LCD_D4)   0 | 5  6   16 (LCD_D5)      (BTN_EN2) 12 | 5  6   23 (SPI MOSI)
- *  (LCD_D6)  15 | 7  8 | 17 (LCD_D7)      (SPI_DET) 34 | 7  8 | RESET
- *           GND | 9 10 | 5V                        GND | 9 10 | 3.3V
- *                ------                                 ------
- *                 EXP1                                   EXP2
+ *                 ------                                 ------
+ *  (BEEPER)  149 | 1  2 | 13  (BTN_ENC)   (SPI MISO) 19 | 1  2 | 18 (SPI SCK)
+ *  (LCD_EN)  21* | 3  4 |  4* (LCD_RS)     (BTN_EN1) 14 | 3  4 |  5 (SPI CS)
+ *  (LCD_D4)   0* | 5  6   16* (LCD_D5)     (BTN_EN2) 12 | 5  6   23 (SPI MOSI)
+ *  (LCD_D6)  15* | 7  8 | 17* (LCD_D7)     (SPI_DET) 34 | 7  8 | RESET
+ *            GND | 9 10 | 5V                        GND | 9 10 | 3.3V
+ *                 ------                                 ------
+ *                  EXP1                                   EXP2
+ *
+ * * = Note: Pin is level-shifted to 5V. Cannot be used as an INPUT pin!
+ *           Displays like a CR10_STOCKDISPLAY that require inputs on EXP1 cannot be plugged straight into this board.
  */
 
 #define EXP1_01_PIN                          149
@@ -157,7 +160,7 @@
 //#define SD_SCK_PIN                 EXP2_02_PIN  // uses esp32 default 18
 
 // TODO: Migrate external SD Card to pins/lcd
-#define SDSS                         EXP2_04_PIN
+#define SD_SS_PIN                    EXP2_04_PIN
 #define SD_DETECT_PIN                EXP2_07_PIN  // IO34 default is SD_DET signal (Jump to SDDET)
 #define USES_SHARED_SPI                           // SPI is shared by SD card with TMC SPI drivers
 

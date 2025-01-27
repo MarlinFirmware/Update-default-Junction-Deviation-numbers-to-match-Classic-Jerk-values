@@ -6,6 +6,7 @@
 # will be picked up by PlatformIO just like any other variant.
 #
 import pioutil, re
+
 marlin_variant_pattern = re.compile("marlin_.*")
 if pioutil.is_pio_build():
     import shutil, marlin
@@ -55,4 +56,4 @@ if pioutil.is_pio_build():
         variants_dir = here / 'buildroot' / 'share' / 'PlatformIO' / 'variants'
         source_dir = variants_dir / variant
         assert source_dir.is_dir()
-        board.update("build.variants_dir", str(variants_dir));
+        board.update("build.variants_dir", str(variants_dir))

@@ -148,7 +148,7 @@
 //
 // Misc. Functions
 //
-#define SDSS                                  31
+#define SD_SS_PIN                             31
 #define LED_PIN                               -1
 
 /**
@@ -184,7 +184,7 @@
 
 #if HAS_WIRED_LCD
 
-  #define LCD_SDSS                   EXP1_06_PIN
+  #define LCD_SDSS_PIN               EXP1_06_PIN
 
   #if HAS_ADC_BUTTONS
 

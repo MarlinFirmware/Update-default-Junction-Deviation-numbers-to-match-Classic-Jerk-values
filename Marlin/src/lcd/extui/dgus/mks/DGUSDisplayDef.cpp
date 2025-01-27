@@ -602,11 +602,18 @@ const struct DGUS_VP_Variable ListOfVP[] PROGMEM = {
 
   // Fan Data
   #if HAS_FAN
-    #define FAN_VPHELPER(N)                                                                                                                    \
-      VPHELPER(VP_Fan##N##_Percentage, &thermalManager.fan_speed[N], screen.setUint8, screen.sendFanToDisplay), \
-      VPHELPER(VP_FAN##N##_CONTROL, &thermalManager.fan_speed[N], screen.handleFanControl, nullptr),                               \
+    #if HOTENDS <= 4
+      #define FAN_CONTROL HOTENDS
+    #elif FAN_COUNT <= 4
+      #define FAN_CONTROL FAN_COUNT
+    #else
+      #define FAN_CONTROL 4
+    #endif
+    #define FAN_VPHELPER(N) \
+      VPHELPER(VP_Fan##N##_Percentage, &thermalManager.fan_speed[N], screen.percentageToUint8, screen.sendFanToDisplay), \
+      VPHELPER(VP_FAN##N##_CONTROL, &thermalManager.fan_speed[N], screen.handleFanControl, nullptr), \
       VPHELPER(VP_FAN##N##_STATUS, &thermalManager.fan_speed[N], nullptr, screen.sendFanStatusToDisplay),
-    REPEAT(FAN_COUNT, FAN_VPHELPER)
+    REPEAT(FAN_CONTROL, FAN_VPHELPER)
   #endif
 
   // Feedrate

@@ -703,6 +703,9 @@ volatile bool Temperature::raw_temps_ready = false;
       ui.update();
     #endif
 
+    // Update beeper queue
+    TERN_(HAS_BEEPER, buzzer.tick());
+
     return temp_ready;
   }
 
@@ -1496,6 +1499,13 @@ int16_t Temperature::getHeaterPower(const heater_id_t heater_id) {
 // Temperature Error Handlers
 //
 
+/**
+ * Loud Kill
+ * @brief  Produce a loud alarm, park the head, "kill" the machine
+ *         in response to a temperature error, e.g., a thermal runaway.
+ * @param  lcd_msg:  The message to display on the LCD
+ * @param  heater_id:  The heater that caused the error
+ */
 inline void loud_kill(FSTR_P const lcd_msg, const heater_id_t heater_id) {
   marlin_state = MarlinState::MF_KILLED;
   thermalManager.disable_all_heaters();
@@ -1526,13 +1536,24 @@ inline void loud_kill(FSTR_P const lcd_msg, const heater_id_t heater_id) {
   kill(lcd_msg, HEATER_FSTR(heater_id));
 }
 
+/**
+ * Temperature Error
+ * @brief  Handle a temperature error, e.g., a thermal runaway.
+ * @param  heater_id:  The heater that caused the error
+ * @param  serial_msg:  The message to display on the serial console
+ * @param  lcd_msg:  The message to display on the LCD
+ * @param  deg:  The detected temperature (if ERR_INCLUDE_TEMP)
+ */
 void Temperature::_temp_error(
   const heater_id_t heater_id, FSTR_P const serial_msg, FSTR_P const lcd_msg
   OPTARG(ERR_INCLUDE_TEMP, const celsius_float_t deg)
 ) {
+  #if BOGUS_TEMPERATURE_GRACE_PERIOD
+    #define HAS_BOGUS_TEMPERATURE_GRACE_PERIOD 1
+  #endif
   static uint8_t killed = 0;
 
-  if (IsRunning() && TERN1(BOGUS_TEMPERATURE_GRACE_PERIOD, killed == 2)) {
+  if (IsRunning() && killed == TERN(HAS_BOGUS_TEMPERATURE_GRACE_PERIOD, 2, 0)) {
     SERIAL_ERROR_START();
     SERIAL_ECHO(serial_msg);
     SERIAL_ECHOPGM(STR_STOPPED_HEATER);
@@ -1566,7 +1587,13 @@ void Temperature::_temp_error(
   disable_all_heaters(); // always disable (even for bogus temp)
   hal.watchdog_refresh();
 
-  #if BOGUS_TEMPERATURE_GRACE_PERIOD
+  #if HAS_BOGUS_TEMPERATURE_GRACE_PERIOD
+
+    // During boot the temperature may be unreliable, so when killed ==
+    //  0: Set the expire time
+    //  1: Check the expiration time has elapsed
+    //  2: Kill the machine
+    // >2: Do nothing
     const millis_t ms = millis();
     static millis_t expire_ms;
     switch (killed) {
@@ -1582,13 +1609,21 @@ void Temperature::_temp_error(
         ++killed;
         break;
     }
-  #elif defined(BOGUS_TEMPERATURE_GRACE_PERIOD)
-    UNUSED(killed);
+
   #else
+
     if (!killed) { killed = 1; loud_kill(lcd_msg, heater_id); }
+
   #endif
 }
 
+/**
+ * Max Temp Error
+ * @brief - The temperature reading is out of range, e.g., too high.
+ *          May be caused by a disconnected thermistor which has infinite resistance.
+ * @param heater_id:  The heater that caused the error
+ * @param deg:  The detected temperature (if ERR_INCLUDE_TEMP)
+ */
 void Temperature::maxtemp_error(const heater_id_t heater_id OPTARG(ERR_INCLUDE_TEMP, const celsius_float_t deg)) {
   #if HAS_HOTEND || HAS_HEATED_BED
     TERN_(SOVOL_SV06_RTS, rts.gotoPageBeep(ID_KillBadTemp_L, ID_KillBadTemp_D));
@@ -1598,6 +1633,13 @@ void Temperature::maxtemp_error(const heater_id_t heater_id OPTARG(ERR_INCLUDE_T
   _TEMP_ERROR(heater_id, F(STR_T_MAXTEMP), MSG_ERR_MAXTEMP, deg);
 }
 
+/**
+ * Min Temp Error
+ * @brief - The temperature reading is out of range, e.g., too high.
+ *          May be caused by a shorted thermistor which has near zero resistance.
+ * @param heater_id:  The heater that caused the error
+ * @param deg:  The detected temperature (if ERR_INCLUDE_TEMP)
+ */
 void Temperature::mintemp_error(const heater_id_t heater_id OPTARG(ERR_INCLUDE_TEMP, const celsius_float_t deg)) {
   #if HAS_HOTEND || HAS_HEATED_BED
     TERN_(SOVOL_SV06_RTS, rts.gotoPageBeep(ID_KillBadTemp_L, ID_KillBadTemp_D));
@@ -1665,6 +1707,13 @@ void Temperature::mintemp_error(const heater_id_t heater_id OPTARG(ERR_INCLUDE_T
 
 #if HAS_HOTEND
 
+  /**
+   * PID Output Hotend
+   * @brief Calculate the power output for the hotend (using PID or MPC)
+   *        that is required to get closer to the target temperature.
+   * @param E_NAME:  The extruder index
+   * @return The power output for the hotend
+   */
   float Temperature::get_pid_output_hotend(const uint8_t E_NAME) {
     const uint8_t ee = HOTEND_INDEX;
 
@@ -1779,6 +1828,12 @@ void Temperature::mintemp_error(const heater_id_t heater_id OPTARG(ERR_INCLUDE_T
 
 #if ENABLED(PIDTEMPBED)
 
+  /**
+   * PID Output Bed
+   * @brief Calculate the bed power output using PID that is required
+   *        to get closer to the target temperature.
+   * @return The power output for the bed
+   */
   float Temperature::get_pid_output_bed() {
     static PIDRunner<bed_info_t> bed_pid(temp_bed);
     const float pid_output = bed_pid.get_pid_output();
@@ -1790,6 +1845,12 @@ void Temperature::mintemp_error(const heater_id_t heater_id OPTARG(ERR_INCLUDE_T
 
 #if ENABLED(PIDTEMPCHAMBER)
 
+  /**
+   * PID Output Chamber
+   * @brief Calculate the chamber power output using PID that is required
+   *        to get closer to the target temperature.
+   * @return The power output for the chamber
+   */
   float Temperature::get_pid_output_chamber() {
     static PIDRunner<chamber_info_t> chamber_pid(temp_chamber);
     const float pid_output = chamber_pid.get_pid_output();
@@ -1801,6 +1862,11 @@ void Temperature::mintemp_error(const heater_id_t heater_id OPTARG(ERR_INCLUDE_T
 
 #if HAS_HOTEND
 
+  /**
+   * Manage Hotend Temperatures
+   * @brief Task for managing hotends, called from Temperature::task()
+   * @param ms Current Time
+   */
   void Temperature::manage_hotends(const millis_t &ms) {
     HOTEND_LOOP() {
       #if ENABLED(THERMAL_PROTECTION_HOTENDS)
@@ -1845,6 +1911,11 @@ void Temperature::mintemp_error(const heater_id_t heater_id OPTARG(ERR_INCLUDE_T
 
 #if HAS_HEATED_BED
 
+  /**
+   * Manage Heated Bed Temperature
+   * @brief Task for managing the heated bed, called from Temperature::task()
+   * @param ms Current Time
+   */
   void Temperature::manage_heated_bed(const millis_t &ms) {
 
     #if ENABLED(THERMAL_PROTECTION_BED)
@@ -1973,6 +2044,11 @@ void Temperature::mintemp_error(const heater_id_t heater_id OPTARG(ERR_INCLUDE_T
 
 #if HAS_HEATED_CHAMBER
 
+  /**
+   * Manage Heated Chamber Temperature
+   * @brief Task for managing the heated chamber, called from Temperature::task()
+   * @param ms Current Time
+   */
   void Temperature::manage_heated_chamber(const millis_t &ms) {
 
     #ifndef CHAMBER_CHECK_INTERVAL
@@ -2105,6 +2181,11 @@ void Temperature::mintemp_error(const heater_id_t heater_id OPTARG(ERR_INCLUDE_T
 
 #if HAS_COOLER
 
+  /**
+   * Manage Heated Cooler Temperature
+   * @brief Task for managing the cooler, called from Temperature::task()
+   * @param ms Current Time
+   */
   void Temperature::manage_cooler(const millis_t &ms) {
 
     #ifndef COOLER_CHECK_INTERVAL
@@ -3778,7 +3859,6 @@ void Temperature::update_raw_temperatures() {
     temp_bed.update();
   #endif
 
-  TERN_(HAS_TEMP_ADC_2,       temp_hotend[2].update());
   TERN_(HAS_TEMP_ADC_3,       temp_hotend[3].update());
   TERN_(HAS_TEMP_ADC_4,       temp_hotend[4].update());
   TERN_(HAS_TEMP_ADC_5,       temp_hotend[5].update());

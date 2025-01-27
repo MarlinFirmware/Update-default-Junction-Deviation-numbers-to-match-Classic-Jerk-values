@@ -51,8 +51,6 @@
 #include "../../../sd/cardreader.h"
 
 #include "../../../MarlinCore.h"
-#include "../../../core/serial.h"
-#include "../../../core/macros.h"
 #include "../../../gcode/queue.h"
 
 #include "../../../module/temperature.h"
@@ -355,6 +353,10 @@ void clearMainWindow() {
 void clearPopupArea() {
   clearTitleBar();
   dwinDrawRectangle(1, COLOR_BG_BLACK, 0, 31, DWIN_WIDTH, DWIN_HEIGHT);
+}
+
+void drawPopupBkgd60() {
+  dwinDrawRectangle(1, COLOR_BG_WINDOW, 14, 60, 258, 330);
 }
 
 void drawPopupBkgd105() {
@@ -1083,10 +1085,6 @@ void drawMotionMenu() {
 
 #endif
 
-void drawPopupBkgd60() {
-  dwinDrawRectangle(1, COLOR_BG_WINDOW, 14, 60, 258, 330);
-}
-
 #if HAS_HOTEND
 
   void popupWindowETempTooLow() {
@@ -1118,7 +1116,7 @@ void popupWindowResume() {
   else {
     dwinDrawString(true, font8x16, COLOR_POPUP_TEXT, COLOR_BG_WINDOW, (272 - 8 * 14) / 2, 115, F("Continue Print"));
     dwinDrawString(true, font8x16, COLOR_POPUP_TEXT, COLOR_BG_WINDOW, (272 - 8 * 22) / 2, 192, F("It looks like the last"));
-    dwinDrawString(true, font8x16, COLOR_POPUP_TEXT, COLOR_BG_WINDOW, (272 - 8 * 22) / 2, 212, F("file was interrupted."));
+    dwinDrawString(true, font8x16, COLOR_POPUP_TEXT, COLOR_BG_WINDOW, (272 - 8 * 21) / 2, 212, F("file was interrupted."));
     dwinIconShow(ICON, ICON_Cancel_E,    26, 307);
     dwinIconShow(ICON, ICON_Continue_E, 146, 307);
   }
@@ -1127,7 +1125,7 @@ void popupWindowResume() {
 void popupWindowHome(const bool parking/*=false*/) {
   clearMainWindow();
   drawPopupBkgd60();
-  dwinIconShow(ICON, ICON_BLTouch, 101, 105);
+  dwinIconShow(ICON, ICON_Printer_0, 101, 105);
   if (hmiIsChinese()) {
     dwinFrameAreaCopy(1, 0, 371, 33, 386, 85, 240);       // Wait for Move to Complete
     dwinFrameAreaCopy(1, 203, 286, 271, 302, 118, 240);
@@ -1150,7 +1148,7 @@ void popupWindowHome(const bool parking/*=false*/) {
       dwinFrameAreaCopy(1, 0, 389, 150, 402, 61, 280);
     }
     else {
-      dwinDrawString(true, font8x16, COLOR_POPUP_TEXT, COLOR_BG_WINDOW, (272 - 8 * 13) / 2, 230, GET_TEXT_F(MSG_BED_LEVELING));
+      dwinDrawString(true, font8x16, COLOR_POPUP_TEXT, COLOR_BG_WINDOW, (272 - 8 * 12) / 2, 230, GET_TEXT_F(MSG_BED_LEVELING));
       dwinDrawString(true, font8x16, COLOR_POPUP_TEXT, COLOR_BG_WINDOW, (272 - 8 * 23) / 2, 260, F("Please wait until done."));
     }
   }
@@ -1171,8 +1169,8 @@ void popupwindowPauseOrStop() {
   clearMainWindow();
   drawPopupBkgd60();
   if (hmiIsChinese()) {
-         if (select_print.now == PRINT_PAUSE_RESUME) dwinFrameAreaCopy(1, 237, 338, 269, 356, 98, 150);    // Pause
-    else if (select_print.now == PRINT_STOP) dwinFrameAreaCopy(1, 221, 320, 253, 336, 98, 150);    // Stop
+         if (select_print.now == PRINT_PAUSE_RESUME) dwinFrameAreaCopy(1, 237, 338, 269, 356, 98, 150); // Pause
+    else if (select_print.now == PRINT_STOP) dwinFrameAreaCopy(1, 221, 320, 253, 336, 98, 150);         // Stop
     dwinFrameAreaCopy(1, 220, 304, 264, 319, 130, 150); // Print
     dwinIconShow(ICON, ICON_Confirm_C, 26, 280);
     dwinIconShow(ICON, ICON_Cancel_C, 146, 280);
@@ -1827,6 +1825,14 @@ void MarlinUI::update() {
 #if HAS_LCD_BRIGHTNESS
   void MarlinUI::_set_brightness() { dwinLCDBrightness(backlight ? brightness : 0); }
 #endif
+
+void MarlinUI::kill_screen(FSTR_P const lcd_error, FSTR_P const) {
+  clearMainWindow();
+  drawPopupBkgd60();
+  dwinIconShow(ICON, ICON_Printer_0, 101, 105);
+  dwinDrawString(true, font8x16, COLOR_POPUP_TEXT, COLOR_BG_WINDOW, (272 - 8 * 15) / 2, 230, GET_TEXT_F(MSG_PRINTER_KILLED));
+  dwinDrawString(true, font8x16, COLOR_POPUP_TEXT, COLOR_BG_WINDOW, (272 - 8 * 20) / 2, 260, GET_TEXT_F(MSG_TURN_OFF));
+}
 
 #if ENABLED(SCROLL_LONG_FILENAMES)
 

@@ -53,9 +53,9 @@
 #if ENABLED(I2C_EEPROM)
   #define IIC_EEPROM_SDA                    PB7
   #define IIC_EEPROM_SCL                    PB6
-  #define MARLIN_EEPROM_SIZE              0x1000  // 4K
+  #define MARLIN_EEPROM_SIZE             0x1000U  // 4K
 #elif ENABLED(SDCARD_EEPROM_EMULATION)
-  #define MARLIN_EEPROM_SIZE              0x1000  // 4K
+  #define MARLIN_EEPROM_SIZE             0x1000U  // 4K
 #endif
 
 //
@@ -136,7 +136,7 @@
 
 #if HAS_TMC_UART
   /**
-   * TMC2209 stepper drivers
+   * TMC2208/TMC2209 stepper drivers
    * Hardware serial communication ports.
    */
   #define X_HARDWARE_SERIAL  MSerial4
@@ -174,7 +174,7 @@
 #if SD_CONNECTION_IS(ONBOARD)
   #define SD_DETECT_PIN                     PC4
   #define ONBOARD_SD_CS_PIN                 PA4   // Chip select for "System" SD card
-  #define SDSS                 ONBOARD_SD_CS_PIN
+  #define SD_SS_PIN            ONBOARD_SD_CS_PIN
 #endif
 
 //

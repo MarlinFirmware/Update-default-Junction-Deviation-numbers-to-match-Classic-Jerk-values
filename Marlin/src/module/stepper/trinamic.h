@@ -108,7 +108,7 @@
   #define CHOPPER_TIMING_E CHOPPER_TIMING
 #endif
 
-#if HAS_TMC220x
+#if HAS_TMC_UART
   void tmc_serial_begin();
 #endif
 

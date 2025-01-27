@@ -40,7 +40,7 @@
 
 #if HAS_TMC_UART
   //
-  // TMC2209 stepper drivers
+  // TMC2208/TMC2209 stepper drivers
   //
   #define X_HARDWARE_SERIAL              Serial1
   #define Y_HARDWARE_SERIAL              Serial1

@@ -12,7 +12,7 @@ if pioutil.is_pio_build():
         accumulating_xor_value = seed
 
         for i in range(0, len(contents), 4):
-            value = struct.unpack('<I', contents[ i : i + 4])[0]
+            value = struct.unpack("<I", contents[i : i + 4])[0]
             accumulating_xor_value = accumulating_xor_value ^ value
         return accumulating_xor_value
 
@@ -29,8 +29,8 @@ if pioutil.is_pio_build():
         # This is the block counter
         block_number = xor_seed * block_number
 
-        #load the xor key from the file
-        r7 =  file_key
+        # load the xor key from the file
+        r7 = file_key
 
         for loop_counter in range(0, block_size):
             # meant to make sure different bits of the key are used.
@@ -54,10 +54,10 @@ if pioutil.is_pio_build():
             # and then with IP
             xor_seed = xor_seed ^ ip
 
-            #Now store the byte back
+            # Now store the byte back
             r1[loop_counter] = xor_seed & 0xFF
 
-            #increment the loop_counter
+            # increment the loop_counter
             loop_counter = loop_counter + 1
 
     def encrypt_file(input, output_file, file_length):
@@ -82,15 +82,15 @@ if pioutil.is_pio_build():
         # write the file_key
         output_file.write(struct.pack("<I", file_key))
 
-        #TODO - how to enforce that the firmware aligns to block boundaries?
+        # TODO: - how to enforce that the firmware aligns to block boundaries?
         block_count = len(input_file) // block_size
-        print ("Block Count is ", block_count)
+        print("Block Count is ", block_count)
         for block_number in range(0, block_count):
-            block_offset = (block_number * block_size)
+            block_offset = block_number * block_size
             block_end = block_offset + block_size
-            block_array = bytearray(input_file[block_offset: block_end])
+            block_array = bytearray(input_file[block_offset:block_end])
             xor_block(block_array, block_array, block_number, block_size, file_key)
-            for n in range (0, block_size):
+            for n in range(0, block_size):
                 input_file[block_offset + n] = block_array[n]
 
             # update the expected CRC value.

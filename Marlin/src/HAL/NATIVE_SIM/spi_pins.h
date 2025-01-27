@@ -32,7 +32,6 @@
 //#define SD_SCK_PIN     P0_07
 //#define SD_MISO_PIN    P0_08
 //#define SD_MOSI_PIN    P0_09
-//#define SD_SS_PIN      P0_06
 
 // External SD
 #ifndef SD_SCK_PIN
@@ -43,10 +42,4 @@
 #endif
 #ifndef SD_MOSI_PIN
   #define SD_MOSI_PIN       52
-#endif
-#ifndef SD_SS_PIN
-  #define SD_SS_PIN         53
-#endif
-#ifndef SDSS
-  #define SDSS       SD_SS_PIN
 #endif

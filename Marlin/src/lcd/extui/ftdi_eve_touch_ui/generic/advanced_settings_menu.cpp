@@ -102,7 +102,7 @@ void AdvancedSettingsMenu::onRedraw(draw_mode_t what) {
       #endif
       .enabled(ENABLED(HAS_MULTI_HOTEND))
       .tag(4) .button(OFFSETS_POS,            GET_TEXT_F(MSG_OFFSETS_MENU))
-      .enabled(ANY(LIN_ADVANCE, FILAMENT_RUNOUT_SENSOR))
+      .enabled(ANY(LIN_ADVANCE, HAS_FILAMENT_SENSOR))
       .tag(11).button(FILAMENT_POS,           GET_TEXT_F(MSG_FILAMENT))
       .tag(12).button(ENDSTOPS_POS,           GET_TEXT_F(MSG_LCD_ENDSTOPS))
       .tag(15).button(DISPLAY_POS,            GET_TEXT_F(MSG_DISPLAY_MENU))
@@ -122,29 +122,29 @@ bool AdvancedSettingsMenu::onTouchEnd(uint8_t tag) {
   switch (tag) {
     case  1: SaveSettingsDialogBox::promptToSaveSettings(); break;
     #if HAS_BED_PROBE
-    case  2: GOTO_SCREEN(ZOffsetScreen); break;
+      case  2: GOTO_SCREEN(ZOffsetScreen); break;
     #endif
     case  3: GOTO_SCREEN(StepsScreen); break;
     #if HAS_MULTI_HOTEND
-    case  4: GOTO_SCREEN(NozzleOffsetScreen); break;
+      case  4: GOTO_SCREEN(NozzleOffsetScreen); break;
     #endif
     case  5: GOTO_SCREEN(MaxVelocityScreen); break;
     case  6: GOTO_SCREEN(DefaultAccelerationScreen); break;
     case  7: GOTO_SCREEN(TERN(HAS_JUNCTION_DEVIATION, JunctionDeviationScreen, JerkScreen)); break;
     #if ENABLED(BACKLASH_GCODE)
-    case  8: GOTO_SCREEN(BacklashCompensationScreen); break;
+      case  8: GOTO_SCREEN(BacklashCompensationScreen); break;
     #endif
     case  9: GOTO_SCREEN(InterfaceSettingsScreen);  LockScreen::check_passcode(); break;
     case 10: GOTO_SCREEN(RestoreFailsafeDialogBox); LockScreen::check_passcode(); break;
-    #if ANY(LIN_ADVANCE, FILAMENT_RUNOUT_SENSOR)
-    case 11: GOTO_SCREEN(FilamentMenu); break;
+    #if ANY(LIN_ADVANCE, HAS_FILAMENT_SENSOR)
+      case 11: GOTO_SCREEN(FilamentMenu); break;
     #endif
     case 12: GOTO_SCREEN(EndstopStatesScreen); break;
     #if HAS_TRINAMIC_CONFIG
-    case 13: GOTO_SCREEN(StepperCurrentScreen); break;
+      case 13: GOTO_SCREEN(StepperCurrentScreen); break;
     #endif
     #if ENABLED(SENSORLESS_HOMING)
-    case 14: GOTO_SCREEN(StepperBumpSensitivityScreen); break;
+      case 14: GOTO_SCREEN(StepperBumpSensitivityScreen); break;
     #endif
     case 15: GOTO_SCREEN(DisplayTuningScreen); break;
     case 16: GOTO_SCREEN(FlowPercentScreen); break;

@@ -119,7 +119,7 @@
 #define SD_SCK_PIN                            76
 #define SD_MISO_PIN                           74
 #define SD_MOSI_PIN                           75
-#define SDSS                                  53
+#define SD_SS_PIN                             53
 #define SD_DETECT_PIN                         40
 
 // Common I/O

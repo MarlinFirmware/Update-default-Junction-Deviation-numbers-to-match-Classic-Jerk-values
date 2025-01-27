@@ -55,7 +55,7 @@
     constexpr uint16_t sasn[2] = { 0 };
   #endif
 
-  #ifdef Z_PROBE_SERVO_NR
+  #if HAS_Z_SERVO_PROBE
     #if ENABLED(BLTOUCH)
       #include "../feature/bltouch.h"
       #undef Z_SERVO_ANGLES
@@ -76,6 +76,9 @@
   #ifndef SWITCHING_NOZZLE_SERVO_NR
     #define SWITCHING_NOZZLE_SERVO_NR -1
   #endif
+  #ifndef SWITCHING_NOZZLE_E1_SERVO_NR
+    #define SWITCHING_NOZZLE_E1_SERVO_NR -1
+  #endif
   #ifndef Z_PROBE_SERVO_NR
     #define Z_PROBE_SERVO_NR -1
   #endif
@@ -83,12 +86,12 @@
   #define SASN(J,I) TERN(SWITCHING_NOZZLE_TWO_SERVOS, sasn[J][I], sasn[I])
 
   #define ASRC(N,I) ( \
-                                         N == SWITCHING_EXTRUDER_SERVO_NR     ? sase[I]     \
-                                       : N == SWITCHING_EXTRUDER_E23_SERVO_NR ? sase[I+2]   \
-                                       : N == SWITCHING_NOZZLE_SERVO_NR       ? SASN(0,I)   \
-    TERN_(SWITCHING_NOZZLE_TWO_SERVOS, : N == SWITCHING_NOZZLE_E1_SERVO_NR    ? SASN(1,I))  \
-                                       : N == Z_PROBE_SERVO_NR                ? sazp[I]     \
-                                       : 0                                                  )
+      N == SWITCHING_EXTRUDER_SERVO_NR     ? sase[I]   \
+    : N == SWITCHING_EXTRUDER_E23_SERVO_NR ? sase[I+2] \
+    : N == SWITCHING_NOZZLE_SERVO_NR       ? SASN(0,I) \
+    : N == SWITCHING_NOZZLE_E1_SERVO_NR    ? SASN(1,I) \
+    : N == Z_PROBE_SERVO_NR                ? sazp[I]   \
+    : 0                                                )
 
   #if ENABLED(EDITABLE_SERVO_ANGLES)
     extern uint16_t servo_angles[NUM_SERVOS][2];
@@ -97,24 +100,8 @@
     #define CONST_SERVO_ANGLES servo_angles
   #endif
 
-  constexpr uint16_t CONST_SERVO_ANGLES [NUM_SERVOS][2] = {
-      { ASRC(0,0), ASRC(0,1) }
-    #if NUM_SERVOS > 1
-      , { ASRC(1,0), ASRC(1,1) }
-      #if NUM_SERVOS > 2
-        , { ASRC(2,0), ASRC(2,1) }
-        #if NUM_SERVOS > 3
-          , { ASRC(3,0), ASRC(3,1) }
-          #if NUM_SERVOS > 4
-            , { ASRC(4,0), ASRC(4,1) }
-            #if NUM_SERVOS > 5
-              , { ASRC(5,0), ASRC(5,1) }
-            #endif
-          #endif
-        #endif
-      #endif
-    #endif
-  };
+  #define _ASRC_PAIR(N) { ASRC(N,0), ASRC(N,1) },
+  constexpr uint16_t CONST_SERVO_ANGLES [NUM_SERVOS][2] = { REPEAT(NUM_SERVOS, _ASRC_PAIR) };
 
   #if HAS_Z_SERVO_PROBE
     #define DEPLOY_Z_SERVO() servo[Z_PROBE_SERVO_NR].move(servo_angles[Z_PROBE_SERVO_NR][0])

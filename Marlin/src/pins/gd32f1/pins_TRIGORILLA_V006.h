@@ -36,7 +36,7 @@
 // EEPROM
 //
 #define FLASH_EEPROM_EMULATION
-#define MARLIN_EEPROM_SIZE                0x1000  // 4KB
+#define MARLIN_EEPROM_SIZE               0x1000U  // 4K
 
 //
 // Limit Switches
@@ -123,10 +123,9 @@
   // SPI
   //
   #define SPI_DEVICE                        -1    // Maple
-  #define SCK_PIN                           -1
-  #define MISO_PIN                          -1
-  #define MOSI_PIN                          -1
-  #define SS_PIN                            -1
+  #define SD_SCK_PIN                        -1
+  #define SD_MISO_PIN                       -1
+  #define SD_MOSI_PIN                       -1
 
   //
   // SDIO
@@ -141,12 +140,10 @@
 
 #else
 
-  #undef SDSS
-  #define SDSS                              PC11  // SDIO_D3_PIN
-  #define SS_PIN                            SDSS
-  #define SCK_PIN                           PC12  // SDIO_CK_PIN
-  #define MISO_PIN                          PC8   // SDIO_D0_PIN
-  #define MOSI_PIN                          PD2   // SDIO_CMD_PIN
+  #define SD_SS_PIN                         PC11  // SDIO_D3_PIN
+  #define SD_SCK_PIN                        PC12  // SDIO_CK_PIN
+  #define SD_MISO_PIN                       PC8   // SDIO_D0_PIN
+  #define SD_MOSI_PIN                       PD2   // SDIO_CMD_PIN
   #define SOFTWARE_SPI
 
 #endif

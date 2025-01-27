@@ -134,9 +134,9 @@ void tft_lvgl_init() {
 
   hal.watchdog_refresh();     // LVGL init takes time
 
-  #if ENABLED(USB_FLASH_DRIVE_SUPPORT)
+  #if HAS_USB_FLASH_DRIVE
     uint16_t usb_flash_loop = 1000;
-    #if ENABLED(MULTI_VOLUME) && !HAS_SD_HOST_DRIVE
+    #if HAS_MULTI_VOLUME && !HAS_SD_HOST_DRIVE
       if (IS_SD_INSERTED())
         card.changeMedia(&card.media_driver_sdcard);
       else

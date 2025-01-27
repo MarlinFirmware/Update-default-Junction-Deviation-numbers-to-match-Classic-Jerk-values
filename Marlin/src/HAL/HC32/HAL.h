@@ -30,69 +30,18 @@
 
 #include "../../inc/MarlinConfig.h"
 
-#include "../../core/macros.h"
 #include "../shared/Marduino.h"
 #include "../shared/math_32bit.h"
 #include "../shared/HAL_SPI.h"
 
 #include "fastio.h"
 #include "timers.h"
-#include "MarlinSerial.h"
-
-#include <stdint.h>
 
 //
 // Serial Ports
 //
-#define _MSERIAL(X) MSerial##X
-#define MSERIAL(X) _MSERIAL(X)
-#define NUM_UARTS 4
 
-#if SERIAL_PORT == -1
-  #error "USB Serial is not supported on HC32F460"
-#elif WITHIN(SERIAL_PORT, 1, NUM_UARTS)
-  #define MYSERIAL1 MSERIAL(SERIAL_PORT)
-#else
-  #define MYSERIAL1 MSERIAL(1) // Dummy port
-  static_assert(false, "SERIAL_PORT must be from 1 to " STRINGIFY(NUM_UARTS) ".")
-#endif
-
-#ifdef SERIAL_PORT_2
-  #if SERIAL_PORT_2 == -1
-    #error "USB Serial is not supported on HC32F460"
-  #elif WITHIN(SERIAL_PORT_2, 1, NUM_UARTS)
-    #define MYSERIAL2 MSERIAL(SERIAL_PORT_2)
-  #else
-    #define MYSERIAL2 MSERIAL(1) // Dummy port
-    static_assert(false, "SERIAL_PORT_2 must be from 1 to " STRINGIFY(NUM_UARTS) ".")
-  #endif
-#endif
-
-#ifdef SERIAL_PORT_3
-  #if SERIAL_PORT_3 == -1
-    #error "USB Serial is not supported on HC32F460"
-  #elif WITHIN(SERIAL_PORT_3, 1, NUM_UARTS)
-    #define MYSERIAL3 MSERIAL(SERIAL_PORT_3)
-  #else
-    #define MYSERIAL3 MSERIAL(1) // Dummy port
-    static_assert(false, "SERIAL_PORT_3 must be from 1 to " STRINGIFY(NUM_UARTS) ".")
-  #endif
-#endif
-
-#ifdef LCD_SERIAL_PORT
-  #if LCD_SERIAL_PORT == -1
-    #error "USB Serial is not supported on HC32F460"
-  #elif WITHIN(LCD_SERIAL_PORT, 1, NUM_UARTS)
-    #define LCD_SERIAL MSERIAL(LCD_SERIAL_PORT)
-  #else
-    #define LCD_SERIAL MSERIAL(1) // Dummy port
-    static_assert(false, "LCD_SERIAL_PORT must be from 1 to " STRINGIFY(NUM_UARTS) ".")
-  #endif
-
-  #if HAS_DGUS_LCD
-    #define LCD_SERIAL_TX_BUFFER_FREE() LCD_SERIAL.availableForWrite()
-  #endif
-#endif
+#include "MarlinSerial.h"
 
 //
 // Emergency Parser

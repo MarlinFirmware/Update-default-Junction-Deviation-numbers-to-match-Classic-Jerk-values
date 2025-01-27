@@ -18,8 +18,7 @@ Options:
   --num-temps=...   the number of temperature points to calculate (default: 36)
 """
 
-from __future__ import print_function
-from __future__ import division
+from __future__ import print_function, division
 
 from math import *
 import sys, getopt

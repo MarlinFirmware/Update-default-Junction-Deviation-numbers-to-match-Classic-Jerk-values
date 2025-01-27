@@ -16,7 +16,7 @@
 # location: <https://www.gnu.org/licenses/>.
 
 from __future__ import print_function
-import argparse,re,sys
+import argparse, re, sys
 
 from html.parser import HTMLParser
 

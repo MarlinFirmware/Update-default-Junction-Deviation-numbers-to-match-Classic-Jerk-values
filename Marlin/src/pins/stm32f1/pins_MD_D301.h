@@ -33,16 +33,16 @@
 #define DISABLE_JTAG
 
 #define FLASH_EEPROM_EMULATION
-#define EEPROM_PAGE_SIZE     (0x800U)           // 2KB
-#define EEPROM_START_ADDRESS (0x8000000UL + (512) * 1024UL - (EEPROM_PAGE_SIZE) * 2UL)
-#define MARLIN_EEPROM_SIZE    EEPROM_PAGE_SIZE  // 2KB
+#define EEPROM_PAGE_SIZE                  0x800U  // 2K
+#define EEPROM_START_ADDRESS   (0x8000000UL + (STM32_FLASH_SIZE) * 1024UL - (EEPROM_PAGE_SIZE) * 2UL)
+#define MARLIN_EEPROM_SIZE      EEPROM_PAGE_SIZE  // 2K
 
 /**
  * This board works with this SERIAL_PORT_* configuration
  * #define SERIAL_PORT 3
  * #define BAUDRATE 115200
  * #define SERIAL_PORT_2 -1
-*/
+ */
 
 //
 // Servos
@@ -159,7 +159,7 @@
 
 #define ONBOARD_SPI_DEVICE                     1  // SPI1
 #define ONBOARD_SD_CS_PIN                   PA4   // Chip select for "System" SD card
-#define SDSS                   ONBOARD_SD_CS_PIN
+#define SD_SS_PIN              ONBOARD_SD_CS_PIN
 
 //
 // Misc. Functions

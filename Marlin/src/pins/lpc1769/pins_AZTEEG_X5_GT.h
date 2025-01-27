@@ -117,7 +117,7 @@
   #define BTN_ENC                          P2_11
 
   #define SD_DETECT_PIN                    P1_18
-  #define SDSS                             P1_21
+  #define SD_SS_PIN                        P1_21
 
   #define STAT_LED_RED_PIN                 P1_19
   #define STAT_LED_BLUE_PIN                P1_20

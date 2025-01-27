@@ -146,7 +146,12 @@ namespace LanguageNarrow_nl {
   LSTR MSG_AUTORETRACT                    = _UxGT("Auto-Retract");
   LSTR MSG_FILAMENTCHANGE                 = _UxGT("Verv. Filament");
   LSTR MSG_FILAMENTCHANGE_E               = _UxGT("Verv. Filament *");
-  LSTR MSG_ATTACH_MEDIA                   = _UxGT("Init. SD kaart");
+  #if HAS_MULTI_VOLUME
+    LSTR MSG_ATTACH_SD_MEDIA              = _UxGT("Init. SD kaart");
+    LSTR MSG_ATTACH_USB_MEDIA             = _UxGT("Init. USB stick");
+  #else
+    LSTR MSG_ATTACH_MEDIA                 = _UxGT("Init. SD kaart");
+  #endif
   LSTR MSG_CHANGE_MEDIA                   = _UxGT("Verv. SD Kaart");
   LSTR MSG_ZPROBE_OUT                     = _UxGT("Z probe uit. bed");
   LSTR MSG_BLTOUCH_SELFTEST               = _UxGT("BLTouch Zelf-Test");

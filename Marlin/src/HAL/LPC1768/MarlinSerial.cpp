@@ -25,6 +25,8 @@
 
 #include "../../inc/MarlinConfig.h"
 
+DefaultSerial1 USBSerial(false, UsbSerial);
+
 #if USING_HW_SERIAL0
   MarlinSerial _MSerial0(LPC_UART0);
   MSerialT MSerial0(true, _MSerial0);

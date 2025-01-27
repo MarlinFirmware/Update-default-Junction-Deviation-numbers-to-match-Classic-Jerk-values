@@ -91,12 +91,12 @@
 #define SD_MOSI_PIN                           23
 #define SD_MISO_PIN                           19
 #define SD_SCK_PIN                            18
-#define SDSS                                   5
+#define SD_SS_PIN                              5
 #define USES_SHARED_SPI                           // SPI is shared by SD card with TMC SPI drivers
 
 #if HAS_TMC_UART
   //
-  // TMC2209 stepper drivers
+  // TMC2208/TMC2209 stepper drivers
   //
 
   //

@@ -1,5 +1,10 @@
 '''
 config.py - Helper functions for config manipulation
+
+Make sure both copies always match:
+ - buildroot/bin/config.py
+ - buildroot/share/PlatformIO/scripts/config.py
+
 '''
 import re
 
@@ -17,24 +22,25 @@ def set(file_path, define_name, value):
     modified = False
     for i in range(len(content)):
         # Regex to match the desired pattern
-        match = re.match(r'^(\s*)(/*)(\s*)(#define\s+{})\s+(.*)$'.format(re.escape(define_name)), content[i])
+        match = re.match(r'^(\s*)(/*)(\s*)(#define\s+{})\s+(.*?)\s*(//.*)?$'.format(re.escape(define_name)), content[i])
         if match:
-            new_line = f"{match[1]}{match[3]}{match[4]} {value} // {match[5]}\n"
-            content[i] = new_line
             modified = True
+            comm = '' if match[6] is None else ' ' + match[6]
+            oldval = '' if match[5] is None else match[5]
+            if match[2] or value != oldval:
+                content[i] = f"{match[1]}{match[3]}{match[4]} {value} // {match[5]}{comm}\n"
 
     # Write the modified content back to the file only if changes were made
     if modified:
         with open(file_path, 'w') as f:
             f.writelines(content)
-        return True
+            return True
 
     return False
 
 def add(file_path, define_name, value=""):
     '''
     Insert a define on the first blank line in a file.
-    Returns True if the define was found and replaced, False otherwise.
     '''
     with open(file_path, 'r') as f:
         content = f.readlines()
@@ -66,7 +72,7 @@ def enable(file_path, define_name, enable=True):
         content = f.readlines()
 
     # Prepare the regex
-    regex = re.compile(r'^(\s*)(/*)(\s*)(#define\s+{}\b.*?)( *//.*)?$'.format(re.escape(define_name)))
+    regex = re.compile(r'^(\s*)(/*)(\s*)(#define\s+{}\b.*?)(\s*//.*)?$'.format(re.escape(define_name)))
 
     # Find the define in the file and uncomment or comment it
     found = False

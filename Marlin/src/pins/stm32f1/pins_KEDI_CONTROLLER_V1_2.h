@@ -33,9 +33,9 @@
 
 #if ANY(NO_EEPROM_SELECTED, FLASH_EEPROM_EMULATION)
   #define FLASH_EEPROM_EMULATION
-  #define EEPROM_PAGE_SIZE     (0x800U)           // 2KB
+  #define EEPROM_PAGE_SIZE                0x800U  // 2K
   #define EEPROM_START_ADDRESS (0x8000000UL + (STM32_FLASH_SIZE) * 1024UL - (EEPROM_PAGE_SIZE) * 2UL)
-  #define MARLIN_EEPROM_SIZE    EEPROM_PAGE_SIZE  // 2KB
+  #define MARLIN_EEPROM_SIZE    EEPROM_PAGE_SIZE  // 2K
 #endif
 
 //
@@ -94,47 +94,29 @@
 #endif
 
 // CS Pins (One pin for each driver)
-#if HAS_DRIVER(TMC2130) || HAS_DRIVER(TMC2160) || HAS_DRIVER(TMC2660) || HAS_DRIVER(TMC5130) || HAS_DRIVER(TMC5160)
- #ifndef X_CS_PIN
-  #define X_CS_PIN                          PC10
- #endif
- #ifndef Y_CS_PIN
-  #define Y_CS_PIN                          PC11
- #endif
- #ifndef Z_CS_PIN
-  #define Z_CS_PIN                          PC12
- #endif
- #ifndef E0_CS_PIN
-  #define E0_CS_PIN                         PC14
- #endif
+#if HAS_TMC_SPI
+  #ifndef X_CS_PIN
+    #define X_CS_PIN                        PC10
+  #endif
+  #ifndef Y_CS_PIN
+    #define Y_CS_PIN                        PC11
+  #endif
+  #ifndef Z_CS_PIN
+    #define Z_CS_PIN                        PC12
+  #endif
+  #ifndef E0_CS_PIN
+    #define E0_CS_PIN                       PC14
+  #endif
 #endif
 
-// TMC2208 or TMC2209 on UART
-#if HAS_DRIVER(TMC2208) || HAS_DRIVER(TMC2209)
-
-// UART Pins (Single pin for both RX & TX)
- #ifndef X_PIN_UART
-  #define X_PIN_UART                        PC10
- #endif
- #ifndef Y_PIN_UART
-  #define Y_PIN_UART                        PC11
- #endif
- #ifndef Z_PIN_UART
-  #define Z_PIN_UART                        PC12
- #endif
- #ifndef E0_PIN_UART
-  #define E0_PIN_UART                       PC14
- #endif
-
-// Configurating Pins
-#define X_SERIAL_TX_PIN               X_PIN_UART
-#define X_SERIAL_RX_PIN               X_PIN_UART
-#define Y_SERIAL_TX_PIN               Y_PIN_UART
-#define Y_SERIAL_RX_PIN               Y_PIN_UART
-#define Z_SERIAL_TX_PIN               Z_PIN_UART
-#define Z_SERIAL_RX_PIN               Z_PIN_UART
-#define E0_SERIAL_TX_PIN             E0_PIN_UART
-#define E0_SERIAL_RX_PIN             E0_PIN_UART
+/**
+ * TMC2208/TMC2209 stepper drivers
+ */
+#if HAS_TMC_UART
+  #define X_SERIAL_TX_PIN                   PC10
+  #define Y_SERIAL_TX_PIN                   PC11
+  #define Z_SERIAL_TX_PIN                   PC12
+  #define E0_SERIAL_TX_PIN                  PC14
 #endif
 
 //
@@ -225,7 +207,7 @@
 
       #define FORCE_SOFT_SPI                      // SPI MODE3
 
-      #define LED_PIN                EXP1_05_PIN   // red pwm
+      #define LED_PIN                EXP1_05_PIN  // red pwm
       //#define LED_PIN              EXP1_04_PIN  // green
       //#define LED_PIN              EXP1_03_PIN  // blue
 

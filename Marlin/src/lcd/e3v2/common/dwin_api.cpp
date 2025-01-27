@@ -158,6 +158,7 @@ void dwinFrameClear(const uint16_t color) {
 }
 
 #if DISABLED(TJC_DISPLAY)
+
   // Draw a point
   //  color: point color
   //  width: point width   0x01-0x0F
@@ -173,7 +174,67 @@ void dwinFrameClear(const uint16_t color) {
     dwinWord(i, y);
     dwinSend(i);
   }
-#endif
+
+  // Draw a map of multiple points using minimal amount of point drawing commands
+  //  color: point color
+  //  point_width: point width   0x01-0x0F
+  //  point_height: point height 0x01-0x0F
+  //  x,y: upper left point
+  //  map_columns: columns in theh point map. each column is a byte in the map and contains 8 points
+  //  map_rows: rows in the point map
+  //  map: point bitmap. 2D array of points, 1 bit per point
+  // Note: somewhat similar to U8G's drawBitmap() function, see https://github.com/olikraus/u8glib/wiki/userreference#drawbitmap
+  void dwinDrawPointMap(
+    const uint16_t color,
+    const uint8_t point_width, const uint8_t point_height,
+    const uint16_t x, const uint16_t y,
+    const uint16_t map_columns, const uint16_t map_rows,
+    const uint8_t *map_data
+  ) {
+    // At how many bytes should we flush the send buffer?
+    // One byte is used (hidden) for F_HONE, and we need 4 bytes when appending a point.
+    // So we should flush the send buffer when we have less than 5 bytes left.
+    constexpr size_t flush_send_buffer_at = (COUNT(dwinSendBuf) - 1 - 4);
+
+    // How long is the header of each draw command?
+    // => 1B CMD, 2B COLOR, 1B WIDTH, 1B HEIGHT
+    constexpr size_t command_header_size = 5;
+
+    size_t i = 0;
+    for (uint16_t row = 0; row < map_rows; row++) {
+      for (uint16_t col = 0; col < map_columns; col++) {
+        const uint8_t map_byte = map_data[(row * map_columns) + col];
+        for (uint8_t bit = 0; bit < 8; bit++) {
+          // Draw a point at this position?
+          if (TEST(map_byte, bit)) {
+            // Flush the send buffer and prepare next draw if either
+            // a) The buffer reached the 'should flush' state, or
+            // b) This is the first point to draw
+            if (i >= flush_send_buffer_at || i == 0) {
+              // Dispatch the current draw command
+              if (i > command_header_size) dwinSend(i);
+
+              // Prepare the next draw command
+              i = 0;
+              dwinByte(i, 0x02); // cmd: draw point(s)
+              dwinWord(i, color);
+              dwinByte(i, point_width);
+              dwinByte(i, point_height);
+            }
+
+            // Append point coordinates to draw command
+            dwinWord(i, x + (point_width * ((8 * col) + (7 - bit)))); // x
+            dwinWord(i, y + (point_height * (row)));                  // y
+          }
+        }
+      }
+    }
+
+    // Dispatch final draw command if the buffer contains any points
+    if (i > command_header_size) dwinSend(i);
+  }
+
+#endif // !TJC_DISPLAY
 
 // Draw a line
 //  color: Line segment color

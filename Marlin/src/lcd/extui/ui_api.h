@@ -172,10 +172,10 @@ namespace ExtUI {
   bool isHeaterIdle(const extruder_t);
   celsius_float_t getActualTemp_celsius(const heater_t);
   celsius_float_t getActualTemp_celsius(const extruder_t);
-  celsius_float_t getTargetTemp_celsius(const heater_t);
-  celsius_float_t getTargetTemp_celsius(const extruder_t);
-  float getActualFan_percent(const fan_t);
-  float getTargetFan_percent(const fan_t);
+  celsius_t getTargetTemp_celsius(const heater_t);
+  celsius_t getTargetTemp_celsius(const extruder_t);
+  uint8_t getActualFan_percent(const fan_t);
+  uint8_t getTargetFan_percent(const fan_t);
 
   // High level positions, by Axis ID, Extruder ID
   float getAxisPosition_mm(const axis_t);

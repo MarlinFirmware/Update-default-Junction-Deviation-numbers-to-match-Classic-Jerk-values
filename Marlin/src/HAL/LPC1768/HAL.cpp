@@ -35,8 +35,6 @@
 #include <CDCSerial.h>
 #include <usb/mscuser.h>
 
-DefaultSerial1 USBSerial(false, UsbSerial);
-
 uint32_t MarlinHAL::adc_result = 0;
 pin_t MarlinHAL::adc_pin = 0;
 

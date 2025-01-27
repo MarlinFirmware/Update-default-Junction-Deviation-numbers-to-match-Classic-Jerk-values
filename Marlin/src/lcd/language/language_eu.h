@@ -219,7 +219,12 @@ namespace LanguageNarrow_eu {
   LSTR MSG_FILAMENTUNLOAD                 = _UxGT("Harizpia deskargatu");
   LSTR MSG_FILAMENTUNLOAD_E               = _UxGT("Harizpia deskargatu *");
   LSTR MSG_FILAMENTUNLOAD_ALL             = _UxGT("Erabat deskargatu");
-  LSTR MSG_ATTACH_MEDIA                   = _UxGT("Hasieratu SD-a");
+  #if HAS_MULTI_VOLUME
+    LSTR MSG_ATTACH_SD_MEDIA              = _UxGT("Hasieratu SD-a");
+    LSTR MSG_ATTACH_USB_MEDIA             = _UxGT("Hasieratu USB-a");
+  #else
+    LSTR MSG_ATTACH_MEDIA                 = _UxGT("Hasieratu SD-a");
+  #endif
   LSTR MSG_CHANGE_MEDIA                   = _UxGT("Aldatu txartela");
   LSTR MSG_ZPROBE_OUT                     = _UxGT("Z zunda kanpora");
   LSTR MSG_SKEW_FACTOR                    = _UxGT("Okertze faktorea");

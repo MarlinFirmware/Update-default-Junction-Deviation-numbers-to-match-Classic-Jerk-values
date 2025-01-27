@@ -147,7 +147,7 @@
   #define BTN_ENC                          P1_30  // EXP1-2
 
   #define LCD_PINS_RS                      P0_16  // EXP1-4
-  #define LCD_SDSS                         P0_28  // EXP2-4
+  #define LCD_SDSS_PIN                     P0_28  // EXP2-4
   #define LCD_PINS_EN                      P0_18  // EXP1-3
   #define LCD_PINS_D4                      P0_15  // EXP1-5
 

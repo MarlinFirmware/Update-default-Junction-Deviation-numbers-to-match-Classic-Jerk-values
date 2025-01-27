@@ -11,7 +11,7 @@
 # been extended to evaluate conditions and can determine what options are actually enabled, not just which
 # options are uncommented. That will be migrated to this script for standalone migration.
 #
-import re,json
+import re, json
 from pathlib import Path
 
 def extend_dict(d:dict, k:tuple):
@@ -120,15 +120,13 @@ def extract_files(filekey):
     defgrep = re.compile(r'^(//)?\s*(#define)\s+([A-Za-z0-9_]+)\s*(.*?)\s*(//.+)?$')
     # Pattern to match a float value
     flt = r'[-+]?\s*(\d+\.|\d*\.\d+)([eE][-+]?\d+)?[fF]?'
-    # Defines to ignore
-    ignore = ('CONFIGURATION_H_VERSION', 'CONFIGURATION_ADV_H_VERSION', 'CONFIG_EXAMPLES_DIR', 'CONFIG_EXPORT')
     # Start with unknown state
     state = Parse.NORMAL
     # Serial ID
     sid = 0
     # Loop through files and parse them line by line
     for fn, fk in filekey.items():
-        with Path("Marlin", fn).open() as fileobj:
+        with Path("Marlin", fn).open(encoding='utf-8') as fileobj:
             section = 'none'        # Current Settings section
             line_number = 0         # Counter for the line number of the file
             conditions = []         # Create a condition stack for the current file
@@ -138,7 +136,7 @@ def extract_files(filekey):
             eol_options = False     # The options came from end of line, so only apply once
             join_line = False       # A flag that the line should be joined with the previous one
             line = ''               # A line buffer to handle \ continuation
-            last_added_ref = None   # Reference to the last added item
+            last_added_ref = {}     # Reference to the last added item
             # Loop through the lines in the file
             for the_line in fileobj.readlines():
                 line_number += 1
@@ -185,18 +183,28 @@ def extract_files(filekey):
                 # - The line starts with '======' so just skip it.
                 #
                 def use_comment(c, opt, sec, bufref):
-                    if c.startswith(':'):               # If the comment starts with : then it has magic JSON
-                        d = c[1:].strip()               # Strip the leading :
-                        cbr = c.rindex('}') if d.startswith('{') else c.rindex(']') if d.startswith('[') else 0
+                    '''
+                    c       - The comment line to parse
+                    opt     - Options JSON string to return (if not updated)
+                    sec     - Section to return (if not updated)
+                    bufref  - The comment buffer to add to
+                    '''
+                    sc = c.strip()                      # Strip for special patterns
+                    if sc.startswith(':'):              # If the comment starts with : then it has magic JSON
+                        d = sc[1:].strip()              # Strip the leading : and spaces
+                        # Look for a JSON container
+                        cbr = sc.rindex('}') if d.startswith('{') else sc.rindex(']') if d.startswith('[') else 0
                         if cbr:
-                            opt, cmt = c[1:cbr+1].strip(), c[cbr+1:].strip()
+                            opt, cmt = sc[1:cbr+1].strip(), sc[cbr+1:].strip()
                             if cmt != '': bufref.append(cmt)
                         else:
-                            opt = c[1:].strip()
-                    elif c.startswith('@section'):      # Start a new section
-                        sec = c[8:].strip()
-                    elif not c.startswith('========'):
-                        bufref.append(c)
+                            opt = sc[1:].strip()        # Some literal value not in a JSON container?
+                    else:
+                        m = re.match(r'@section\s*(.+)', sc) # Start a new section?
+                        if m:
+                            sec = m[1]
+                        elif not sc.startswith('========'):
+                            bufref.append(c)            # Anything else is part of the comment
                     return opt, sec
 
                 # For slash comments, capture consecutive slash comments.
@@ -220,7 +228,6 @@ def extract_files(filekey):
                         # Temperature sensors are done
                         if state == Parse.GET_SENSORS:
                             options_json = f'[ {options_json[:-2]} ]'
-
                         state = Parse.NORMAL
 
                     # Strip the leading '* ' from block comments
@@ -228,9 +235,9 @@ def extract_files(filekey):
 
                     # Collect temperature sensors
                     if state == Parse.GET_SENSORS:
-                        sens = re.match(r'^(-?\d+)\s*:\s*(.+)$', cline)
+                        sens = re.match(r'^\s*(-?\d+)\s*:\s*(.+)$', cline)
                         if sens:
-                            s2 = sens[2].replace("'","''")
+                            s2 = sens[2].replace("'", "''")
                             options_json += f"{sens[1]}:'{sens[1]} - {s2}', "
 
                     elif state == Parse.BLOCK_COMMENT:
@@ -255,12 +262,11 @@ def extract_files(filekey):
                         comment_buff = []
                         state = Parse.BLOCK_COMMENT
                         eol_options = False
-
                     elif cpos2 != -1 and (cpos2 < cpos1 or cpos1 == -1):
                         cpos = cpos2
 
                         # Comment after a define may be continued on the following lines
-                        if defmatch != None and cpos > 10:
+                        if defmatch is not None and cpos > 10:
                             state = Parse.EOL_COMMENT
                             prev_comment = '\n'.join(comment_buff)
                             comment_buff = []
@@ -327,10 +333,10 @@ def extract_files(filekey):
                         conditions.append([ f'!defined({line[7:].strip()})' ])
 
                     # Handle a complete #define line
-                    elif defmatch != None:
+                    elif defmatch is not None:
 
                         # Get the match groups into vars
-                        enabled, define_name, val = defmatch[1] == None, defmatch[3], defmatch[4]
+                        enabled, define_name, val = defmatch[1] is None, defmatch[3], defmatch[4]
 
                         # Increment the serial ID
                         sid += 1
@@ -347,14 +353,14 @@ def extract_files(filekey):
                         # Type is based on the value
                         value_type = \
                              'switch'  if val == '' \
-                        else 'bool'    if re.match(r'^(true|false)$', val) \
                         else 'int'     if re.match(r'^[-+]?\s*\d+$', val) \
                         else 'ints'    if re.match(r'^([-+]?\s*\d+)(\s*,\s*[-+]?\s*\d+)+$', val) \
                         else 'floats'  if re.match(rf'({flt}(\s*,\s*{flt})+)', val) \
                         else 'float'   if re.match(f'^({flt})$', val) \
                         else 'string'  if val[0] == '"' \
                         else 'char'    if val[0] == "'" \
-                        else 'state'   if re.match(r'^(LOW|HIGH)$', val) \
+                        else 'bool'    if val in ('true', 'false') \
+                        else 'state'   if val in ('HIGH', 'LOW') \
                         else 'enum'    if re.match(r'^[A-Za-z0-9_]{3,}$', val) \
                         else 'int[]'   if re.match(r'^{\s*[-+]?\s*\d+(\s*,\s*[-+]?\s*\d+)*\s*}$', val) \
                         else 'float[]' if re.match(r'^{{\s*{flt}(\s*,\s*{flt})*\s*}}$', val) \
@@ -375,7 +381,7 @@ def extract_files(filekey):
 
                         # If the comment_buff is not empty, add the comment to the info
                         if comment_buff:
-                            full_comment = '\n'.join(comment_buff)
+                            full_comment = '\n'.join(comment_buff).strip()
 
                             # An EOL comment will be added later
                             # The handling could go here instead of above
@@ -389,8 +395,16 @@ def extract_files(filekey):
                             units = re.match(r'^\(([^)]+)\)', full_comment)
                             if units:
                                 units = units[1]
-                                if units == 's' or units == 'sec': units = 'seconds'
+                                if units in ('s', 'sec'): units = 'seconds'
                                 define_info['units'] = units
+
+                        if 'comment' not in define_info or define_info['comment'] == '':
+                            if prev_comment:
+                                define_info['comment'] = prev_comment
+                                prev_comment = ''
+
+                        if 'comment' in define_info and define_info['comment'] == '':
+                            del define_info['comment']
 
                         # Set the options for the current #define
                         if define_name == "MOTHERBOARD" and boards != '':
@@ -424,12 +438,23 @@ def extract():
     return extract_files({ 'Configuration.h':'basic', 'Configuration_adv.h':'advanced' })
 
 def dump_json(schema:dict, jpath:Path):
-    with jpath.open('w') as jfile:
+    with jpath.open('w', encoding='utf-8') as jfile:
         json.dump(schema, jfile, ensure_ascii=False, indent=2)
 
 def dump_yaml(schema:dict, ypath:Path):
     import yaml
-    with ypath.open('w') as yfile:
+
+    # Custom representer for all multi-line strings
+    def str_literal_representer(dumper, data):
+        if '\n' in data:  # Check for multi-line strings
+            # Add a newline to trigger '|+'
+            if not data.endswith('\n'): data += '\n'
+            return dumper.represent_scalar('tag:yaml.org,2002:str', data, style='|')
+        return dumper.represent_scalar('tag:yaml.org,2002:str', data)
+
+    yaml.add_representer(str, str_literal_representer)
+
+    with ypath.open('w', encoding='utf-8') as yfile:
         yaml.dump(schema, yfile, default_flow_style=False, width=120, indent=2)
 
 def main():

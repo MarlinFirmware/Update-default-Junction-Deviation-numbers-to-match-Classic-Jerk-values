@@ -224,7 +224,7 @@
     #define BTN_EN2                            3  // D3 RX1   JP2-7
     #define BTN_ENC                           45  // F7 TDI   JP2-12
 
-    #define SDSS                               3  // F5 TMS   JP2-8
+    #define SD_SS_PIN                          3  // F5 TMS   JP2-8
 
     #define STAT_LED_RED_PIN                  12  // C2       JP11-14
     #define STAT_LED_BLUE_PIN                 10  // C0       JP11-12
@@ -235,7 +235,7 @@
 
     #if DISABLED(USE_INTERNAL_SD)
       //      PIN       FASTIO PIN#  ATUSB90 PIN# Teensy2.0++ PIN#  Printrboard RevF Conn.   MKSLCD12864 PIN#
-      #define SDSS                            11  //      36               C1                EXP2-13             EXP2-07
+      #define SD_SS_PIN                       11  //      36               C1                EXP2-13             EXP2-07
       #define SD_DETECT_PIN                    9  //      34               E1                EXP2-11             EXP2-04
     #endif
 
@@ -272,7 +272,7 @@
 //
 //      PIN       FASTIO PIN#  ATUSB90 PIN# Teensy2.0++ PIN#  Printrboard RevF Conn.
 #ifndef SDSS
-  #define SDSS                                20  //       10               B0
+  #define SD_SS_PIN                           20  //       10               B0
 #endif
 
 /**

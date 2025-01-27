@@ -34,7 +34,7 @@
 #define USBCON
 
 #ifndef MARLIN_EEPROM_SIZE
-  #define MARLIN_EEPROM_SIZE              0x2000  // 8KB
+  #define MARLIN_EEPROM_SIZE             0x2000U  // 8K
 #endif
 
 //

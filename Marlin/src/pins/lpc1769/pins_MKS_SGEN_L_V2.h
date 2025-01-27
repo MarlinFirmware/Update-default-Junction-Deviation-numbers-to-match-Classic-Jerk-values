@@ -38,7 +38,7 @@
 //
 #if NO_EEPROM_SELECTED
   #define I2C_EEPROM                              // AT24C32
-  #define MARLIN_EEPROM_SIZE              0x1000  // 4K
+  #define MARLIN_EEPROM_SIZE             0x1000U  // 4K
 #endif
 
 //
@@ -324,7 +324,7 @@
     #define BTN_EN1                  EXP2_03_PIN
     #define BTN_EN2                  EXP2_05_PIN
 
-    #define LCD_SDSS                 EXP2_04_PIN
+    #define LCD_SDSS_PIN             EXP2_04_PIN
 
     #if ENABLED(MKS_12864OLED_SSD1306)
 

@@ -37,7 +37,7 @@ if pioutil.is_pio_build():
                 #
                 # platformio.ini will accept this for a Windows upload port designation: 'upload_port = L:'
                 #   Windows - doesn't care about the disk's name, only cares about the drive letter
-                import subprocess,string
+                import subprocess, string
                 from ctypes import windll
                 from pathlib import PureWindowsPath
 

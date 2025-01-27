@@ -16,10 +16,7 @@
 # location: <https://www.gnu.org/licenses/>.
 
 from __future__ import print_function
-import argparse
-import textwrap
-import os
-import zlib
+import argparse, textwrap, os, zlib
 
 def deflate(data):
   return zlib.compress(data)

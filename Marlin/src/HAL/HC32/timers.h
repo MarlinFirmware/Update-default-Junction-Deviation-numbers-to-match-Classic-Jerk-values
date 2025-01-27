@@ -20,6 +20,7 @@
 #pragma once
 #include <stdint.h>
 #include <Timer0.h>
+#include "sysclock.h"
 
 //
 // Timer Types
@@ -42,17 +43,15 @@ extern Timer0 step_timer;
  * HAL_TIMER_RATE must be known at compile time since it's used to calculate
  * STEPPER_TIMER_RATE, which is used in 'constexpr' calculations.
  * On the HC32F460 the timer rate depends on PCLK1, which is derived from the
- * system clock configured at runtime. As a workaround, we use the existing
- * assumption of a 200MHz clock, defining F_CPU as 200000000, then configure PCLK1
- * as F_CPU with a divider of 4 in 'sysclock.cpp::core_hook_sysclock_init'.
+ * system clock configured at runtime.
+ * Thus we use the 'F_PCLK1' constant defined in 'sysclock.h'.
  *
- * If you face issues with this assumption, please double-check with the values
- * printed by 'MarlinHAL::HAL_clock_frequencies_dump'.
+ * See https://github.com/MarlinFirmware/Marlin/pull/27099 for more information.
  *
- * TODO: If the 'constexpr' requirement is ever lifted, use TIMER0_BASE_FREQUENCY instead
+ * NOTE: If the 'constexpr' requirement is ever lifted, TIMER0_BASE_FREQUENCY could
+ * be used instead. Tho this would probably not make any noticable difference.
  */
-#define HAL_TIMER_RATE (F_CPU / 4) // i.e., 50MHz
-//#define HAL_TIMER_RATE TIMER0_BASE_FREQUENCY
+#define HAL_TIMER_RATE F_PCLK1
 
 // Temperature timer
 #define TEMP_TIMER_NUM        (&temp_timer)
