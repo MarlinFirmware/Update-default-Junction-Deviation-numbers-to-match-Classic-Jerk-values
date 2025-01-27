@@ -529,7 +529,7 @@
   #endif
 
   // Extender cable doesn't support SD_DETECT_PIN
-  #if ENABLED(NO_SD_DETECT)
+  #if ENABLED(NO_SD_DETECT) && DISABLED(DWIN_LCD_PROUI)
     #undef SD_DETECT_PIN
   #endif
 
@@ -3349,7 +3349,7 @@
   #ifndef MESH_MAX_Y
     #define MESH_MAX_Y _MESH_MAX_Y
   #endif
-#else
+#elif DISABLED(DWIN_LCD_PROUI)
   #undef MESH_MIN_X
   #undef MESH_MIN_Y
   #undef MESH_MAX_X

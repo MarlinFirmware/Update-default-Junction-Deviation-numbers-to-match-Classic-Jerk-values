@@ -56,6 +56,10 @@
   #include "../../../lcd/sovol_rts/sovol_rts.h"
 #endif
 
+#if ENABLED(DWIN_LCD_PROUI)
+  #include "../../../lcd/e3v2/proui/meshviewer.h"
+#endif
+
 #define DEBUG_OUT ENABLED(DEBUG_LEVELING_FEATURE)
 #include "../../../core/debug_out.h"
 
@@ -266,6 +270,10 @@ G29_TYPE GcodeSuite::G29() {
   // Send 'N' to force homing before G29 (internal only)
   if (parser.seen_test('N'))
     process_subcommands_now(TERN(CAN_SET_LEVELING_AFTER_G28, F("G28L0"), FPSTR(G28_STR)));
+  #if ENABLED(DWIN_LCD_PROUI)
+    else
+      process_subcommands_now(F("G28Z"));
+  #endif
 
   // Don't allow auto-leveling without homing first
   if (homing_needed_error()) G29_RETURN(false, false);
@@ -689,6 +697,8 @@ G29_TYPE GcodeSuite::G29() {
 
         int8_t inStart, inStop, inInc;
 
+        TERN_(DWIN_LCD_PROUI, if (hmiFlag.cancel_lev) break);
+
         if (zig) {                      // Zig away from origin
           inStart = 0;                  // Left or front
           inStop = PR_INNER_SIZE;       // Right or back
@@ -801,6 +811,7 @@ G29_TYPE GcodeSuite::G29() {
             const float z = abl.measured_z + abl.Z_offset;
             abl.z_values[abl.meshCount.x][abl.meshCount.y] = z;
             TERN_(EXTENSIBLE_UI, ExtUI::onMeshUpdate(abl.meshCount, z));
+            TERN_(DWIN_LCD_PROUI, meshViewer.drawMeshPoint(abl.meshCount.x, abl.meshCount.y, z));
 
             #if ENABLED(SOVOL_SV06_RTS)
               if (pt_index <= GRID_MAX_POINTS) rts.sendData(pt_index, AUTO_BED_LEVEL_ICON_VP);
@@ -812,6 +823,7 @@ G29_TYPE GcodeSuite::G29() {
 
           abl.reenable = false; // Don't re-enable after modifying the mesh
           idle_no_sleep();
+          TERN_(DWIN_LCD_PROUI, if (hmiFlag.cancel_lev) break);
 
         } // inner
       } // outer
@@ -1017,7 +1029,7 @@ G29_TYPE GcodeSuite::G29() {
   // Restore state after probing
   if (!faux) restore_feedrate_and_scaling();
 
-  TERN_(HAS_BED_PROBE, probe.move_z_after_probing());
+  TERN_(Z_AFTER_PROBING, probe.move_z_after_probing());
 
   #ifdef EVENT_GCODE_AFTER_G29
     if (DEBUGGING(LEVELING)) DEBUG_ECHOLNPGM("After G29 G-code: ", EVENT_GCODE_AFTER_G29);
