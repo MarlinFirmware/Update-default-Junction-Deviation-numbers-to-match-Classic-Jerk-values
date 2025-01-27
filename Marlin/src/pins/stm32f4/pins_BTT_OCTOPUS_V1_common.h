@@ -36,7 +36,7 @@
 #if ANY(NO_EEPROM_SELECTED, I2C_EEPROM)
   #undef NO_EEPROM_SELECTED
   #define I2C_EEPROM
-  #define MARLIN_EEPROM_SIZE              0x1000  // 4K (AT24C32)
+  #define MARLIN_EEPROM_SIZE             0x1000U  // 4K (AT24C32)
   #define SOFT_I2C_EEPROM                         // Force the use of Software I2C
   #define I2C_SCL_PIN                       PB8
   #define I2C_SDA_PIN                       PB9
@@ -344,8 +344,7 @@
   #define SD_DETECT_PIN                     PC14
 #elif SD_CONNECTION_IS(LCD)
 
-  #define SDSS                              PA4
-  #define SD_SS_PIN                         SDSS
+  #define SD_SS_PIN                         PA4
   #define SD_SCK_PIN                        PA5
   #define SD_MISO_PIN                       PA6
   #define SD_MOSI_PIN                       PA7
@@ -531,13 +530,13 @@
   /**
    *                      -------
    *            GND | 9  |       | 8 | 3.3V
-   *  (ESP-CS) PB12 | 10 |       | 7 | PB15 (ESP-MOSI)
-   *           3.3V | 11 |       | 6 | PB14 (ESP-MISO)
+   *  (ESP-CS) PB12 | 10 |       | 7 | PC3  (ESP-MOSI)
+   *             -- | 11 |       | 6 | PC2  (ESP-MISO)
    * (ESP-IO0)  PD7 | 12 |       | 5 | PB13 (ESP-CLK)
    * (ESP-IO4) PD10 | 13 |       | 4 | --
-   *             -- | 14 |       | 3 | PE15 (ESP-EN)
+   *             -- | 14 |       | 3 | PG8  (ESP-EN)
    *  (ESP-RX)  PD8 | 15 |       | 2 | --
-   *  (ESP-TX)  PD9 | 16 |       | 1 | PE14 (ESP-RST)
+   *  (ESP-TX)  PD9 | 16 |       | 1 | PG7  (ESP-RST)
    *                      -------
    *                       WIFI
    */

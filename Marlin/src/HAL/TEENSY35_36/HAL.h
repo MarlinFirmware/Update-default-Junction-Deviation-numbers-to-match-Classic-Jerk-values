@@ -70,17 +70,10 @@
 typedef ForwardSerial1Class<decltype(SerialUSB)> USBSerialType;
 extern USBSerialType USBSerial;
 
-#define _MSERIAL(X) MSerial##X
-#define MSERIAL(X) _MSERIAL(X)
-
-#if SERIAL_PORT == -1
-  #define MYSERIAL1 USBSerial
-#elif WITHIN(SERIAL_PORT, 0, 3)
-  #define MYSERIAL1 MSERIAL(SERIAL_PORT)
-  DECLARE_SERIAL(SERIAL_PORT);
-#else
-  #error "SERIAL_PORT must be from 0 to 3, or -1 for Native USB."
-#endif
+#define SERIAL_INDEX_MIN 0
+#define SERIAL_INDEX_MAX 3
+#define USB_SERIAL_PORT(...) USBSerial
+#include "../shared/serial_ports.h"
 
 // ------------------------
 // Types

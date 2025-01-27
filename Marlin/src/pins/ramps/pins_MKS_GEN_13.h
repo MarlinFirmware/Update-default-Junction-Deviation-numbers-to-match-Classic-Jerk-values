@@ -121,7 +121,7 @@
   // EXP2_06_PIN  yellow MOSI
   // EXP2_02_PIN  orange SCK
 
-  //#define SDSS                     EXP2_04_PIN  // SDCS     blue
+  //#define SD_SS_PIN                EXP2_04_PIN  // SDCS     blue
 
   //
   // VIKI2 4-wire lead

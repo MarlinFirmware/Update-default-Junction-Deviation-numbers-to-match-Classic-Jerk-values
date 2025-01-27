@@ -26,7 +26,7 @@
 
 #include "../../inc/MarlinConfigPre.h"
 
-#if HAS_MARLINUI_MENU && (HAS_LEVELING || HAS_BED_PROBE)
+#if HAS_MARLINUI_MENU && ANY(HAS_LEVELING, HAS_BED_PROBE, ASSISTED_TRAMMING_WIZARD, LCD_BED_TRAMMING)
 
 #include "menu_item.h"
 
@@ -44,11 +44,9 @@
   #include "../../feature/babystep.h"
 #endif
 
-#if HAS_GRAPHICAL_TFT
+#if ALL(TOUCH_SCREEN, HAS_GRAPHICAL_TFT)
   #include "../tft/tft.h"
-  #if ENABLED(TOUCH_SCREEN)
-    #include "../tft/touch.h"
-  #endif
+  #include "../tft/touch.h"
 #endif
 
 #if ENABLED(LCD_BED_LEVELING) && ANY(PROBE_MANUALLY, MESH_BED_LEVELING)
@@ -410,4 +408,4 @@ void menu_probe_level() {
   END_MENU();
 }
 
-#endif // HAS_MARLINUI_MENU && (HAS_LEVELING || HAS_BED_PROBE)
+#endif // HAS_MARLINUI_MENU && (HAS_LEVELING || HAS_BED_PROBE || ASSISTED_TRAMMING_WIZARD || LCD_BED_TRAMMING)

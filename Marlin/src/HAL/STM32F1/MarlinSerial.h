@@ -28,6 +28,29 @@
 #include "../../inc/MarlinConfigPre.h"
 #include "../../core/serial_hook.h"
 
+#ifdef SERIAL_USB
+  typedef ForwardSerial1Class< USBSerial > DefaultSerial1;
+  extern DefaultSerial1 MSerial0;
+  #if HAS_SD_HOST_DRIVE
+    #define UsbSerial MarlinCompositeSerial
+  #else
+    #define UsbSerial MSerial0
+  #endif
+#endif
+
+#define SERIAL_INDEX_MIN 1
+#if ANY(STM32_HIGH_DENSITY, STM32_XL_DENSITY)
+  #define SERIAL_INDEX_MAX 5
+#else
+  #define SERIAL_INDEX_MAX 3
+#endif
+#define USB_SERIAL_PORT(...) UsbSerial
+#include "../shared/serial_ports.h"
+
+#if defined(LCD_SERIAL_PORT) && ANY(HAS_DGUS_LCD, EXTENSIBLE_UI)
+  #define LCD_SERIAL_TX_BUFFER_FREE() LCD_SERIAL.availableForWrite()
+#endif
+
 // Increase priority of serial interrupts, to reduce overflow errors
 #define UART_IRQ_PRIO 1
 

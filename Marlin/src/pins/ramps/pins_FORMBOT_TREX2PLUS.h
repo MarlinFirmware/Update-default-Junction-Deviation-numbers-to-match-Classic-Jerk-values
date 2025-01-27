@@ -139,7 +139,7 @@
 //
 // Misc. Functions
 //
-#define SDSS                                  53
+#define SD_SS_PIN                             53
 #ifndef LED_PIN
   #define LED_PIN                             13  // The Formbot v 1 board has almost no unassigned pins.
 #endif                                            // The Board's LED is a good place to connect the Max7219 Matrix.

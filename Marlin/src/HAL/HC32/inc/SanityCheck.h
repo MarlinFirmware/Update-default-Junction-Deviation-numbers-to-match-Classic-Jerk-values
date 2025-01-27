@@ -94,7 +94,7 @@
     #error "SERIAL_DMA requires USART_RX_DMA_SUPPORT to be enabled in the arduino core."
   #endif
 
-  // Before arduino core version 1.2.0, USART_RX_DMA_SUPPORT did not implement 
+  // Before arduino core version 1.2.0, USART_RX_DMA_SUPPORT did not implement
   // core_hook_usart_rx_irq, which is required for the emergency parser.
   // With 1.2.0, this was fixed (see https://github.com/shadow578/framework-arduino-hc32f46x/pull/25).
   #if ENABLED(EMERGENCY_PARSER) && ARDUINO_CORE_VERSION_INT < GET_VERSION_INT(1, 2, 0)

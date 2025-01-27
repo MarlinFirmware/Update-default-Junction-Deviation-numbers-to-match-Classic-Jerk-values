@@ -155,7 +155,7 @@ void GcodeSuite::M115() {
     cap_line(F("AUTOLEVEL"), ENABLED(HAS_AUTOLEVEL));
 
     // RUNOUT (M412, M600)
-    cap_line(F("RUNOUT"), ENABLED(FILAMENT_RUNOUT_SENSOR));
+    cap_line(F("RUNOUT"), ENABLED(HAS_FILAMENT_SENSOR));
 
     // Z_PROBE (G30)
     cap_line(F("Z_PROBE"), ENABLED(HAS_BED_PROBE));
@@ -194,7 +194,7 @@ void GcodeSuite::M115() {
 
     // MULTI_VOLUME (M21 S/M21 U)
     #if HAS_MEDIA
-      cap_line(F("MULTI_VOLUME"), ENABLED(MULTI_VOLUME));
+      cap_line(F("MULTI_VOLUME"), ENABLED(HAS_MULTI_VOLUME));
     #endif
 
     // REPEAT (M808)

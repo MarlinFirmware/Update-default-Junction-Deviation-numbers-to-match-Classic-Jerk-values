@@ -155,7 +155,12 @@ namespace LanguageNarrow_an {
   LSTR MSG_AUTORETRACT                    = _UxGT("Retraccion auto.");
   LSTR MSG_FILAMENTCHANGE                 = _UxGT("Cambear filamento");
   LSTR MSG_FILAMENTCHANGE_E               = _UxGT("Cambear filamento *");
-  LSTR MSG_ATTACH_MEDIA                   = _UxGT("Encetan. tarcheta");
+  #if HAS_MULTI_VOLUME
+    LSTR MSG_ATTACH_SD_MEDIA              = _UxGT("Encetan. SD");
+    LSTR MSG_ATTACH_USB_MEDIA             = _UxGT("Encetan. USB");
+  #else
+    LSTR MSG_ATTACH_MEDIA                 = _UxGT("Encetan. SD");
+  #endif
   LSTR MSG_CHANGE_MEDIA                   = _UxGT("Cambiar tarcheta");
   LSTR MSG_ZPROBE_OUT                     = _UxGT("Sonda Z fuera");
   LSTR MSG_BLTOUCH_RESET                  = _UxGT("Reset BLTouch");

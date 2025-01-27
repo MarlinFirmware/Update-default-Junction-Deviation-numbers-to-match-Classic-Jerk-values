@@ -35,73 +35,16 @@
 #include "fastio.h"
 //#include "Servo.h"
 #include "watchdog.h"
-#include "MarlinSerial.h"
 
 #include "../../inc/MarlinConfigPre.h"
 
 #include <stdint.h>
 
-// ------------------------
-// Serial ports
-// ------------------------
+//
+// Serial Ports
+//
 
-#include "../../core/serial_hook.h"
-typedef ForwardSerial1Class< decltype(Serial) > DefaultSerial1;
-extern DefaultSerial1 MSerial0;
-
-#define _MSERIAL(X) MSerial##X
-#define MSERIAL(X) _MSERIAL(X)
-
-#if SERIAL_PORT == -1
-  #define MYSERIAL1 MSerial0
-#elif WITHIN(SERIAL_PORT, 0, 6)
-  #define MYSERIAL1 MSERIAL(SERIAL_PORT)
-#else
-  #error "SERIAL_PORT must be from 0 to 6. You can also use -1 if the board supports Native USB."
-#endif
-
-#ifdef SERIAL_PORT_2
-  #if SERIAL_PORT_2 == -1
-    #define MYSERIAL2 MSerial0
-  #elif WITHIN(SERIAL_PORT_2, 0, 6)
-    #define MYSERIAL2 MSERIAL(SERIAL_PORT_2)
-  #else
-    #error "SERIAL_PORT_2 must be from 0 to 6. You can also use -1 if the board supports Native USB."
-  #endif
-#endif
-
-#ifdef SERIAL_PORT_3
-  #if SERIAL_PORT_3 == -1
-    #define MYSERIAL3 MSerial0
-  #elif WITHIN(SERIAL_PORT_3, 0, 6)
-    #define MYSERIAL3 MSERIAL(SERIAL_PORT_3)
-  #else
-    #error "SERIAL_PORT_3 must be from 0 to 6. You can also use -1 if the board supports Native USB."
-  #endif
-#endif
-
-#ifdef MMU2_SERIAL_PORT
-  #if MMU2_SERIAL_PORT == -1
-    #define MMU2_SERIAL MSerial0
-  #elif WITHIN(MMU2_SERIAL_PORT, 0, 6)
-    #define MMU2_SERIAL MSERIAL(MMU2_SERIAL_PORT)
-  #else
-    #error "MMU2_SERIAL_PORT must be from 0 to 6. You can also use -1 if the board supports Native USB."
-  #endif
-#endif
-
-#ifdef LCD_SERIAL_PORT
-  #if LCD_SERIAL_PORT == -1
-    #define LCD_SERIAL MSerial0
-  #elif WITHIN(LCD_SERIAL_PORT, 0, 6)
-    #define LCD_SERIAL MSERIAL(LCD_SERIAL_PORT)
-  #else
-    #error "LCD_SERIAL_PORT must be from 0 to 6. You can also use -1 if the board supports Native USB."
-  #endif
-  #if HAS_DGUS_LCD
-    #define SERIAL_GET_TX_BUFFER_FREE() LCD_SERIAL.availableForWrite()
-  #endif
-#endif
+#include "MarlinSerial.h"
 
 // ------------------------
 // Defines

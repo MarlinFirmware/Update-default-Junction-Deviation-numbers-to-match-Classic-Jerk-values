@@ -614,9 +614,10 @@
         default: break;
       }
     }
-  #endif
+  #endif // TMC2160 || TMC5160
 
   #if HAS_TMC220x
+
     static void _tmc_status(TMC2208Stepper &st, const TMC_debug_enum i) {
       switch (i) {
         case TMC_PWM_SCALE_SUM: SERIAL_ECHO(st.pwm_scale_sum()); break;
@@ -664,7 +665,8 @@
         }
       }
     #endif
-  #endif
+
+  #endif // HAS_TMC220x
 
   #if HAS_DRIVER(TMC2660)
     static void _tmc_parse_drv_status(TMC2660Stepper, const TMC_drv_status_enum) { }

@@ -1435,7 +1435,7 @@ void RTS::handleData() {
           // pause_resume_selected = true;
         }
         else {
-          #if ENABLED(FILAMENT_RUNOUT_SENSOR)
+          #if HAS_FILAMENT_SENSOR
             bool runouton = false;
             if (getFilamentRunoutState()) {
               #if NUM_RUNOUT_SENSORS > 1

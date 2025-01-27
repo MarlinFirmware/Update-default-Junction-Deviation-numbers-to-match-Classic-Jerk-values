@@ -1,6 +1,6 @@
 /**
  * Marlin 3D Printer Firmware
- * Copyright (c) 2020 MarlinFirmware [https://github.com/MarlinFirmware/Marlin]
+ * Copyright (c) 2024 MarlinFirmware [https://github.com/MarlinFirmware/Marlin]
  *
  * Based on Sprinter and grbl.
  * Copyright (c) 2011 Camiel Gubbels / Erik van der Zalm
@@ -22,15 +22,6 @@
 #pragma once
 
 #define BOARD_INFO_NAME "FYSETC S6 2.0"
-
-//
-// EEPROM Emulation
-//
-#if NO_EEPROM_SELECTED
-  #undef NO_EEPROM_SELECTED
-  //#define FLASH_EEPROM_EMULATION
-  #define I2C_EEPROM
-#endif
 
 //
 // Steppers
@@ -60,4 +51,4 @@
   #define TMC_SPI_SCK                       PE12
 #endif
 
-#include "pins_FYSETC_S6.h"
+#include "pins_FYSETC_S6_common.h"

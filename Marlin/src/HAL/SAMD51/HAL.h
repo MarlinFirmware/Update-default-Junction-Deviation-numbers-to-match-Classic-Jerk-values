@@ -34,72 +34,7 @@
 
 #ifdef ADAFRUIT_GRAND_CENTRAL_M4
   #include "MarlinSerial_AGCM4.h"
-
-  // Serial ports
-  typedef ForwardSerial1Class< decltype(Serial) > DefaultSerial1;
-  typedef ForwardSerial1Class< decltype(Serial1) > DefaultSerial2;
-  typedef ForwardSerial1Class< decltype(Serial2) > DefaultSerial3;
-  typedef ForwardSerial1Class< decltype(Serial3) > DefaultSerial4;
-  typedef ForwardSerial1Class< decltype(Serial4) > DefaultSerial5;
-  extern DefaultSerial1 MSerial0;
-  extern DefaultSerial2 MSerial1;
-  extern DefaultSerial3 MSerial2;
-  extern DefaultSerial4 MSerial3;
-  extern DefaultSerial5 MSerial4;
-
-  #define __MSERIAL(X) MSerial##X
-  #define _MSERIAL(X) __MSERIAL(X)
-  #define MSERIAL(X) _MSERIAL(INCREMENT(X))
-
-  #if SERIAL_PORT == -1
-    #define MYSERIAL1 MSerial0
-  #elif WITHIN(SERIAL_PORT, 0, 3)
-    #define MYSERIAL1 MSERIAL(SERIAL_PORT)
-  #else
-    #error "SERIAL_PORT must be from 0 to 3. You can also use -1 if the board supports Native USB."
-  #endif
-
-  #ifdef SERIAL_PORT_2
-    #if SERIAL_PORT_2 == -1
-      #define MYSERIAL2 MSerial0
-    #elif WITHIN(SERIAL_PORT_2, 0, 3)
-      #define MYSERIAL2 MSERIAL(SERIAL_PORT_2)
-    #else
-      #error "SERIAL_PORT_2 must be from 0 to 3. You can also use -1 if the board supports Native USB."
-    #endif
-  #endif
-
-  #ifdef SERIAL_PORT_3
-    #if SERIAL_PORT_3 == -1
-      #define MYSERIAL3 MSerial0
-    #elif WITHIN(SERIAL_PORT_3, 0, 3)
-      #define MYSERIAL3 MSERIAL(SERIAL_PORT_3)
-    #else
-      #error "SERIAL_PORT_3 must be from 0 to 3. You can also use -1 if the board supports Native USB."
-    #endif
-  #endif
-
-  #ifdef MMU_SERIAL_PORT
-    #if MMU_SERIAL_PORT == -1
-      #define MMU_SERIAL MSerial0
-    #elif WITHIN(MMU_SERIAL_PORT, 0, 3)
-      #define MMU_SERIAL MSERIAL(MMU_SERIAL_PORT)
-    #else
-      #error "MMU_SERIAL_PORT must be from 0 to 3. You can also use -1 if the board supports Native USB."
-    #endif
-  #endif
-
-  #ifdef LCD_SERIAL_PORT
-    #if LCD_SERIAL_PORT == -1
-      #define LCD_SERIAL MSerial0
-    #elif WITHIN(LCD_SERIAL_PORT, 0, 3)
-      #define LCD_SERIAL MSERIAL(LCD_SERIAL_PORT)
-    #else
-      #error "LCD_SERIAL_PORT must be from 0 to 3. You can also use -1 if the board supports Native USB."
-    #endif
-  #endif
-
-#endif // ADAFRUIT_GRAND_CENTRAL_M4
+#endif
 
 typedef int8_t pin_t;
 

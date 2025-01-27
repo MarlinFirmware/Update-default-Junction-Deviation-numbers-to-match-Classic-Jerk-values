@@ -1,0 +1,33 @@
+#!/usr/bin/env bash
+#
+#  mfenvs   Print the current board and environment information
+#           Output -> "SHORT_NAME (###): [ env1 env2 env3 ... ]"
+#
+
+[[ -d Marlin/src ]] || { echo "Please 'cd' to the Marlin repo root." ; exit 1 ; }
+which pio >/dev/null || { echo "Make sure 'pio' is in your execution PATH." ; exit 1 ;  }
+
+errout() { echo -e "\033[0;31m$1\033[0m" ; }
+
+case $(uname | tr '[:upper:]' '[:lower:]') in
+  darwin) SYS='mac' ;;
+  *linux) SYS='lin' ;;
+    win*) SYS='win' ;;
+   msys*) SYS='win' ;;
+ cygwin*) SYS='win' ;;
+  mingw*) SYS='win' ;;
+       *) SYS='uni' ;;
+esac
+
+ACODE='/^[[:space:]]*#define[[:space:]]MOTHERBOARD[[:space:]]/ { sub(/^BOARD_/, "", $3); print $3 }'
+MB=$(awk "$ACODE" Marlin/Configuration.h 2>/dev/null)
+[[ -z $MB ]] && MB=$(awk "$ACODE" Marlin/Config.h 2>/dev/null)
+[[ -z $MB ]] && { echo "Error - Can't read MOTHERBOARD setting." ; exit 1 ; }
+BLINE=$( grep -E "define\s+BOARD_$MB\b" Marlin/src/core/boards.h )
+BNUM=$( sed -E 's/^.+BOARD_[^ ]+ +([0-9]+).+$/\1/' <<<"$BLINE" )
+[[ -z $BNUM ]] && { echo "Error - Can't find BOARD_$MB in core/boards.h." ; exit 1 ; }
+ENVS=( $( grep -EA1 "MB\(.*\b$MB\b.*\)" Marlin/src/pins/pins.h | grep -E "#include.+//.+(env|$SYS):[^ ]+" | grep -oE "(env|$SYS):[^ ]+" | sed -E "s/(env|$SYS)://" ) )
+[[ -z $ENVS ]] && { errout "Error - Can't find target(s) for $MB ($BNUM)." ; exit 1 ; }
+ECOUNT=${#ENVS[*]}
+[[ $ECOUNT == 1 ]] && EOUT=$ENVS || EOUT="${ENVS[@]}"
+echo "$MB ($BNUM): [ $EOUT ]"

@@ -40,7 +40,7 @@
 //
 #if ANY(NO_EEPROM_SELECTED, FLASH_EEPROM_EMULATION)
   #define FLASH_EEPROM_EMULATION
-  #define EEPROM_PAGE_SIZE     (0x800U)           // 2K
+  #define EEPROM_PAGE_SIZE                0x800U  // 2K
   #define EEPROM_START_ADDRESS (0x8000000UL + (STM32_FLASH_SIZE) * 1024UL - (EEPROM_PAGE_SIZE) * 2UL)
   #define MARLIN_EEPROM_SIZE    EEPROM_PAGE_SIZE  // 2K
 #endif
@@ -254,8 +254,7 @@
 //
 #define SDCARD_CONNECTION                ONBOARD
 #define ONBOARD_SPI_DEVICE                     2  // Maple
-#define SDSS                           SD_SS_PIN
-#define ONBOARD_SD_CS_PIN              SD_SS_PIN
+#define ONBOARD_SD_CS_PIN            EXP2_04_PIN
 #define SD_DETECT_PIN                EXP2_07_PIN
 #define NO_SD_HOST_DRIVE
 
@@ -264,4 +263,4 @@
 #define SD_SCK_PIN                   EXP2_02_PIN
 #define SD_MISO_PIN                  EXP2_01_PIN
 #define SD_MOSI_PIN                  EXP2_06_PIN
-#define SD_SS_PIN                    EXP2_04_PIN
+#define SD_SS_PIN              ONBOARD_SD_CS_PIN

@@ -51,6 +51,8 @@
   #define HAS_FILAMENT_SWITCH 1
 #endif
 
+#define FILAMENT_IS_OUT(N...) (READ(FIL_RUNOUT##N##_PIN) == FIL_RUNOUT##N##_STATE)
+
 typedef Flags<
           #if NUM_MOTION_SENSORS > NUM_RUNOUT_SENSORS
             NUM_MOTION_SENSORS

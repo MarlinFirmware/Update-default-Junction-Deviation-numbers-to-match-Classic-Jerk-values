@@ -51,7 +51,7 @@
 #define E0_DIR_PIN                            37
 #define E0_ENABLE_PIN                         45
 
-#define SDSS                                  16
+#define SD_SS_PIN                             16
 
 #ifndef FIL_RUNOUT_PIN
   #define FIL_RUNOUT_PIN                      34  // X_MAX unless overridden

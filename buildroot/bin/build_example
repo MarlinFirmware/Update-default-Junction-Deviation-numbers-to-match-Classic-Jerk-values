@@ -4,6 +4,8 @@
 #
 #  build_example  -b|--base=<path>    - Configurations root folder (e.g., ./.pio/build-BRANCH)
 #                 -c|--config=<rel>   - Sub-path of the configs to build (within config/examples)
+#                [-n|--index=N]       - Which environment to build, by index (Based on pins.h comments)
+#                [-m|--many]          - Build all the board's environments listed in pins.h
 #                [-e|--export=N]      - Use CONFIG_EXPORT N to export the config to the export location
 #                [-a|--archive]       - Archive the build (to the export location)
 #                [-o|--output]        - Redirect export / archiving to another location
@@ -19,6 +21,8 @@ usage() { echo "Usage:
 
 build_example  -b|--base=<path>    - Configurations root folder (e.g., ./.pio/build-BRANCH)
                -c|--config=<rel>   - Sub-path of the configs to build (within config/examples)
+              [-n|--index=N]       - Which environment to build, by index (Based on pins.h comments)
+              [-m|--many]          - Build all the board's environments listed in pins.h
               [-e|--export=N]      - Use CONFIG_EXPORT N to export the config to the export location
               [-a|--archive]       - Archive the build (to the export location)
               [-o|--output]        - Redirect export / archiving to another location
@@ -50,15 +54,20 @@ REVEAL=
 EXPNUM=
 NOFAIL=
 OUTBASE=
-while getopts 'ab:c:e:fhio:r-:' OFLAG; do
+BUILDINDEX=1
+MANY=
+
+while getopts 'ab:c:e:fhmn:o:r-:' OFLAG; do
   case "${OFLAG}" in
     a) ARCHIVE=1 ;;
     b) BASE="${OPTARG%/}" ;;
     c) CONFIG="${OPTARG%/}" ;;
     e) EXPNUM="$OPTARG" ;;
-    o) OUTBASE="${OPTARG%/}" ;;
-    h) EXIT_USAGE=1 ; break ;;
     f) NOFAIL=1 ;;
+    h) EXIT_USAGE=1 ; break ;;
+    m) MANY=1 ;;
+    n) BUILDINDEX="$OPTARG" ;;
+    o) OUTBASE="${OPTARG%/}" ;;
     r) REVEAL=1 ;;
     -) ONAM="${OPTARG%%=*}" ; OVAL="${OPTARG#*=}"
        case "$ONAM" in
@@ -66,6 +75,8 @@ while getopts 'ab:c:e:fhio:r-:' OFLAG; do
           allow) ALLOW=1 ;;
            base) BASE="${OVAL%/}" ;;
          config) CONFIG="${OVAL%/}" ;;
+           many) MANY=1 ;;
+          index) BUILDINDEX="$OVAL" ;;
          export) EXPNUM="$OVAL" ;;
          output) OUTBASE="${OVAL%/}" ;;
            help) EXIT_USAGE=1 ; break ;;
@@ -154,11 +165,12 @@ ENAME=("-name" "marlin_config.json" \
   "-o" "-name" "schema.yml")
 
 # Possible built firmware names (in the build folder)
-BNAME=("-name" 'firmware*.hex' \
+BNAME=("-name" "firmware*.hex" \
   "-o" "-name" "firmware*.bin" \
   "-o" "-name" "project*.bin" \
   "-o" "-name" "Robin*.bin" \
-  "-o" "-name" "main_*.bin")
+  "-o" "-name" "main_*.bin" \
+  "-o" "-name" "MarlinSimulator*")
 
 mkdir -p "$BUILD"
 
@@ -166,64 +178,113 @@ mkdir -p "$BUILD"
 if [[ $EXPNUM ]]; then
   opt_set CONFIG_EXPORT $EXPNUM
   # Clean up old exports
-  find "$BUILD" \( "${ENAME[@]}" \) -exec rm "{}" \;
+  find "$BUILD" -type f \( "${ENAME[@]}" \) -exec rm "{}" \;
 fi
 
-((ARCHIVE)) && find "$BUILD" \( "${BNAME[@]}" \) -exec rm "{}" \;
+((ARCHIVE)) && find "$BUILD" -type f \( "${BNAME[@]}" \) -exec rm "{}" \;
 
-set +e
+echo "Building example $CONFIG..."
 
-echo "Building example $CONFIG ..."
-mftest -s -a -n1 ; ERR=$?
+# If doing many builds get a list of all environment names,
+# which also gives us the number of environments.
+if ((MANY)); then
+  ENVLIST=$(mfenvs) # BOARD_NAME_STRING (1234): [ env1 env2 env3 ... ]
+  ENVLIST=${ENVLIST##*: [ }
+  ENVARRAY=(${ENVLIST% ]})
+  ENVCOUNT=${#ENVARRAY[*]}
+  ((ENVCOUNT)) || { alrt "mfenvs failed for this board." ; exit 1 ; }
+  echo "Found $ENVCOUNT environment(s): ${ENVARRAY[*]}"
+fi
 
-((ERR)) && alrt "Failed ($ERR)" || annc "Success"
+# Run one or more builds based on --many
+# Build all from BUILDINDEX onward (usually 1) meaning ALL.
+# MANY with a BUILDINDEX may be useful for continuing an interrupted build.
 
-set -e
+while ((1)); do
+  set +e
 
-if [[ $ERR -gt 0 ]]; then
+  echo "Building example $CONFIG ($BUILDINDEX)..."
 
-  # Error? For --nofail simply log. Otherwise return the error.
-  if [[ -n $NOFAIL ]]; then
-    date +"%F %T [FAIL] $CONFIG" >>./.pio/error-log.txt
+  # Run a build and record the error number
+  mftest -s -a -n$BUILDINDEX ; ERR=$?
+
+  # "Index out of range" can fail without an error
+  ((MANY)) && ((ERR == 66)) && ERR=0 && break  # "index out of range"
+
+  set -e
+
+  if [[ $ERR -gt 0 ]]; then
+
+    alrt "Failed ($ERR)"
+
+    # Error? For --nofail simply log. Otherwise return the error.
+    if [[ -n $NOFAIL ]]; then
+      date +"%F %T [FAIL] $CONFIG ($BUILDINDEX)" >>./.pio/error-log.txt
+    else
+      exit $ERR
+    fi
+
   else
-    exit $ERR
-  fi
 
-else
+    annc "Success"
 
-  # Copy exports back to the configs
-  if [[ -n $EXPNUM ]]; then
-    annc "Exporting $EXPNUM"
-    [[ -f Marlin/Config-export.h ]] && { cp Marlin/Config-export.h "$ARCSUB"/Config.h ; }
-    find "$BUILD" \( "${ENAME[@]}" \) -exec cp "{}" "$ARCSUB" \;
-  fi
+    # Copy exports back to the configs
+    if [[ -n $EXPNUM ]]; then
+      annc "Exporting $EXPNUM"
+      [[ -f Marlin/Config-export.h ]] && { cp Marlin/Config-export.h "$ARCSUB"/Config.h ; }
+      find "$BUILD" -type f \( "${ENAME[@]}" \) -exec cp "{}" "$ARCSUB" \;
+    fi
 
-  # Copy potential firmware files into the config folder
-  # TODO: Consider firmware that needs an STM32F4_UPDATE folder.
-  #       Currently only BOARD_CREALITY_F401RE env:STM32F401RE_creality
-  if ((ARCHIVE)); then
-    annc "Archiving"
-    rm -f "$ARCSUB"/*.tar.gz "$ARCSUB"/*.sha256.txt
-    find "$BUILD" \( "${BNAME[@]}" \) -exec sh -c '
-      ARCSUB="$1"
-      CONFIG="$2"
-      shift 2
-      for FILE in "$@"; do
-        cd "${FILE%/*}"
-        NAME=${FILE##*/}
-        SHRT=${NAME%.*}
+    # When building many, create sub-folders for each build env name
+    if [[ -n $MANY && $ENVCOUNT -gt 1 ]]; then
+      ENV=${ENVARRAY[BUILDINDEX-1]}
+      ARCENVSUB="$ARCSUB/$ENV"
+    else
+      ARCENVSUB="$ARCSUB"
+    fi
+
+    # Copy potential firmware files into the config folder
+    # TODO: Consider firmware that needs an STM32F4_UPDATE folder.
+    #       Currently only BOARD_CREALITY_F401RE env:STM32F401RE_creality
+    if ((ARCHIVE)); then
+      annc "Archiving"
+      find "$BUILD" -type f \( "${BNAME[@]}" \) -exec sh -c '
+        ARCDIR="$1" ; CONFIG="$2" ; FILE="$3" ; shift 3
+        NAME=${FILE##*/} ; SHRT=${NAME%.*} ; DIR=${FILE%/*}
+        ZIPX=
+        if [[ $CONFIG == *Simulator* ]]; then
+          case $(uname | tr '[:upper:]' '[:lower:]') in
+            darwin) SUB="macOS" ; ZIPX="-X" ;;
+            *linux) SUB="Linux" ;;
+              win*) SUB="Windows" ;;
+             msys*) SUB="Windows" ;;
+           cygwin*) SUB="Windows" ;;
+            mingw*) SUB="Windows" ;;
+                 *) SUB='Unix' ;;
+          esac
+          ARCH=$(uname -m | tr '[:lower:]' '[:upper:]')
+          ARCDIR="$ARCDIR/$SUB-$ARCH"
+        fi
+        mkdir -p "$ARCDIR"
+        rm -f "$ARCDIR"/*.zip "$ARCDIR"/*.sha256.txt
+        cd "$DIR"
         SHASUM=$(sha256sum "$NAME" | cut -d" " -f1)
-        tar -czf "$ARCSUB/$SHRT.tar.gz" "$NAME"
-        echo "$CONFIG\n$SHASUM" > "$ARCSUB/$NAME.sha256.txt"
-        rm "$NAME"
+        echo "$CONFIG\n$SHASUM" > "$ARCDIR/$NAME.sha256.txt"
+        zip $ZIPX "$ARCDIR/$SHRT.zip" "$NAME" && rm "$NAME"
         cd - >/dev/null
-      done
-    ' sh "$ARCSUB" "$CONFIG" {} +
+      ' sh "$ARCENVSUB" "$CONFIG" {} +
+    fi
+
+    # Reveal the configs after the build, if requested
+    ((REVEAL)) && { annc "Revealing $ARCENVSUB" ; open "$ARCENVSUB" ; }
+
   fi
 
-  # Reveal the configs after the build, if requested
-  ((REVEAL)) && { annc "Revealing $ARCSUB" ; open "$ARCSUB" ; }
+  ((MANY)) || break # Only one build if not --many
 
-fi
+  # Set up for the next build, if there is one
+  ((++BUILDINDEX > ENVCOUNT)) && break
+
+done
 
 exit 0

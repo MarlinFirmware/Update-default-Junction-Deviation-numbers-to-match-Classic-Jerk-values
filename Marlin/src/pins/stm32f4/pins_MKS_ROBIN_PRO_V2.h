@@ -37,7 +37,7 @@
 //#define SRAM_EEPROM_EMULATION                   // Use BackSRAM-based EEPROM emulation
 //#define FLASH_EEPROM_EMULATION                  // Use Flash-based EEPROM emulation
 #define I2C_EEPROM
-#define MARLIN_EEPROM_SIZE                0x1000  // 4K
+#define MARLIN_EEPROM_SIZE               0x1000U  // 4K
 
 #define HAS_OTG_USB_HOST_SUPPORT                  // USB Flash Drive support
 
@@ -219,8 +219,7 @@
     #define SD_SPI MARLIN_SPI(HardwareSPI3, PC9)
   #else
     #define ENABLE_SPI3
-    #define SD_SS_PIN                       -1
-    #define SDSS                            PC9
+    #define SD_SS_PIN                       PC9
     #define SD_SCK_PIN                      PC10
     #define SD_MISO_PIN                     PC11
     #define SD_MOSI_PIN                     PC12
@@ -261,7 +260,7 @@
 /*
 #if SD_CONNECTION_IS(LCD)
   #define ENABLE_SPI1
-  #define SDSS                       EXP2_04_PIN
+  #define SD_SS_PIN                  EXP2_04_PIN
   #define SD_SCK_PIN                 EXP2_02_PIN
   #define SD_MISO_PIN                EXP2_01_PIN
   #define SD_MOSI_PIN                EXP2_06_PIN

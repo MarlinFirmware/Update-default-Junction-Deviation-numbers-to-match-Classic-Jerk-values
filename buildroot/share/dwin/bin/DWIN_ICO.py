@@ -54,8 +54,7 @@
 #   does not define a name for 39. This is specially handled to
 #   prevent reordering stock icons.
 
-import os
-import struct
+import os, struct
 from PIL import Image
 
 def getJpegResolution(jpegFile):

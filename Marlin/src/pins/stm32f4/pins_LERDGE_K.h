@@ -37,7 +37,7 @@
   #define SOFT_I2C_EEPROM                         // Force the use of Software I2C
   #define I2C_SCL_PIN                       PG14
   #define I2C_SDA_PIN                       PG13
-  #define MARLIN_EEPROM_SIZE             0x10000
+  #define MARLIN_EEPROM_SIZE            0x10000U  // 64K
 #endif
 
 #define HAS_OTG_USB_HOST_SUPPORT                  // USB Flash Drive support
@@ -209,7 +209,6 @@
   #define SD_MISO_PIN                       PC8
   #define SD_MOSI_PIN                       PD2
   #define SD_SS_PIN                         PC11
-  #define SDSS                              PC11
 #endif
 
 //

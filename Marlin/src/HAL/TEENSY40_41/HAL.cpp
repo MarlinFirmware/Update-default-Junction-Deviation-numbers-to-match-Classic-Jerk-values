@@ -202,18 +202,13 @@ uint16_t MarlinHAL::adc_value() {
 // Free Memory Accessor
 // ------------------------
 
-#define __bss_end _ebss
-
 extern "C" {
-  extern char __bss_end;
-  extern char __heap_start;
-  extern void* __brkval;
+  // Reference for Teensy 4.x: https://forum.pjrc.com/index.php?threads/how-to-display-free-ram.33443/#post-275013
+  extern unsigned long _heap_end;
+  extern char *__brkval;
 
-  // Doesn't work on Teensy 4.x
   uint32_t freeMemory() {
-    uint32_t free_memory;
-    free_memory = ((uint32_t)&free_memory) - (((uint32_t)__brkval) ?: ((uint32_t)&__bss_end));
-    return free_memory;
+    return (char *)&_heap_end - __brkval;
   }
 }
 

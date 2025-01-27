@@ -236,7 +236,7 @@ enum SovolPage : uint8_t {
   ID_AdvWarn_D      =  49,      ID_AdvWarn_L      =  55 + ID_AdvWarn_D,          // Warning when entering advanced settings
   ID_KillRunaway_D  =  52,      ID_KillRunaway_L  =  55 + ID_KillRunaway_D,      // Thermal runaway
   ID_KillHeat_D     =  53,      ID_KillHeat_L     =  55 + ID_KillHeat_D,         // Thermistor error
-  ID_KillBadTemp_D  =  54,      ID_KillBadTemp_L  =  55 + ID_KillBadTemp_D,      // Heating failed 
+  ID_KillBadTemp_D  =  54,      ID_KillBadTemp_L  =  55 + ID_KillBadTemp_D,      // Heating failed
   ID_KillHome_D     =  55,      ID_KillHome_L     =  55 + ID_KillHome_D,         // Auto-home failed
   ID_Level5_D       =  111,     ID_Level5_L       =   6 + ID_Level5_D,           // Leveling screen 0.05mm
   ID_DriverError_D  =  112,     ID_DriverError_L  =   6 + ID_DriverError_D,      // Driver error

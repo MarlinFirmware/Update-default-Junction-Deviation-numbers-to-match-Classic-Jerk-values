@@ -171,8 +171,8 @@
 //
 // Misc. Functions
 //
-#ifndef SDSS
-  #define SDSS                                53
+#ifndef SD_SS_PIN
+  #define SD_SS_PIN                           53
 #endif
 
 #define LED_PIN                               13
@@ -187,7 +187,7 @@
 
 #if HAS_TMC_UART
   /**
-   * TMC2209 stepper drivers
+   * TMC2208/TMC2209 stepper drivers
    *
    * Hardware serial communication ports.
    * If undefined software serial is used according to the pins below
@@ -335,7 +335,7 @@
 
 #if ENABLED(ZONESTAR_12864LCD)
   #define LCDSCREEN_NAME "ZONESTAR LCD12864"
-  #define LCD_SDSS                            16
+  #define LCD_SDSS_PIN                        16
   #define LCD_PINS_RS                         16  // ST7920 CS          (LCD-4)
   #define LCD_PINS_EN                         23  // ST7920 DAT LCD-R/W (LCD-5)
   #define LCD_PINS_D4                         17  // ST7920 CLK LCD-ENA (LCD-6)
@@ -363,7 +363,7 @@
 
 #if ANY(ZONESTAR_12864OLED, ZONESTAR_12864OLED_SSD1306)
   #define LCDSCREEN_NAME "ZONESTAR 12864OLED"
-  #define LCD_SDSS                            16
+  #define LCD_SDSS_PIN                        16
   #define LCD_PINS_RS                         23  // RESET Pull low for 1s to init
   #define LCD_PINS_DC                         17
   #define DOGLCD_CS                           16  // CS
@@ -503,4 +503,4 @@
  *   ======
  *   | 12 |                (12)  PB6 ** Pin25 ** D12
  *   ======
-*/
+ */

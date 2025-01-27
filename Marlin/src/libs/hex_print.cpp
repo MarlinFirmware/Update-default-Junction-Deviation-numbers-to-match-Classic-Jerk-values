@@ -25,7 +25,6 @@
 #if NEED_HEX_PRINT
 
 #include "hex_print.h"
-#include "../core/serial.h"
 
 static char _hex[] = "0x00000000"; // 0:adr32 2:long 4:adr16 6:word 8:byte
 

@@ -12,11 +12,11 @@ def logmsg(msg, line):
 
 # Print a formatted error
 def err(board, msg):
-  print(f'[ERROR] {board:30} {msg}')
+    print(f"[ERROR] {board:30} {msg}")
 
 # Print a formatted warning
 def warn(board, msg):
-  print(f'[WARNING] {board:30} {msg}')
+    print(f"[WARNING] {board:30} {msg}")
 
 def bshort(board):
     return board.replace('BOARD_', '')
@@ -119,7 +119,7 @@ def boards_checks(argv):
             print(f'[ERROR] Non-matching boards order in pins.h. Expected {bshort(boards_boards[i])} but got {bshort(pins_boards[i])}')
             break
 
-    return ERRS;
+    return ERRS
 
 if __name__ == '__main__':
     ERR_COUNT = boards_checks(sys.argv[1:])

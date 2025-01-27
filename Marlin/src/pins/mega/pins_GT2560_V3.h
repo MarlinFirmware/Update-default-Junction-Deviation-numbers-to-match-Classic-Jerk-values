@@ -149,7 +149,7 @@
 // Misc. Functions
 //
 #define SD_DETECT_PIN                         38
-#define SDSS                                  53
+#define SD_SS_PIN                             53
 #define LED_PIN                               13  // Use 6 (case light) for external LED. 13 is internal (yellow) LED.
 #define PS_ON_PIN                             12
 
