@@ -1882,6 +1882,7 @@ void dwinSetDataDefaults() {
     applyLEDColor();
   #endif
   TERN_(HAS_GCODE_PREVIEW, hmiData.enablePreview = true);
+  TERN_(REVERSIBLE_ENCODER, ui.reverse_encoder = false);
 }
 
 void dwinCopySettingsTo(char * const buff) {
@@ -2698,6 +2699,10 @@ void applyMaxAccel() { planner.set_max_acceleration(hmiValue.axis, menuData.valu
   void setAddRecover()    { setPFloatOnClick(-5, 5, UNITFDIGITS); }
 #endif
 
+#if ENABLED(REVERSIBLE_ENCODER)
+  void toggleReverseEncoder() { toggleCheckboxLine(ui.reverse_encoder); }
+#endif
+
 // Special Menuitem Drawing functions =================================================
 
 void onDrawBack(MenuItem* menuitem, int8_t line) {
@@ -3197,9 +3202,19 @@ void drawControlMenu() {
   updateMenu(controlMenu);
 }
 
+constexpr int advItems = 3 + COUNT_ENABLED( \
+  EEPROM_SETTINGS, HAS_MESH, HAS_BED_PROBE, HAS_HOME_OFFSET, HAS_TRINAMIC_CONFIG, HAS_ESDIAG, \
+  HAS_LOCKSCREEN, EDITABLE_DISPLAY_TIMEOUT, SOUND_MENU_ITEM, POWER_LOSS_RECOVERY, HAS_GCODE_PREVIEW, \
+  PROUI_MEDIASORT, BAUD_RATE_GCODE, HAS_CUSTOM_COLORS, REVERSIBLE_ENCODER) \
+  + (2 * ENABLED(PRINTCOUNTER)) \
+  + (2 * ENABLED(HAS_LCD_BRIGHTNESS)) \
+  + (ENABLED(PIDTEMP) && ANY(PID_AUTOTUNE_MENU, PID_EDIT_MENU)) \
+  + ANY(MPC_EDIT_MENU, MPC_AUTOTUNE_MENU) \
+  + (ENABLED(PIDTEMPBED) && ANY(PID_AUTOTUNE_MENU, PID_EDIT_MENU));
+
 void drawAdvancedSettingsMenu() {
   checkkey = ID_Menu;
-  if (SET_MENU(advancedSettingsMenu, MSG_ADVANCED_SETTINGS, 24)) {
+  if (SET_MENU(advancedSettingsMenu, MSG_ADVANCED_SETTINGS, advItems)) {
     BACK_ITEM(gotoMainMenu);
     #if ENABLED(EEPROM_SETTINGS)
       MENU_ITEM(ICON_WriteEEPROM, MSG_STORE_EEPROM, onDrawMenuItem, writeEEPROM);
@@ -3261,6 +3276,9 @@ void drawAdvancedSettingsMenu() {
     #endif
     #if HAS_CUSTOM_COLORS
       MENU_ITEM(ICON_Scolor, MSG_COLORS_SELECT, onDrawSubMenu, drawSelectColorsMenu);
+    #endif
+    #if ENABLED(REVERSIBLE_ENCODER)
+      EDIT_ITEM(ICON_Motion, MSG_REVERSE_ENCODER, onDrawChkbMenu, toggleReverseEncoder, &ui.reverse_encoder);
     #endif
   }
   ui.reset_status(true);
