@@ -314,12 +314,12 @@ namespace ExtUI {
   //
   uint8_t getTargetFan_percent(const fan_t fan) {
     UNUSED(fan);
-    return TERN0(HAS_FAN, thermalManager.fanSpeedPercent(fan - FAN0));
+    return TERN0(HAS_FAN, fans[fan - FAN0].speed_pct());
   }
 
   uint8_t getActualFan_percent(const fan_t fan) {
     UNUSED(fan);
-    return TERN0(HAS_FAN, thermalManager.scaledFanSpeedPercent(fan - FAN0));
+    return TERN0(HAS_FAN, fans[fan - FAN0].speed_pct_scaled());
   }
 
   //

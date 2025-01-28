@@ -859,9 +859,9 @@ void JyersDWIN::drawStatusArea(const bool icons/*=false*/) {
       fan = -1;
       dwinIconShow(ICON, ICON_FanSpeed, 187, 383);
     }
-    if (thermalManager.fan_speed[0] != fan) {
-      fan = thermalManager.fan_speed[0];
-      dwinDrawIntValue(true, true, 0, DWIN_FONT_STAT, getColor(eeprom_settings.status_area_text, COLOR_WHITE), COLOR_BG_BLACK, 3, 195 + 2 * STAT_CHR_W, 384, thermalManager.fan_speed[0]);
+    if (fans[0].speed != fan) {
+      fan = fans[0].speed;
+      dwinDrawIntValue(true, true, 0, DWIN_FONT_STAT, getColor(eeprom_settings.status_area_text, COLOR_WHITE), COLOR_BG_BLACK, 3, 195 + 2 * STAT_CHR_W, 384, fans[0].speed);
     }
   #endif
 
@@ -2023,10 +2023,10 @@ void JyersDWIN::menuItemHandler(const uint8_t menu, const uint8_t item, bool dra
           case TEMP_FAN:
             if (draw) {
               drawMenuItem(row, ICON_FanSpeed, GET_TEXT_F(MSG_FAN_SPEED));
-              drawFloat(thermalManager.fan_speed[0], row, false, 1);
+              drawFloat(fans[0].speed, row, false, 1);
             }
             else
-              modifyValue(thermalManager.fan_speed[0], MIN_FAN_SPEED, MAX_FAN_SPEED, 1);
+              modifyValue(fans[0].speed, MIN_FAN_SPEED, MAX_FAN_SPEED, 1);
             break;
         #endif
         #if ANY(PIDTEMP, PIDTEMPBED)
@@ -3885,10 +3885,10 @@ void JyersDWIN::menuItemHandler(const uint8_t menu, const uint8_t item, bool dra
           case TUNE_FAN:
             if (draw) {
               drawMenuItem(row, ICON_FanSpeed, GET_TEXT_F(MSG_FAN_SPEED));
-              drawFloat(thermalManager.fan_speed[0], row, false, 1);
+              drawFloat(fans[0].speed, row, false, 1);
             }
             else
-              modifyValue(thermalManager.fan_speed[0], MIN_FAN_SPEED, MAX_FAN_SPEED, 1);
+              modifyValue(fans[0].speed, MIN_FAN_SPEED, MAX_FAN_SPEED, 1);
             break;
         #endif
 
@@ -4612,7 +4612,7 @@ void JyersDWIN::printScreenControl() {
               #if HAS_EXTRUDERS
                 gcode.process_subcommands_now(TS(F("M109 S"), pausetemp));
               #endif
-              TERN_(HAS_FAN, thermalManager.fan_speed[0] = pausefan);
+              TERN_(HAS_FAN, fans[0].speed = pausefan);
               planner.synchronize();
               TERN_(HAS_MEDIA, queue.inject(FPSTR(M24_STR)));
             #endif
@@ -4662,7 +4662,7 @@ void JyersDWIN::popupControl() {
               queue.inject(F("M25"));
               TERN_(HAS_HOTEND, pausetemp = thermalManager.degTargetHotend(0));
               TERN_(HAS_HEATED_BED, pausebed = thermalManager.degTargetBed());
-              TERN_(HAS_FAN, pausefan = thermalManager.fan_speed[0]);
+              TERN_(HAS_FAN, pausefan = fans[0].speed);
               thermalManager.cooldown();
             #endif
           }
@@ -5046,8 +5046,8 @@ void JyersDWIN::screenUpdate() {
           }
         #endif
         #if HAS_FAN
-          if (thermalManager.fan_speed[0] != fanspeed) {
-            fanspeed = thermalManager.fan_speed[0];
+          if (fans[0].speed != fanspeed) {
+            fanspeed = fans[0].speed;
             if (scrollpos <= TEMP_FAN && TEMP_FAN <= scrollpos + MROWS) {
               if (process != Proc_Value || selection != TEMP_HOTEND - scrollpos)
                 drawFloat(fanspeed, TEMP_FAN - scrollpos, false, 1);
@@ -5075,8 +5075,8 @@ void JyersDWIN::screenUpdate() {
           }
         #endif
         #if HAS_FAN
-          if (thermalManager.fan_speed[0] != fanspeed) {
-            fanspeed = thermalManager.fan_speed[0];
+          if (fans[0].speed != fanspeed) {
+            fanspeed = fans[0].speed;
             if (scrollpos <= TUNE_FAN && TUNE_FAN <= scrollpos + MROWS) {
               if (process != Proc_Value || selection != TEMP_HOTEND - scrollpos)
                 drawFloat(fanspeed, TUNE_FAN - scrollpos, false, 1);

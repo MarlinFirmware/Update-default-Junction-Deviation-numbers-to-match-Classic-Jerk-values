@@ -210,9 +210,8 @@ void Power::power_off() {
 
     if (printJobOngoing() || printingIsPaused()) return true;
 
-    #if ENABLED(AUTO_POWER_FANS)
-      FANS_LOOP(i) if (thermalManager.fan_speed[i]) return true;
-    #endif
+    // Do any fans need power?
+    if (TERN0(AUTO_POWER_FANS, Fan::is_power_needed())) return true;
 
     #if ENABLED(AUTO_POWER_E_FANS)
       HOTEND_LOOP() if (thermalManager.autofan_speed[e]) return true;

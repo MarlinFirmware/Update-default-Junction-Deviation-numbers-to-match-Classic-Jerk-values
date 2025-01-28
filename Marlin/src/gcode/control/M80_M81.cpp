@@ -84,8 +84,7 @@ void GcodeSuite::M81() {
   print_job_timer.stop();
 
   #if ALL(HAS_FAN, PROBING_FANS_OFF)
-    thermalManager.fans_paused = false;
-    ZERO(thermalManager.saved_fan_speed);
+    Fan::power_off();
   #endif
 
   TERN_(POWER_LOSS_RECOVERY, recovery.purge()); // Clear PLR on intentional shutdown

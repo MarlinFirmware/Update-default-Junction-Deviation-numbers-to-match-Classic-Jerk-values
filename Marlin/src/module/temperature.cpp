@@ -406,69 +406,8 @@ PGMSTR(str_t_heating_failed, STR_T_HEATING_FAILED);
   uint8_t Temperature::coolerfan_speed = FAN_OFF_PWM;
 #endif
 
-#if ALL(FAN_SOFT_PWM, USE_CONTROLLER_FAN)
-  uint8_t Temperature::soft_pwm_controller_speed = FAN_OFF_PWM;
-#endif
-
-// Init fans according to whether they're native PWM or Software PWM
-#ifdef BOARD_OPENDRAIN_MOSFETS
-  #define _INIT_SOFT_FAN(P) OUT_WRITE_OD(P, ENABLED(FAN_INVERTING) ? LOW : HIGH)
-#else
-  #define _INIT_SOFT_FAN(P) OUT_WRITE(P, ENABLED(FAN_INVERTING) ? LOW : HIGH)
-#endif
-#if ENABLED(FAN_SOFT_PWM)
-  #define _INIT_FAN_PIN(P) _INIT_SOFT_FAN(P)
-#else
-  #define _INIT_FAN_PIN(P) do{ if (PWM_PIN(P)) SET_PWM(P); else _INIT_SOFT_FAN(P); }while(0)
-#endif
-#if ENABLED(FAST_PWM_FAN)
-  #define SET_FAST_PWM_FREQ(P) hal.set_pwm_frequency(pin_t(P), FAST_PWM_FAN_FREQUENCY)
-#else
-  #define SET_FAST_PWM_FREQ(P) NOOP
-#endif
-#define INIT_FAN_PIN(P) do{ _INIT_FAN_PIN(P); SET_FAST_PWM_FREQ(P); }while(0)
-
 // HAS_FAN does not include CONTROLLER_FAN
 #if HAS_FAN
-
-  uint8_t Temperature::fan_speed[FAN_COUNT] = ARRAY_N_1(FAN_COUNT, FAN_OFF_PWM);
-
-  #if ENABLED(EXTRA_FAN_SPEED)
-
-    Temperature::extra_fan_t Temperature::extra_fan_speed[FAN_COUNT] = ARRAY_N_1(FAN_COUNT, FAN_OFF_PWM);
-
-    /**
-     * Handle the M106 P<fan> T<speed> command:
-     *  T1       = Restore fan speed saved on the last T2
-     *  T2       = Save the fan speed, then set to the last T<3-255> value
-     *  T<3-255> = Set the "extra fan speed"
-     */
-    void Temperature::set_temp_fan_speed(const uint8_t fan, const uint16_t command_or_speed) {
-      switch (command_or_speed) {
-        case 1:
-          set_fan_speed(fan, extra_fan_speed[fan].saved);
-          break;
-        case 2:
-          extra_fan_speed[fan].saved = fan_speed[fan];
-          set_fan_speed(fan, extra_fan_speed[fan].speed);
-          break;
-        default:
-          extra_fan_speed[fan].speed = _MIN(command_or_speed, 255U);
-          break;
-      }
-    }
-
-  #endif
-
-  #if ANY(PROBING_FANS_OFF, ADVANCED_PAUSE_FANS_PAUSE)
-    bool Temperature::fans_paused; // = false
-    uint8_t Temperature::saved_fan_speed[FAN_COUNT] = ARRAY_N_1(FAN_COUNT, FAN_OFF_PWM);
-  #endif
-
-  #if ENABLED(ADAPTIVE_FAN_SLOWING)
-    uint8_t Temperature::fan_speed_scaler[FAN_COUNT] = ARRAY_N_1(FAN_COUNT, 128);
-  #endif
-
   /**
    * Set the print fan speed for a target extruder
    */
@@ -487,17 +426,33 @@ PGMSTR(str_t_heating_failed, STR_T_HEATING_FAILED);
 
     if (fan >= FAN_COUNT) return;
 
-    fan_speed[fan] = speed;
+    fans[fan].speed = speed;
 
     #if NUM_REDUNDANT_FANS
       if (fan == 0) {
         for (uint8_t f = REDUNDANT_PART_COOLING_FAN; f < REDUNDANT_PART_COOLING_FAN + NUM_REDUNDANT_FANS; ++f)
-          thermalManager.set_fan_speed(f, speed);
+          fans[f].speed = speed;
       }
     #endif
 
     TERN_(REPORT_FAN_CHANGE, report_fan_speed(fan));
   }
+
+  #if ENABLED(EXTRA_FAN_SPEED)
+    /**
+     * Handle the M106 P<fan> T<speed> command:
+     *  T1       = Restore fan speed saved on the last T2
+     *  T2       = Save the fan speed, then set to the last T<3-255> value
+     *  T<3-255> = Set the "extra fan speed"
+     */
+    void Temperature::set_temp_fan_speed(const uint8_t fan, const uint16_t command_or_speed) {
+      fans[fan].set_temp_speed(command_or_speed);
+      switch (command_or_speed) {
+        case 1 ... 2: set_fan_speed(fan, fans[fan].extra.speed);
+        default: break;
+      }
+    }
+  #endif
 
   #if ENABLED(REPORT_FAN_CHANGE)
     /**
@@ -505,23 +460,8 @@ PGMSTR(str_t_heating_failed, STR_T_HEATING_FAILED);
      */
     void Temperature::report_fan_speed(const uint8_t fan) {
       if (fan >= FAN_COUNT) return;
-      PORT_REDIRECT(SerialMask::All);
-      SERIAL_ECHOLNPGM("M106 P", fan, " S", fan_speed[fan]);
+      fans[fan].report_speed(fan);
     }
-  #endif
-
-  #if ANY(PROBING_FANS_OFF, ADVANCED_PAUSE_FANS_PAUSE)
-
-    void Temperature::set_fans_paused(const bool p) {
-      if (p != fans_paused) {
-        fans_paused = p;
-        if (p)
-          FANS_LOOP(i) { saved_fan_speed[i] = fan_speed[i]; fan_speed[i] = 0; }
-        else
-          FANS_LOOP(i) fan_speed[i] = saved_fan_speed[i];
-      }
-    }
-
   #endif
 
 #endif // HAS_FAN
@@ -653,11 +593,6 @@ volatile bool Temperature::raw_temps_ready = false;
   millis_t Temperature::fan_update_ms = 0;
 #endif
 
-#if ENABLED(FAN_SOFT_PWM)
-  uint8_t Temperature::soft_pwm_amount_fan[FAN_COUNT],
-          Temperature::soft_pwm_count_fan[FAN_COUNT];
-#endif
-
 #if ENABLED(SINGLENOZZLE_STANDBY_TEMP)
   celsius_t Temperature::singlenozzle_temp[EXTRUDERS];
 #endif
@@ -737,34 +672,18 @@ volatile bool Temperature::raw_temps_ready = false;
     const bool isbed = (heater_id == H_BED),
            ischamber = (heater_id == H_CHAMBER);
 
-    #if ENABLED(PIDTEMPCHAMBER)
-      #define C_TERN(T,A,B) ((T) ? (A) : (B))
-    #else
-      #define C_TERN(T,A,B) (B)
-    #endif
-    #if ENABLED(PIDTEMPBED)
-      #define B_TERN(T,A,B) ((T) ? (A) : (B))
-    #else
-      #define B_TERN(T,A,B) (B)
-    #endif
-    #define GHV(C,B,H) C_TERN(ischamber, C, B_TERN(isbed, B, H))
-    #define SHV(V) C_TERN(ischamber, temp_chamber.soft_pwm_amount = V, B_TERN(isbed, temp_bed.soft_pwm_amount = V, temp_hotend[heater_id].soft_pwm_amount = V))
-    #define ONHEATINGSTART() C_TERN(ischamber, printerEventLEDs.onChamberHeatingStart(), B_TERN(isbed, printerEventLEDs.onBedHeatingStart(), printerEventLEDs.onHotendHeatingStart()))
-    #define ONHEATING(S,C,T) C_TERN(ischamber, printerEventLEDs.onChamberHeating(S,C,T), B_TERN(isbed, printerEventLEDs.onBedHeating(S,C,T), printerEventLEDs.onHotendHeating(S,C,T)))
+    #define C_CBH(T,A,B) TERN(PIDTEMPCHAMBER, ((T) ? (A) : (B)), (B))
+    #define B_CBH(T,A,B) TERN(PIDTEMPBED, ((T) ? (A) : (B)), (B))
+    #define CBH(C,B,H) C_CBH(ischamber, C, B_CBH(isbed, B, H))
+    #define SHV(V) C_CBH(ischamber, temp_chamber.soft_pwm_amount = V, B_CBH(isbed, temp_bed.soft_pwm_amount = V, temp_hotend[heater_id].soft_pwm_amount = V))
+    #define ONHEATINGSTART() C_CBH(ischamber, printerEventLEDs.onChamberHeatingStart(), B_CBH(isbed, printerEventLEDs.onBedHeatingStart(), printerEventLEDs.onHotendHeatingStart()))
+    #define ONHEATING(S,C,T) C_CBH(ischamber, printerEventLEDs.onChamberHeating(S,C,T), B_CBH(isbed, printerEventLEDs.onBedHeating(S,C,T), printerEventLEDs.onHotendHeating(S,C,T)))
 
     #define WATCH_PID DISABLED(NO_WATCH_PID_TUNING) && (ALL(WATCH_CHAMBER, PIDTEMPCHAMBER) || ALL(WATCH_BED, PIDTEMPBED) || ALL(WATCH_HOTENDS, PIDTEMP))
 
     #if WATCH_PID
-      #if ALL(THERMAL_PROTECTION_CHAMBER, PIDTEMPCHAMBER)
-        #define C_GTV(T,A,B) ((T) ? (A) : (B))
-      #else
-        #define C_GTV(T,A,B) (B)
-      #endif
-      #if ALL(THERMAL_PROTECTION_BED, PIDTEMPBED)
-        #define B_GTV(T,A,B) ((T) ? (A) : (B))
-      #else
-        #define B_GTV(T,A,B) (B)
-      #endif
+      #define C_GTV(T,A,B) TERN(THERMAL_PROTECTION_CHAMBER, C_CBH(T,A,B), (B))
+      #define B_GTV(T,A,B) TERN(THERMAL_PROTECTION_BED, B_CBH(T,A,B), (B))
       #define GTV(C,B,H) C_GTV(ischamber, C, B_GTV(isbed, B, H))
       const uint16_t watch_temp_period = GTV(WATCH_CHAMBER_TEMP_PERIOD, WATCH_BED_TEMP_PERIOD, WATCH_TEMP_PERIOD);
       const uint8_t watch_temp_increase = GTV(WATCH_CHAMBER_TEMP_INCREASE, WATCH_BED_TEMP_INCREASE, WATCH_TEMP_INCREASE);
@@ -778,7 +697,7 @@ volatile bool Temperature::raw_temps_ready = false;
 
     TERN_(EXTENSIBLE_UI, ExtUI::onPIDTuning(ischamber ? ExtUI::pidresult_t::PID_CHAMBER_STARTED : isbed ? ExtUI::pidresult_t::PID_BED_STARTED : ExtUI::pidresult_t::PID_STARTED));
 
-    if (target > GHV(CHAMBER_MAX_TARGET, BED_MAX_TARGET, hotend_max_target(heater_id))) {
+    if (target > CBH(CHAMBER_MAX_TARGET, BED_MAX_TARGET, hotend_max_target(heater_id))) {
       SERIAL_ECHOPGM(STR_PID_AUTOTUNE); SERIAL_ECHOLNPGM(STR_PID_TEMP_TOO_HIGH);
       TERN_(EXTENSIBLE_UI, ExtUI::onPIDTuning(ExtUI::pidresult_t::PID_TEMP_TOO_HIGH));
       TERN_(HOST_PROMPT_SUPPORT, hostui.notify(GET_TEXT_F(MSG_PID_TEMP_TOO_HIGH)));
@@ -790,12 +709,12 @@ volatile bool Temperature::raw_temps_ready = false;
     disable_all_heaters();
     TERN_(AUTO_POWER_CONTROL, powerManager.power_on());
 
-    long bias = GHV(MAX_CHAMBER_POWER, MAX_BED_POWER, PID_MAX) >> 1, d = bias;
+    long bias = CBH(MAX_CHAMBER_POWER, MAX_BED_POWER, PID_MAX) >> 1, d = bias;
     SHV(bias);
 
     #if ENABLED(PRINTER_EVENT_LEDS)
-      const celsius_float_t start_temp = GHV(degChamber(), degBed(), degHotend(heater_id));
       const LEDColor oldcolor = ONHEATINGSTART();
+      const celsius_float_t start_temp = CBH(degChamber(), degBed(), degHotend(heater_id));
     #endif
 
     TERN_(TEMP_TUNING_MAINTAIN_FAN, adaptive_fan_slowing = false);
@@ -815,7 +734,7 @@ volatile bool Temperature::raw_temps_ready = false;
       if (temp_ready) {
 
         // Get the current temperature and constrain it
-        current_temp = GHV(degChamber(), degBed(), degHotend(heater_id));
+        current_temp = CBH(degChamber(), degBed(), degHotend(heater_id));
         NOLESS(maxT, current_temp);
         NOMORE(minT, current_temp);
 
@@ -836,7 +755,7 @@ volatile bool Temperature::raw_temps_ready = false;
           t2 = ms;
           t_low = t2 - t1;
           if (cycles > 0) {
-            const long max_pow = GHV(MAX_CHAMBER_POWER, MAX_BED_POWER, PID_MAX);
+            const long max_pow = CBH(MAX_CHAMBER_POWER, MAX_BED_POWER, PID_MAX);
             bias += (d * (t_high - t_low)) / (t_low + t_high);
             LIMIT(bias, 20, max_pow - 20);
             d = (bias > max_pow >> 1) ? max_pow - 1 - bias : bias;
@@ -926,7 +845,7 @@ volatile bool Temperature::raw_temps_ready = false;
         TERN_(HOST_PROMPT_SUPPORT, hostui.notify(GET_TEXT_F(MSG_PID_AUTOTUNE_DONE)));
 
         #if ANY(PIDTEMPBED, PIDTEMPCHAMBER)
-          FSTR_P const estring = GHV(F("chamber"), F("bed"), FPSTR(NUL_STR));
+          FSTR_P const estring = CBH(F("chamber"), F("bed"), FPSTR(NUL_STR));
           say_default_(); SERIAL_ECHOLN(estring, F("Kp "), tune_pid.p);
           say_default_(); SERIAL_ECHOLN(estring, F("Ki "), tune_pid.i);
           say_default_(); SERIAL_ECHOLN(estring, F("Kd "), tune_pid.d);
@@ -962,7 +881,7 @@ volatile bool Temperature::raw_temps_ready = false;
 
         // Use the result? (As with "M303 U1")
         if (set_result)
-          GHV(_set_chamber_pid(tune_pid), _set_bed_pid(tune_pid), _set_hotend_pid(heater_id, tune_pid));
+          CBH(_set_chamber_pid(tune_pid), _set_bed_pid(tune_pid), _set_hotend_pid(heater_id, tune_pid));
 
         goto EXIT_M303;
       }
@@ -1012,7 +931,7 @@ volatile bool Temperature::raw_temps_ready = false;
     temp_hotend[e].soft_pwm_amount = 0;
     #if HAS_FAN
       set_fan_speed(TERN(SINGLEFAN, 0, e), 0);
-      planner.sync_fan_speeds(fan_speed);
+      Fan::sync_speeds();
     #endif
 
     do_z_clearance(MPC_TUNING_END_Z, false);
@@ -1169,7 +1088,7 @@ volatile bool Temperature::raw_temps_ready = false;
         #if HAS_FAN
           else if (ELAPSED(curr_time_ms, test_end_ms) && !fan0_done) {
             set_fan_speed(TERN(SINGLEFAN, 0, e), 255);
-            planner.sync_fan_speeds(fan_speed);
+            Fan::sync_speeds();
             settle_end_ms = curr_time_ms + settle_time;
             test_end_ms = settle_end_ms + test_duration;
             fan0_done = true;
@@ -1245,7 +1164,7 @@ volatile bool Temperature::raw_temps_ready = false;
     #if HAS_FAN
       zero_fan_speeds();
       set_fan_speed(TERN(SINGLEFAN, 0, e), 255);
-      planner.sync_fan_speeds(fan_speed);
+      Fan::sync_speeds();
     #endif
     do_blocking_move_to(xyz_pos_t(MPC_TUNING_POS));
 
@@ -1259,7 +1178,7 @@ volatile bool Temperature::raw_temps_ready = false;
 
     #if HAS_FAN
       set_fan_speed(TERN(SINGLEFAN, 0, e), 0);
-      planner.sync_fan_speeds(fan_speed);
+      Fan::sync_speeds();
     #endif
 
     // Heat to 200 degrees
@@ -1320,7 +1239,6 @@ volatile bool Temperature::raw_temps_ready = false;
     mpc.ambient_xfer_coeff_fan0 = tuner.get_power_fan0() / (hotend.target - tuner.get_ambient_temp());
     #if HAS_FAN
       const float ambient_xfer_coeff_fan255 = tuner.get_power_fan255() / (hotend.target - tuner.get_ambient_temp());
-      mpc.applyFanAdjustment(ambient_xfer_coeff_fan255);
     #endif
 
     if (tuning_type == AUTO || tuning_type == FORCE_ASYMPTOTIC) {
@@ -1329,9 +1247,10 @@ volatile bool Temperature::raw_temps_ready = false;
       block_responsiveness = -log((t2 - asymp_temp) / (t1 - asymp_temp)) / tuner.get_sample_interval();
 
       #if ENABLED(MPC_AUTOTUNE_DEBUG)
-        SERIAL_ECHOLNPGM("Refining estimates for:");
-        SERIAL_ECHOLNPGM("asymp_temp ", asymp_temp);
-        SERIAL_ECHOLNPGM("block_responsiveness ", p_float_t(block_responsiveness, 4));
+        SERIAL_ECHOLNPGM(
+          "Refining estimates for: asymp_temp=", asymp_temp,
+          " block_responsiveness=", p_float_t(block_responsiveness, 4)
+        );
       #endif
 
       // Update analytic tuning values based on the above
@@ -1384,18 +1303,19 @@ int16_t Temperature::getHeaterPower(const heater_id_t heater_id) {
 
   #define _EFANOVERLAP(I,N) ((I != N) && _FANOVERLAP(I,E##N))
 
+  #define _INIT_FAN_PWM_PIN(P) do{ if (PWM_PIN(P)) { SET_PWM(P); SET_FAST_PWM_FREQ(P); } else SET_OUTPUT(P); }while(0)
   #if EXTRUDER_AUTO_FAN_SPEED != 255
-    #define INIT_E_AUTO_FAN_PIN(P) do{ if (PWM_PIN(P)) { SET_PWM(P); SET_FAST_PWM_FREQ(P); } else SET_OUTPUT(P); }while(0)
+    #define INIT_E_AUTO_FAN_PIN(P) _INIT_FAN_PWM_PIN(P)
   #else
     #define INIT_E_AUTO_FAN_PIN(P) SET_OUTPUT(P)
   #endif
   #if CHAMBER_AUTO_FAN_SPEED != 255
-    #define INIT_CHAMBER_AUTO_FAN_PIN(P) do{ if (PWM_PIN(P)) { SET_PWM(P); SET_FAST_PWM_FREQ(P); } else SET_OUTPUT(P); }while(0)
+    #define INIT_CHAMBER_AUTO_FAN_PIN(P) _INIT_FAN_PWM_PIN(P)
   #else
     #define INIT_CHAMBER_AUTO_FAN_PIN(P) SET_OUTPUT(P)
   #endif
   #if COOLER_AUTO_FAN_SPEED != 255
-    #define INIT_COOLER_AUTO_FAN_PIN(P) do{ if (PWM_PIN(P)) { SET_PWM(P); SET_FAST_PWM_FREQ(P); } else SET_OUTPUT(P); }while(0)
+    #define INIT_COOLER_AUTO_FAN_PIN(P) _INIT_FAN_PWM_PIN(P)
   #else
     #define INIT_COOLER_AUTO_FAN_PIN(P) SET_OUTPUT(P)
   #endif
@@ -1672,7 +1592,7 @@ void Temperature::mintemp_error(const heater_id_t heater_id OPTARG(ERR_INCLUDE_T
         float out = tempinfo.pid.get_pid_output(tempinfo.target, tempinfo.celsius);
 
         #if ENABLED(PID_FAN_SCALING)
-          out += tempinfo.pid.get_fan_scale_output(thermalManager.fan_speed[extr]);
+          out += tempinfo.pid.get_fan_scale_output(fans[extr].speed);
         #endif
 
         #if ENABLED(PID_EXTRUSION_SCALING)
@@ -1755,7 +1675,7 @@ void Temperature::mintemp_error(const heater_id_t heater_id OPTARG(ERR_INCLUDE_T
       float ambient_xfer_coeff = mpc.ambient_xfer_coeff_fan0;
       #if ENABLED(MPC_INCLUDE_FAN)
         const uint8_t fan_index = TERN(SINGLEFAN, 0, ee);
-        const float fan_fraction = TERN_(MPC_FAN_0_ACTIVE_HOTEND, !this_hotend ? 0.0f : ) fan_speed[fan_index] * RECIPROCAL(255);
+        const float fan_fraction = TERN_(MPC_FAN_0_ACTIVE_HOTEND, !this_hotend ? 0.0f : ) fans[fan_index].speed * RECIPROCAL(255);
         ambient_xfer_coeff += fan_fraction * mpc.fan255_adjustment;
       #endif
 
@@ -3070,30 +2990,8 @@ void Temperature::init() {
     OUT_WRITE(COOLER_PIN, ENABLED(COOLER_INVERTING));
   #endif
 
-  #if HAS_FAN0
-    INIT_FAN_PIN(FAN0_PIN);
-  #endif
-  #if HAS_FAN1
-    INIT_FAN_PIN(FAN1_PIN);
-  #endif
-  #if HAS_FAN2
-    INIT_FAN_PIN(FAN2_PIN);
-  #endif
-  #if HAS_FAN3
-    INIT_FAN_PIN(FAN3_PIN);
-  #endif
-  #if HAS_FAN4
-    INIT_FAN_PIN(FAN4_PIN);
-  #endif
-  #if HAS_FAN5
-    INIT_FAN_PIN(FAN5_PIN);
-  #endif
-  #if HAS_FAN6
-    INIT_FAN_PIN(FAN6_PIN);
-  #endif
-  #if HAS_FAN7
-    INIT_FAN_PIN(FAN7_PIN);
-  #endif
+  TERN_(HAS_FAN, Fan::init_pins());
+
   #if ENABLED(USE_CONTROLLER_FAN)
     INIT_FAN_PIN(CONTROLLER_FAN_PIN);
   #endif
@@ -3380,7 +3278,7 @@ void Temperature::init() {
           if (adaptive_fan_slowing && heater_id >= 0) {
             const int_fast8_t fan_index = _MIN(heater_id, FAN_COUNT - 1);
             uint8_t scale;
-            if (fan_speed[fan_index] == 0 || rdiff <= hysteresis_degc * 0.25f)
+            if (fans[fan_index].speed == 0 || rdiff <= hysteresis_degc * 0.25f)
               scale = 128;
             else if (rdiff <= hysteresis_degc * 0.3335f)
               scale = 96;
@@ -3392,12 +3290,12 @@ void Temperature::init() {
               scale = 0;
 
             if (TERN0(REPORT_ADAPTIVE_FAN_SLOWING, DEBUGGING(INFO))) {
-              const uint8_t fss7 = fan_speed_scaler[fan_index] & 0x80;
+              const uint8_t fss7 = fans[fan_index].speed_scaler & 0x80;
               if (fss7 ^ (scale & 0x80))
                 serial_ternary(F("Adaptive Fan Slowing "), fss7, nullptr, F("de"), F("activated.\n"));
             }
 
-            fan_speed_scaler[fan_index] = scale;
+            fans[fan_index].speed_scaler = scale;
           }
         #endif // ADAPTIVE_FAN_SLOWING
 
@@ -3530,8 +3428,8 @@ void Temperature::disable_all_heaters() {
 
   void Temperature::singlenozzle_change(const uint8_t old_tool, const uint8_t new_tool) {
     #if ENABLED(SINGLENOZZLE_STANDBY_FAN)
-      singlenozzle_fan_speed[old_tool] = fan_speed[0];
-      fan_speed[0] = singlenozzle_fan_speed[new_tool];
+      singlenozzle_fan_speed[old_tool] = fans[0].speed;
+      fans[0].speed = singlenozzle_fan_speed[new_tool];
     #endif
     #if ENABLED(SINGLENOZZLE_STANDBY_TEMP)
       singlenozzle_temp[old_tool] = temp_hotend[0].target;
@@ -4011,8 +3909,6 @@ void Temperature::isr() {
     static SoftPWM soft_pwm_controller;
   #endif
 
-  #define WRITE_FAN(n, v) WRITE(FAN##n##_PIN, (v) ^ ENABLED(FAN_INVERTING))
-
   #if DISABLED(SLOW_PWM_HEATERS)
 
     #if ANY(HAS_HOTEND, HAS_HEATED_BED, HAS_HEATED_CHAMBER, HAS_COOLER, FAN_SOFT_PWM)
@@ -4030,7 +3926,7 @@ void Temperature::isr() {
       pwm_count_tmp -= 127;
 
       #if HAS_HOTEND
-        #define _PWM_MOD_E(N) _PWM_MOD(N,soft_pwm_hotend[N],temp_hotend[N]);
+        #define _PWM_MOD_E(N) _PWM_MOD(N, soft_pwm_hotend[N], temp_hotend[N]);
         REPEAT(HOTENDS, _PWM_MOD_E);
       #endif
 
@@ -4050,41 +3946,12 @@ void Temperature::isr() {
       #endif
 
       #if ENABLED(FAN_SOFT_PWM)
-
         #if ENABLED(USE_CONTROLLER_FAN)
           WRITE(CONTROLLER_FAN_PIN, soft_pwm_controller.add(pwm_mask, controllerFan.soft_pwm_speed));
         #endif
 
-        #define _FAN_PWM(N) do{                                     \
-          uint8_t &spcf = soft_pwm_count_fan[N];                    \
-          spcf = (spcf & pwm_mask) + (soft_pwm_amount_fan[N] >> 1); \
-          WRITE_FAN(N, spcf > pwm_mask ? HIGH : LOW);               \
-        }while(0)
-
-        #if HAS_FAN0
-          _FAN_PWM(0);
-        #endif
-        #if HAS_FAN1
-          _FAN_PWM(1);
-        #endif
-        #if HAS_FAN2
-          _FAN_PWM(2);
-        #endif
-        #if HAS_FAN3
-          _FAN_PWM(3);
-        #endif
-        #if HAS_FAN4
-          _FAN_PWM(4);
-        #endif
-        #if HAS_FAN5
-          _FAN_PWM(5);
-        #endif
-        #if HAS_FAN6
-          _FAN_PWM(6);
-        #endif
-        #if HAS_FAN7
-          _FAN_PWM(7);
-        #endif
+        #define _SOFT_PWM_ON(N) fans[N].soft_pwm_on();
+        REPEAT(FAN_COUNT, _SOFT_PWM_ON)
       #endif
     }
     else {
@@ -4107,30 +3974,8 @@ void Temperature::isr() {
       #endif
 
       #if ENABLED(FAN_SOFT_PWM)
-        #if HAS_FAN0
-          if (soft_pwm_count_fan[0] <= pwm_count_tmp) WRITE_FAN(0, LOW);
-        #endif
-        #if HAS_FAN1
-          if (soft_pwm_count_fan[1] <= pwm_count_tmp) WRITE_FAN(1, LOW);
-        #endif
-        #if HAS_FAN2
-          if (soft_pwm_count_fan[2] <= pwm_count_tmp) WRITE_FAN(2, LOW);
-        #endif
-        #if HAS_FAN3
-          if (soft_pwm_count_fan[3] <= pwm_count_tmp) WRITE_FAN(3, LOW);
-        #endif
-        #if HAS_FAN4
-          if (soft_pwm_count_fan[4] <= pwm_count_tmp) WRITE_FAN(4, LOW);
-        #endif
-        #if HAS_FAN5
-          if (soft_pwm_count_fan[5] <= pwm_count_tmp) WRITE_FAN(5, LOW);
-        #endif
-        #if HAS_FAN6
-          if (soft_pwm_count_fan[6] <= pwm_count_tmp) WRITE_FAN(6, LOW);
-        #endif
-        #if HAS_FAN7
-          if (soft_pwm_count_fan[7] <= pwm_count_tmp) WRITE_FAN(7, LOW);
-        #endif
+        #define _SOFT_PWM_2(N) fans[N].soft_pwm_off(pwm_count_tmp);
+        REPEAT(FAN_COUNT, _SOFT_PWM_2)
         #if ENABLED(USE_CONTROLLER_FAN)
           if (soft_pwm_controller.count <= pwm_count_tmp) WRITE(CONTROLLER_FAN_PIN, LOW);
         #endif
@@ -4201,60 +4046,10 @@ void Temperature::isr() {
     #if ENABLED(FAN_SOFT_PWM)
       if (pwm_count_tmp >= 127) {
         pwm_count_tmp = 0;
-        #define _PWM_FAN(N) do{                                 \
-          soft_pwm_count_fan[N] = soft_pwm_amount_fan[N] >> 1;  \
-          WRITE_FAN(N, soft_pwm_count_fan[N] > 0 ? HIGH : LOW); \
-        }while(0)
-        #if HAS_FAN0
-          _PWM_FAN(0);
-        #endif
-        #if HAS_FAN1
-          _PWM_FAN(1);
-        #endif
-        #if HAS_FAN2
-          _PWM_FAN(2);
-        #endif
-        #if HAS_FAN3
-          _FAN_PWM(3);
-        #endif
-        #if HAS_FAN4
-          _FAN_PWM(4);
-        #endif
-        #if HAS_FAN5
-          _FAN_PWM(5);
-        #endif
-        #if HAS_FAN6
-          _FAN_PWM(6);
-        #endif
-        #if HAS_FAN7
-          _FAN_PWM(7);
-        #endif
+        FANS_LOOP(f) fans[f].slow_soft_pwm();
       }
-      #if HAS_FAN0
-        if (soft_pwm_count_fan[0] <= pwm_count_tmp) WRITE_FAN(0, LOW);
-      #endif
-      #if HAS_FAN1
-        if (soft_pwm_count_fan[1] <= pwm_count_tmp) WRITE_FAN(1, LOW);
-      #endif
-      #if HAS_FAN2
-        if (soft_pwm_count_fan[2] <= pwm_count_tmp) WRITE_FAN(2, LOW);
-      #endif
-      #if HAS_FAN3
-        if (soft_pwm_count_fan[3] <= pwm_count_tmp) WRITE_FAN(3, LOW);
-      #endif
-      #if HAS_FAN4
-        if (soft_pwm_count_fan[4] <= pwm_count_tmp) WRITE_FAN(4, LOW);
-      #endif
-      #if HAS_FAN5
-        if (soft_pwm_count_fan[5] <= pwm_count_tmp) WRITE_FAN(5, LOW);
-      #endif
-      #if HAS_FAN6
-        if (soft_pwm_count_fan[6] <= pwm_count_tmp) WRITE_FAN(6, LOW);
-      #endif
-      #if HAS_FAN7
-        if (soft_pwm_count_fan[7] <= pwm_count_tmp) WRITE_FAN(7, LOW);
-      #endif
-    #endif // FAN_SOFT_PWM
+      FANS_LOOP(f) fans[f].soft_pwm_off(pwm_count_tmp);
+    #endif
 
     // SOFT_PWM_SCALE to frequency:
     //
