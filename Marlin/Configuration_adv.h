@@ -3456,6 +3456,13 @@
     //#define W_STALL_SENSITIVITY  8
     //#define SPI_ENDSTOPS              // TMC2130/TMC5160 only
     //#define IMPROVE_HOMING_RELIABILITY
+
+    // When homing a "trusted" axis, verify Stallguard results by timing the move
+    //#define SENSORLESS_HOMING_VALIDATION
+    #if ENABLED(SENSORLESS_HOMING_VALIDATION)
+      #define SHV_STARTUP_COMPENSATION 200   // (ms)
+      #define SHV_ERROR_MARGIN          50   // (mm)
+    #endif
   #endif
 
   // @section tmc/config
