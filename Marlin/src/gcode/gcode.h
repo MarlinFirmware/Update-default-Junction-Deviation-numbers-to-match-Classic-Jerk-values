@@ -66,6 +66,8 @@
  * G42  - Coordinated move to a mesh point (Requires MESH_BED_LEVELING, AUTO_BED_LEVELING_BLINEAR, or AUTO_BED_LEVELING_UBL)
  * G60  - Save current position. (Requires SAVED_POSITIONS)
  * G61  - Apply/restore saved coordinates. (Requires SAVED_POSITIONS)
+ * G68  - Set coordinate rotation center and angle. (Requires CNC_COORDINATE_ROTATION)
+ * G69  - Reset coordinate rotation. (Requires CNC_COORDINATE_ROTATION)
  * G76  - Calibrate first layer temperature offsets. (Requires PTC_PROBE and PTC_BED)
  * G80  - Cancel current motion mode (Requires GCODE_MOTION_MODES)
  * G90  - Use Absolute Coordinates
@@ -373,6 +375,26 @@ enum AxisRelative : uint8_t {
 };
 typedef bits_t(NUM_REL_MODES) relative_t;
 
+#if ENABLED(CNC_COORDINATE_ROTATION)
+  typedef struct {
+    float x, y, rad, s, c;
+    void set_angle(const_float_t r) { rad = r; s = sin(r); c = cos(r); }
+    void reset() { x = y = rad = s = c = 0.0f; }
+    void rotate(xy_pos_t &point) {
+      if (!rad) return;
+      const xy_pos_t p = point;
+      point.x = x + (p.x - x) * c - (p.y - y) * s;
+      point.y = y + (p.x - x) * s + (p.y - y) * c;
+    }
+    void unrotate(xy_pos_t &point) {
+      if (!rad) return;
+      const xy_pos_t p = point;
+      point.x = x + (p.x - x) * c - (p.y - y) * s;
+      point.y = y + (p.x - x) * s + (p.y - y) * c;
+    }
+  } rotation_t;
+#endif
+
 extern const char G28_STR[];
 
 class GcodeSuite {
@@ -426,6 +448,10 @@ public:
     static int8_t active_coordinate_system;
     static xyz_pos_t coordinate_system[MAX_COORDINATE_SYSTEMS];
     static bool select_coordinate_system(const int8_t _new);
+  #endif
+
+  #if ENABLED(CNC_COORDINATE_ROTATION)
+    static rotation_t rotation;
   #endif
 
   static millis_t previous_move_ms, max_inactive_time;
@@ -623,6 +649,12 @@ private:
   #if SAVED_POSITIONS
     static void G60();
     static void G61(int8_t slot=-1);
+  #endif
+
+  #if ENABLED(CNC_COORDINATE_ROTATION)
+    static void G68();
+    static void G68_report();
+    static void G69();
   #endif
 
   #if ENABLED(GCODE_MOTION_MODES)
