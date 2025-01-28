@@ -4506,6 +4506,11 @@ static_assert(WITHIN(MULTISTEPPING_LIMIT, 1, 128) && IS_POWER_OF_2(MULTISTEPPING
   #error "Only enable ULTIPANEL_FEEDMULTIPLY or ULTIPANEL_FLOWPERCENT, but not both."
 #endif
 
+// Differential Extruder requires the magic of Creality V4
+#if ENABLED(DIFFERENTIAL_EXTRUDER) && !(EXTRUDERS == 1 && MB(CREALITY_V4))
+  #error "DIFFERENTIAL_EXTRUDER requires MOTHERBOARD BOARD_CREALITY_V4 and EXTRUDERS 1."
+#endif
+
 // Misc. Cleanup
 #undef _TEST_PWM
 #undef _NUM_AXES_STR
