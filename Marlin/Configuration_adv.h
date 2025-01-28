@@ -1785,6 +1785,7 @@
     //#define BACKUP_POWER_SUPPLY           // Backup power / UPS to move the steppers on power-loss
     #if ENABLED(BACKUP_POWER_SUPPLY)
       //#define POWER_LOSS_RETRACT_LEN   10 // (mm) Length of filament to retract on fail
+      //#define PLR_REBOOT_TIMEOUT       60 // (seconds) Restart after power loss if UPS never lost power
     #endif
 
     // Enable if Z homing is needed for proper recovery. 99.9% of the time this should be disabled!
