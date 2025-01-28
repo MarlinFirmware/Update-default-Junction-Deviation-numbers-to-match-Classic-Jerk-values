@@ -36,6 +36,10 @@
 
 #define BOARD_NO_NATIVE_USB
 
+#ifndef TEMP_TIMER_CHAN
+  #define TEMP_TIMER_CHAN                      4  // Timer Channel for compare, interrupts. Defined by PIO env.
+#endif
+
 //
 // EEPROM
 //
@@ -112,3 +116,25 @@
 // Misc. Functions
 //
 #define CASE_LIGHT_PIN                      PA6
+
+#if HAS_TMC220x
+
+  //
+  // TMC2208 mode
+  //
+  //#define TMC2208_STANDALONE
+
+  #define X_HARDWARE_SERIAL  MSerial2
+  #define Y_HARDWARE_SERIAL  MSerial2
+  #define Z_HARDWARE_SERIAL  MSerial2
+  #define E0_HARDWARE_SERIAL MSerial2
+
+  //
+  // TMC2208 Software serial
+  //
+  //#define HAVE_SW_SERIAL
+
+  // Reduce baud rate to improve software serial reliability
+  //#define TMC_BAUD_RATE                  19200
+
+#endif
