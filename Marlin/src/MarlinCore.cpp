@@ -895,8 +895,6 @@ void idle(const bool no_stepper_sleep/*=false*/) {
 void kill(FSTR_P const lcd_error/*=nullptr*/, FSTR_P const lcd_component/*=nullptr*/, const bool steppers_off/*=false*/) {
   thermalManager.disable_all_heaters();
 
-  TERN_(HAS_CUTTER, cutter.kill()); // Full cutter shutdown including ISR control
-
   // Echo the LCD message to serial for extra context
   if (lcd_error) { SERIAL_ECHO_START(); SERIAL_ECHOLN(lcd_error); }
 
@@ -916,9 +914,17 @@ void kill(FSTR_P const lcd_error/*=nullptr*/, FSTR_P const lcd_component/*=nullp
   #endif
 
   minkill(steppers_off);
+  TERN_(HAS_CUTTER, cutter.kill()); // Reiterate cutter shutdown
 }
 
 void minkill(const bool steppers_off/*=false*/) {
+
+  #if HAS_CUTTER
+    if (cutter.active_tool_type != TYPE_EXTRUDER) {
+      quickstop_stepper();  // Stop steppers
+      cutter.kill();  // Full cutter shutdown including ISR control
+    }
+  #endif
 
   // Wait a short time (allows messages to get out before shutting down.
   for (int i = 1000; i--;) DELAY_US(600);
@@ -931,10 +937,10 @@ void minkill(const bool steppers_off/*=false*/) {
   // Reiterate heaters off
   thermalManager.disable_all_heaters();
 
-  TERN_(HAS_CUTTER, cutter.kill());  // Reiterate cutter shutdown
-
   // Power off all steppers (for M112) or just the E steppers
   steppers_off ? stepper.disable_all_steppers() : stepper.disable_e_steppers();
+
+  TERN_(HAS_CUTTER, cutter.kill());  // Reiterate cutter shutdown
 
   TERN_(PSU_CONTROL, powerManager.power_off());
 

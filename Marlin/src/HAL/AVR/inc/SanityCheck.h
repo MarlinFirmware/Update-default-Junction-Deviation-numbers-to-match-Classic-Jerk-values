@@ -85,6 +85,8 @@
   #include "../ServoTimers.h"   // Needed to check timer availability (_useTimer3)
   #if SPINDLE_LASER_PWM_PIN == 4 || WITHIN(SPINDLE_LASER_PWM_PIN, 11, 13)
     #error "Counter/Timer for SPINDLE_LASER_PWM_PIN is used by a system interrupt."
+  #elif LASER_PWM_PIN == 4 || WITHIN(LASER_PWM_PIN, 11, 13)
+    #error "Counter/Timer for LASER_PWM_PIN is used by a system interrupt."
   #elif NUM_SERVOS > 0 && defined(_useTimer3) && (WITHIN(SPINDLE_LASER_PWM_PIN, 2, 3) || SPINDLE_LASER_PWM_PIN == 5)
     #error "Counter/Timer for SPINDLE_LASER_PWM_PIN is used by the servo system."
   #endif
