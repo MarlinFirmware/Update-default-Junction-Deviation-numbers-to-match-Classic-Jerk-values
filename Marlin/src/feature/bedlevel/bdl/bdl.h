@@ -34,16 +34,25 @@ enum BDS_State : int8_t {
   BDS_HOMING_Z        = -3,
   BDS_READ_RAW        = -5,
   BDS_CALIBRATE_START = -6,
-  BDS_CALIBRATING     = -7
+  BDS_CALIBRATING     = -7,
+  BDS_HOME_END        = -8
 };
 
 class BDS_Leveling {
 public:
-  static int8_t config_state;
+  static int config_state;
+  static int sw_mode;
+  static bool bd_triggered;
   static float pos_zero_offset;
   static void init(uint8_t _sda, uint8_t _scl, uint16_t delay_s);
-  static void process();
-  static float read();
+  void process();
+  static float bd_read();
+  static void prepare_homing();
+  static void adjust_probe_up(float up_steps);
+  static float adjust_probe_down(float down_steps);
+  static void end_homing();
+  static bool read_endstop();
+  static void read_version(int len_s);
   static float interpret(const uint16_t data);
   static float good_data(const uint16_t data) { return (data & 0x3FF) < 1016; }
   static bool check(const uint16_t data, const bool raw_data=false, const bool hicheck=false);

@@ -52,7 +52,7 @@ void GcodeSuite::M102() {
   if (parser.seenval('S')) {
     const int8_t command = parser.value_int();
     if (command == BDS_READ_MM)
-      SERIAL_ECHOLNPGM("Bed Distance:", bdl.read(), "mm");
+      SERIAL_ECHOLNPGM("Bed Distance:", bdl.bd_read(), "mm");
     else if ((command < BDS_IDLE) && printingIsActive())
       return;
     else
