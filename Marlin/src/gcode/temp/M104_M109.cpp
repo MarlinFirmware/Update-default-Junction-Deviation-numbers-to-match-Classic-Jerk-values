@@ -38,6 +38,10 @@
 
 #include "../../MarlinCore.h" // for startOrResumeJob, etc.
 
+#if ENABLED(CREALITY_RTS)
+  #include "../../lcd/rts/lcd_rts.h"
+#endif
+
 #if ENABLED(PRINTJOB_TIMER_AUTOSTART)
   #include "../../module/printcounter.h"
   #if ENABLED(CANCEL_OBJECTS)
@@ -106,6 +110,8 @@ void GcodeSuite::M104_M109(const bool isM109) {
       if (target_extruder != active_extruder) return;
     #endif
     thermalManager.setTargetHotend(temp, target_extruder);
+
+    TERN_(CREALITY_RTS, temphot = temp);
 
     #if ENABLED(DUAL_X_CARRIAGE)
       if (idex_is_duplicating() && target_extruder == 0)

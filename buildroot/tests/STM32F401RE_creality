@@ -1,0 +1,13 @@
+#!/usr/bin/env bash
+#
+# Build tests for STM32F401RE_creality
+#
+
+# exit on first failure
+set -e
+
+use_example_configs "Creality/Ender-5 S1"
+exec_test $1 $2 "Ender-5 S1" "$3"
+
+# clean up
+restore_configs

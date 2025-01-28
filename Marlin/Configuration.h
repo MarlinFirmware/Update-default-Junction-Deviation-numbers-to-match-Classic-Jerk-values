@@ -3118,6 +3118,15 @@
 //
 //#define CR10_STOCKDISPLAY
 
+// Resistive touch screen
+//#define CREALITY_RTS
+
+// Creality Cloud-based Printing
+//#define CREALITY_CLOUD
+
+// Over-the-air Firmware Update with M936
+//#define OTA_FIRMWARE_UPDATE
+
 //
 // Ender-2 OEM display, a variant of the MKS_MINI_12864
 //
@@ -3689,3 +3698,7 @@
 
 // Disable servo with M282 to reduce power consumption, noise, and heat when not in use
 //#define SERVO_DETACH_GCODE
+
+// Creality WiFi
+//#define CREALITY_WIFI
+//#define MENU_RESET_WIFI

@@ -166,6 +166,10 @@ class PrintJobRecovery {
       static bool ui_flag_resume;     //!< Flag the UI to show a dialog to Resume (M1000) or Cancel (M1000C)
     #endif
 
+    #if ENABLED(CREALITY_RTS)
+      static bool recovery_flag;
+    #endif
+
     static void init();
     static void prepare();
 
