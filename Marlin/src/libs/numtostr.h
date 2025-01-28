@@ -59,6 +59,9 @@ const char* i16tostr3rj(const int16_t x);
 // Convert signed int to lj string with 123 format
 const char* i16tostr3left(const int16_t xx);
 
+// Convert unsigned int to string 1, 12, 123 format, capped at 999
+const char* utostr3(const uint16_t x);
+
 // Convert signed int to rj string with _123, -123, _-12, or __-1 format
 const char* i16tostr4signrj(const int16_t x);
 
@@ -119,6 +122,8 @@ const char* ftostr51sign(const_float_t x);
 // Convert signed float to space-padded string with -_23.4_ format
 const char* ftostr52sp(const_float_t x);
 
+const char* ftostr52custom(const_float_t f);
+
 // Convert signed float to string with +123.45 format
 const char* ftostr52sign(const_float_t x);
 
@@ -133,6 +138,9 @@ const char* ftostr51rj(const_float_t x);
 
 // Convert unsigned float to string with ____5.6 / ___45.6 / __345.6 / _2345.6 / 12345.6 format
 const char* ftostr61rj(const_float_t x);
+
+// Convert usigned float to string with ____5.67, ___45.67, __345.67, _2345.67, 12345.67 format
+const char* ftostr7xrj(int32_t intVal, int32_t decimal);
 
 // Convert unsigned float to string with 1.23 format
 const char* ftostr32rj(const_float_t f);
@@ -160,8 +168,7 @@ FORCE_INLINE const char* ftostr3rj(const_float_t x) { return i16tostr3rj(int16_t
   FORCE_INLINE const char* ftostr4sign(const_float_t x) { return i16tostr4signrj(int16_t(x + (x < 0 ? -0.5f : 0.5f))); }
 #endif
 
-// Convert unsigned int to string 1, 12, 123 format, capped at 999
-const char* utostr3(const uint16_t x);
-
 // Convert signed float to space-padded string with 1.23, 12.34, 123.45 format
 const char* ftostr52sprj(const_float_t f);
+
+const char* shortenNum(const char * convptr, bool removeWhole0 = true, bool removeUnit = true);
