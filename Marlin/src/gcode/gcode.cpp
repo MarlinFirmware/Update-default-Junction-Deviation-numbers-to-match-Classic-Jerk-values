@@ -1093,6 +1093,16 @@ void GcodeSuite::process_parsed_command(const bool no_ok/*=false*/) {
         case 951: M951(); break;                                  // M951: Set Magnetic Parking Extruder parameters
       #endif
 
+      #if ENABLED(ACCELEROMETER_ADXL345)
+        case 955: M955(); break;                                  // M955: Configure Accelerometer - <RepRapFirmware>
+        case 956: M956(); break;                                  // M956: Collect and Save Accelerometer Data - <RepRapFirmware>
+        case 958: M958(); break;                                  // M958: Collect and Save Accelerometer Data
+        case 974: M974(); break;                                  // M974: Measure Print Head Resonance - Report Raw Samples - <Prusa Firmware>
+        case 975: M975(); break;                                  // M975: Measure Accelerometer Sampling Frequency - <Prusa Firmware>
+        case 976: M976(); break;                                  // M976: Measure Print Head Resonance - Frequency Response - <Prusa Firmware>
+        case 977: M977(); break;                                  // M977: Calibrate Stepper Motor Frequency Compensation (Input Shaping) - <Prusa Firmware>
+      #endif
+
       #if ENABLED(Z_STEPPER_AUTO_ALIGN)
         case 422: M422(); break;                                  // M422: Set Z Stepper automatic alignment position using probe
       #endif

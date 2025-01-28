@@ -3630,7 +3630,7 @@ void Temperature::disable_all_heaters() {
 
       #if !HAS_MAXTC_SW_SPI
         // Initialize SPI using the default Hardware SPI bus.
-        // FIXME: spiBegin, spiRec and spiInit doesn't work when soft spi is used.
+        // FIXME: spiBegin, spiRec and spiInit don't work when soft spi is used.
         spiBegin();
         spiInit(MAX_TC_SPEED_BITS);
       #endif
