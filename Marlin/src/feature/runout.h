@@ -320,28 +320,28 @@ class FilamentSensorBase {
       }
   };
 
- #endif // HAS_FILAMENT_SWITCH
+#endif // HAS_FILAMENT_SWITCH
 
-  /**
-   * This is a simple endstop switch in the path of the filament.
-   * It can detect filament runout, but not stripouts or jams.
-   */
-  class FilamentSensor : public FilamentSensorBase {
-    private:
-      TERN_(HAS_FILAMENT_MOTION, static FilamentSensorEncoder encoder_sensor);
-      TERN_(HAS_FILAMENT_SWITCH, static FilamentSensorSwitch switch_sensor);
+/**
+ * This is a simple endstop switch in the path of the filament.
+ * It can detect filament runout, but not stripouts or jams.
+ */
+class FilamentSensor : public FilamentSensorBase {
+  private:
+    TERN_(HAS_FILAMENT_MOTION, static FilamentSensorEncoder encoder_sensor);
+    TERN_(HAS_FILAMENT_SWITCH, static FilamentSensorSwitch switch_sensor);
 
-    public:
-      static void block_completed(const block_t * const b) {
-        TERN_(HAS_FILAMENT_MOTION, encoder_sensor.block_completed(b));
-        TERN_(HAS_FILAMENT_SWITCH, switch_sensor.block_completed(b));
-      }
+  public:
+    static void block_completed(const block_t * const b) {
+      TERN_(HAS_FILAMENT_MOTION, encoder_sensor.block_completed(b));
+      TERN_(HAS_FILAMENT_SWITCH, switch_sensor.block_completed(b));
+    }
 
-      static void run() {
-        TERN_(HAS_FILAMENT_MOTION, encoder_sensor.run());
-        TERN_(HAS_FILAMENT_SWITCH, switch_sensor.run());
-      }
-  };
+    static void run() {
+      TERN_(HAS_FILAMENT_MOTION, encoder_sensor.run());
+      TERN_(HAS_FILAMENT_SWITCH, switch_sensor.run());
+    }
+};
 
 /********************************* RESPONSE TYPE *********************************/
 

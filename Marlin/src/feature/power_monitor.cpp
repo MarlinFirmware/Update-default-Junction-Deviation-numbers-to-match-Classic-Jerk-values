@@ -20,6 +20,10 @@
  *
  */
 
+/**
+ * feature/power_monitor.cpp
+ */
+
 #include "../inc/MarlinConfigPre.h"
 
 #if HAS_POWER_MONITOR

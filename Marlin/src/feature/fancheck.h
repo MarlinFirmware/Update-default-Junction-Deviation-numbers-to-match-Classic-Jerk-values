@@ -21,6 +21,10 @@
  */
 #pragma once
 
+/**
+ * feature/fancheck.h - fan tachometer check
+ */
+
 #include "../inc/MarlinConfig.h"
 
 #if HAS_FANCHECK

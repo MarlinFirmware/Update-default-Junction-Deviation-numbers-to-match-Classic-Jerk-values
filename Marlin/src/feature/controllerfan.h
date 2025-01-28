@@ -21,13 +21,17 @@
  */
 #pragma once
 
+/**
+ * feature/controllerfan.h
+ */
+
 #include "../inc/MarlinConfigPre.h"
 
 typedef struct {
-  uint8_t   active_speed,    // 0-255 (fullspeed); Speed with enabled stepper motors
-            idle_speed;      // 0-255 (fullspeed); Speed after idle period with all motors are disabled
-  uint16_t  duration;        // Duration in seconds for the fan to run after all motors are disabled
-  bool      auto_mode;       // Default true
+  uint8_t   active_speed, // 0-255 (fullspeed); Speed with enabled stepper motors
+            idle_speed;   // 0-255 (fullspeed); Speed after idle period with all motors are disabled
+  uint16_t  duration;     // Duration in seconds for the fan to run after all motors are disabled
+  bool      auto_mode;    // Default true
 } controllerFan_settings_t;
 
 #ifndef CONTROLLERFAN_SPEED_ACTIVE

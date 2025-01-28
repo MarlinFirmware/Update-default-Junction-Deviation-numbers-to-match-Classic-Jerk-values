@@ -20,6 +20,10 @@
  *
  */
 
+/**
+ * feature/host_actions.cpp
+ */
+
 #include "../inc/MarlinConfig.h"
 
 #if ENABLED(HOST_ACTION_COMMANDS)

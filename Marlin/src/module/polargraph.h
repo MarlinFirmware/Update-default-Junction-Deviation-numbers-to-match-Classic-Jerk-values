@@ -22,7 +22,7 @@
 #pragma once
 
 /**
- * polargraph.h - Polargraph-specific functions
+ * module/polargraph.h - Polargraph-specific functions
  */
 
 #include "../core/types.h"

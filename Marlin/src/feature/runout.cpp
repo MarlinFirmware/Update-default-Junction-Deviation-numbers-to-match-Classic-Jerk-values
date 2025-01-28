@@ -33,10 +33,10 @@
 FilamentMonitor runout;
 
 bool FilamentMonitorBase::enabled = true,
-     FilamentMonitorBase::filament_ran_out;  // = false
+     FilamentMonitorBase::filament_ran_out; // = false
 
 #if ENABLED(HOST_ACTION_COMMANDS)
-  bool FilamentMonitorBase::host_handling; // = false
+  bool FilamentMonitorBase::host_handling;  // = false
 #endif
 
 #if ENABLED(TOOLCHANGE_MIGRATION_FEATURE)
@@ -55,9 +55,9 @@ bool FilamentMonitorBase::enabled = true,
   int8_t RunoutResponseDebounced::runout_count[NUM_RUNOUT_SENSORS]; // = 0
 #endif
 
-//
-// Filament Runout event handler
-//
+/**
+ * Filament Runout event handler
+ */
 #include "../MarlinCore.h"
 #include "pause.h"
 #include "../gcode/queue.h"
@@ -72,12 +72,12 @@ bool FilamentMonitorBase::enabled = true,
 
 void event_filament_runout(const uint8_t extruder) {
 
-  if (did_pause_print) return;  // Action already in progress. Purge triggered repeated runout.
+  if (did_pause_print) return; // Action already in progress. Purge triggered repeated runout
 
   #if ENABLED(TOOLCHANGE_MIGRATION_FEATURE)
     if (migration.in_progress) {
       DEBUG_ECHOLNPGM("Migration Already In Progress");
-      return;  // Action already in progress. Purge triggered repeated runout.
+      return; // Action already in progress. Purge triggered repeated runout
     }
     if (migration.automode) {
       DEBUG_ECHOLNPGM("Migration Starting");
@@ -91,9 +91,9 @@ void event_filament_runout(const uint8_t extruder) {
     const char tool = '0' + TERN0(MULTI_FILAMENT_SENSOR, extruder);
   #endif
 
-  //action:out_of_filament
+  // action:out_of_filament
   #if ENABLED(HOST_PROMPT_SUPPORT)
-    hostui.prompt_do(PROMPT_FILAMENT_RUNOUT, F("FilamentRunout T"), tool); //action:out_of_filament
+    hostui.prompt_do(PROMPT_FILAMENT_RUNOUT, F("FilamentRunout T"), tool); // action:out_of_filament
   #endif
 
   const bool run_runout_script = !runout.host_handling;

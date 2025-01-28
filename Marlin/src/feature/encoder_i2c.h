@@ -21,6 +21,10 @@
  */
 #pragma once
 
+/**
+ * feature/encoder_i2c.h
+ */
+
 #include "../inc/MarlinConfig.h"
 
 #include "../module/planner.h"
@@ -29,73 +33,73 @@
 
 //=========== Advanced / Less-Common Encoder Configuration Settings ==========
 
-#define I2CPE_EC_THRESH_PROPORTIONAL                    // if enabled adjusts the error correction threshold
-                                                        // proportional to the current speed of the axis allows
-                                                        // for very small error margin at low speeds without
-                                                        // stuttering due to reading latency at high speeds
+#define I2CPE_EC_THRESH_PROPORTIONAL       // If enabled, adjusts the error correction threshold
+                                           // proportional to the current speed of the axis. Allows
+                                           // for very small error margin at low speeds without
+                                           // stuttering due to reading latency at high speeds
 
-#define I2CPE_DEBUG                                     // enable encoder-related debug serial echos
+#define I2CPE_DEBUG                        // Enable encoder-related debug serial echos
 
-#define I2CPE_REBOOT_TIME             5000              // time we wait for an encoder module to reboot
-                                                        // after changing address.
+#define I2CPE_REBOOT_TIME             5000 // Time we wait for an encoder module to reboot
+                                           // after changing address.
 
-#define I2CPE_MAG_SIG_GOOD            0
-#define I2CPE_MAG_SIG_MID             1
-#define I2CPE_MAG_SIG_BAD             2
-#define I2CPE_MAG_SIG_NF              255
+#define I2CPE_MAG_SIG_GOOD               0
+#define I2CPE_MAG_SIG_MID                1
+#define I2CPE_MAG_SIG_BAD                2
+#define I2CPE_MAG_SIG_NF               255
 
-#define I2CPE_REQ_REPORT              0
-#define I2CPE_RESET_COUNT             1
-#define I2CPE_SET_ADDR                2
-#define I2CPE_SET_REPORT_MODE         3
-#define I2CPE_CLEAR_EEPROM            4
+#define I2CPE_REQ_REPORT                 0
+#define I2CPE_RESET_COUNT                1
+#define I2CPE_SET_ADDR                   2
+#define I2CPE_SET_REPORT_MODE            3
+#define I2CPE_CLEAR_EEPROM               4
 
-#define I2CPE_LED_PAR_MODE            10
-#define I2CPE_LED_PAR_BRT             11
-#define I2CPE_LED_PAR_RATE            14
+#define I2CPE_LED_PAR_MODE              10
+#define I2CPE_LED_PAR_BRT               11
+#define I2CPE_LED_PAR_RATE              14
 
-#define I2CPE_REPORT_DISTANCE         0
-#define I2CPE_REPORT_STRENGTH         1
-#define I2CPE_REPORT_VERSION          2
+#define I2CPE_REPORT_DISTANCE            0
+#define I2CPE_REPORT_STRENGTH            1
+#define I2CPE_REPORT_VERSION             2
 
 // Default I2C addresses
-#define I2CPE_PRESET_ADDR_X           30
-#define I2CPE_PRESET_ADDR_Y           31
-#define I2CPE_PRESET_ADDR_Z           32
-#define I2CPE_PRESET_ADDR_E           33
+#define I2CPE_PRESET_ADDR_X             30
+#define I2CPE_PRESET_ADDR_Y             31
+#define I2CPE_PRESET_ADDR_Z             32
+#define I2CPE_PRESET_ADDR_E             33
 
-#define I2CPE_DEF_AXIS                X_AXIS
-#define I2CPE_DEF_ADDR                I2CPE_PRESET_ADDR_X
+#define I2CPE_DEF_AXIS              X_AXIS
+#define I2CPE_DEF_ADDR I2CPE_PRESET_ADDR_X
 
 // Error event counter; tracks how many times there is an error exceeding a certain threshold
-#define I2CPE_ERR_CNT_THRESH          3.00
+#define I2CPE_ERR_CNT_THRESH             3.00
 #define I2CPE_ERR_CNT_DEBOUNCE_MS     2000
 
 #if ENABLED(I2CPE_ERR_ROLLING_AVERAGE)
-  #define I2CPE_ERR_ARRAY_SIZE        32
-  #define I2CPE_ERR_PRST_ARRAY_SIZE   10
+  #define I2CPE_ERR_ARRAY_SIZE          32
+  #define I2CPE_ERR_PRST_ARRAY_SIZE     10
 #endif
 
 // Error Correction Methods
-#define I2CPE_ECM_NONE                0
-#define I2CPE_ECM_MICROSTEP           1
-#define I2CPE_ECM_PLANNER             2
-#define I2CPE_ECM_STALLDETECT         3
+#define I2CPE_ECM_NONE                   0
+#define I2CPE_ECM_MICROSTEP              1
+#define I2CPE_ECM_PLANNER                2
+#define I2CPE_ECM_STALLDETECT            3
 
 // Encoder types
-#define I2CPE_ENC_TYPE_ROTARY         0
-#define I2CPE_ENC_TYPE_LINEAR         1
+#define I2CPE_ENC_TYPE_ROTARY            0
+#define I2CPE_ENC_TYPE_LINEAR            1
 
 // Parser
-#define I2CPE_PARSE_ERR               1
-#define I2CPE_PARSE_OK                0
+#define I2CPE_PARSE_ERR                  1
+#define I2CPE_PARSE_OK                   0
 
 #define LOOP_PE(VAR) for (uint8_t VAR = 0; VAR < I2CPE_ENCODER_CNT; ++VAR)
 #define CHECK_IDX() do{ if (!WITHIN(idx, 0, I2CPE_ENCODER_CNT - 1)) return; }while(0)
 
 typedef union {
   volatile int32_t val = 0;
-  uint8_t          bval[4];
+  uint8_t bval[4];
 } i2cLong;
 
 class I2CPositionEncoder {
@@ -105,7 +109,7 @@ class I2CPositionEncoder {
     uint8_t   i2cAddress          = I2CPE_DEF_ADDR,
               ecMethod            = I2CPE_DEF_EC_METHOD,
               type                = I2CPE_DEF_TYPE,
-              H                   = I2CPE_MAG_SIG_NF;    // Magnetic field strength
+              H                   = I2CPE_MAG_SIG_NF; // Magnetic field strength
 
     int       encoderTicksPerUnit = I2CPE_DEF_ENC_TICKS_UNIT,
               stepperTicks        = I2CPE_DEF_TICKS_REV,
@@ -219,7 +223,7 @@ class I2CPositionEncodersMgr {
 
     static void init();
 
-    // consider only updating one endoder per call / tick if encoders become too time intensive
+    // Consider only updating one endoder per call / tick if encoders become too time intensive
     static void update() { LOOP_PE(i) encoders[i].update(); }
 
     static void homed(const AxisEnum axis) {

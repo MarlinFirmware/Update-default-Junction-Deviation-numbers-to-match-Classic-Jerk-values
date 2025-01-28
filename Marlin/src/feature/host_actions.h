@@ -21,6 +21,10 @@
  */
 #pragma once
 
+/**
+ * feature/host_actions.h
+ */
+
 #include "../inc/MarlinConfigPre.h"
 #include "../HAL/shared/Marduino.h"
 

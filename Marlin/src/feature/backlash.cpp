@@ -20,6 +20,10 @@
  *
  */
 
+/**
+ * feature/backlash.cpp
+ */
+
 #include "../inc/MarlinConfigPre.h"
 
 #if ENABLED(BACKLASH_COMPENSATION)
@@ -190,7 +194,7 @@ class Backlash::StepAdjuster {
       LOOP_NUM_AXES(axis) applied_steps[axis] = backlash.get_applied_steps((AxisEnum)axis);
     }
     ~StepAdjuster() {
-      // after backlash compensation parameter changes, ensure applied step count does not change
+      // After backlash compensation parameter changes, ensure applied step count does not change
       LOOP_NUM_AXES(axis) residual_error[axis] += backlash.get_applied_steps((AxisEnum)axis) - applied_steps[axis];
     }
 };

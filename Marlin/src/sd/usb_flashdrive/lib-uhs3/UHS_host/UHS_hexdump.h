@@ -23,6 +23,7 @@ Circuits At Home, LTD
 Web      :  https://www.circuitsathome.com
 e-mail   :  support@circuitsathome.com
  */
+
 #if !defined(_usb_h_) || defined(__HEXDUMP_H__)
 #error "Never include UHS_hexdump.h directly; include UHS_Usb.h instead"
 #else

@@ -21,7 +21,7 @@
  */
 
 /**
- * scara.cpp
+ * module/scara.cpp
  */
 
 #include "../inc/MarlinConfig.h"

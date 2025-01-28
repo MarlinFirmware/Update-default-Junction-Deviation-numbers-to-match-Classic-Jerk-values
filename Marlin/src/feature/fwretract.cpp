@@ -21,7 +21,7 @@
  */
 
 /**
- * fwretract.cpp - Implement firmware-based retraction
+ * feature/fwretract.cpp - Implement firmware-based retraction
  */
 
 #include "../inc/MarlinConfig.h"
@@ -44,20 +44,20 @@ FWRetract fwretract; // Single instance - this calls the constructor
 // private:
 
 #if HAS_MULTI_EXTRUDER
-  Flags<EXTRUDERS> FWRetract::retracted_swap;         // Which extruders are swap-retracted
+  Flags<EXTRUDERS> FWRetract::retracted_swap; // Which extruders are swap-retracted
 #endif
 
 // public:
 
-fwretract_settings_t FWRetract::settings;             // M207 S F Z W, M208 S F W R
+fwretract_settings_t FWRetract::settings;     // M207 S F Z W, M208 S F W R
 
 #if ENABLED(FWRETRACT_AUTORETRACT)
-  bool FWRetract::autoretract_enabled;                // M209 S - Autoretract switch
+  bool FWRetract::autoretract_enabled;        // M209 S - Autoretract switch
 #endif
 
-Flags<EXTRUDERS> FWRetract::retracted;                // Which extruders are currently retracted
+Flags<EXTRUDERS> FWRetract::retracted;        // Which extruders are currently retracted
 
-float FWRetract::current_retract[EXTRUDERS],          // Retract value used by planner
+float FWRetract::current_retract[EXTRUDERS],  // Retract value used by planner
       FWRetract::current_hop;
 
 void FWRetract::reset() {
@@ -87,7 +87,7 @@ void FWRetract::reset() {
  *
  * To simplify the logic, doubled retract/recover moves are ignored.
  *
- * Note: Auto-retract will apply the set Z hop in addition to any Z hop
+ * NOTE: Auto-retract will apply the set Z hop in addition to any Z hop
  *       included in the G-code. Use M207 Z0 to to prevent double hop.
  */
 void FWRetract::retract(const bool retracting E_OPTARG(bool swapping/*=false*/)) {
@@ -141,8 +141,8 @@ void FWRetract::retract(const bool retracting E_OPTARG(bool swapping/*=false*/))
     );
 
     // Is a Z hop set, and has the hop not yet been done?
-    if (!current_hop && settings.retract_zraise > 0.01f) {  // Apply hop only once
-      current_hop += settings.retract_zraise;               // Add to the hop total (again, only once)
+    if (!current_hop && settings.retract_zraise > 0.01f) { // Apply hop only once
+      current_hop += settings.retract_zraise;              // Add to the hop total (again, only once)
       // Raise up, set_current_to_destination. Maximum Z feedrate
       prepare_internal_move_to_destination(fr_max_z);
     }
@@ -157,8 +157,8 @@ void FWRetract::retract(const bool retracting E_OPTARG(bool swapping/*=false*/))
 
     const float extra_recover = swapping ? settings.swap_retract_recover_extra : settings.retract_recover_extra;
     if (extra_recover) {
-      current_position.e -= extra_recover;          // Adjust the current E position by the extra amount to recover
-      sync_plan_position_e();                             // Sync the planner position so the extra amount is recovered
+      current_position.e -= extra_recover; // Adjust the current E position by the extra amount to recover
+      sync_plan_position_e();              // Sync the planner position so the extra amount is recovered
     }
 
     current_retract[active_extruder] = 0;
@@ -169,9 +169,9 @@ void FWRetract::retract(const bool retracting E_OPTARG(bool swapping/*=false*/))
     );
   }
 
-  TERN_(RETRACT_SYNC_MIXING, mixer.T(old_mixing_tool));   // Restore original mixing tool
+  TERN_(RETRACT_SYNC_MIXING, mixer.T(old_mixing_tool)); // Restore original mixing tool
 
-  retracted.set(active_extruder, retracting);             // Active extruder now retracted / recovered
+  retracted.set(active_extruder, retracting);           // Active extruder now retracted / recovered
 
   // If swap retract/recover update the retracted_swap flag too
   #if HAS_MULTI_EXTRUDER
@@ -252,7 +252,7 @@ void FWRetract::M208_report() {
   /**
    * M209: Enable automatic retract (M209 S1)
    *   For slicers that don't support G10/11, reversed extrude-only
-   *   moves will be classified as retraction.
+   *   moves will be classified as retraction
    */
   void FWRetract::M209() {
     if (!parser.seen('S')) return M209_report();

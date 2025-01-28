@@ -59,7 +59,7 @@ const char* i16tostr3rj(const int16_t x);
 // Convert signed int to lj string with 123 format
 const char* i16tostr3left(const int16_t xx);
 
-// Convert signed int to rj string with _123, -123, _-12, or __-1 format
+// Convert signed int to rj string with 1234, _123, -123, _-12, or __-1 format
 const char* i16tostr4signrj(const int16_t x);
 
 // Convert unsigned float to string with 1.2 format
@@ -156,7 +156,7 @@ FORCE_INLINE const char* ftostr3rj(const_float_t x) { return i16tostr3rj(int16_t
   // Convert signed float to rj string with 1234, _123, 12.3, _1.2, -123, _-12, or -1.2 format
   const char* ftostr4sign(const_float_t fx);
 #else
-  // Convert signed float to rj string with 1234, _123, -123, __12, _-12, ___1, or __-1 format
+  // Convert signed float to rj string with 1234, _123, -123, _-12, or __-1 format
   FORCE_INLINE const char* ftostr4sign(const_float_t x) { return i16tostr4signrj(int16_t(x + (x < 0 ? -0.5f : 0.5f))); }
 #endif
 

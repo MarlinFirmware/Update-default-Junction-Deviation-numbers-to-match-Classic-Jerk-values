@@ -39,8 +39,6 @@
  *
  * \asf_license_stop
  *
- */
-/*
  * Support and FAQ: visit <a href="https://www.atmel.com/design-support/">Atmel Support</a>
  */
 
@@ -57,7 +55,7 @@ extern "C" {
 /**INDENT-ON**/
 /// @endcond
 
-/*
+/**
  * Below BOARD_XXX macros are related to the specific board, and
  * should be defined by the board code, otherwise default value are used.
  */
@@ -251,4 +249,4 @@ static inline void osc_wait_ready(uint8_t id) {
 /**INDENT-ON**/
 /// @endcond
 
-#endif /* CHIP_OSC_H_INCLUDED */
+#endif // CHIP_OSC_H_INCLUDED

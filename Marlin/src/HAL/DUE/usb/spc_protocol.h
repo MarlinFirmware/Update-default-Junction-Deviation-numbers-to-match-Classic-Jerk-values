@@ -42,11 +42,9 @@
  *
  * \asf_license_stop
  *
- */
-
-/*
  * Support and FAQ: visit <a href="https://www.atmel.com/design-support/">Atmel Support</a>
  */
+
 #ifndef _SPC_PROTOCOL_H_
 #define _SPC_PROTOCOL_H_
 

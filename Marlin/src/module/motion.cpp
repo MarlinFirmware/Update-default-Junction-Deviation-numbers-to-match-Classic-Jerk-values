@@ -21,7 +21,7 @@
  */
 
 /**
- * motion.cpp
+ * module/motion.cpp
  */
 
 #include "motion.h"

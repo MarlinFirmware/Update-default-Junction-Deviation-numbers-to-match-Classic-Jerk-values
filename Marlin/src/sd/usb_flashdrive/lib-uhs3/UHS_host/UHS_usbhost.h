@@ -445,5 +445,5 @@ public:
 };
 #endif
 
-#endif //_USBHOST_H_
-#endif
+#endif // _USBHOST_H_
+#endif // !_UHS_host_h_

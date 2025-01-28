@@ -22,7 +22,7 @@
 #pragma once
 
 /**
- * delta.h - Delta-specific functions
+ * module/delta.h - Delta-specific functions
  */
 
 #include "../core/types.h"

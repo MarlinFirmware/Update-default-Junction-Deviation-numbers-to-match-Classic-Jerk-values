@@ -20,6 +20,10 @@
  *
  */
 
+/**
+ * feature/baricuda.cpp
+ */
+
 #include "../inc/MarlinConfigPre.h"
 
 #if ENABLED(BARICUDA)

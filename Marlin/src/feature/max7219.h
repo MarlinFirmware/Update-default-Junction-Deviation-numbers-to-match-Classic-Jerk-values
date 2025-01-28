@@ -22,6 +22,7 @@
 #pragma once
 
 /**
+ * feature/max7219.h
  * This module is off by default, but can be enabled to facilitate the display of
  * extra debug information during code development.
  *

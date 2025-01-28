@@ -21,6 +21,10 @@
  */
 #pragma once
 
+/**
+ * feature/ammeter.h
+ */
+
 #include "../inc/MarlinConfigPre.h"
 
 #include <Wire.h>

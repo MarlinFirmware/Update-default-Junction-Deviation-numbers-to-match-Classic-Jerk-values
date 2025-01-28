@@ -1,4 +1,4 @@
-/*
+/**
  * File:   SWI_INLINE.h
  * Author: xxxajk@gmail.com
  *
@@ -74,7 +74,7 @@ void softISR() {
 #endif
 
         //
-        // TO-DO: Perhaps limit to 8, and inline this?
+        // TODO: Perhaps limit to 8, and inline this?
         //
 
         // Make a working copy, while clearing the queue.
@@ -233,8 +233,8 @@ int exec_SWI(const dyn_SWI* klass) {
         return rc;
 }
 
-#endif /* defined(__arm__) */
-#endif  /* SWI_INLINE_H */
+#endif // defined(__arm__)
+#endif // SWI_INLINE_H
 #else
 #error "Never include SWI_INLINE.h directly, include dyn_SWI.h instead"
-#endif
+#endif // DYN_SWI_H

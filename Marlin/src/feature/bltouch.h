@@ -21,6 +21,10 @@
  */
 #pragma once
 
+/**
+ * feature/bltouch.h
+ */
+
 #include "../inc/MarlinConfigPre.h"
 
 // BLTouch commands are sent as servo angles
@@ -68,10 +72,10 @@ class BLTouch {
 public:
 
   static void init(const bool set_voltage=false);
-  static bool od_5v_mode;         // Initialized by settings.load, 0 = Open Drain; 1 = 5V Drain
+  static bool od_5v_mode;        // Initialized by settings.load, 0 = Open Drain; 1 = 5V Drain
 
   #if HAS_BLTOUCH_HS_MODE
-    static bool high_speed_mode;  // Initialized by settings.load, 0 = Low Speed; 1 = High Speed
+    static bool high_speed_mode; // Initialized by settings.load, 0 = Low Speed; 1 = High Speed
   #else
     static constexpr bool high_speed_mode = false;
   #endif

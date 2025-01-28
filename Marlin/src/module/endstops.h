@@ -22,7 +22,7 @@
 #pragma once
 
 /**
- * endstops.h - manages endstops
+ * module/endstops.h - manages endstops
  */
 
 #include "../inc/MarlinConfig.h"

@@ -22,7 +22,7 @@
 #pragma once
 
 /**
- * scara.h - SCARA-specific functions
+ * module/scara.h - SCARA-specific functions
  */
 
 #include "../core/macros.h"
@@ -31,7 +31,7 @@ extern float segments_per_second;
 
 #if ENABLED(AXEL_TPARA)
 
-  float constexpr L1 = TPARA_LINKAGE_1, L2 = TPARA_LINKAGE_2,   // Float constants for Robot arm calculations
+  float constexpr L1 = TPARA_LINKAGE_1, L2 = TPARA_LINKAGE_2, // Float constants for Robot arm calculations
                   L1_2 = FLOAT_SQ(L1), L1_2_2 = 2.0 * L1_2,
                   L2_2 = FLOAT_SQ(L2);
 
@@ -40,7 +40,7 @@ extern float segments_per_second;
 
 #else
 
-  float constexpr L1 = SCARA_LINKAGE_1, L2 = SCARA_LINKAGE_2,   // Float constants for SCARA calculations
+  float constexpr L1 = SCARA_LINKAGE_1, L2 = SCARA_LINKAGE_2, // Float constants for SCARA calculations
                   L1_2 = FLOAT_SQ(L1), L1_2_2 = 2.0 * L1_2,
                   L2_2 = FLOAT_SQ(L2);
 

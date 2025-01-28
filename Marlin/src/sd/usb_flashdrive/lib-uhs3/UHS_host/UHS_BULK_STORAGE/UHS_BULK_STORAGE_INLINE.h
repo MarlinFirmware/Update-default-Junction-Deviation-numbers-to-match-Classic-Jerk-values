@@ -322,7 +322,7 @@ bool UHS_NI UHS_Bulk_Storage::OKtoEnumerate(ENUMERATION_INFO *ei) {
         BS_HOST_DEBUG("BulkOnly: checking protocol %2.2x, interface.klass %2.2x, interface.subklass %2.2x\r\n", ei->protocol, ei->interface.klass, ei->interface.subklass);
         BS_HOST_DEBUG("BulkOnly: checking interface.protocol %2.2x\r\n", ei->interface.protocol);
         //
-        // TO-DO?
+        // TODO:
         // Check that we have 2 bulk endpoints, and one in each direction??
         // e.g.       (ei->interface.numep > 1) && // two or more endpoints AND check types
         // This will work with proper hardware though.

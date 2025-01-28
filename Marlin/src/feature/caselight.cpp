@@ -20,6 +20,10 @@
  *
  */
 
+/**
+ * feature/caselight.cpp
+ */
+
 #include "../inc/MarlinConfig.h"
 
 #if ENABLED(CASE_LIGHT_ENABLE)

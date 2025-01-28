@@ -21,6 +21,10 @@
  */
 #pragma once
 
+/**
+ * feature/repeat.h
+ */
+
 #include "../inc/MarlinConfigPre.h"
 #include "../gcode/parser.h"
 
@@ -29,8 +33,8 @@
 #define MAX_REPEAT_NESTING 10
 
 typedef struct {
-  uint32_t sdpos;   // The repeat file position
-  int16_t counter;  // The counter for looping
+  uint32_t sdpos;  // The repeat file position
+  int16_t counter; // The counter for looping
 } repeat_marker_t;
 
 class Repeat {

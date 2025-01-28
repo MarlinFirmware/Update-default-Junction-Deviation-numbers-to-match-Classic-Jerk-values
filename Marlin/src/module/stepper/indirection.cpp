@@ -21,7 +21,7 @@
  */
 
 /**
- * stepper/indirection.cpp
+ * module/stepper/indirection.cpp
  *
  * Stepper motor driver indirection to allow some stepper functions to
  * be done via SPI/I2c instead of direct pin manipulation.

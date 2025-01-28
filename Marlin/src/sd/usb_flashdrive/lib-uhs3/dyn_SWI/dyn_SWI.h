@@ -1,4 +1,4 @@
-/*
+/**
  * File:   dyn_SWI.h
  * Author: xxxajk@gmail.com
  *
@@ -157,8 +157,8 @@ extern int exec_SWI(const dyn_SWI* klass);
 
 // IMPORTANT! Define this so that you do NOT end up with a NULL stub!
 #define SWI_NO_STUB
-#endif /* SWI_IRQ_NUM */
-#endif /* __arm__ */
+#endif // SWI_IRQ_NUM
+#endif // __arm__
 
 // if no SWI for CPU (e.g. AVR) make a void stub.
 #ifndef SWI_NO_STUB
@@ -167,4 +167,4 @@ extern int exec_SWI(const dyn_SWI* klass);
 #define DDSB() (void(0))
 #endif
 #endif
-#endif  /* DYN_SWI_H */
+#endif // DYN_SWI_H

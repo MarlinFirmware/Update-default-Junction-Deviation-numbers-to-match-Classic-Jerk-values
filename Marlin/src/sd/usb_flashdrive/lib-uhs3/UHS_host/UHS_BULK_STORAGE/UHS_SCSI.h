@@ -27,14 +27,14 @@ e-mail   :  support@circuitsathome.com
 #ifndef UHS_SCSI_H
 #define UHS_SCSI_H
 
-/*
+/**
  * Reference documents from T10 (https://www.t10.org)
  * SCSI Primary Commands - 3 (SPC-3)
  * SCSI Block Commands - 2 (SBC-2)
  * Multi-Media Commands - 5 (MMC-5)
  */
 
-/* Group 1 commands (CDB's here are should all be 6-bytes) */
+// Group 1 commands (CDB's here are should all be 6-bytes)
 #define SCSI_CMD_TEST_UNIT_READY        0x00U
 #define SCSI_CMD_REQUEST_SENSE          0x03U
 #define SCSI_CMD_FORMAT_UNIT            0x04U
@@ -45,7 +45,8 @@ e-mail   :  support@circuitsathome.com
 #define SCSI_CMD_MODE_SENSE_6           0x1AU
 #define SCSI_CMD_START_STOP_UNIT        0x1BU
 #define SCSI_CMD_PREVENT_REMOVAL        0x1EU
-/* Group 2 Commands (CDB's here are 10-bytes) */
+
+// Group 2 Commands (CDB's here are 10-bytes)
 #define SCSI_CMD_READ_FORMAT_CAPACITIES 0x23U
 #define SCSI_CMD_READ_CAPACITY_10       0x25U
 #define SCSI_CMD_READ_10                0x28U
@@ -77,7 +78,8 @@ e-mail   :  support@circuitsathome.com
 #define SCSI_CMD_CLOSE_TRACK_SESSION    0x5BU
 #define SCSI_CMD_READ_BUFFER_CAPACITY   0x5CU
 #define SCSI_CMD_SEND_CUE_SHEET         0x5DU
-/* Group 5 Commands (CDB's here are 12-bytes) */
+
+// Group 5 Commands (CDB's here are 12-bytes)
 #define SCSI_CMD_REPORT_LUNS            0xA0U
 #define SCSI_CMD_BLANK                  0xA1U
 #define SCSI_CMD_SECURITY_PROTOCOL_IN   0xA2U
@@ -99,14 +101,15 @@ e-mail   :  support@circuitsathome.com
 #define SCSI_CMD_MECHANISM_STATUS       0xBDU
 #define SCSI_CMD_READ_CD                0xBEU
 #define SCSI_CMD_SEND_DISC_STRUCTURE    0xBFU
-/* Vendor-unique Commands, included for completeness */
-#define SCSI_CMD_CD_PLAYBACK_STATUS     0xC4U /* SONY unique */
-#define SCSI_CMD_PLAYBACK_CONTROL       0xC9U /* SONY unique */
-#define SCSI_CMD_READ_CDDA              0xD8U /* Vendor unique */
-#define SCSI_CMD_READ_CDXA              0xDBU /* Vendor unique */
-#define SCSI_CMD_READ_ALL_SUBCODES      0xDFU /* Vendor unique */
 
-/* SCSI error codes */
+// Vendor-unique Commands, included for completeness
+#define SCSI_CMD_CD_PLAYBACK_STATUS     0xC4U // SONY unique
+#define SCSI_CMD_PLAYBACK_CONTROL       0xC9U // SONY unique
+#define SCSI_CMD_READ_CDDA              0xD8U // Vendor unique
+#define SCSI_CMD_READ_CDXA              0xDBU // Vendor unique
+#define SCSI_CMD_READ_ALL_SUBCODES      0xDFU // Vendor unique
+
+// SCSI error codes
 #define SCSI_S_NOT_READY                0x02U
 #define SCSI_S_MEDIUM_ERROR             0x03U
 #define SCSI_S_ILLEGAL_REQUEST          0x05U
@@ -324,4 +327,4 @@ struct SCSI_Request_Sense_Response {
         uint8_t SenseKeySpecific[3];
 } __attribute__((packed));
 
-#endif  /* UHS_SCSI_H */
+#endif  // UHS_SCSI_H

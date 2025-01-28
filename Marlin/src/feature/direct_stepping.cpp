@@ -20,6 +20,10 @@
  *
  */
 
+/**
+ * feature/direct_stepping.cpp
+ */
+
 #include "../inc/MarlinConfigPre.h"
 
 #if ENABLED(DIRECT_STEPPING)

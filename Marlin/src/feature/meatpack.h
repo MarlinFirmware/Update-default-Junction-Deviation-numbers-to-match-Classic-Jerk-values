@@ -20,7 +20,10 @@
  *
  */
 
+#pragma once
+
 /**
+ * feature/meatpack.h
  * MeatPack G-code Compression
  *
  * Algorithm & Implementation: Scott Mudge - mail@scottmudge.com
@@ -46,7 +49,6 @@
  * ware like OctoPrint would also suffer this same micro-stuttering and poor print quality issue.
  *
  */
-#pragma once
 
 #include <stdint.h>
 #include "../core/serial_hook.h"

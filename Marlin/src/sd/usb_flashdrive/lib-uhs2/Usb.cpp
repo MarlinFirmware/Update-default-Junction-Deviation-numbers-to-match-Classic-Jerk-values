@@ -685,7 +685,7 @@ uint8_t USB::Configuring(uint8_t parent, uint8_t port, bool lowspeed) {
     return rcode;
   }
 
-  // To-do?
+  // TODO:
   // Allocate new address according to device class
   //bAddress = addrPool.AllocAddress(parent, false, port);
 

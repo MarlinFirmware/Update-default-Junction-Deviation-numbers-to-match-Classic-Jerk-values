@@ -21,6 +21,10 @@
  */
 #pragma once
 
+/**
+ * feature/probe_temp_comp.h
+ */
+
 #include "../inc/MarlinConfig.h"
 
 enum TempSensorID : uint8_t {
@@ -37,15 +41,15 @@ enum TempSensorID : uint8_t {
 };
 
 typedef struct {
-  uint8_t measurements;       // Max. number of measurements to be stored (35 - 80°C)
-  celsius_t temp_resolution,  // Resolution in °C between measurements
-            start_temp;       // Base measurement; z-offset == 0
+  uint8_t measurements;      // Max. number of measurements to be stored (35 - 80°C)
+  celsius_t temp_resolution, // Resolution in °C between measurements
+            start_temp;      // Base measurement; z-offset == 0
 } temp_calib_t;
 
 /**
  * Probe temperature compensation implementation.
  * Z-probes like the P.I.N.D.A V2 allow for compensation of
- * measurement errors/shifts due to changed temperature.
+ * measurement errors/shifts due to changed temperature
  */
 
 class ProbeTempComp {
@@ -53,10 +57,10 @@ class ProbeTempComp {
 
     static constexpr temp_calib_t cali_info[TSI_COUNT] = {
       #if ENABLED(PTC_PROBE)
-        { PTC_PROBE_COUNT, PTC_PROBE_RES, PTC_PROBE_START },   // Probe
+        { PTC_PROBE_COUNT, PTC_PROBE_RES, PTC_PROBE_START },    // Probe
       #endif
       #if ENABLED(PTC_BED)
-        { PTC_BED_COUNT, PTC_BED_RES, PTC_BED_START },   // Bed
+        { PTC_BED_COUNT, PTC_BED_RES, PTC_BED_START },          // Bed
       #endif
       #if ENABLED(PTC_HOTEND)
         { PTC_HOTEND_COUNT, PTC_HOTEND_RES, PTC_HOTEND_START }, // Extruder
@@ -65,13 +69,13 @@ class ProbeTempComp {
 
     static int16_t *sensor_z_offsets[TSI_COUNT];
     #if ENABLED(PTC_PROBE)
-      static int16_t z_offsets_probe[PTC_PROBE_COUNT]; // (µm)
+      static int16_t z_offsets_probe[PTC_PROBE_COUNT];   // (µm)
     #endif
     #if ENABLED(PTC_BED)
-      static int16_t z_offsets_bed[PTC_BED_COUNT];   // (µm)
+      static int16_t z_offsets_bed[PTC_BED_COUNT];       // (µm)
     #endif
     #if ENABLED(PTC_HOTEND)
-      static int16_t z_offsets_hotend[PTC_HOTEND_COUNT];   // (µm)
+      static int16_t z_offsets_hotend[PTC_HOTEND_COUNT]; // (µm)
     #endif
 
     static void reset_index() { calib_idx = 0; };
@@ -100,13 +104,13 @@ class ProbeTempComp {
 
     /**
      * Base value. Temperature compensation values will be deltas
-     * to this value, set at first probe.
+     * to this value, set at first probe
      */
     static float init_measurement;
 
     /**
      * Fit a linear function in measured temperature offsets
-     * to allow generating values of higher temperatures.
+     * to allow generating values of higher temperatures
      */
     static bool linear_regression(const TempSensorID tsi, float &k, float &d);
 

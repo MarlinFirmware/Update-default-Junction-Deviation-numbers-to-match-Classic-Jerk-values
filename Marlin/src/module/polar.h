@@ -22,7 +22,7 @@
 #pragma once
 
 /**
- * polar.h - POLAR-specific functions
+ * module/polar.h - POLAR-specific functions
  */
 
 #include "../core/types.h"

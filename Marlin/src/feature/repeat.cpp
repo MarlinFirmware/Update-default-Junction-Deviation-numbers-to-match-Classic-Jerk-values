@@ -20,6 +20,10 @@
  *
  */
 
+/**
+ * feature/repeat.cpp
+ */
+
 #include "../inc/MarlinConfig.h"
 
 #if ENABLED(GCODE_REPEAT_MARKERS)
@@ -50,17 +54,17 @@ void Repeat::add_marker(const uint32_t sdpos, const uint16_t count) {
 
 void Repeat::loop() {
   if (!index)                           // No marker?
-    SERIAL_ECHO_MSG("!No marker set."); //  Inform the user.
+    SERIAL_ECHO_MSG("!No marker set."); // Inform the user
   else {
     const uint8_t ind = index - 1;      // Active marker's index
     if (!marker[ind].counter) {         // Did its counter run out?
       DEBUG_ECHOLNPGM("Pass Marker ", index);
-      index--;                          //  Carry on. Previous marker on the next 'M808'.
+      index--;                          // Carry on. Previous marker on the next 'M808'
     }
     else {
-      card.setIndex(marker[ind].sdpos); // Loop back to the marker.
-      if (marker[ind].counter > 0)      // Ignore a negative (or zero) counter.
-        --marker[ind].counter;          // Decrement the counter. If zero this 'M808' will be skipped next time.
+      card.setIndex(marker[ind].sdpos); // Loop back to the marker
+      if (marker[ind].counter > 0)      // Ignore a negative (or zero) counter
+        --marker[ind].counter;          // Decrement the counter. If zero this 'M808' will be skipped next time
       DEBUG_ECHOLNPGM("Goto Marker ", index, " at ", marker[ind].sdpos, " (", marker[ind].counter, ")");
     }
   }

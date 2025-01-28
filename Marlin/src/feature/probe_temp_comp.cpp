@@ -20,11 +20,15 @@
  *
  */
 
+/**
+ * feature/probe_temp_comp.cpp
+ */
+
 #include "../inc/MarlinConfigPre.h"
 
 #if HAS_PTC
 
-//#define DEBUG_PTC   // Print extra debug output with 'M871'
+//#define DEBUG_PTC // Print extra debug output with 'M871'
 
 #include "probe_temp_comp.h"
 #include <math.h>
@@ -61,7 +65,7 @@ int16_t *ProbeTempComp::sensor_z_offsets[TSI_COUNT] = {
 
 constexpr temp_calib_t ProbeTempComp::cali_info[TSI_COUNT];
 
-uint8_t ProbeTempComp::calib_idx; // = 0
+uint8_t ProbeTempComp::calib_idx;      // = 0
 float ProbeTempComp::init_measurement; // = 0.0
 bool ProbeTempComp::enabled = true;
 
@@ -191,8 +195,7 @@ void ProbeTempComp::compensate_measurement(const TempSensorID tsi, const celsius
     return p1.y + (p2.y - p1.y) / (p2.x - p1.x) * (x - p1.x);
   };
 
-  // offset in µm
-  float offset = 0.0f;
+  float offset = 0.0f; // (µm)
 
   #if PTC_LINEAR_EXTRAPOLATION
     if (temp < start_temp)
@@ -211,7 +214,7 @@ void ProbeTempComp::compensate_measurement(const TempSensorID tsi, const celsius
       offset = linear_interp(temp, tpoint(idx), tpoint(idx + 1));
     }
 
-  // convert offset to mm and apply it
+  // Convert offset to (mm) and apply it
   meas_z -= offset / 1000.0f;
 }
 

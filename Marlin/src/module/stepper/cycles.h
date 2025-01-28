@@ -22,7 +22,7 @@
 #pragma once
 
 /**
- * cycles.h - Cycle counting for the Stepper ISR
+ * module/stepper/cycles.h - Cycle counting for the Stepper ISR
  *
  * Estimate the amount of time the Stepper ISR will take to execute.
  *

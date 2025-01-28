@@ -80,7 +80,7 @@ uint32_t PrintJobRecovery::cmd_sdpos, // = 0
 PrintJobRecovery recovery;
 
 #if DISABLED(BACKUP_POWER_SUPPLY)
-  #undef POWER_LOSS_RETRACT_LEN   // No retract at outage without backup power
+  #undef POWER_LOSS_RETRACT_LEN // No retract at outage without backup power
 #endif
 #ifndef POWER_LOSS_RETRACT_LEN
   #define POWER_LOSS_RETRACT_LEN 0
@@ -165,7 +165,7 @@ void PrintJobRecovery::load() {
  * Set info fields that won't change
  */
 void PrintJobRecovery::prepare() {
-  card.getAbsFilenameInCWD(info.sd_filename);  // SD filename
+  card.getAbsFilenameInCWD(info.sd_filename); // SD filename
   cmd_sdpos = 0;
 }
 
@@ -182,13 +182,13 @@ void PrintJobRecovery::save(const bool force/*=false*/, const float zraise/*=POW
   #endif
 
   #ifndef POWER_LOSS_MIN_Z_CHANGE
-    #define POWER_LOSS_MIN_Z_CHANGE 0.05  // Vase-mode-friendly out of the box
+    #define POWER_LOSS_MIN_Z_CHANGE 0.05 // Vase-mode-friendly out of the box
   #endif
 
   // Did Z change since the last call?
   if (force
-    #if DISABLED(SAVE_EACH_CMD_MODE)      // Always save state when enabled
-      #if SAVE_INFO_INTERVAL_MS > 0       // Save if interval is elapsed
+    #if DISABLED(SAVE_EACH_CMD_MODE) // Always save state when enabled
+      #if SAVE_INFO_INTERVAL_MS > 0  // Save if interval is elapsed
         || ELAPSED(ms, next_save_ms)
       #endif
       // Save if Z is above the last-saved position by some minimum height
@@ -201,7 +201,7 @@ void PrintJobRecovery::save(const bool force/*=false*/, const float zraise/*=POW
     #endif
 
     // Set Head and Foot to matching non-zero values
-    if (!++info.valid_head) ++info.valid_head; // non-zero in sequence
+    if (!++info.valid_head) ++info.valid_head; // Non-zero in sequence
     //if (!IS_SD_PRINTING()) info.valid_head = 0;
     info.valid_foot = info.valid_head;
 
@@ -213,7 +213,7 @@ void PrintJobRecovery::save(const bool force/*=false*/, const float zraise/*=POW
     COPY(info.flow_percentage, planner.flow_percentage);
 
     info.zraise = zraise;
-    info.flag.raised = raised;                      // Was Z raised before power-off?
+    info.flag.raised = raised; // Was Z raised before power-off?
 
     TERN_(CANCEL_OBJECTS, info.cancel_state = cancelable.state);
     TERN_(GCODE_REPEAT_MARKERS, info.stored_repeat = repeat);
@@ -273,7 +273,7 @@ void PrintJobRecovery::save(const bool force/*=false*/, const float zraise/*=POW
     void PrintJobRecovery::retract_and_lift(const_float_t zraise) {
       #if POWER_LOSS_RETRACT_LEN || POWER_LOSS_ZRAISE
 
-        gcode.set_relative_mode(true);  // Use relative coordinates
+        gcode.set_relative_mode(true); // Use relative coordinates
 
         #if POWER_LOSS_RETRACT_LEN
           // Retract filament now
@@ -325,7 +325,7 @@ void PrintJobRecovery::save(const bool force/*=false*/, const float zraise/*=POW
     #endif
 
     // Save the current position, distance that Z was (or should be) raised,
-    // and a flag whether the raise was already done here.
+    // and a flag whether the raise was already done here
     if (IS_SD_PRINTING()) save(true, zraise, ENABLED(BACKUP_POWER_SUPPLY));
 
     // Tell the LCD about the outage, even though it is about to die
@@ -423,10 +423,10 @@ void PrintJobRecovery::resume() {
   const float z_print = resume_pos.z,
               z_raised = z_print + info.zraise;
 
-  //
-  // Home the axes that can safely be homed, and
-  // establish the current position as best we can.
-  //
+  /**
+   * Home the axes that can safely be homed, and
+   * establish the current position as best we can
+   */
 
   PROCESS_SUBCOMMANDS_NOW(F("G92.9E0")); // Reset E to 0
 
@@ -436,8 +436,8 @@ void PrintJobRecovery::resume() {
 
     // If Z homing goes to max then just move back to the "raised" position
     PROCESS_SUBCOMMANDS_NOW(TS(
-      F( "G28R0\n"    // Home all axes (no raise)
-         "G1F1200Z")  // Move Z down to (raised) height
+      F( "G28R0\n"   // Home all axes (no raise)
+         "G1F1200Z") // Move Z down to (raised) height
       , p_float_t(z_now, 3)
     ));
 
@@ -454,7 +454,7 @@ void PrintJobRecovery::resume() {
       PROCESS_SUBCOMMANDS_NOW(TS(F("G92.9Z"), p_float_t(z_now, 3)));
     #endif
 
-    // Does Z need to be raised now? It should be raised before homing XY.
+    // Does Z need to be raised now? It should be raised before homing XY
     if (z_raised > z_now) {
       z_now = z_raised;
       PROCESS_SUBCOMMANDS_NOW(TS(F("G1F600Z"), p_float_t(z_now, 3)));
@@ -466,7 +466,7 @@ void PrintJobRecovery::resume() {
   #endif
 
   #if HOMING_Z_DOWN
-    // Move to a safe XY position and home Z while avoiding the print.
+    // Move to a safe XY position and home Z while avoiding the print
     const xy_pos_t p = xy_pos_t(POWER_LOSS_ZHOME_POS) TERN_(HOMING_Z_WITH_PROBE, - probe.offset_xy);
     PROCESS_SUBCOMMANDS_NOW(TS(F("G1F1000X"), p_float_t(p.x, 3), 'Y', p_float_t(p.y, 3), F("\nG28HZ")));
   #endif
@@ -475,19 +475,19 @@ void PrintJobRecovery::resume() {
   set_all_homed();
 
   #if HAS_LEVELING
-    // Restore Z fade and possibly re-enable bed leveling compensation.
-    // Leveling may already be enabled due to the ENABLE_LEVELING_AFTER_G28 option.
-    // TODO: Add a G28 parameter to leave leveling disabled.
+    // Restore Z fade and possibly re-enable bed leveling compensation
+    // Leveling may already be enabled due to the ENABLE_LEVELING_AFTER_G28 option
+    // TODO: Add a G28 parameter to leave leveling disabled
     PROCESS_SUBCOMMANDS_NOW(TS(F("M420S"), '0' + (char)info.flag.leveling, 'Z', p_float_t(info.fade, 1)));
 
     #if !HOMING_Z_DOWN
-      // The physical Z was adjusted at power-off so undo the M420S1 correction to Z with G92.9.
+      // The physical Z was adjusted at power-off so undo the M420S1 correction to Z with G92.9
       PROCESS_SUBCOMMANDS_NOW(TS(F("G92.9Z"), p_float_t(z_now, 1)));
     #endif
   #endif
 
   #if ENABLED(POWER_LOSS_RECOVER_ZHOME)
-    // Z was homed down to the bed, so move up to the raised height.
+    // Z was homed down to the bed, so move up to the raised height
     z_now = z_raised;
     PROCESS_SUBCOMMANDS_NOW(TS(F("G1F600Z"), p_float_t(z_now, 3)));
   #endif
@@ -689,7 +689,7 @@ void PrintJobRecovery::resume() {
         #endif
 
         #if HAS_LEVELING
-          DEBUG_ECHOLNPGM("leveling: ", info.flag.leveling ? "ON" : "OFF", "  fade: ", info.fade);
+          DEBUG_ECHOLNPGM("leveling: ", info.flag.leveling ? "ON" : "OFF", " fade: ", info.fade);
         #endif
 
         #if ENABLED(FWRETRACT)

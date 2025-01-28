@@ -21,10 +21,14 @@
  */
 #pragma once
 
+/**
+ * feature/caselight.h
+ */
+
 #include "../inc/MarlinConfig.h"
 
 #if CASE_LIGHT_IS_COLOR_LED
-  #include "leds/leds.h" // for LEDColor
+  #include "leds/leds.h" // For LEDColor
 #endif
 
 class CaseLight {

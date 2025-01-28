@@ -1218,7 +1218,7 @@ void tool_change(const uint8_t new_tool, bool no_move/*=false*/) {
           }
           else if (extruder_was_primed[old_tool]) {
             // Retract the old extruder if it was previously primed
-            // To-Do: Should SingleNozzle always retract?
+            // TODO: Should SingleNozzle always retract?
             DEBUG_ECHOLNPGM("Retracting Filament for T", old_tool, ". | Distance: ", toolchange_settings.swap_length, " | Speed: ", MMM_TO_MMS(toolchange_settings.retract_speed), "mm/s");
             unscaled_e_move(-toolchange_settings.swap_length, MMM_TO_MMS(toolchange_settings.retract_speed));
           }

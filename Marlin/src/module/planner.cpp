@@ -21,7 +21,7 @@
  */
 
 /**
- * planner.cpp
+ * module/planner.cpp
  *
  * Buffer movement commands and manage the acceleration profile plan
  *

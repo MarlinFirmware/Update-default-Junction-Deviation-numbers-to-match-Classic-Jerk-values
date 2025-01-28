@@ -21,6 +21,10 @@
  */
 #pragma once
 
+/**
+ * feature/power_monitor.h
+ */
+
 #include "../inc/MarlinConfig.h"
 
 #define PM_SAMPLE_RANGE HAL_ADC_RANGE

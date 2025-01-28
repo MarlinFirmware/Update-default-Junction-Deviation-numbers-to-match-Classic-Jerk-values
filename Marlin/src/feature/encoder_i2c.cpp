@@ -20,12 +20,15 @@
  *
  */
 
-//todo:  add support for multiple encoders on a single axis
-//todo:    add z axis auto-leveling
-//todo:  consolidate some of the related M codes?
-//todo:  add endstop-replacement mode?
-//todo:  try faster I2C speed; tweak TWI_FREQ (400000L, or faster?); or just TWBR = ((CPU_FREQ / 400000L) - 16) / 2;
-//todo:    consider Marlin-optimized Wire library; i.e. MarlinWire, like MarlinSerial
+/**
+ * feature/encoder_i2c.cpp
+ * TODO: add support for multiple encoders on a single axis
+ * TODO: add z axis auto-leveling
+ * TODO: consolidate some of the related M codes?
+ * TODO: add endstop-replacement mode?
+ * TODO: try faster I2C speed; tweak TWI_FREQ (400000L, or faster?); or just TWBR = ((CPU_FREQ / 400000L) - 16) / 2;
+ * TODO: consider Marlin-optimized Wire library; i.e. MarlinWire, like MarlinSerial
+ */
 
 #include "../inc/MarlinConfig.h"
 
@@ -139,17 +142,17 @@ void I2CPositionEncoder::update() {
         if (i) diffSum += ABS(err[i-1] - err[i]);
       }
 
-      const int32_t error = int32_t(sum / (I2CPE_ERR_ARRAY_SIZE + 1)); //calculate average for error
+      const int32_t error = int32_t(sum / (I2CPE_ERR_ARRAY_SIZE + 1)); // Calculate average for error
 
     #else
       const int32_t error = get_axis_error_steps(false);
     #endif
 
-    //SERIAL_ECHOLNPGM("Axis error steps: ", error);
+    // SERIAL_ECHOLNPGM("Axis error steps: ", error);
 
     #ifdef I2CPE_ERR_THRESH_ABORT
       if (ABS(error) > I2CPE_ERR_THRESH_ABORT * planner.settings.axis_steps_per_mm[encoderAxis]) {
-        //kill(F("Significant Error"));
+        // kill(F("Significant Error"));
         SERIAL_ECHOLNPGM("Axis error over threshold, aborting!", error);
         safe_delay(5000);
       }
@@ -201,7 +204,7 @@ void I2CPositionEncoder::update() {
 
 void I2CPositionEncoder::set_homed() {
   if (active) {
-    reset();  // Reset module's offset to zero (so current position is homed / zero)
+    reset(); // Reset module's offset to zero (so current position is homed / zero)
     delay(10);
 
     zeroOffset = get_raw_count();
@@ -266,18 +269,18 @@ int32_t I2CPositionEncoder::get_axis_error_steps(const bool report) {
 
   float stepperTicksPerUnit;
   int32_t encoderTicks = position, encoderCountInStepperTicksScaled;
-  //int32_t stepperTicks = stepper.position(encoderAxis);
+  // int32_t stepperTicks = stepper.position(encoderAxis);
 
-  // With a rotary encoder we're concerned with ticks/rev; whereas with a linear we're concerned with ticks/mm
+  // With a rotary encoder we're concerned with ticks/rev; whereas with a linear we're concerned with ticks/(mm)
   stepperTicksPerUnit = (type == I2CPE_ENC_TYPE_ROTARY) ? stepperTicks : planner.settings.axis_steps_per_mm[encoderAxis];
 
-  //convert both 'ticks' into same units / base
+  // Convert both 'ticks' into same units / base
   encoderCountInStepperTicksScaled = LROUND((stepperTicksPerUnit * encoderTicks) / encoderTicksPerUnit);
 
   const int32_t target = stepper.position(encoderAxis);
   int32_t error = encoderCountInStepperTicksScaled - target;
 
-  //suppress discontinuities (might be caused by bad I2C readings...?)
+  // Suppress discontinuities (might be caused by bad I2C readings...?)
   const bool suppressOutput = (ABS(error - errorPrev) > 100);
 
   errorPrev = error;
@@ -302,7 +305,7 @@ int32_t I2CPositionEncoder::get_raw_count() {
   encoderCount.val = 0x00;
 
   if (Wire.requestFrom(I2C_ADDRESS(i2cAddress), uint8_t(3)) != 3) {
-    //houston, we have a problem...
+    // Houston, we have a problem...
     H = I2CPE_MAG_SIG_NF;
     return 0;
   }
@@ -310,11 +313,11 @@ int32_t I2CPositionEncoder::get_raw_count() {
   while (Wire.available())
     encoderCount.bval[index++] = (uint8_t)Wire.read();
 
-  //extract the magnetic strength
+  // Extract the magnetic strength
   H = (B00000011 & (encoderCount.bval[2] >> 6));
 
-  //extract sign bit; sign = (encoderCount.bval[2] & B00100000);
-  //set all upper bits to the sign value to overwrite H
+  // Extract sign bit: sign = (encoderCount.bval[2] & B00100000);
+  // Set all upper bits to the sign value to overwrite H
   encoderCount.val = (encoderCount.bval[2] & B00100000) ? (encoderCount.val | 0xFFC00000) : (encoderCount.val & 0x003FFFFF);
 
   if (invert) encoderCount.val *= -1;
@@ -348,14 +351,14 @@ bool I2CPositionEncoder::test_axis() {
     planner.synchronize();
   #endif
 
-  // if the module isn't currently trusted, wait until it is (or until it should be if things are working)
+  // If the module isn't currently trusted, wait until it is (or until it should be if things are working)
   if (!trusted) {
     int32_t startWaitingTime = millis();
     while (!trusted && millis() - startWaitingTime < I2CPE_TIME_TRUSTED)
       safe_delay(500);
   }
 
-  if (trusted) { // if trusted, commence test
+  if (trusted) { // If trusted, commence test
     TERN_(HAS_EXTRUDERS, endCoord.e = planner.get_axis_position_mm(E_AXIS));
     planner.buffer_line(endCoord, fr_mm_s, 0);
     planner.synchronize();
@@ -408,13 +411,13 @@ void I2CPositionEncoder::calibrate_steps_mm(const uint8_t iter) {
     delay(250);
     startCount = get_position();
 
-    //do_blocking_move_to(endCoord);
+    // do_blocking_move_to(endCoord);
 
     TERN_(HAS_EXTRUDERS, endCoord.e = planner.get_axis_position_mm(E_AXIS));
     planner.buffer_line(endCoord, fr_mm_s, 0);
     planner.synchronize();
 
-    //Read encoder distance
+    // Read encoder distance
     delay(250);
     stopCount = get_position();
 
@@ -704,7 +707,7 @@ void I2CPositionEncodersMgr::change_module_address(const uint8_t oldaddr, const 
   SERIAL_ECHOLNPGM("Address change successful!");
 
   // Now, if this module is configured, find which encoder instance it's supposed to correspond to
-  // and enable it (it will likely have failed initialization on power-up, before the address change).
+  // and enable it (it will likely have failed initialization on power-up, before the address change)
   const int8_t idx = idx_from_addr(newaddr);
   if (idx >= 0 && !encoders[idx].get_active()) {
     SERIAL_CHAR(AXIS_CHAR(encoders[idx).get_axis()]);
@@ -754,7 +757,7 @@ int8_t I2CPositionEncodersMgr::parse() {
     }
 
     I2CPE_addr = parser.value_byte();
-    if (!WITHIN(I2CPE_addr, 30, 200)) { // reserve the first 30 and last 55
+    if (!WITHIN(I2CPE_addr, 30, 200)) { // Reserve the first 30 and last 55
       SERIAL_ECHOLNPGM("?Address out of range. [30-200]");
       return I2CPE_PARSE_ERR;
     }
@@ -789,18 +792,18 @@ int8_t I2CPositionEncodersMgr::parse() {
 }
 
 /**
- * M860:  Report the position(s) of position encoder module(s).
+ * M860: Report the position(s) of position encoder module(s)
  *
- *   A<addr>  Module I2C address.  [30, 200].
- *   I<index> Module index.  [0, I2CPE_ENCODER_CNT - 1]
- *   O        Include homed zero-offset in returned position.
- *   U        Units in mm or raw step count.
+ *   A<addr>  Module I2C address. [30, 200]
+ *   I<index> Module index. [0, I2CPE_ENCODER_CNT - 1]
+ *   O        Include homed zero-offset in returned position
+ *   U        Units in (mm) or raw step count
  *
  *   If A or I not specified:
- *    X       Report on X axis encoder, if present.
- *    Y       Report on Y axis encoder, if present.
- *    Z       Report on Z axis encoder, if present.
- *    E       Report on E axis encoder, if present.
+ *    X       Report on X axis encoder, if present
+ *    Y       Report on Y axis encoder, if present
+ *    Z       Report on Z axis encoder, if present
+ *    E       Report on E axis encoder, if present
  */
 void I2CPositionEncodersMgr::M860() {
   if (parse()) return;
@@ -820,16 +823,16 @@ void I2CPositionEncodersMgr::M860() {
 }
 
 /**
- * M861:  Report the status of position encoder modules.
+ * M861: Report the status of position encoder modules
  *
- *   A<addr>  Module I2C address.  [30, 200].
- *   I<index> Module index.  [0, I2CPE_ENCODER_CNT - 1]
+ *   A<addr>  Module I2C address. [30, 200]
+ *   I<index> Module index. [0, I2CPE_ENCODER_CNT - 1]
  *
  *   If A or I not specified:
- *    X       Report on X axis encoder, if present.
- *    Y       Report on Y axis encoder, if present.
- *    Z       Report on Z axis encoder, if present.
- *    E       Report on E axis encoder, if present.
+ *    X       Report on X axis encoder, if present
+ *    Y       Report on Y axis encoder, if present
+ *    Z       Report on Z axis encoder, if present
+ *    E       Report on E axis encoder, if present
  */
 void I2CPositionEncodersMgr::M861() {
   if (parse()) return;
@@ -847,17 +850,17 @@ void I2CPositionEncodersMgr::M861() {
 }
 
 /**
- * M862:  Perform an axis continuity test for position encoder
- *        modules.
+ * M862: Perform an axis continuity test for position encoder
+ *       modules
  *
- *   A<addr>  Module I2C address.  [30, 200].
- *   I<index> Module index.  [0, I2CPE_ENCODER_CNT - 1]
+ *   A<addr>  Module I2C address. [30, 200]
+ *   I<index> Module index. [0, I2CPE_ENCODER_CNT - 1]
  *
  *   If A or I not specified:
- *    X       Report on X axis encoder, if present.
- *    Y       Report on Y axis encoder, if present.
- *    Z       Report on Z axis encoder, if present.
- *    E       Report on E axis encoder, if present.
+ *    X       Report on X axis encoder, if present
+ *    Y       Report on Y axis encoder, if present
+ *    Z       Report on Z axis encoder, if present
+ *    E       Report on E axis encoder, if present
  */
 void I2CPositionEncodersMgr::M862() {
   if (parse()) return;
@@ -875,18 +878,18 @@ void I2CPositionEncodersMgr::M862() {
 }
 
 /**
- * M863:  Perform steps-per-mm calibration for
- *        position encoder modules.
+ * M863: Perform steps-per-mm calibration for
+ *       position encoder modules
  *
- *   A<addr>  Module I2C address.  [30, 200].
- *   I<index> Module index.  [0, I2CPE_ENCODER_CNT - 1]
- *   P        Number of rePeats/iterations.
+ *   A<addr>  Module I2C address. [30, 200]
+ *   I<index> Module index. [0, I2CPE_ENCODER_CNT - 1]
+ *   P        Number of rePeats/iterations
  *
  *   If A or I not specified:
- *    X       Report on X axis encoder, if present.
- *    Y       Report on Y axis encoder, if present.
- *    Z       Report on Z axis encoder, if present.
- *    E       Report on E axis encoder, if present.
+ *    X       Report on X axis encoder, if present
+ *    Y       Report on Y axis encoder, if present
+ *    Z       Report on Z axis encoder, if present
+ *    E       Report on E axis encoder, if present
  */
 void I2CPositionEncodersMgr::M863() {
   if (parse()) return;
@@ -906,17 +909,17 @@ void I2CPositionEncodersMgr::M863() {
 }
 
 /**
- * M864:  Change position encoder module I2C address.
+ * M864: Change position encoder module I2C address
  *
- *   A<addr>  Module current/old I2C address.  If not present,
- *            assumes default address (030).  [30, 200].
- *   S<addr>  Module new I2C address. [30, 200].
+ *   A<addr>  Module current/old I2C address. If not present,
+ *            assumes default address (030). [30, 200]
+ *   S<addr>  Module new I2C address. [30, 200]
  *
  *   If S is not specified:
- *    X       Use I2CPE_PRESET_ADDR_X (030).
- *    Y       Use I2CPE_PRESET_ADDR_Y (031).
- *    Z       Use I2CPE_PRESET_ADDR_Z (032).
- *    E       Use I2CPE_PRESET_ADDR_E (033).
+ *    X       Use I2CPE_PRESET_ADDR_X (030)
+ *    Y       Use I2CPE_PRESET_ADDR_Y (031)
+ *    Z       Use I2CPE_PRESET_ADDR_Z (032)
+ *    E       Use I2CPE_PRESET_ADDR_E (033)
  */
 void I2CPositionEncodersMgr::M864() {
   uint8_t newAddress;
@@ -955,16 +958,16 @@ void I2CPositionEncodersMgr::M864() {
 }
 
 /**
- * M865:  Check position encoder module firmware version.
+ * M865: Check position encoder module firmware version
  *
- *   A<addr>  Module I2C address.  [30, 200].
- *   I<index> Module index.  [0, I2CPE_ENCODER_CNT - 1].
+ *   A<addr>  Module I2C address. [30, 200]
+ *   I<index> Module index. [0, I2CPE_ENCODER_CNT - 1]
  *
  *   If A or I not specified:
- *    X       Check X axis encoder, if present.
- *    Y       Check Y axis encoder, if present.
- *    Z       Check Z axis encoder, if present.
- *    E       Check E axis encoder, if present.
+ *    X       Check X axis encoder, if present
+ *    Y       Check Y axis encoder, if present
+ *    Z       Check Z axis encoder, if present
+ *    E       Check E axis encoder, if present
  */
 void I2CPositionEncodersMgr::M865() {
   if (parse()) return;
@@ -982,18 +985,17 @@ void I2CPositionEncodersMgr::M865() {
 }
 
 /**
- * M866:  Report or reset position encoder module error
- *        count.
+ * M866: Report or reset position encoder module error count
  *
- *   A<addr>  Module I2C address.  [30, 200].
- *   I<index> Module index.  [0, I2CPE_ENCODER_CNT - 1].
- *   R        Reset error counter.
+ *   A<addr>  Module I2C address. [30, 200]
+ *   I<index> Module index. [0, I2CPE_ENCODER_CNT - 1]
+ *   R        Reset error counter
  *
  *   If A or I not specified:
- *    X       Act on X axis encoder, if present.
- *    Y       Act on Y axis encoder, if present.
- *    Z       Act on Z axis encoder, if present.
- *    E       Act on E axis encoder, if present.
+ *    X       Act on X axis encoder, if present
+ *    Y       Act on Y axis encoder, if present
+ *    Z       Act on Z axis encoder, if present
+ *    E       Act on E axis encoder, if present
  */
 void I2CPositionEncodersMgr::M866() {
   if (parse()) return;
@@ -1020,18 +1022,18 @@ void I2CPositionEncodersMgr::M866() {
 }
 
 /**
- * M867:  Enable/disable or toggle error correction for position encoder modules.
+ * M867:  Enable/disable or toggle error correction for position encoder modules
  *
- *   A<addr>  Module I2C address.  [30, 200].
- *   I<index> Module index.  [0, I2CPE_ENCODER_CNT - 1].
- *   S<1|0>   Enable/disable error correction. 1 enables, 0 disables.  If not
- *            supplied, toggle.
+ *   A<addr>  Module I2C address. [30, 200]
+ *   I<index> Module index. [0, I2CPE_ENCODER_CNT - 1]
+ *   S<1|0>   Enable/disable error correction. 1 enables, 0 disables. If not
+ *            supplied, toggle
  *
  *   If A or I not specified:
- *    X       Act on X axis encoder, if present.
- *    Y       Act on Y axis encoder, if present.
- *    Z       Act on Z axis encoder, if present.
- *    E       Act on E axis encoder, if present.
+ *    X       Act on X axis encoder, if present
+ *    Y       Act on Y axis encoder, if present
+ *    Z       Act on Z axis encoder, if present
+ *    E       Act on E axis encoder, if present
  */
 void I2CPositionEncodersMgr::M867() {
   if (parse()) return;
@@ -1056,18 +1058,18 @@ void I2CPositionEncodersMgr::M867() {
 }
 
 /**
- * M868:  Report or set position encoder module error correction
- *        threshold.
+ * M868: Report or set position encoder module error correction
+ *       threshold
  *
- *   A<addr>  Module I2C address.  [30, 200].
- *   I<index> Module index.  [0, I2CPE_ENCODER_CNT - 1].
- *   T        New error correction threshold.
+ *   A<addr>  Module I2C address. [30, 200]
+ *   I<index> Module index. [0, I2CPE_ENCODER_CNT - 1]
+ *   T        New error correction threshold
  *
  *   If A not specified:
- *    X       Act on X axis encoder, if present.
- *    Y       Act on Y axis encoder, if present.
- *    Z       Act on Z axis encoder, if present.
- *    E       Act on E axis encoder, if present.
+ *    X       Act on X axis encoder, if present
+ *    Y       Act on Y axis encoder, if present
+ *    Z       Act on Z axis encoder, if present
+ *    E       Act on E axis encoder, if present
  */
 void I2CPositionEncodersMgr::M868() {
   if (parse()) return;
@@ -1094,16 +1096,16 @@ void I2CPositionEncodersMgr::M868() {
 }
 
 /**
- * M869:  Report position encoder module error.
+ * M869: Report position encoder module error
  *
- *   A<addr>  Module I2C address.  [30, 200].
- *   I<index> Module index.  [0, I2CPE_ENCODER_CNT - 1].
+ *   A<addr>  Module I2C address. [30, 200]
+ *   I<index> Module index. [0, I2CPE_ENCODER_CNT - 1]
  *
  *   If A not specified:
- *    X       Act on X axis encoder, if present.
- *    Y       Act on Y axis encoder, if present.
- *    Z       Act on Z axis encoder, if present.
- *    E       Act on E axis encoder, if present.
+ *    X       Act on X axis encoder, if present
+ *    Y       Act on Y axis encoder, if present
+ *    Z       Act on Z axis encoder, if present
+ *    E       Act on E axis encoder, if present
  */
 void I2CPositionEncodersMgr::M869() {
   if (parse()) return;

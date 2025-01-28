@@ -39,8 +39,6 @@
  *
  * \asf_license_stop
  *
- */
-/*
  * Support and FAQ: visit <a href="https://www.atmel.com/design-support/">Atmel Support</a>
  */
 
@@ -1079,7 +1077,7 @@ static inline void convert_16_bit_to_byte_address(uint16_t value, uint8_t *data)
     data[1] = (value >> 8) & 0xFF;
 }
 
-/*
+/**
  * @brief Converts a 2 Byte array into a 16-Bit value
  *
  * @param data Specifies the pointer to the 2 Byte array
@@ -1136,4 +1134,4 @@ static inline uint64_t convert_byte_array_to_64_bit(uint8_t *data)
  * \}
  */
 
-#endif /* UTILS_COMPILER_H */
+#endif // UTILS_COMPILER_H

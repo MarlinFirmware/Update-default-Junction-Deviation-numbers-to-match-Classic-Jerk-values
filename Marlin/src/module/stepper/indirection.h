@@ -22,7 +22,7 @@
 #pragma once
 
 /**
- * stepper/indirection.h - Stepper Indirection Macros
+ * module/stepper/indirection.h - Stepper Indirection Macros
  *
  * Each axis in a machine may have between 1 and 4 stepper motors.
  * Currently X and Y allow for 1 or 2 steppers. Z can have up to 4.

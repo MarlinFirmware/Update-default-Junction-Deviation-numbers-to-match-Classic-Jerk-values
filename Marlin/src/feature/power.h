@@ -24,6 +24,7 @@
 /**
  * power.h - power control
  */
+
 #if PIN_EXISTS(PS_ON_EDM) || (PIN_EXISTS(PS_ON1_EDM) && ENABLED(PSU_OFF_REDUNDANT))
   #define PSU_TRACK_STATE_MS 1
 #endif

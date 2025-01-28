@@ -42,8 +42,6 @@
  *
  * \asf_license_stop
  *
- */
-/*
  * Support and FAQ: visit <a href="https://www.atmel.com/design-support/">Atmel Support</a>
  */
 
@@ -297,7 +295,7 @@ typedef uint8_t usb_ep_t;
  */
 #define  USB_MAX_DESC_LEN     255
 
-/*
+/**
  * 2-byte alignment requested for all USB structures.
  */
 COMPILER_PACK_SET(1)
@@ -489,4 +487,4 @@ COMPILER_PACK_RESET()
 
 //! @}
 
-#endif /* _USB_PROTOCOL_H_ */
+#endif // _USB_PROTOCOL_H_

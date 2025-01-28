@@ -20,6 +20,10 @@
  *
  */
 
+/**
+ * feature/controllerfan.cpp
+ */
+
 #include "../inc/MarlinConfig.h"
 
 #if ENABLED(USE_CONTROLLER_FAN)
@@ -55,8 +59,8 @@ void ControllerFan::set_fan_speed(const uint8_t s) {
 }
 
 void ControllerFan::update() {
-  static millis_t lastComponentOn = 0,  // Last time a stepper, heater, etc. was turned on
-                  nextFanCheck = 0;     // Last time the state was checked
+  static millis_t lastComponentOn = 0, // Last time a stepper, heater, etc. was turned on
+                  nextFanCheck = 0;    // Last time the state was checked
   const millis_t ms = millis();
   if (ELAPSED(ms, nextFanCheck)) {
     nextFanCheck = ms + 2500UL; // Not a time critical function, so only check every 2.5s

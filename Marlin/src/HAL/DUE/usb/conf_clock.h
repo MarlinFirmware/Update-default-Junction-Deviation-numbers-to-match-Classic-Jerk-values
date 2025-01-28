@@ -39,8 +39,6 @@
  *
  * \asf_license_stop
  *
- */
-/*
  * Support and FAQ: visit <a href="https://www.atmel.com/design-support/">Atmel Support</a>
  */
 
@@ -96,4 +94,4 @@
 // - UPLL frequency: 480MHz
 // - USB clock: 480 / 1 = 480MHz
 
-#endif /* CONF_CLOCK_H_INCLUDED */
+#endif // CONF_CLOCK_H_INCLUDED

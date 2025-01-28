@@ -39,8 +39,6 @@
  *
  * \asf_license_stop
  *
- */
-/*
  * Support and FAQ: visit <a href="https://www.atmel.com/design-support/">Atmel Support</a>
  */
 #ifndef _USB_PROTOCOL_CDC_H_
@@ -159,7 +157,7 @@
 #define  USB_REQ_CDC_NOTIFY_LINE_STATE_CHANGE                    0x29
 //@}
 
-/*
+/**
  * Need to pack structures tightly, or the compiler might insert padding
  * and violate the spec-mandated layout.
  */
