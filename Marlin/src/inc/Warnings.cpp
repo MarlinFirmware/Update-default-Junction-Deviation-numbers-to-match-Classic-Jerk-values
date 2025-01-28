@@ -853,6 +853,10 @@
   #warning "MULTISTEPPING_LIMIT has been automatically set to 128. Use a lower value if the machine is slow to respond."
 #endif
 
+#if ENABLED(CNC_ABORT_ON_ENDSTOP_HIT) && DISABLED(HOME_Z_FIRST)
+  #warning "CNC usually homes Z first to clear the workpiece + clamps. Enable HOME_Z_FIRST if you require this behavior."
+#endif
+
 /**
  * SD Card extras
  */

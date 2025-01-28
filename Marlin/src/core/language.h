@@ -129,7 +129,7 @@
 #define STR_WATCHDOG_FIRED                  "Watchdog timeout. Reset required."
 #define STR_ERR_KILLED                      "Printer halted. kill() called!"
 #define STR_FLOWMETER_FAULT                 "Coolant flow fault. Flowmeter safety is active. Attention required."
-#define STR_ERR_STOPPED                     "Printer stopped due to errors. Fix the error and use M999 to restart. (Temperature is reset. Set it after restarting)"
+#define STR_ERR_STOPPED                     "STOP on error. Use M999 to restart. Restore temperature after restart."
 #define STR_ERR_SERIAL_MISMATCH             "Serial status mismatch"
 #define STR_BUSY_PROCESSING                 "busy: processing"
 #define STR_BUSY_PAUSED_FOR_USER            "busy: paused for user"
@@ -200,12 +200,13 @@
 #define STR_FILAMENT_CHANGE_INSERT_M108     "Insert filament and send M108"
 #define STR_FILAMENT_CHANGE_WAIT_M108       "Send M108 to resume"
 
-#define STR_STOP_PRE                        "!! STOP called because of "
+#define STR_STOP_PRE                        "!! STOP - "
 #define STR_STOP_POST                       " error - restart with M999"
 #define STR_STOP_BLTOUCH                    "BLTouch"
 #define STR_STOP_UNHOMED                    "unhomed"
-#define STR_KILL_PRE                        "!! KILL caused by "
-#define STR_KILL_INACTIVE_TIME              "too much inactive time - current command: "
+#define STR_KILL_PRE                        "!! KILL - "
+#define STR_KILL_MOTION_TIMEOUT             "motion timeout"
+#define STR_OUT_OF_BOUNDS                   "out of bounds"
 #define STR_KILL_BUTTON                     "KILL button/pin"
 
 // temperature.cpp strings
