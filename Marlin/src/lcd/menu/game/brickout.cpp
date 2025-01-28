@@ -44,7 +44,7 @@ brickout_data_t &bdat = marlin_game_data.brickout;
 
 inline void reset_bricks(const uint16_t v) {
   bdat.brick_count = (BRICK_COLS) * (BRICK_ROWS);
-  for (uint8_t i = 0; i < BRICK_ROWS; ++i) bdat.bricks[i] = v;
+  for (uint_fast8_t i = 0; i < BRICK_ROWS; ++i) bdat.bricks[i] = v;
 }
 
 void reset_ball() {
@@ -142,10 +142,10 @@ void BrickoutGame::game_screen() {
     int color_index = 0;
   #endif
   if (PAGE_CONTAINS(BRICK_TOP, BRICK_BOT)) {
-    for (uint8_t y = 0; y < BRICK_ROWS; ++y) {
+    for (uint_fast8_t y = 0; y < BRICK_ROWS; ++y) {
       const uint8_t yy = y * BRICK_H + BRICK_TOP;
       if (PAGE_CONTAINS(yy, yy + BRICK_H - 1)) {
-        for (uint8_t x = 0; x < BRICK_COLS; ++x) {
+        for (uint_fast8_t x = 0; x < BRICK_COLS; ++x) {
           #if IS_DWIN_MARLINUI
             // Cycle through colors, even if the brick is gone.
             // Otherwise, bricks would change color if their neighbor is hit
@@ -159,7 +159,7 @@ void BrickoutGame::game_screen() {
               if (PAGE_CONTAINS(yy, yy + BRICK_H - 1))
                 draw_box(xx, yy, BRICK_W - 1, BRICK_H - 1);
             #else
-              for (uint8_t v = 0; v < BRICK_H - 1; ++v)
+              for (uint_fast8_t v = 0; v < BRICK_H - 1; ++v)
                 if (PAGE_CONTAINS(yy + v, yy + v))
                   u8g.drawHLine(xx, yy + v, BRICK_W - 1);
             #endif

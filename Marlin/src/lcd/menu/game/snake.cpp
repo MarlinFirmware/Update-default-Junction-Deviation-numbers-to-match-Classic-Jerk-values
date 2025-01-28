@@ -84,14 +84,14 @@ void shorten_tail() {
   }
   if (shift) {
     sdat.head_ind--;
-    for (uint8_t i = 0; i <= sdat.head_ind; ++i)
+    for (uint_fast8_t i = 0; i <= sdat.head_ind; ++i)
       sdat.snake_tail[i] = sdat.snake_tail[i + 1];
   }
 }
 
 // The food is on a line
 inline bool food_on_line() {
-  for (uint8_t n = 0; n < sdat.head_ind; ++n) {
+  for (uint_fast8_t n = 0; n < sdat.head_ind; ++n) {
     pos_t &p = sdat.snake_tail[n], &q = sdat.snake_tail[n + 1];
     if (p.x == q.x) {
       if ((sdat.foodx == p.x - 1 || sdat.foodx == p.x) && WITHIN(sdat.foody, _MIN(p.y, q.y), _MAX(p.y, q.y)))
@@ -151,7 +151,7 @@ bool snake_overlap() {
   // VERTICAL head segment?
   if (h1.x == h2.x) {
     // Loop from oldest to segment two away from head
-    for (uint8_t n = 0; n < sdat.head_ind - 2; ++n) {
+    for (uint_fast8_t n = 0; n < sdat.head_ind - 2; ++n) {
       // Segment p to q
       const pos_t &p = sdat.snake_tail[n], &q = sdat.snake_tail[n + 1];
       if (p.x != q.x) {
@@ -163,7 +163,7 @@ bool snake_overlap() {
   }
   else {
     // Loop from oldest to segment two away from head
-    for (uint8_t n = 0; n < sdat.head_ind - 2; ++n) {
+    for (uint_fast8_t n = 0; n < sdat.head_ind - 2; ++n) {
       // Segment p to q
       const pos_t &p = sdat.snake_tail[n], &q = sdat.snake_tail[n + 1];
       if (p.y != q.y) {
@@ -235,7 +235,7 @@ void SnakeGame::game_screen() {
   #if SNAKE_WH < 2
 
     // At this scale just draw a line
-    for (uint8_t n = 0; n < sdat.head_ind; ++n) {
+    for (uint_fast8_t n = 0; n < sdat.head_ind; ++n) {
       const pos_t &p = sdat.snake_tail[n], &q = sdat.snake_tail[n + 1];
       if (p.x == q.x) {
         const int8_t y1 = GAMEY(_MIN(p.y, q.y)), y2 = GAMEY(_MAX(p.y, q.y));
@@ -251,7 +251,7 @@ void SnakeGame::game_screen() {
   #elif SNAKE_WH == 2
 
     // At this scale draw two lines
-    for (uint8_t n = 0; n < sdat.head_ind; ++n) {
+    for (uint_fast8_t n = 0; n < sdat.head_ind; ++n) {
       const pos_t &p = sdat.snake_tail[n], &q = sdat.snake_tail[n + 1];
       if (p.x == q.x) {
         const int8_t y1 = GAMEY(_MIN(p.y, q.y)), y2 = GAMEY(_MAX(p.y, q.y));
@@ -270,7 +270,7 @@ void SnakeGame::game_screen() {
   #else
 
     // Draw a series of boxes
-    for (uint8_t n = 0; n < sdat.head_ind; ++n) {
+    for (uint_fast8_t n = 0; n < sdat.head_ind; ++n) {
       const pos_t &p = sdat.snake_tail[n], &q = sdat.snake_tail[n + 1];
       if (p.x == q.x) {
         const int8_t y1 = _MIN(p.y, q.y), y2 = _MAX(p.y, q.y);

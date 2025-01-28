@@ -713,10 +713,10 @@ void MarlinHAL::adc_init() {
   #if ADC_IS_REQUIRED
     memset(adc_results, 0xFF, sizeof(adc_results));                         // Fill result with invalid values
 
-    for (uint8_t pi = 0; pi < COUNT(adc_pins); ++pi)
+    for (uint_fast8_t pi = 0; pi < COUNT(adc_pins); ++pi)
       pinPeripheral(adc_pins[pi], PIO_ANALOG);
 
-    for (uint8_t ai = FIRST_ADC; ai <= LAST_ADC; ++ai) {
+    for (uint_fast8_t ai = FIRST_ADC; ai <= LAST_ADC; ++ai) {
       Adc* adc = ((Adc*[])ADC_INSTS)[ai];
 
       // ADC clock setup
@@ -748,7 +748,7 @@ void MarlinHAL::adc_init() {
 
 void MarlinHAL::adc_start(const pin_t pin) {
   #if ADC_IS_REQUIRED
-    for (uint8_t pi = 0; pi < COUNT(adc_pins); ++pi)
+    for (uint_fast8_t pi = 0; pi < COUNT(adc_pins); ++pi)
       if (pin == adc_pins[pi]) { adc_result = adc_results[pi]; return; }
   #endif
 

@@ -141,7 +141,7 @@ void IIC::nAck() {
 void IIC::send_byte(uint8_t txd) {
   SDA_OUT();
   IIC_SCL_0(); // Pull down the clock to start data transmission
-  for (uint8_t t = 0; t < 8; ++t) {
+  for (uint_fast8_t t = 0; t < 8; ++t) {
     // IIC_SDA = (txd & 0x80) >> 7;
     if (txd & 0x80) IIC_SDA_1(); else IIC_SDA_0();
     txd <<= 1;
@@ -157,7 +157,7 @@ void IIC::send_byte(uint8_t txd) {
 uint8_t IIC::read_byte(unsigned char ack_chr) {
   unsigned char receive = 0;
   SDA_IN(); // SDA is set as input
-  for (uint8_t i = 0; i < 8; ++i) {
+  for (uint_fast8_t i = 0; i < 8; ++i) {
     IIC_SCL_0();
     delay_us(2);
     IIC_SCL_1();
@@ -228,7 +228,7 @@ void BL24CXX::writeOneByte(uint16_t WriteAddr, uint8_t DataToWrite) {
 // DataToWrite: the first address of the data array
 // Len: The length of the data to be written 2, 4
 void BL24CXX::writeLenByte(uint16_t WriteAddr, uint32_t DataToWrite, uint8_t Len) {
-  for (uint8_t t = 0; t < Len; ++t)
+  for (uint_fast8_t t = 0; t < Len; ++t)
     writeOneByte(WriteAddr + t, (DataToWrite >> (8 * t)) & 0xFF);
 }
 
@@ -239,7 +239,7 @@ void BL24CXX::writeLenByte(uint16_t WriteAddr, uint32_t DataToWrite, uint8_t Len
 // Len: The length of the data to be read 2,4
 uint32_t BL24CXX::readLenByte(uint16_t ReadAddr, uint8_t Len) {
   uint32_t temp = 0;
-  for (uint8_t t = 0; t < Len; ++t) {
+  for (uint_fast8_t t = 0; t < Len; ++t) {
     temp <<= 8;
     temp += readOneByte(ReadAddr + Len - t - 1);
   }

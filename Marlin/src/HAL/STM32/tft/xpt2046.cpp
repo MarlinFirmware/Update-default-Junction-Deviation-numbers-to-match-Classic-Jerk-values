@@ -182,7 +182,7 @@ uint16_t XPT2046::hardwareIO(uint16_t data) {
 uint16_t XPT2046::softwareIO(uint16_t data) {
   uint16_t result = 0;
 
-  for (uint8_t j = 0x80; j > 0; j >>= 1) {
+  for (uint_fast8_t j = 0x80; j > 0; j >>= 1) {
     WRITE(TOUCH_SCK_PIN, LOW);
     __DSB();
     WRITE(TOUCH_MOSI_PIN, data & j ? HIGH : LOW);

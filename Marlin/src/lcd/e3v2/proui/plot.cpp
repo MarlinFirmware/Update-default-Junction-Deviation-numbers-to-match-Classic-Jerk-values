@@ -45,15 +45,15 @@ Plot plot;
 
 Plot::PlotData Plot::data;
 
-void Plot::draw(const frame_rect_t &frame, const_celsius_float_t max, const_celsius_float_t ref/*=0*/) {
+void Plot::draw(const frame_rect_t &frame, const_celsius_float_t max, const_float_t ref/*=0*/) {
   data.graphframe = frame;
   data.graphpoints = 0;
   data.scale = frame.h / max;
   data.x2 = frame.x + frame.w - 1;
   data.y2 = frame.y + frame.h - 1;
-  data.r = LROUND((data.y2) - ref * data.scale);
+  data.r = round((data.y2) - ref * data.scale);
   DWINUI::drawBox(1, plotBgColor, frame);
-  for (uint8_t i = 1; i < 4; i++) if (i * 60 < frame.w) dwinDrawVLine(COLOR_LINE, i * 60 + frame.x, frame.y, frame.h);
+  for (uint_fast8_t i = 1; i < 4; i++) if (i * 60 < frame.w) dwinDrawVLine(COLOR_LINE, i * 60 + frame.x, frame.y, frame.h);
   DWINUI::drawBox(0, COLOR_WHITE, DWINUI::extendFrame(frame, 1));
   dwinDrawHLine(COLOR_RED, frame.x, data.r, frame.w);
 }

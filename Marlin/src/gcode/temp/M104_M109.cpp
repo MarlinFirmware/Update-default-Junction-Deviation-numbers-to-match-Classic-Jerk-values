@@ -74,9 +74,9 @@ void GcodeSuite::M104_M109(const bool isM109) {
   if (DEBUGGING(DRYRUN)) return;
 
   #if ENABLED(MIXING_EXTRUDER) && MIXING_VIRTUAL_TOOLS > 1
-    constexpr int8_t target_extruder = 0;
+    constexpr int_fast8_t target_extruder = 0;
   #else
-    const int8_t target_extruder = get_target_extruder_from_command();
+    const int_fast8_t target_extruder = get_target_extruder_from_command();
     if (target_extruder < 0) return;
   #endif
 

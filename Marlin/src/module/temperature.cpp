@@ -395,19 +395,19 @@ PGMSTR(str_t_heating_failed, STR_T_HEATING_FAILED);
 #endif
 
 #if ANY(AUTO_POWER_E_FANS, HAS_FANCHECK)
-  uint8_t Temperature::autofan_speed[HOTENDS] = ARRAY_N_1(HOTENDS, FAN_OFF_PWM);
+  uint_fast8_t Temperature::autofan_speed[HOTENDS] = ARRAY_N_1(HOTENDS, FAN_OFF_PWM);
 #endif
 
 #if ENABLED(AUTO_POWER_CHAMBER_FAN)
-  uint8_t Temperature::chamberfan_speed = FAN_OFF_PWM;
+  uint_fast8_t Temperature::chamberfan_speed = FAN_OFF_PWM;
 #endif
 
 #if ENABLED(AUTO_POWER_COOLER_FAN)
-  uint8_t Temperature::coolerfan_speed = FAN_OFF_PWM;
+  uint_fast8_t Temperature::coolerfan_speed = FAN_OFF_PWM;
 #endif
 
 #if ALL(FAN_SOFT_PWM, USE_CONTROLLER_FAN)
-  uint8_t Temperature::soft_pwm_controller_speed = FAN_OFF_PWM;
+  uint_fast8_t Temperature::soft_pwm_controller_speed = FAN_OFF_PWM;
 #endif
 
 // Init fans according to whether they're native PWM or Software PWM
@@ -431,7 +431,7 @@ PGMSTR(str_t_heating_failed, STR_T_HEATING_FAILED);
 // HAS_FAN does not include CONTROLLER_FAN
 #if HAS_FAN
 
-  uint8_t Temperature::fan_speed[FAN_COUNT] = ARRAY_N_1(FAN_COUNT, FAN_OFF_PWM);
+  uint_fast8_t Temperature::fan_speed[FAN_COUNT] = ARRAY_N_1(FAN_COUNT, FAN_OFF_PWM);
 
   #if ENABLED(EXTRA_FAN_SPEED)
 
@@ -443,7 +443,7 @@ PGMSTR(str_t_heating_failed, STR_T_HEATING_FAILED);
      *  T2       = Save the fan speed, then set to the last T<3-255> value
      *  T<3-255> = Set the "extra fan speed"
      */
-    void Temperature::set_temp_fan_speed(const uint8_t fan, const uint16_t command_or_speed) {
+    void Temperature::set_temp_fan_speed(const uint_fast8_t fan, const uint16_t command_or_speed) {
       switch (command_or_speed) {
         case 1:
           set_fan_speed(fan, extra_fan_speed[fan].saved);
@@ -462,17 +462,17 @@ PGMSTR(str_t_heating_failed, STR_T_HEATING_FAILED);
 
   #if ANY(PROBING_FANS_OFF, ADVANCED_PAUSE_FANS_PAUSE)
     bool Temperature::fans_paused; // = false
-    uint8_t Temperature::saved_fan_speed[FAN_COUNT] = ARRAY_N_1(FAN_COUNT, FAN_OFF_PWM);
+    uint_fast8_t Temperature::saved_fan_speed[FAN_COUNT] = ARRAY_N_1(FAN_COUNT, FAN_OFF_PWM);
   #endif
 
   #if ENABLED(ADAPTIVE_FAN_SLOWING)
-    uint8_t Temperature::fan_speed_scaler[FAN_COUNT] = ARRAY_N_1(FAN_COUNT, 128);
+    uint_fast8_t Temperature::fan_speed_scaler[FAN_COUNT] = ARRAY_N_1(FAN_COUNT, 128);
   #endif
 
   /**
    * Set the print fan speed for a target extruder
    */
-  void Temperature::set_fan_speed(uint8_t fan, uint16_t speed) {
+  void Temperature::set_fan_speed(uint_fast8_t fan, uint_fast16_t speed) {
 
     NOMORE(speed, 255U);
 
@@ -491,7 +491,7 @@ PGMSTR(str_t_heating_failed, STR_T_HEATING_FAILED);
 
     #if NUM_REDUNDANT_FANS
       if (fan == 0) {
-        for (uint8_t f = REDUNDANT_PART_COOLING_FAN; f < REDUNDANT_PART_COOLING_FAN + NUM_REDUNDANT_FANS; ++f)
+        for (uint_fast8_t f = REDUNDANT_PART_COOLING_FAN; f < REDUNDANT_PART_COOLING_FAN + NUM_REDUNDANT_FANS; ++f)
           thermalManager.set_fan_speed(f, speed);
       }
     #endif
@@ -503,7 +503,7 @@ PGMSTR(str_t_heating_failed, STR_T_HEATING_FAILED);
     /**
      * Report print fan speed for a target extruder
      */
-    void Temperature::report_fan_speed(const uint8_t fan) {
+    void Temperature::report_fan_speed(const uint_fast8_t fan) {
       if (fan >= FAN_COUNT) return;
       PORT_REDIRECT(SerialMask::All);
       SERIAL_ECHOLNPGM("M106 P", fan, " S", fan_speed[fan]);
@@ -654,15 +654,15 @@ volatile bool Temperature::raw_temps_ready = false;
 #endif
 
 #if ENABLED(FAN_SOFT_PWM)
-  uint8_t Temperature::soft_pwm_amount_fan[FAN_COUNT],
-          Temperature::soft_pwm_count_fan[FAN_COUNT];
+  uint_fast8_t Temperature::soft_pwm_amount_fan[FAN_COUNT],
+               Temperature::soft_pwm_count_fan[FAN_COUNT];
 #endif
 
 #if ENABLED(SINGLENOZZLE_STANDBY_TEMP)
   celsius_t Temperature::singlenozzle_temp[EXTRUDERS];
 #endif
 #if ENABLED(SINGLENOZZLE_STANDBY_FAN)
-  uint8_t Temperature::singlenozzle_fan_speed[EXTRUDERS];
+  uint_fast8_t Temperature::singlenozzle_fan_speed[EXTRUDERS];
 #endif
 
 #if ENABLED(PROBING_HEATERS_OFF)
@@ -881,7 +881,7 @@ volatile bool Temperature::raw_temps_ready = false;
       // Report heater states every 2 seconds
       if (ELAPSED(ms, next_temp_ms)) {
         #if HAS_TEMP_SENSOR
-          print_heater_states(heater_id < 0 ? active_extruder : (int8_t)heater_id);
+          print_heater_states(heater_id < 0 ? active_extruder : int_fast8_t(heater_id));
           SERIAL_EOL();
         #endif
         next_temp_ms = ms + 2000UL;
@@ -936,7 +936,7 @@ volatile bool Temperature::raw_temps_ready = false;
           say_default_(); SERIAL_ECHOLNPGM("Kd ", tune_pid.d);
         #endif
 
-        auto _set_hotend_pid = [](const uint8_t tool, const raw_pid_t &in_pid) {
+        auto _set_hotend_pid = [](const uint_fast8_t tool, const raw_pid_t &in_pid) {
           #if ENABLED(PIDTEMP)
             #if ENABLED(PID_PARAMS_PER_HOTEND)
               thermalManager.temp_hotend[tool].pid.set(in_pid);
@@ -1099,7 +1099,7 @@ volatile bool Temperature::raw_temps_ready = false;
 
           // If there are too many samples, space them more widely
           if (sample_count == COUNT(temp_samples)) {
-            for (uint8_t i = 0; i < COUNT(temp_samples) / 2; i++)
+            for (uint_fast8_t i = 0; i < COUNT(temp_samples) / 2; i++)
               temp_samples[i] = temp_samples[i * 2];
             sample_count /= 2;
             sample_distance *= 2;
@@ -1132,7 +1132,7 @@ volatile bool Temperature::raw_temps_ready = false;
       SERIAL_ECHOLNPGM("t1_time ", t1_time);
       SERIAL_ECHOLNPGM("sample_count ", sample_count);
       SERIAL_ECHOLNPGM("sample_distance ", sample_distance);
-      for (uint8_t i = 0; i < sample_count; i++)
+      for (uint_fast8_t i = 0; i < sample_count; i++)
         SERIAL_ECHOLNPGM("sample ", i, " : ", temp_samples[i]);
       SERIAL_ECHOLNPGM("t1 ", get_sample_1_temp(), " t2 ", get_sample_2_temp(), " t3 ", get_sample_3_temp());
     #endif
@@ -1231,7 +1231,7 @@ volatile bool Temperature::raw_temps_ready = false;
     return MeasurementState::SUCCESS;
   }
 
-  void Temperature::MPC_autotune(const uint8_t e, MPCTuningType tuning_type=AUTO) {
+  void Temperature::MPC_autotune(const uint_fast8_t e, MPCTuningType tuning_type=AUTO) {
     SERIAL_ECHOLNPGM(STR_MPC_AUTOTUNE_START, e);
 
     MPC_autotuner tuner(e);
@@ -1449,7 +1449,7 @@ int16_t Temperature::getHeaterPower(const heater_id_t heater_id) {
     }while(0)
 
     uint8_t fanDone = 0;
-    for (uint8_t f = 0; f < COUNT(fanBit); ++f) {
+    for (uint_fast8_t f = 0; f < COUNT(fanBit); ++f) {
       const uint8_t realFan = pgm_read_byte(&fanBit[f]);
       if (TEST(fanDone, realFan)) continue;
       const bool fan_on = TEST(fanState, realFan);
@@ -1510,7 +1510,7 @@ inline void loud_kill(FSTR_P const lcd_msg, const heater_id_t heater_id) {
   marlin_state = MarlinState::MF_KILLED;
   thermalManager.disable_all_heaters();
   #if HAS_BEEPER
-    for (uint8_t i = 20; i--;) {
+    for (uint_fast8_t i = 20; i--;) {
       hal.watchdog_refresh();
       buzzer.click(25);
       delay(80);
@@ -1662,7 +1662,7 @@ void Temperature::mintemp_error(const heater_id_t heater_id OPTARG(ERR_INCLUDE_T
 
     PIDRunner(TT &t) : tempinfo(t) { }
 
-    float get_pid_output(const uint8_t extr=0) {
+    float get_pid_output(const uint_fast8_t extr=0) {
       #if ENABLED(PID_OPENLOOP)
 
         return constrain(tempinfo.target, 0, MAX_POW);
@@ -1714,8 +1714,8 @@ void Temperature::mintemp_error(const heater_id_t heater_id OPTARG(ERR_INCLUDE_T
    * @param E_NAME:  The extruder index
    * @return The power output for the hotend
    */
-  float Temperature::get_pid_output_hotend(const uint8_t E_NAME) {
-    const uint8_t ee = HOTEND_INDEX;
+  float Temperature::get_pid_output_hotend(const uint_fast8_t E_NAME) {
+    const uint_fast8_t ee = HOTEND_INDEX;
 
     const bool is_idling = TERN0(HEATER_IDLE_HANDLER, heater_idle[ee].timed_out);
 
@@ -1754,7 +1754,7 @@ void Temperature::mintemp_error(const heater_id_t heater_id OPTARG(ERR_INCLUDE_T
 
       float ambient_xfer_coeff = mpc.ambient_xfer_coeff_fan0;
       #if ENABLED(MPC_INCLUDE_FAN)
-        const uint8_t fan_index = TERN(SINGLEFAN, 0, ee);
+        const uint_fast8_t fan_index = TERN(SINGLEFAN, 0, ee);
         const float fan_fraction = TERN_(MPC_FAN_0_ACTIVE_HOTEND, !this_hotend ? 0.0f : ) fan_speed[fan_index] * RECIPROCAL(255);
         ambient_xfer_coeff += fan_fraction * mpc.fan255_adjustment;
       #endif
@@ -2448,7 +2448,7 @@ void Temperature::task() {
     COPY(user_thermistor, default_user_thermistor);
   }
 
-  void Temperature::M305_report(const uint8_t t_index, const bool forReplay/*=true*/) {
+  void Temperature::M305_report(const uint_fast8_t t_index, const bool forReplay/*=true*/) {
     TERN_(MARLIN_SMALL_BUILD, return);
 
     gcode.report_heading_etc(forReplay, F(STR_USER_THERMISTORS));
@@ -2480,7 +2480,7 @@ void Temperature::task() {
     );
   }
 
-  celsius_float_t Temperature::user_thermistor_to_deg_c(const uint8_t t_index, const raw_adc_t raw) {
+  celsius_float_t Temperature::user_thermistor_to_deg_c(const uint_fast8_t t_index, const raw_adc_t raw) {
 
     if (!WITHIN(t_index, 0, COUNT(user_thermistor) - 1)) return 25;
 
@@ -2516,7 +2516,7 @@ void Temperature::task() {
 #if HAS_HOTEND
   // Derived from RepRap FiveD extruder::getTemperature()
   // For hot end temperature measurement.
-  celsius_float_t Temperature::analog_to_celsius_hotend(const raw_adc_t raw, const uint8_t e) {
+  celsius_float_t Temperature::analog_to_celsius_hotend(const raw_adc_t raw, const uint_fast8_t e) {
     if (e >= HOTENDS) {
       SERIAL_ERROR_START();
       SERIAL_ECHO(e);
@@ -2832,7 +2832,7 @@ void Temperature::updateTemperaturesFromRawValues() {
 
   #if HAS_HOTEND
     #define _TEMPDIR(N) TEMP_SENSOR_IS_ANY_MAX_TC(N) ? 0 : TEMPDIR(N),
-    static constexpr int8_t temp_dir[HOTENDS] = { REPEAT(HOTENDS, _TEMPDIR) };
+    static constexpr int_fast8_t temp_dir[HOTENDS] = { REPEAT(HOTENDS, _TEMPDIR) };
 
     HOTEND_LOOP() {
       const raw_adc_t r = temp_hotend[e].getraw();
@@ -3528,7 +3528,7 @@ void Temperature::disable_all_heaters() {
 
 #if ANY(SINGLENOZZLE_STANDBY_TEMP, SINGLENOZZLE_STANDBY_FAN)
 
-  void Temperature::singlenozzle_change(const uint8_t old_tool, const uint8_t new_tool) {
+  void Temperature::singlenozzle_change(const uint_fast8_t old_tool, const uint_fast8_t new_tool) {
     #if ENABLED(SINGLENOZZLE_STANDBY_FAN)
       singlenozzle_fan_speed[old_tool] = fan_speed[0];
       fan_speed[0] = singlenozzle_fan_speed[new_tool];
@@ -3564,7 +3564,7 @@ void Temperature::disable_all_heaters() {
    * @param  hindex  the hotend we're referencing (if MULTI_MAX_TC)
    * @return         integer representing the board's buffer, to be converted later if needed
    */
-  raw_adc_t Temperature::read_max_tc(TERN_(HAS_MULTI_MAX_TC, const uint8_t hindex/*=0*/)) {
+  raw_adc_t Temperature::read_max_tc(TERN_(HAS_MULTI_MAX_TC, const uint_fast8_t hindex/*=0*/)) {
     #define MAXTC_HEAT_INTERVAL 250UL
 
     #if HAS_MAX31855
@@ -3595,7 +3595,7 @@ void Temperature::disable_all_heaters() {
     #else
       // When we have only 1 max tc, THERMO_SEL will pick the appropriate sensor
       // variable, and MAXTC_*() macros will be hardcoded to the correct CS pin.
-      constexpr uint8_t hindex = 0;
+      constexpr uint_fast8_t hindex = 0;
       #define THERMO_TEMP(I) max_tc_temp
       #if TEMP_SENSOR_IS_ANY_MAX_TC(0)
         #define THERMO_SEL(A,B,C) A
@@ -3639,7 +3639,7 @@ void Temperature::disable_all_heaters() {
       DELAY_NS(100);        // Ensure 100ns delay
 
       // Read a big-endian temperature value without using a library
-      for (uint8_t i = sizeof(max_tc_temp); i--;) {
+      for (uint_fast8_t i = sizeof(max_tc_temp); i--;) {
         max_tc_temp |= TERN(HAS_MAXTC_SW_SPI, max_tc_spi.receive(), spiRec());
         if (i > 0) max_tc_temp <<= 8; // shift left if not the last byte
       }
@@ -3936,13 +3936,13 @@ HAL_TEMP_TIMER_ISR() {
 
 class SoftPWM {
 public:
-  uint8_t count;
-  inline bool add(const uint8_t mask, const uint8_t amount) {
+  uint_fast8_t count;
+  inline bool add(const uint_fast8_t mask, const uint_fast8_t amount) {
     count = (count & mask) + amount; return (count > mask);
   }
   #if ENABLED(SLOW_PWM_HEATERS)
     bool state_heater;
-    uint8_t state_timer_heater;
+    uint_fast8_t state_timer_heater;
     inline void dec() { if (state_timer_heater > 0) state_timer_heater--; }
     inline bool ready(const bool v) {
       const bool rdy = !state_timer_heater;
@@ -3975,16 +3975,16 @@ void Temperature::isr() {
     }
   #endif
 
-  static int8_t temp_count = -1;
+  static int_fast8_t temp_count = -1;
   static ADCSensorState adc_sensor_state = StartupDelay;
 
   #ifndef SOFT_PWM_SCALE
     #define SOFT_PWM_SCALE 0
   #endif
-  static uint8_t pwm_count = _BV(SOFT_PWM_SCALE);
+  static uint_fast8_t pwm_count = _BV(SOFT_PWM_SCALE);
 
   // Avoid multiple loads of pwm_count
-  uint8_t pwm_count_tmp = pwm_count;
+  uint_fast8_t pwm_count_tmp = pwm_count;
 
   #if HAS_ADC_BUTTONS
     static raw_adc_t raw_ADCKey_value = 0;
@@ -4056,7 +4056,7 @@ void Temperature::isr() {
         #endif
 
         #define _FAN_PWM(N) do{                                     \
-          uint8_t &spcf = soft_pwm_count_fan[N];                    \
+          uint_fast8_t &spcf = soft_pwm_count_fan[N];               \
           spcf = (spcf & pwm_mask) + (soft_pwm_amount_fan[N] >> 1); \
           WRITE_FAN(N, spcf > pwm_mask ? HIGH : LOW);               \
         }while(0)
@@ -4158,7 +4158,7 @@ void Temperature::isr() {
     #define _SLOW_PWM(NR,PWM,SRC) do{ PWM.count = SRC.soft_pwm_amount; _SLOW_SET(NR,PWM,(PWM.count > 0)); }while(0)
     #define _PWM_OFF(NR,PWM) do{ if (PWM.count < slow_pwm_count) _SLOW_SET(NR,PWM,0); }while(0)
 
-    static uint8_t slow_pwm_count = 0;
+    static uint_fast8_t slow_pwm_count = 0;
 
     if (slow_pwm_count == 0) {
 
@@ -4314,8 +4314,8 @@ void Temperature::isr() {
     case SensorsReady: {
       // All sensors have been read. Stay in this state for a few
       // ISRs to save on calls to temp update/checking code below.
-      constexpr int8_t extra_loops = MIN_ADC_ISR_LOOPS - (int8_t)SensorsReady;
-      static uint8_t delay_count = 0;
+      constexpr int_fast8_t extra_loops = MIN_ADC_ISR_LOOPS - int_fast8_t(SensorsReady);
+      static uint_fast8_t delay_count = 0;
       if (extra_loops > 0) {
         if (delay_count == 0) delay_count = extra_loops;  // Init this delay
         if (--delay_count)                                // While delaying...
@@ -4574,7 +4574,7 @@ void Temperature::isr() {
    *       Cooler: " L@:nnn"
    *      Hotends: " @0:nnn @1:nnn ..."
    */
-  void Temperature::print_heater_states(const int8_t target_extruder
+  void Temperature::print_heater_states(const int_fast8_t target_extruder
     OPTARG(HAS_TEMP_REDUNDANT, const bool include_r/*=false*/)
   ) {
     #if HAS_TEMP_HOTEND
@@ -4625,7 +4625,7 @@ void Temperature::isr() {
   #endif
 
   #if HAS_HOTEND && HAS_STATUS_MESSAGE
-    void Temperature::set_heating_message(const uint8_t e, const bool isM104/*=false*/) {
+    void Temperature::set_heating_message(const uint_fast8_t e, const bool isM104/*=false*/) {
       const bool heating = isHeatingHotend(e);
       ui.status_printf(0,
         #if HAS_MULTI_HOTEND
@@ -4637,7 +4637,7 @@ void Temperature::isr() {
       );
 
       if (isM104) {
-        static uint8_t wait_e; wait_e = e;
+        static uint_fast8_t wait_e; wait_e = e;
         ui.set_status_reset_fn([]{
           const celsius_t c = degTargetHotend(wait_e);
           return c < 30 || degHotendNear(wait_e, c);
@@ -4655,7 +4655,7 @@ void Temperature::isr() {
       #define MIN_COOLING_SLOPE_TIME 60
     #endif
 
-    bool Temperature::wait_for_hotend(const uint8_t target_extruder, const bool no_wait_for_cooling/*=true*/
+    bool Temperature::wait_for_hotend(const uint_fast8_t target_extruder, const bool no_wait_for_cooling/*=true*/
       OPTARG(G26_CLICK_CAN_CANCEL, const bool click_to_cancel/*=false*/)
     ) {
       #if ENABLED(AUTOTEMP)
@@ -4780,7 +4780,7 @@ void Temperature::isr() {
     }
 
     #if ENABLED(WAIT_FOR_HOTEND)
-      void Temperature::wait_for_hotend_heating(const uint8_t target_extruder) {
+      void Temperature::wait_for_hotend_heating(const uint_fast8_t target_extruder) {
         if (isHeatingHotend(target_extruder)) {
           SERIAL_ECHOLNPGM("Wait for hotend heating...");
           LCD_MESSAGE(MSG_HEATING);

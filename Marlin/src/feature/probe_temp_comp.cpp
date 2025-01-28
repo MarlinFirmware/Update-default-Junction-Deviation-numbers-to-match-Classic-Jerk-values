@@ -66,13 +66,13 @@ float ProbeTempComp::init_measurement; // = 0.0
 bool ProbeTempComp::enabled = true;
 
 void ProbeTempComp::reset() {
-  TERN_(PTC_PROBE, for (uint8_t i = 0; i < PTC_PROBE_COUNT; ++i) z_offsets_probe[i] = z_offsets_probe_default[i]);
-  TERN_(PTC_BED, for (uint8_t i = 0; i < PTC_BED_COUNT; ++i) z_offsets_bed[i] = z_offsets_bed_default[i]);
-  TERN_(PTC_HOTEND, for (uint8_t i = 0; i < PTC_HOTEND_COUNT; ++i) z_offsets_hotend[i] = z_offsets_hotend_default[i]);
+  TERN_(PTC_PROBE, for (uint_fast8_t i = 0; i < PTC_PROBE_COUNT; ++i) z_offsets_probe[i] = z_offsets_probe_default[i]);
+  TERN_(PTC_BED, for (uint_fast8_t i = 0; i < PTC_BED_COUNT; ++i) z_offsets_bed[i] = z_offsets_bed_default[i]);
+  TERN_(PTC_HOTEND, for (uint_fast8_t i = 0; i < PTC_HOTEND_COUNT; ++i) z_offsets_hotend[i] = z_offsets_hotend_default[i]);
 }
 
 void ProbeTempComp::clear_offsets(const TempSensorID tsi) {
-  for (uint8_t i = 0; i < cali_info[tsi].measurements; ++i)
+  for (uint_fast8_t i = 0; i < cali_info[tsi].measurements; ++i)
     sensor_z_offsets[tsi][i] = 0;
   calib_idx = 0;
 }
@@ -84,7 +84,7 @@ bool ProbeTempComp::set_offset(const TempSensorID tsi, const uint8_t idx, const 
 }
 
 void ProbeTempComp::print_offsets() {
-  for (uint8_t s = 0; s < TSI_COUNT; ++s) {
+  for (uint_fast8_t s = 0; s < TSI_COUNT; ++s) {
     celsius_t temp = cali_info[s].start_temp;
     for (int16_t i = -1; i < cali_info[s].measurements; ++i) {
       SERIAL_ECHOLN(
@@ -227,7 +227,7 @@ bool ProbeTempComp::linear_regression(const TempSensorID tsi, float &k, float &d
         sum_xy = 0, sum_y = 0;
 
   float xi = static_cast<float>(start_temp);
-  for (uint8_t i = 0; i < calib_idx; ++i) {
+  for (uint_fast8_t i = 0; i < calib_idx; ++i) {
     const float yi = static_cast<float>(data[i]);
     xi += res_temp;
     sum_x += xi;

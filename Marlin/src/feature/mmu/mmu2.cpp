@@ -407,7 +407,7 @@ void MMU2::tx_str(FSTR_P fstr) {
 void MMU2::tx_printf(FSTR_P format, int argument = -1) {
   clear_rx_buffer();
   const uint8_t len = sprintf_P(tx_buffer, FTOP(format), argument);
-  for (uint8_t i = 0; i < len; ++i) MMU_SERIAL.write(tx_buffer[i]);
+  for (uint_fast8_t i = 0; i < len; ++i) MMU_SERIAL.write(tx_buffer[i]);
   prev_request = millis();
 }
 
@@ -417,7 +417,7 @@ void MMU2::tx_printf(FSTR_P format, int argument = -1) {
 void MMU2::tx_printf(FSTR_P format, int argument1, int argument2) {
   clear_rx_buffer();
   const uint8_t len = sprintf_P(tx_buffer, FTOP(format), argument1, argument2);
-  for (uint8_t i = 0; i < len; ++i) MMU_SERIAL.write(tx_buffer[i]);
+  for (uint_fast8_t i = 0; i < len; ++i) MMU_SERIAL.write(tx_buffer[i]);
   prev_request = millis();
 }
 
@@ -471,7 +471,7 @@ inline void beep_bad_cmd() { BUZZ(400, 40); }
   bool MMU2::load_to_gears() {
     command(MMU_CMD_C0);
     manage_response(true, true);
-    for (uint8_t i = 0; i < MMU2_C0_RETRY; ++i) {  // Keep loading until filament reaches gears
+    for (uint_fast8_t i = 0; i < MMU2_C0_RETRY; ++i) {  // Keep loading until filament reaches gears
       if (mmu2s_triggered) break;
       command(MMU_CMD_C0);
       manage_response(true, true);
@@ -485,7 +485,7 @@ inline void beep_bad_cmd() { BUZZ(400, 40); }
   /**
    * Handle tool change
    */
-  void MMU2::tool_change(const uint8_t index) {
+  void MMU2::tool_change(const uint_fast8_t index) {
 
     if (!_enabled) return;
 
@@ -572,7 +572,7 @@ inline void beep_bad_cmd() { BUZZ(400, 40); }
   /**
    * Handle tool change
    */
-  void MMU2::tool_change(const uint8_t index) {
+  void MMU2::tool_change(const uint_fast8_t index) {
     if (!_enabled) return;
 
     set_runout_valid(false);
@@ -660,7 +660,7 @@ inline void beep_bad_cmd() { BUZZ(400, 40); }
   void MMU2::mmu_continue_loading() {
     // Try to load the filament a limited number of times
     bool fil_present = 0;
-    for (uint8_t i = 0; i < MMU2_LOADING_ATTEMPTS_NR; i++) {
+    for (uint_fast8_t i = 0; i < MMU2_LOADING_ATTEMPTS_NR; i++) {
       DEBUG_ECHOLNPGM("Load attempt #", i + 1);
 
       // Done as soon as filament is present
@@ -697,7 +697,7 @@ inline void beep_bad_cmd() { BUZZ(400, 40); }
   /**
    * Handle tool change
    */
-  void MMU2::tool_change(const uint8_t index) {
+  void MMU2::tool_change(const uint_fast8_t index) {
     if (!_enabled) return;
 
     set_runout_valid(false);
@@ -903,7 +903,7 @@ void MMU2::filament_runout() {
     int filament_detected_count = 0;
     const int steps = (MMU2_CAN_LOAD_RETRACT) / (MMU2_CAN_LOAD_INCREMENT);
     DEBUG_ECHOLNPGM("MMU can_load:");
-    for (uint8_t i = 0; i < steps; ++i) {
+    for (uint_fast8_t i = 0; i < steps; ++i) {
       execute_extruder_sequence(can_load_increment_sequence, COUNT(can_load_increment_sequence));
       check_filament(); // Don't trust the idle function
       DEBUG_CHAR(mmu2s_triggered ? 'O' : 'o');
@@ -1051,7 +1051,7 @@ void MMU2::execute_extruder_sequence(const E_Step * const sequence, const uint8_
 
   const E_Step *step = sequence;
 
-  for (uint8_t i = 0; i < steps; ++i) {
+  for (uint_fast8_t i = 0; i < steps; ++i) {
     const float es = pgm_read_float(&(step->extrude));
     const feedRate_t fr_mm_m = pgm_read_float(&(step->feedRate));
     DEBUG_ECHO_MSG("E step ", es, "/", fr_mm_m);

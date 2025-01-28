@@ -820,7 +820,7 @@ G29_TYPE GcodeSuite::G29() {
 
       // Probe at 3 arbitrary points
 
-      for (uint8_t i = 0; i < 3; ++i) {
+      for (uint_fast8_t i = 0; i < 3; ++i) {
         if (abl.verbose_level) SERIAL_ECHOLNPGM("Probing point ", i + 1, "/3.");
         TERN_(HAS_STATUS_MESSAGE, ui.status_printf(0, F(S_FMT " %i/3"), GET_TEXT_F(MSG_PROBING_POINT), int(i + 1)));
 
@@ -931,7 +931,7 @@ G29_TYPE GcodeSuite::G29() {
         auto print_topo_map = [&](FSTR_P const title, const bool get_min) {
           SERIAL_ECHO(title);
           for (int8_t yy = abl.grid_points.y - 1; yy >= 0; yy--) {
-            for (uint8_t xx = 0; xx < abl.grid_points.x; ++xx) {
+            for (uint_fast8_t xx = 0; xx < abl.grid_points.x; ++xx) {
               const int ind = abl.indexIntoAB[xx][yy];
               xyz_float_t tmp = { abl.eqnAMatrix[ind + 0 * abl.abl_points],
                                   abl.eqnAMatrix[ind + 1 * abl.abl_points], 0 };

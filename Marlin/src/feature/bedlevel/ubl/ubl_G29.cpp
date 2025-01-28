@@ -417,7 +417,7 @@ void unified_bed_leveling::G29() {
         break;
 
       case 1:
-        for (uint8_t x = 0; x < GRID_MAX_POINTS_X; ++x) {                     // Create a diagonal line several Mesh cells thick that is raised
+        for (uint_fast8_t x = 0; x < GRID_MAX_POINTS_X; ++x) {                     // Create a diagonal line several Mesh cells thick that is raised
           const uint8_t x2 = x + (x < (GRID_MAX_POINTS_Y) - 1 ? 1 : -1);
           z_values[x][x] += 9.999f;
           z_values[x][x2] += 9.999f; // We want the altered line several mesh points thick
@@ -430,8 +430,8 @@ void unified_bed_leveling::G29() {
 
       case 2:
         // Allow the user to specify the height because 10mm is a little extreme in some cases.
-        for (uint8_t x = (GRID_MAX_POINTS_X) / 3; x < 2 * (GRID_MAX_POINTS_X) / 3; x++)     // Create a rectangular raised area in
-          for (uint8_t y = (GRID_MAX_POINTS_Y) / 3; y < 2 * (GRID_MAX_POINTS_Y) / 3; y++) { // the center of the bed
+        for (uint_fast8_t x = (GRID_MAX_POINTS_X) / 3; x < 2 * (GRID_MAX_POINTS_X) / 3; x++)     // Create a rectangular raised area in
+          for (uint_fast8_t y = (GRID_MAX_POINTS_Y) / 3; y < 2 * (GRID_MAX_POINTS_Y) / 3; y++) { // the center of the bed
             z_values[x][y] += parser.seen_test('C') ? param.C_constant : 9.99f;
             TERN_(EXTENSIBLE_UI, ExtUI::onMeshUpdate(x, y, z_values[x][y]));
           }
@@ -1460,20 +1460,20 @@ void unified_bed_leveling::smart_fill_mesh() {
     info3 PROGMEM = { (GRID_MAX_POINTS_X) - 1, 0, 0, GRID_MAX_POINTS_Y,       true  };  // Right side of the mesh looking left
   static const smart_fill_info * const info[] PROGMEM = { &info0, &info1, &info2, &info3 };
 
-  for (uint8_t i = 0; i < COUNT(info); ++i) {
+  for (uint_fast8_t i = 0; i < COUNT(info); ++i) {
     const smart_fill_info *f = (smart_fill_info*)pgm_read_ptr(&info[i]);
     const int8_t sx = pgm_read_byte(&f->sx), sy = pgm_read_byte(&f->sy),
                  ex = pgm_read_byte(&f->ex), ey = pgm_read_byte(&f->ey);
     if (pgm_read_byte(&f->yfirst)) {
       const int8_t dir = ex > sx ? 1 : -1;
-      for (uint8_t y = sy; y != ey; ++y)
-        for (uint8_t x = sx; x != ex; x += dir)
+      for (int_fast8_t y = sy; y != ey; ++y)
+        for (int_fast8_t x = sx; x != ex; x += dir)
           if (smart_fill_one(x, y, dir, 0)) break;
     }
     else {
       const int8_t dir = ey > sy ? 1 : -1;
-       for (uint8_t x = sx; x != ex; ++x)
-        for (uint8_t y = sy; y != ey; y += dir)
+       for (int_fast8_t x = sx; x != ex; ++x)
+        for (int_fast8_t y = sy; y != ey; y += dir)
           if (smart_fill_one(x, y, 0, dir)) break;
     }
   }
@@ -1499,7 +1499,7 @@ void unified_bed_leveling::smart_fill_mesh() {
 
       #if ENABLED(UBL_TILT_ON_MESH_POINTS_3POINT)
         mesh_index_pair cpos[3];
-        for (uint8_t ix = 0; ix < 3; ++ix) { // Convert points to coordinates of mesh points
+        for (uint_fast8_t ix = 0; ix < 3; ++ix) { // Convert points to coordinates of mesh points
           cpos[ix] = find_closest_mesh_point_of_type(REAL, points[ix], true);
           points[ix] = cpos[ix].meshpos();
         }
@@ -1509,7 +1509,7 @@ void unified_bed_leveling::smart_fill_mesh() {
         float gotz[3];  // Used for algorithm validation below
       #endif
 
-      for (uint8_t i = 0; i < 3; ++i) {
+      for (uint_fast8_t i = 0; i < 3; ++i) {
         SERIAL_ECHOLNPGM("Tilting mesh (", i + 1, "/3)");
         TERN_(HAS_STATUS_MESSAGE, ui.status_printf(0, F(S_FMT " %i/3"), GET_TEXT_F(MSG_LCD_TILTING_MESH), i + 1));
 
@@ -1549,10 +1549,10 @@ void unified_bed_leveling::smart_fill_mesh() {
       const uint16_t total_points = sq(param.J_grid_size);
       uint16_t point_num = 1;
 
-      for (uint8_t ix = 0; ix < param.J_grid_size; ++ix) {
+      for (uint_fast8_t ix = 0; ix < param.J_grid_size; ++ix) {
         xy_pos_t rpos;
         rpos.x = x_min + ix * dx;
-        for (uint8_t iy = 0; iy < param.J_grid_size; ++iy) {
+        for (uint_fast8_t iy = 0; iy < param.J_grid_size; ++iy) {
           rpos.y = y_min + dy * (zig_zag ? param.J_grid_size - 1 - iy : iy);
 
           #if ENABLED(UBL_TILT_ON_MESH_POINTS)
@@ -1703,17 +1703,17 @@ void unified_bed_leveling::smart_fill_mesh() {
     GRID_LOOP(jx, jy) if (!isnan(z_values[jx][jy])) SBI(bitmap[jx], jy);
 
     xy_pos_t ppos;
-    for (uint8_t ix = 0; ix < GRID_MAX_POINTS_X; ++ix) {
+    for (uint_fast8_t ix = 0; ix < GRID_MAX_POINTS_X; ++ix) {
       ppos.x = get_mesh_x(ix);
-      for (uint8_t iy = 0; iy < GRID_MAX_POINTS_Y; ++iy) {
+      for (uint_fast8_t iy = 0; iy < GRID_MAX_POINTS_Y; ++iy) {
         ppos.y = get_mesh_y(iy);
         if (isnan(z_values[ix][iy])) {
           // undefined mesh point at (ppos.x,ppos.y), compute weighted LSF from original valid mesh points.
           incremental_LSF_reset(&lsf_results);
           xy_pos_t rpos;
-          for (uint8_t jx = 0; jx < GRID_MAX_POINTS_X; ++jx) {
+          for (uint_fast8_t jx = 0; jx < GRID_MAX_POINTS_X; ++jx) {
             rpos.x = get_mesh_x(jx);
-            for (uint8_t jy = 0; jy < GRID_MAX_POINTS_Y; ++jy) {
+            for (uint_fast8_t jy = 0; jy < GRID_MAX_POINTS_Y; ++jy) {
               if (TEST(bitmap[jx], jy)) {
                 rpos.y = get_mesh_y(jy);
                 const float rz = z_values[jx][jy],
@@ -1772,14 +1772,14 @@ void unified_bed_leveling::smart_fill_mesh() {
     SERIAL_ECHOLNPGM("MESH_Y_DIST  ", MESH_Y_DIST);                         serial_delay(50);
 
     SERIAL_ECHOPGM("X-Axis Mesh Points at: ");
-    for (uint8_t i = 0; i < GRID_MAX_POINTS_X; ++i) {
+    for (uint_fast8_t i = 0; i < GRID_MAX_POINTS_X; ++i) {
       SERIAL_ECHO(p_float_t(LOGICAL_X_POSITION(get_mesh_x(i)), 3), F("  "));
       serial_delay(25);
     }
     SERIAL_EOL();
 
     SERIAL_ECHOPGM("Y-Axis Mesh Points at: ");
-    for (uint8_t i = 0; i < GRID_MAX_POINTS_Y; ++i) {
+    for (uint_fast8_t i = 0; i < GRID_MAX_POINTS_Y; ++i) {
       SERIAL_ECHO(p_float_t(LOGICAL_Y_POSITION(get_mesh_y(i)), 3), F("  "));
       serial_delay(25);
     }

@@ -160,7 +160,7 @@ void FileNavigator::upDIR() {
   }
   else {
     char *pos = nullptr;
-    for (uint8_t f = 0; f < folderdepth; f++)
+    for (uint_fast8_t f = 0; f < folderdepth; f++)
       pos = strchr(currentDirPath, '/');
     pos[1] = '\0';
   }

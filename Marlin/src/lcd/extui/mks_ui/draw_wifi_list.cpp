@@ -70,7 +70,7 @@ static void event_handler(lv_obj_t *obj, lv_event_t event) {
     }
   }
   else {
-    for (uint8_t i = 0; i < NUMBER_OF_PAGE; i++) {
+    for (uint_fast8_t i = 0; i < NUMBER_OF_PAGE; i++) {
       if (obj->mks_obj_id == i + 1) {
         if (wifi_list.getNameNum != 0) {
           const bool do_wifi = wifi_link_state == WIFI_CONNECTED && strcmp((const char *)wifi_list.wifiConnectedName, (const char *)wifi_list.wifiName[wifi_list.nameIndex + i]) == 0;
@@ -95,7 +95,7 @@ void lv_draw_wifi_list() {
   lv_obj_t *buttonDown = lv_imgbtn_create(scr, "F:/bmp_pageDown.bin", OTHER_BTN_XPIEL * 3 + INTERVAL_V * 4, titleHeight + OTHER_BTN_YPIEL + INTERVAL_H, event_handler, ID_WL_DOWN);
   lv_obj_t *buttonBack = lv_imgbtn_create(scr, "F:/bmp_back.bin", OTHER_BTN_XPIEL * 3 + INTERVAL_V * 4, titleHeight + (OTHER_BTN_YPIEL + INTERVAL_H) * 2, event_handler, ID_WL_RETURN);
 
-  for (uint8_t i = 0; i < NUMBER_OF_PAGE; i++) {
+  for (uint_fast8_t i = 0; i < NUMBER_OF_PAGE; i++) {
     buttonWifiN[i] = lv_label_btn_create(scr, 0, NAME_BTN_Y * i + 10 + titleHeight, NAME_BTN_X, NAME_BTN_Y, event_handler, i + 1);
     labelWifiText[i] = lv_label_create_empty(buttonWifiN[i]);
     #if HAS_ROTARY_ENCODER

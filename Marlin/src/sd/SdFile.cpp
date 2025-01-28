@@ -82,7 +82,7 @@ void SdFile::write(const char * const str) { SdBaseFile::write(str, strlen(str))
  * Use writeError to check for errors.
  */
 void SdFile::write_P(PGM_P str) {
-  for (uint8_t c; (c = pgm_read_byte(str)); str++) write(c);
+  for (uint_fast8_t c; (c = pgm_read_byte(str)); str++) write(c);
 }
 
 /**

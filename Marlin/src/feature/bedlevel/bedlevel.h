@@ -73,12 +73,12 @@ class TemporaryBedLevelingState {
 
     #include <stdint.h>
 
-    typedef float (*element_2d_fn)(const uint8_t, const uint8_t);
+    typedef float (*element_2d_fn)(const uint_fast8_t, const uint_fast8_t);
 
     /**
      * Print calibration results for plotting or manual frame adjustment.
      */
-    void print_2d_array(const uint8_t sx, const uint8_t sy, const uint8_t precision, const float *values);
+    void print_2d_array(const uint_fast8_t sx, const uint_fast8_t sy, const uint_fast8_t precision, const float *values);
 
   #endif
 

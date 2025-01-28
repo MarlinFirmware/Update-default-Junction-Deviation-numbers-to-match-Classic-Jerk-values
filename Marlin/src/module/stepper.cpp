@@ -178,7 +178,7 @@ AxisBits Stepper::last_direction_bits, // = 0
 bool Stepper::abort_current_block;
 
 #if DISABLED(MIXING_EXTRUDER) && HAS_MULTI_EXTRUDER
-  uint8_t Stepper::last_moved_extruder = 0xFF;
+  uint_fast8_t Stepper::last_moved_extruder = 0xFF;
 #endif
 
 #if ENABLED(X_DUAL_ENDSTOPS)
@@ -203,7 +203,7 @@ bool Stepper::abort_current_block;
 uint32_t Stepper::acceleration_time, Stepper::deceleration_time;
 
 #if MULTISTEPPING_LIMIT > 1
-  uint8_t Stepper::steps_per_isr = 1; // Count of steps to perform per Stepper ISR call
+  uint_fast8_t Stepper::steps_per_isr = 1; // Count of steps to perform per Stepper ISR call
 #endif
 
 #if DISABLED(OLD_ADAPTIVE_MULTISTEPPING)
@@ -217,9 +217,9 @@ uint32_t Stepper::acceleration_time, Stepper::deceleration_time;
     constexpr bool Stepper::adaptive_step_smoothing_enabled; // = true
   #endif
   // Oversampling factor (log2(multiplier)) to increase temporal resolution of axis
-  uint8_t Stepper::oversampling_factor;
+  uint_fast8_t Stepper::oversampling_factor;
 #else
-  constexpr uint8_t Stepper::oversampling_factor; // = 0
+  constexpr uint_fast8_t Stepper::oversampling_factor; // = 0
 #endif
 
 #if ENABLED(FREEZE_FEATURE)
@@ -236,9 +236,9 @@ uint32_t Stepper::advance_divisor = 0,
          Stepper::step_event_count;          // The total event count for the current block
 
 #if ANY(HAS_MULTI_EXTRUDER, MIXING_EXTRUDER)
-  uint8_t Stepper::stepper_extruder;
+  uint_fast8_t Stepper::stepper_extruder;
 #else
-  constexpr uint8_t Stepper::stepper_extruder;
+  constexpr uint_fast8_t Stepper::stepper_extruder;
 #endif
 
 #if ENABLED(S_CURVE_ACCELERATION)
@@ -597,16 +597,16 @@ bool Stepper::disable_axis(const AxisEnum axis) {
 
 #if HAS_EXTRUDERS
 
-  void Stepper::enable_extruder(E_TERN_(const uint8_t eindex)) {
-    IF_DISABLED(HAS_MULTI_EXTRUDER, constexpr uint8_t eindex = 0);
+  void Stepper::enable_extruder(E_TERN_(const uint_fast8_t eindex)) {
+    IF_DISABLED(HAS_MULTI_EXTRUDER, constexpr uint_fast8_t eindex = 0);
     #define _CASE_ENA_E(N) case N: ENABLE_AXIS_E##N(); mark_axis_enabled(E_AXIS E_OPTARG(eindex)); break;
     switch (eindex) {
       REPEAT(E_STEPPERS, _CASE_ENA_E)
     }
   }
 
-  bool Stepper::disable_extruder(E_TERN_(const uint8_t eindex/*=0*/)) {
-    IF_DISABLED(HAS_MULTI_EXTRUDER, constexpr uint8_t eindex = 0);
+  bool Stepper::disable_extruder(E_TERN_(const uint_fast8_t eindex/*=0*/)) {
+    IF_DISABLED(HAS_MULTI_EXTRUDER, constexpr uint_fast8_t eindex = 0);
     mark_axis_disabled(E_AXIS E_OPTARG(eindex));
     const bool can_disable = can_axis_disable(E_AXIS E_OPTARG(eindex));
     if (can_disable) {
@@ -2280,7 +2280,7 @@ hal_timer_t Stepper::calc_multistep_timer_interval(uint32_t step_rate) {
 
       // Find a doable step rate using multistepping
       uint8_t multistep = 1;
-      for (uint8_t i = 0; i < COUNT(limit) && step_rate > uint32_t(pgm_read_dword(&limit[i])); ++i) {
+      for (uint_fast8_t i = 0; i < COUNT(limit) && step_rate > uint32_t(pgm_read_dword(&limit[i])); ++i) {
         step_rate >>= 1;
         multistep <<= 1;
       }
@@ -2664,9 +2664,8 @@ hal_timer_t Stepper::block_phase_isr() {
 
       // For non-inline cutter, grossly apply power
       #if HAS_CUTTER
-        if (cutter.cutter_mode == CUTTER_MODE_STANDARD) {
+        if (cutter.cutter_mode == CUTTER_MODE_STANDARD)
           cutter.apply_power(current_block->cutter_power);
-        }
       #endif
 
       #if ENABLED(POWER_LOSS_RECOVERY)
@@ -2939,7 +2938,7 @@ void Stepper::init() {
   #if MB(ALLIGATOR)
     const float motor_current[] = MOTOR_CURRENT;
     unsigned int digipot_motor = 0;
-    for (uint8_t i = 0; i < 3 + EXTRUDERS; ++i) {
+    for (uint_fast8_t i = 0; i < 3 + EXTRUDERS; ++i) {
       digipot_motor = 255 * (motor_current[i] / 2.5);
       dac084s085::setValue(i, digipot_motor);
     }
@@ -3804,7 +3803,7 @@ void Stepper::report_positions() {
 
   void Stepper::refresh_motor_power() {
     if (!initialized) return;
-    for (uint8_t i = 0; i < COUNT(motor_current_setting); ++i) {
+    for (uint_fast8_t i = 0; i < COUNT(motor_current_setting); ++i) {
       switch (i) {
         #if ANY_PIN(MOTOR_CURRENT_PWM_XY, MOTOR_CURRENT_PWM_X, MOTOR_CURRENT_PWM_Y, MOTOR_CURRENT_PWM_I, MOTOR_CURRENT_PWM_J, MOTOR_CURRENT_PWM_K, MOTOR_CURRENT_PWM_U, MOTOR_CURRENT_PWM_V, MOTOR_CURRENT_PWM_W)
           case 0:
@@ -3900,7 +3899,7 @@ void Stepper::report_positions() {
         SPI.begin();
         SET_OUTPUT(DIGIPOTSS_PIN);
 
-        for (uint8_t i = 0; i < COUNT(motor_current_setting); ++i)
+        for (uint_fast8_t i = 0; i < COUNT(motor_current_setting); ++i)
           set_digipot_current(i, motor_current_setting[i]);
 
       #elif HAS_MOTOR_CURRENT_PWM

@@ -80,7 +80,7 @@ bool SdBaseFile::addDirCluster() {
   memset(vol_->cacheBuffer_.data, 0, 512);
 
   // zero rest of cluster
-  for (uint8_t i = 1; i < vol_->blocksPerCluster_; i++) {
+  for (uint_fast8_t i = 1; i < vol_->blocksPerCluster_; i++) {
     if (!vol_->writeBlock(block + i, vol_->cacheBuffer_.data)) return false;
   }
   // Increase directory file size by cluster size
@@ -209,7 +209,7 @@ bool SdBaseFile::dirEntry(dir_t *dir) {
  */
 void SdBaseFile::dirName(const dir_t &dir, char *name) {
   uint8_t j = 0;
-  for (uint8_t i = 0; i < 11; ++i) {
+  for (uint_fast8_t i = 0; i < 11; ++i) {
     if (dir.name[i] == ' ')continue;
     if (i == 8) name[j++] = '.';
     name[j++] = dir.name[i];
@@ -350,10 +350,10 @@ int8_t SdBaseFile::lsPrintNext(const uint8_t flags, const uint8_t indent) {
         && DIR_IS_FILE_OR_SUBDIR(&dir)) break;
   }
   // indent for dir level
-  for (uint8_t i = 0; i < indent; ++i) SERIAL_CHAR(' ');
+  for (uint_fast8_t i = 0; i < indent; ++i) SERIAL_CHAR(' ');
 
   // print name
-  for (uint8_t i = 0; i < 11; ++i) {
+  for (uint_fast8_t i = 0; i < 11; ++i) {
     if (dir.name[i] == ' ')continue;
     if (i == 8) {
       SERIAL_CHAR('.');
@@ -394,7 +394,7 @@ int8_t SdBaseFile::lsPrintNext(const uint8_t flags, const uint8_t indent) {
  */
 uint8_t lfn_checksum(const uint8_t *name) {
   uint8_t sum = 0;
-  for (uint8_t i = 11; i; i--)
+  for (uint_fast8_t i = 11; i; i--)
     sum = ((sum & 1) << 7) + (sum >> 1) + *name++;
   return sum;
 }
@@ -504,7 +504,7 @@ bool SdBaseFile::mkdir(SdBaseFile * const parent, const uint8_t dname[11]
   dir_t d;
   memcpy(&d, p, sizeof(d));
   d.name[0] = '.';
-  for (uint8_t i = 1; i < 11; ++i) d.name[i] = ' ';
+  for (uint_fast8_t i = 1; i < 11; ++i) d.name[i] = ' ';
 
   // cache block for '.'  and '..'
   uint32_t block = vol_->clusterStartBlock(firstCluster_);
@@ -771,7 +771,7 @@ bool SdBaseFile::open(SdBaseFile * const dirFile, const uint8_t dname[11]
       if (!dirFile->seekSet(32 * index)) return false;
 
       // Dir entries write loop: [LFN] + SFN(1)
-      for (uint8_t dirWriteIdx = 0; dirWriteIdx < reqEntriesNum; ++dirWriteIdx) {
+      for (uint_fast8_t dirWriteIdx = 0; dirWriteIdx < reqEntriesNum; ++dirWriteIdx) {
         index = (dirFile->curPosition_ / 32) & 0xF;
         p = dirFile->readDirCache();
         // LFN or SFN Entry?
@@ -1137,7 +1137,7 @@ bool SdBaseFile::openNext(SdBaseFile *dirFile, const uint8_t oflag) {
    */
   void SdBaseFile::getLFNName(vfat_t *pFatDir, char *lname, const uint8_t sequenceNumber) {
     const uint8_t startOffset = (sequenceNumber - 1) * FILENAME_LENGTH;
-    for (uint8_t i = 0; i < FILENAME_LENGTH; ++i) {
+    for (uint_fast8_t i = 0; i < FILENAME_LENGTH; ++i) {
       const uint16_t utf16_ch = (i >= 11) ? pFatDir->name3[i - 11] : (i >= 5) ? pFatDir->name2[i - 5] : pFatDir->name1[i];
       #if ENABLED(UTF_FILENAME_SUPPORT)
         // We can't reconvert to UTF-8 here as UTF-8 is variable-size encoding, but joining LFN blocks
@@ -1158,7 +1158,7 @@ bool SdBaseFile::openNext(SdBaseFile *dirFile, const uint8_t oflag) {
   void SdBaseFile::setLFNName(vfat_t *pFatDir, char *lname, const uint8_t sequenceNumber) {
     const uint8_t startOffset = (sequenceNumber - 1) * FILENAME_LENGTH,
                   nameLength = strlen(lname);
-    for (uint8_t i = 0; i < FILENAME_LENGTH; ++i) {
+    for (uint_fast8_t i = 0; i < FILENAME_LENGTH; ++i) {
       uint16_t ch = 0;
       if ((startOffset + i) < nameLength)
         ch = lname[startOffset + i];
@@ -1479,7 +1479,7 @@ int8_t SdBaseFile::readDir(dir_t * const dir, char * const longFilename) {
 
               n = (seq - 1) * (FILENAME_LENGTH);
 
-              for (uint8_t i = 0; i < FILENAME_LENGTH; ++i) {
+              for (uint_fast8_t i = 0; i < FILENAME_LENGTH; ++i) {
                 const uint16_t utf16_ch = (i >= 11) ? VFAT->name3[i - 11] : (i >= 5) ? VFAT->name2[i - 5] : VFAT->name1[i];
                 #if ENABLED(UTF_FILENAME_SUPPORT)
                   // We can't reconvert to UTF-8 here as UTF-8 is variable-size encoding, but joining LFN blocks
@@ -1627,7 +1627,7 @@ bool SdBaseFile::remove() {
     // Check if the entry has a LFN
     bool lastEntry = false;
     // loop back to search for any LFN entries related to this file
-    for (uint8_t sequenceNumber = 1; sequenceNumber <= VFAT_ENTRIES_LIMIT; ++sequenceNumber) {
+    for (uint_fast8_t sequenceNumber = 1; sequenceNumber <= VFAT_ENTRIES_LIMIT; ++sequenceNumber) {
       dirIndex_ = (dirIndex_ - 1) & 0xF;
       if (dirBlock_ == 0) break;
       if (dirIndex_ == 0xF) dirBlock_--;

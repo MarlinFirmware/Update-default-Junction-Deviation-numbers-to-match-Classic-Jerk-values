@@ -379,7 +379,7 @@ uint32_t picInfoWrite(uint8_t *P_name, uint32_t P_size) {
 
   static void dosName2LongName(const char dosName[11], char *longName) {
     uint8_t j = 0;
-    for (uint8_t i = 0; i < 11; ++i) {
+    for (uint_fast8_t i = 0; i < 11; ++i) {
       if (i == 8) longName[j++] = '.';
       if (dosName[i] == '\0' || dosName[i] == ' ') continue;
       longName[j++] = dosName[i];
@@ -388,7 +388,7 @@ uint32_t picInfoWrite(uint8_t *P_name, uint32_t P_size) {
   }
 
   static int8_t arrayFindStr(FSTR_P const arr[], uint8_t arraySize, const char *str) {
-    for (uint8_t a = 0; a < arraySize; a++) {
+    for (uint_fast8_t a = 0; a < arraySize; a++) {
       if (strcasecmp(FTOP(arr[a]), str) == 0)
         return a;
     }

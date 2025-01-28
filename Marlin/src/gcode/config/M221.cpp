@@ -30,7 +30,7 @@
  */
 void GcodeSuite::M221() {
 
-  const int8_t target_extruder = get_target_extruder_from_command();
+  const int_fast8_t target_extruder = get_target_extruder_from_command();
   if (target_extruder < 0) return;
 
   if (parser.seenval('S'))

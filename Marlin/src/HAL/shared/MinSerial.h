@@ -53,7 +53,7 @@ struct MinSerial {
   // Send Hex number through UART
   static void TXHex(uint32_t v) {
     TX("0x");
-    for (uint8_t i = 0; i < 8; i++, v <<= 4)
+    for (uint_fast8_t i = 0; i < 8; i++, v <<= 4)
       TXDigit((v >> 28) & 0xF);
   }
 

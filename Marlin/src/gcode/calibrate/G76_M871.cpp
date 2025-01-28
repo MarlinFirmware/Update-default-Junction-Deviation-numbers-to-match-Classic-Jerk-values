@@ -186,7 +186,7 @@
       // Disable leveling so it won't mess with us
       TERN_(HAS_LEVELING, set_bed_leveling_enabled(false));
 
-      for (uint8_t idx = 0; idx <= PTC_BED_COUNT; idx++) {
+      for (uint_fast8_t idx = 0; idx <= PTC_BED_COUNT; idx++) {
         thermalManager.setTargetBed(target_bed);
 
         report_targets(target_bed, target_probe);
@@ -250,7 +250,7 @@
       TERN_(HAS_LEVELING, set_bed_leveling_enabled(false));
 
       bool timeout = false;
-      for (uint8_t idx = 0; idx <= PTC_PROBE_COUNT; idx++) {
+      for (uint_fast8_t idx = 0; idx <= PTC_PROBE_COUNT; idx++) {
         // Move probe to probing point and wait for it to reach target temperature
         do_blocking_move_to(noz_pos_xyz);
 

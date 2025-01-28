@@ -232,15 +232,15 @@ void ST7920_Lite_Status_Screen::home() {
 void ST7920_Lite_Status_Screen::clear_ddram() {
   set_ddram_address(DDRAM_LINE_1);
   begin_data();
-  for (uint8_t i = 64; i--;) write_byte(' ');
+  for (uint_fast8_t i = 64; i--;) write_byte(' ');
 }
 
 /* This fills the entire graphics buffer with zeros */
 void ST7920_Lite_Status_Screen::clear_gdram() {
-  for (uint8_t y = 0; y < BUFFER_HEIGHT; ++y) {
+  for (uint_fast8_t y = 0; y < BUFFER_HEIGHT; ++y) {
     set_gdram_address(0, y);
     begin_data();
-    for (uint8_t i = (BUFFER_WIDTH) / 16; i--;) write_word(0);
+    for (uint_fast8_t i = (BUFFER_WIDTH) / 16; i--;) write_word(0);
   }
 }
 
@@ -248,7 +248,7 @@ void ST7920_Lite_Status_Screen::load_cgram_icon(const uint16_t addr, const void 
   const uint16_t *p_word = (const uint16_t *)data;
   set_cgram_address(addr);
   begin_data();
-  for (uint8_t i = 16; i--;)
+  for (uint_fast8_t i = 16; i--;)
     write_word(pgm_read_word(p_word++));
 }
 
@@ -435,7 +435,7 @@ void ST7920_Lite_Status_Screen::draw_degree_symbol(uint8_t x, uint8_t y, const b
     const uint8_t x_word  = x >> 1,
                   y_top   = degree_symbol_y_top,
                   y_bot   = y_top + COUNT(degree_symbol);
-    for (uint8_t i = y_top; i < y_bot; ++i) {
+    for (uint_fast8_t i = y_top; i < y_bot; ++i) {
       uint8_t byte = pgm_read_byte(p_bytes++);
       set_gdram_address(x_word, i + y * 16);
       begin_data();
@@ -751,10 +751,10 @@ bool ST7920_Lite_Status_Screen::indicators_changed() {
     // This drawing is a mess and only produce readable result around 25% steps
     // i.e. 74-76% look fine [||||||||||||||||||||||||        ], but 73% look like this: [||||||||||||||||       |        ]
     // meaning partially filled bytes produce only single vertical line, and i bet they're not supposed to!
-    for (uint8_t y = top; y <= bottom; ++y) {
+    for (uint_fast8_t y = top; y <= bottom; ++y) {
       set_gdram_address(left, y);
       begin_data();
-      for (uint8_t x = 0; x < width; ++x) {
+      for (uint_fast8_t x = 0; x < width; ++x) {
         uint16_t gfx_word = 0x0000;
         if ((x + 1) * char_pcnt <= value)
           gfx_word = 0xFFFF;                                              // Draw completely filled bytes

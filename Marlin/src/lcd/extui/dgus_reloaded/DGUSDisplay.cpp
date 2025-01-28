@@ -298,7 +298,7 @@ void DGUSDisplay::processRx() {
             unsigned char buffer[vp.size];
             memset(buffer, 0, vp.size);
 
-            for (uint8_t i = 0; i < dlen; i++) {
+            for (uint_fast8_t i = 0; i < dlen; i++) {
               if (i >= vp.size) break;
 
               if (i + 1 < dlen && tmp[i + 3] == 0xFF && tmp[i + 4] == 0xFF)

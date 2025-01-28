@@ -61,7 +61,7 @@ inline void toggle_pins() {
             end = PARSED_PIN_INDEX('L', NUM_DIGITAL_PINS - 1),
             wait = parser.intval('W', 500);
 
-  for (uint8_t i = start; i <= end; ++i) {
+  for (uint_fast8_t i = start; i <= end; ++i) {
     pin_t pin = GET_PIN_MAP_PIN_M43(i);
     if (!isValidPin(pin)) continue;
     if (M43_NEVER_TOUCH(i) || (!ignore_protection && pin_is_protected(pin))) {
@@ -189,7 +189,7 @@ inline void servo_probe_test() {
       // DEPLOY and STOW 4 times and see if the signal follows
       // Then it is a mechanical switch
       SERIAL_ECHOLNPGM(". Deploy & stow 4 times");
-      for (uint8_t i = 0; i < 4; ++i) {
+      for (uint_fast8_t i = 0; i < 4; ++i) {
         servo[probe_index].move(servo_angles[Z_PROBE_SERVO_NR][0]); // Deploy
         safe_delay(500);
         deploy_state = READ(PROBE_TEST_PIN);
@@ -326,7 +326,7 @@ void GcodeSuite::M43() {
     const uint8_t pin_count = last_pin - first_pin + 1;
     uint8_t pin_state[pin_count];
     bool can_watch = false;
-    for (uint8_t i = first_pin; i <= last_pin; ++i) {
+    for (uint_fast8_t i = first_pin; i <= last_pin; ++i) {
       pin_t pin = GET_PIN_MAP_PIN_M43(i);
       if (!isValidPin(pin)) continue;
       if (M43_NEVER_TOUCH(i) || (!ignore_protection && pin_is_protected(pin))) continue;
@@ -369,7 +369,7 @@ void GcodeSuite::M43() {
     #endif
 
     for (;;) {
-      for (uint8_t i = first_pin; i <= last_pin; ++i) {
+      for (uint_fast8_t i = first_pin; i <= last_pin; ++i) {
         const pin_t pin = GET_PIN_MAP_PIN_M43(i);
         if (!isValidPin(pin)) continue;
         if (M43_NEVER_TOUCH(i) || (!ignore_protection && pin_is_protected(pin))) continue;
@@ -398,7 +398,7 @@ void GcodeSuite::M43() {
   }
   else {
     // Report current state of selected pin(s)
-    for (uint8_t i = first_pin; i <= last_pin; ++i) {
+    for (uint_fast8_t i = first_pin; i <= last_pin; ++i) {
       const pin_t pin = GET_PIN_MAP_PIN_M43(i);
       if (isValidPin(pin)) printPinStateExt(pin, ignore_protection, true);
     }

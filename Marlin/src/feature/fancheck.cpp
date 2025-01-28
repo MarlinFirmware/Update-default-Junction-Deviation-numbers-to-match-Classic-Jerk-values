@@ -72,7 +72,7 @@ void FanCheck::update_tachometers() {
   bool status;
 
   #define _TACHO_CASE(N) case N: status = READ(E##N##_FAN_TACHO_PIN); break;
-  for (uint8_t f = 0; f < TACHO_COUNT; ++f) {
+  for (uint_fast8_t f = 0; f < TACHO_COUNT; ++f) {
     switch (f) {
       #if HAS_E0_FAN_TACHO
         _TACHO_CASE(0)
@@ -113,7 +113,7 @@ void FanCheck::compute_speed(uint16_t elapsedTime) {
   static uint8_t fan_reported_errors_msk = 0;
 
   uint8_t fan_error_msk = 0;
-  for (uint8_t f = 0; f < TACHO_COUNT; ++f) {
+  for (uint_fast8_t f = 0; f < TACHO_COUNT; ++f) {
     switch (f) {
       TERN_(HAS_E0_FAN_TACHO, case 0:)
       TERN_(HAS_E1_FAN_TACHO, case 1:)
@@ -150,7 +150,7 @@ void FanCheck::compute_speed(uint16_t elapsedTime) {
 
   if (fan_error_msk & ~fan_reported_errors_msk) {
     // Handle new faults only
-    for (uint8_t f = 0; f < TACHO_COUNT; ++f) if (TEST(fan_error_msk, f)) report_speed_error(f);
+    for (uint_fast8_t f = 0; f < TACHO_COUNT; ++f) if (TEST(fan_error_msk, f)) report_speed_error(f);
   }
   fan_reported_errors_msk = fan_error_msk;
 }
@@ -176,8 +176,8 @@ void FanCheck::report_speed_error(uint8_t fan) {
 }
 
 void FanCheck::print_fan_states() {
-  for (uint8_t s = 0; s < 2; ++s) {
-    for (uint8_t f = 0; f < TACHO_COUNT; ++f) {
+  for (uint_fast8_t s = 0; s < 2; ++s) {
+    for (uint_fast8_t f = 0; f < TACHO_COUNT; ++f) {
       switch (f) {
         TERN_(HAS_E0_FAN_TACHO, case 0:)
         TERN_(HAS_E1_FAN_TACHO, case 1:)
