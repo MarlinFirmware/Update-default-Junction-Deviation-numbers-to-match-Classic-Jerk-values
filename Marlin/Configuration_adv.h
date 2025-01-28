@@ -1959,6 +1959,10 @@
     #define DEFAULT_SHARED_VOLUME SV_USB_FLASH_DRIVE
   #endif
 
+  // Emulate RepRapFirmware with macro files stored in /sys and /macros
+  // Provide the M98 command to run a macro file as a sub-program
+  //#define MACHINE_COMMAND_MACROS
+
 #endif // HAS_MEDIA
 
 /**
