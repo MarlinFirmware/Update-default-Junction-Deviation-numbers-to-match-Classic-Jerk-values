@@ -141,17 +141,22 @@ inline int8_t pgm_read_any(const int8_t *p) { return TERN(__IMXRT1062__, *p, pgm
     static const XYZval<T> NAME##_P DEFS_PROGMEM = NUM_AXIS_ARRAY(X_##OPT, Y_##OPT, Z_##OPT, I_##OPT, J_##OPT, K_##OPT, U_##OPT, V_##OPT, W_##OPT); \
     return pgm_read_any(&NAME##_P[axis]); \
   }
-XYZ_DEFS(float, base_min_pos,   MIN_POS);
-XYZ_DEFS(float, base_max_pos,   MAX_POS);
-XYZ_DEFS(float, base_home_pos,  HOME_POS);
-XYZ_DEFS(float, max_length,     MAX_LENGTH);
+XYZ_DEFS(float, base_min_pos,  MIN_POS);
+XYZ_DEFS(float, base_max_pos,  MAX_POS);
+XYZ_DEFS(float, base_home_pos, HOME_POS);
+XYZ_DEFS(float, max_length,    MAX_LENGTH);
 XYZ_DEFS(int8_t, home_dir, HOME_DIR);
 
 // Flags for rotational axes
 constexpr AxisFlags rotational{0 LOGICAL_AXIS_GANG(
     | 0, | 0, | 0, | 0,
-    | (ENABLED(AXIS4_ROTATES)<<I_AXIS), | (ENABLED(AXIS5_ROTATES)<<J_AXIS), | (ENABLED(AXIS6_ROTATES)<<K_AXIS),
-    | (ENABLED(AXIS7_ROTATES)<<U_AXIS), | (ENABLED(AXIS8_ROTATES)<<V_AXIS), | (ENABLED(AXIS9_ROTATES)<<W_AXIS))
+    | (ENABLED(AXIS4_ROTATES)<<I_AXIS),
+    | (ENABLED(AXIS5_ROTATES)<<J_AXIS),
+    | (ENABLED(AXIS6_ROTATES)<<K_AXIS),
+    | (ENABLED(AXIS7_ROTATES)<<U_AXIS),
+    | (ENABLED(AXIS8_ROTATES)<<V_AXIS),
+    | (ENABLED(AXIS9_ROTATES)<<W_AXIS)
+  )
 };
 
 inline float home_bump_mm(const AxisEnum axis) {
@@ -242,9 +247,7 @@ inline float home_bump_mm(const AxisEnum axis) {
   extern soft_endstops_t soft_endstop;
   void apply_motion_limits(xyz_pos_t &target);
   void update_software_endstops(const AxisEnum axis
-    #if HAS_HOTEND_OFFSET
-      , const uint8_t old_tool_index=0, const uint8_t new_tool_index=0
-    #endif
+    OPTARG(HAS_HOTEND_OFFSET, const uint8_t old_tool_index=0, const uint8_t new_tool_index=0)
   );
   #define SET_SOFT_ENDSTOP_LOOSE(loose) (soft_endstop._loose = loose)
 
@@ -605,10 +608,10 @@ void home_if_needed(const bool keeplev=false);
   extern float inactive_extruder_x,                 // Used in mode 0 & 1
                duplicate_extruder_x_offset;         // Used in mode 2 & 3
   extern xyz_pos_t raised_parked_position;          // Used in mode 1
-  extern bool active_extruder_parked;               // Used in mode 1, 2 & 3
   extern millis_t delayed_move_time;                // Used in mode 1
   extern celsius_t duplicate_extruder_temp_offset;  // Used in mode 2 & 3
-  extern bool idex_mirrored_mode;                   // Used in mode 3
+  extern bool active_extruder_parked,               // Used in mode 1, 2 & 3
+              idex_mirrored_mode;                   // Used in mode 3
 
   FORCE_INLINE bool idex_is_duplicating() { return dual_x_carriage_mode >= DXC_DUPLICATION_MODE; }
 

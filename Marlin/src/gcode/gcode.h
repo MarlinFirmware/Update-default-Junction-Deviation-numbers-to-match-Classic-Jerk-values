@@ -76,8 +76,8 @@
  *
  * M0   - Unconditional stop - Wait for user to press a button on the LCD (Only if ULTRA_LCD is enabled)
  * M1   -> M0
- * M3   - Turn ON Laser | Spindle (clockwise), set Power | Speed. (Requires SPINDLE_FEATURE or LASER_FEATURE)
- * M4   - Turn ON Laser | Spindle (counter-clockwise), set Power | Speed. (Requires SPINDLE_FEATURE or LASER_FEATURE)
+ * M3   - Turn ON Laser  | Spindle         (clockwise), set Power | Speed. (Requires SPINDLE_FEATURE or LASER_FEATURE)
+ * M4   - Turn ON Laser  | Spindle (counter-clockwise), set Power | Speed. (Requires SPINDLE_FEATURE or LASER_FEATURE)
  * M5   - Turn OFF Laser | Spindle. (Requires SPINDLE_FEATURE or LASER_FEATURE)
  * M7   - Turn mist coolant ON. (Requires COOLANT_CONTROL)
  * M8   - Turn flood coolant ON. (Requires COOLANT_CONTROL)
@@ -163,10 +163,11 @@
  * M123 - Report fan tachometers. (Requires En_FAN_TACHO_PIN) Optionally set auto-report interval. (Requires AUTO_REPORT_FANS)
  * M125 - Save current position and move to filament change position. (Requires PARK_HEAD_ON_PAUSE)
  *
- * M126 - Solenoid Air Valve Open. (Requires BARICUDA)
- * M127 - Solenoid Air Valve Closed. (Requires BARICUDA)
- * M128 - EtoP Open. (Requires BARICUDA)
- * M129 - EtoP Closed. (Requires BARICUDA)
+ *** BARICUDA ***
+ * M126 - Solenoid Air Valve Open.
+ * M127 - Solenoid Air Valve Closed.
+ * M128 - EtoP Open.
+ * M129 - EtoP Closed.
  *
  * M140 - Set bed target temp. S<temp>
  * M141 - Set heated chamber target temp. S<temp> (Requires a chamber heater)

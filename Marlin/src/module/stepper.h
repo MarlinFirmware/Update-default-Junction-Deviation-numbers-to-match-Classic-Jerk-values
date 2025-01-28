@@ -374,7 +374,7 @@ class Stepper {
                   ;
     #endif
 
-    static uint32_t acceleration_time, deceleration_time; // time measured in Stepper Timer ticks
+    static uint32_t acceleration_time, deceleration_time; // Time measured in Stepper Timer ticks
 
     #if MULTISTEPPING_LIMIT == 1
       static constexpr uint8_t steps_per_isr = 1; // Count of steps to perform per Stepper ISR call
@@ -408,10 +408,10 @@ class Stepper {
     #endif
 
     #if ENABLED(S_CURVE_ACCELERATION)
-      static int32_t bezier_A,     // A coefficient in Bézier speed curve
-                     bezier_B,     // B coefficient in Bézier speed curve
-                     bezier_C;     // C coefficient in Bézier speed curve
-      static uint32_t bezier_F,    // F coefficient in Bézier speed curve
+      static int32_t  bezier_A,    // A  coefficient in Bézier speed curve
+                      bezier_B,    // B  coefficient in Bézier speed curve
+                      bezier_C;    // C  coefficient in Bézier speed curve
+      static uint32_t bezier_F,    // F  coefficient in Bézier speed curve
                       bezier_AV;   // AV coefficient in Bézier speed curve
       #ifdef __AVR__
         static bool A_negative;    // If A coefficient was negative
@@ -458,7 +458,7 @@ class Stepper {
 
     static hal_timer_t ticks_nominal;
     #if DISABLED(S_CURVE_ACCELERATION)
-      static uint32_t acc_step_rate; // needed for deceleration start point
+      static uint32_t acc_step_rate; // Needed for deceleration start point
     #endif
 
     // Exact steps at which an endstop was triggered
@@ -567,7 +567,7 @@ class Stepper {
     // The direction of a single motor. A true result indicates forward or positive motion.
     FORCE_INLINE static bool motor_direction(const AxisEnum axis) { return last_direction_bits[axis]; }
 
-    // The last movement direction was not null on the specified axis. Note that motor direction is not necessarily the same.
+    // The last movement direction was not null on the specified axis. NOTE: Motor direction is not necessarily the same.
     FORCE_INLINE static bool axis_is_moving(const AxisEnum axis) { return axis_did_move[axis]; }
 
     // Handle a triggered endstop
@@ -620,7 +620,7 @@ class Stepper {
     #endif
 
     #if ENABLED(BABYSTEPPING)
-      static void do_babystep(const AxisEnum axis, const bool direction); // perform a short step with a single stepper motor, outside of any convention
+      static void do_babystep(const AxisEnum axis, const bool direction); // Perform a short step with a single stepper motor, outside of any convention
     #endif
 
     #if HAS_MOTOR_CURRENT_PWM

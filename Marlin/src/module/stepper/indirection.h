@@ -997,18 +997,18 @@ void reset_stepper_drivers();    // Called by settings.load / settings.reset
   #define DISABLE_AXIS_Y() NOOP
 #endif
 
+#ifdef Z_IDLE_HEIGHT
+  #define Z_RESET() do{ current_position.z = Z_IDLE_HEIGHT; sync_plan_position(); }while(0)
+#else
+  #define Z_RESET()
+#endif
+
 #if HAS_Z_AXIS
   #define  ENABLE_AXIS_Z() if (SHOULD_ENABLE(z))  {  ENABLE_STEPPER_Z();  ENABLE_STEPPER_Z2();  ENABLE_STEPPER_Z3();  ENABLE_STEPPER_Z4(); AFTER_CHANGE(z, true); }
   #define DISABLE_AXIS_Z() if (SHOULD_DISABLE(z)) { DISABLE_STEPPER_Z(); DISABLE_STEPPER_Z2(); DISABLE_STEPPER_Z3(); DISABLE_STEPPER_Z4(); AFTER_CHANGE(z, false); set_axis_untrusted(Z_AXIS); Z_RESET(); TERN_(BD_SENSOR, bdl.config_state = BDS_IDLE); }
 #else
   #define  ENABLE_AXIS_Z() NOOP
   #define DISABLE_AXIS_Z() NOOP
-#endif
-
-#ifdef Z_IDLE_HEIGHT
-  #define Z_RESET() do{ current_position.z = Z_IDLE_HEIGHT; sync_plan_position(); }while(0)
-#else
-  #define Z_RESET()
 #endif
 
 #if HAS_I_AXIS

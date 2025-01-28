@@ -86,11 +86,15 @@ constexpr uint8_t ui8_to_percent(const uint8_t i) { return (int(i) * 100 + 127) 
 const xyze_char_t axis_codes LOGICAL_AXIS_ARRAY('E', 'X', 'Y', 'Z', AXIS4_NAME, AXIS5_NAME, AXIS6_NAME, AXIS7_NAME, AXIS8_NAME, AXIS9_NAME);
 #if NUM_AXES <= XYZ && !HAS_EXTRUDERS
   #define AXIS_CHAR(A) ((char)('X' + A))
-  #define IAXIS_CHAR AXIS_CHAR
+  #if ANY(HAS_MOTOR_CURRENT_SPI, HAS_MOTOR_CURRENT_I2C, HAS_MOTOR_CURRENT_DAC)
+    #define IAXIS_CHAR AXIS_CHAR
+  #endif
 #else
-  const xyze_char_t iaxis_codes LOGICAL_AXIS_ARRAY('E', 'X', 'Y', 'Z', 'I', 'J', 'K', 'U', 'V', 'W');
+  #if ANY(HAS_MOTOR_CURRENT_SPI, HAS_MOTOR_CURRENT_I2C, HAS_MOTOR_CURRENT_DAC)
+    const xyze_char_t iaxis_codes LOGICAL_AXIS_ARRAY('E', 'X', 'Y', 'Z', 'I', 'J', 'K', 'U', 'V', 'W');
+    #define IAXIS_CHAR(A) iaxis_codes[A]
+  #endif
   #define AXIS_CHAR(A) axis_codes[A]
-  #define IAXIS_CHAR(A) iaxis_codes[A]
 #endif
 
 #if ENABLED(MARLIN_DEV_MODE)
