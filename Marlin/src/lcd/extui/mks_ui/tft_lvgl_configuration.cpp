@@ -215,7 +215,6 @@ void tft_lvgl_init() {
   TERN_(HAS_SPI_FLASH_FONT, init_gb2312_font());
 
   tft_style_init();
-  filament_pin_setup();
 
   #if ENABLED(MKS_WIFI_MODULE)
     mks_esp_wifi_init();
