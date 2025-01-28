@@ -46,6 +46,7 @@ jobs:
 
         # Native
         - linux_native
+        - linux_native_sdl
         - simulator_linux_release
 
         # AVR
