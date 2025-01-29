@@ -27,7 +27,7 @@
 #include "endstops.h"
 #include "stepper.h"
 
-#if HAS_STATUS_MESSAGE
+#if ANY(HAS_STATUS_MESSAGE, VALIDATE_HOMING_ENDSTOPS)
   #include "../lcd/marlinui.h"
 #endif
 
@@ -543,7 +543,7 @@ void __O2 Endstops::report_states() {
     }
     #undef _CASE_RUNOUT
   #elif HAS_FILAMENT_SENSOR
-    print_es_state(!FILAMENT_IS_OUT());
+    print_es_state(!FILAMENT_IS_OUT(), F(STR_FILAMENT));
   #endif
 
   TERN_(BLTOUCH, bltouch._reset_SW_mode());

@@ -36,7 +36,7 @@
   #error "SDCARD_EEPROM_EMULATION requires SDSUPPORT. Enable SDSUPPORT or choose another EEPROM emulation."
 #endif
 
-#if !ANY(STM32F4xx, STM32H7xx) && ENABLED(FLASH_EEPROM_LEVELING)
+#if NONE(STM32F4xx, STM32H7xx) && ENABLED(FLASH_EEPROM_LEVELING)
   #error "FLASH_EEPROM_LEVELING is currently only supported on STM32F4/H7 hardware."
 #endif
 

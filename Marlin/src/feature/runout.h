@@ -60,7 +60,7 @@
   #define RUNOUT_STATE(N) bool(CAN_host_get_iostate() & CAN_ID_FILAMENT_MASK)  // CAN Virtual Filament Runout pin
 #else
   #define FILAMENT_IS_OUT() (READ(FIL_RUNOUT_PIN) == FIL_RUNOUT_STATE)
-  #define RUNOUT_STATE(N) READ(FIL_RUNOUT##N##_PIN)               // DIO Filament Runout pin
+  #define FILAMENT_IS_OUT(N...) (READ(FIL_RUNOUT##N##_PIN) == FIL_RUNOUT##N##_STATE)
 #endif
 
 typedef Flags<
