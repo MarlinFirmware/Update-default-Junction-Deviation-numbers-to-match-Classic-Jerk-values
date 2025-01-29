@@ -44,14 +44,8 @@
 #define I2C_EEPROM                                // Need use jumpers set i2c for EEPROM
 #define MARLIN_EEPROM_SIZE               0x1000U  // 4K
 
-#if ENALBED(CAN_HOST)                             // Onboard I2C EEPROM is disconnected by enabling CAN bus jumpers
-// NOTE: 2 Patch wires are required to reconnect the I2C EEPROM
-//#define I2C_SCL_PIN                       PA8   // BLTouch servo control pin
-//#define I2C_SDA_PIN                       PC9   // SPI3_CS TFT Card chip select pin
-#else
-  #define I2C_SCL_PIN                         PB8 // I2C_SCL and CAN_RX
-  #define I2C_SDA_PIN                         PB9 // I2C_SDA and CAN_TX
-#endif
+#define I2C_SCL_PIN                         PB8   // I2C_SCL and CAN_RX
+#define I2C_SDA_PIN                         PB9   // I2C_SDA and CAN_TX
 
 //
 // Servos
