@@ -146,3 +146,14 @@ Name|Role|Link|Donate
 ## License
 
 Marlin is published under the [GPL license](/LICENSE) because we believe in open development. The GPL comes with both rights and obligations. Whether you use Marlin firmware as the driver for your open or closed-source product, you must keep Marlin open, and you must provide your compatible Marlin source code to end users upon request. The most straightforward way to comply with the Marlin license is to make a fork of Marlin on Github, perform your modifications, and direct users to your modified fork.
+## AI-generated ProductMaps
+
+
+
+| Github file | ProductMap |
+|-------------|------------|
+| [planner.cpp](https://github.com/MarlinFirmware/Marlin/blob/bugfix-2.1.x/Marlin/src/module/planner.cpp) | [Link to Map](https://product-map.ai/app/public?url=https://github.com/MarlinFirmware/Marlin/blob/bugfix-2.1.x/Marlin/src/module/planner.cpp) |
+
+Contact ProductMap if you have any questions at [juan@product-map.ai](juan@product-map.ai).
+
+Last updated on Mon Feb 03 22:55:41 UTC 2025.
