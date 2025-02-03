@@ -21,6 +21,10 @@
  */
 #pragma once
 
+/**
+ * feature/hotend_idle.h
+ */
+
 #include "../inc/MarlinConfig.h"
 
 typedef struct {

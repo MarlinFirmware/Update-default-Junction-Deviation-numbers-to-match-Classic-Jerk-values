@@ -22,7 +22,7 @@
 #pragma once
 
 /**
- * fwretract.h - Define firmware-based retraction interface
+ * feature/fwretract.h - Define firmware-based retraction interface
  */
 
 #include "../inc/MarlinConfigPre.h"

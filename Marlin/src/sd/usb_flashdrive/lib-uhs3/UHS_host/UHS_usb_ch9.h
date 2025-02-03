@@ -28,16 +28,16 @@ e-mail   :  support@circuitsathome.com
 #error "Never include UHS_usb_ch9.h directly; include UHS_Usb.h instead"
 #else
 
-/* USB chapter 9 structures */
+// USB chapter 9 structures
 #define _UHS_ch9_h_
 
-/* Misc.USB constants */
+// Misc.USB constants
 #define                           DEV_DESCR_LEN 18      //device descriptor length
 #define                          CONF_DESCR_LEN 9       //configuration descriptor length
 #define                          INTR_DESCR_LEN 9       //interface descriptor length
 #define                            EP_DESCR_LEN 7       //endpoint descriptor length
 
-/* Standard Device Requests */
+// Standard Device Requests
 #define                  USB_REQUEST_GET_STATUS 0       // Standard Device Request - GET STATUS
 #define               USB_REQUEST_CLEAR_FEATURE 1       // Standard Device Request - CLEAR FEATURE
 #define                 USB_REQUEST_SET_FEATURE 3       // Standard Device Request - SET FEATURE
@@ -50,7 +50,7 @@ e-mail   :  support@circuitsathome.com
 #define               USB_REQUEST_SET_INTERFACE 11      // Standard Device Request - SET INTERFACE
 #define                 USB_REQUEST_SYNCH_FRAME 12      // Standard Device Request - SYNCH FRAME
 
-/* Wireless USB Device Requests */
+// Wireless USB Device Requests
 #define                  USB_REQ_SET_ENCRYPTION 0x0D
 #define                  USB_REQ_GET_ENCRYPTION 0x0E
 #define                     USB_REQ_RPIPE_ABORT 0x0E
@@ -65,26 +65,26 @@ e-mail   :  support@circuitsathome.com
 #define              USB_REQ_LOOPBACK_DATA_READ 0x16
 #define                USB_REQ_SET_INTERFACE_DS 0x17
 
-/* USB feature flags */
-#define                 USB_DEVICE_SELF_POWERED 0   /* (read only) */
-#define                USB_DEVICE_REMOTE_WAKEUP 1   /* dev may initiate wakeup */
-#define                    USB_DEVICE_TEST_MODE 2   /* (wired high speed only) */
-#define                      USB_DEVICE_BATTERY 2   /* (wireless) */
-#define                 USB_DEVICE_B_HNP_ENABLE 3   /* (otg) dev may initiate HNP */
-#define                  USB_DEVICE_WUSB_DEVICE 3   /* (wireless)*/
-#define                USB_DEVICE_A_HNP_SUPPORT 4   /* (otg) RH port supports HNP */
-#define            USB_DEVICE_A_ALT_HNP_SUPPORT 5   /* (otg) other RH port does */
-#define                   USB_DEVICE_DEBUG_MODE 6   /* (special devices only) */
+// USB feature flags
+#define                 USB_DEVICE_SELF_POWERED 0   // (read only)
+#define                USB_DEVICE_REMOTE_WAKEUP 1   // dev may initiate wakeup
+#define                    USB_DEVICE_TEST_MODE 2   // (wired high speed only)
+#define                      USB_DEVICE_BATTERY 2   // (wireless)
+#define                 USB_DEVICE_B_HNP_ENABLE 3   // (otg) dev may initiate HNP
+#define                  USB_DEVICE_WUSB_DEVICE 3   // (wireless)
+#define                USB_DEVICE_A_HNP_SUPPORT 4   // (otg) RH port supports HNP
+#define            USB_DEVICE_A_ALT_HNP_SUPPORT 5   // (otg) other RH port does
+#define                   USB_DEVICE_DEBUG_MODE 6   // (special devices only)
 
 #define               USB_FEATURE_ENDPOINT_HALT 0       // CLEAR/SET FEATURE - Endpoint Halt
 #define        USB_FEATURE_DEVICE_REMOTE_WAKEUP 1       // CLEAR/SET FEATURE - Device remote wake-up
 #define                   USB_FEATURE_TEST_MODE 2       // CLEAR/SET FEATURE - Test mode
-/* OTG SET FEATURE Constants    */
+// OTG SET FEATURE Constants
 #define               OTG_FEATURE_B_HNP_ENABLE  3       // SET FEATURE OTG - Enable B device to perform HNP
 #define               OTG_FEATURE_A_HNP_SUPPORT 4       // SET FEATURE OTG - A device supports HNP
 #define           OTG_FEATURE_A_ALT_HNP_SUPPORT 5       // SET FEATURE OTG - Another port on the A device supports HNP
 
-/* Setup Data Constants */
+// Setup Data Constants
 #define                USB_SETUP_HOST_TO_DEVICE 0x00    // Device Request bmRequestType transfer direction - host to device transfer
 #define                USB_SETUP_DEVICE_TO_HOST 0x80    // Device Request bmRequestType transfer direction - device to host transfer
 #define                 USB_SETUP_TYPE_STANDARD 0x00    // Device Request bmRequestType type - standard
@@ -97,7 +97,7 @@ e-mail   :  support@circuitsathome.com
 #define                USB_SETUP_RECIPIENT_PORT 0x04    // Wireless USB 1.0
 #define               USB_SETUP_RECIPIENT_RPIPE 0x05    // Wireless USB 1.0
 
-/* USB descriptors  */
+// USB descriptors
 #define                   USB_DESCRIPTOR_DEVICE 0x01    // bDescriptorType for a Device Descriptor.
 #define            USB_DESCRIPTOR_CONFIGURATION 0x02    // bDescriptorType for a Configuration Descriptor.
 #define                   USB_DESCRIPTOR_STRING 0x03    // bDescriptorType for a String Descriptor.
@@ -129,7 +129,7 @@ e-mail   :  support@circuitsathome.com
 #define             USB_DESCRIPTOR_CS_INTERFACE 0x24
 #define              USB_DESCRIPTOR_CS_ENDPOINT 0x25
 
-/* USB Endpoint Transfer Types  */
+// USB Endpoint Transfer Types
 #define               USB_TRANSFER_TYPE_CONTROL 0x00    // Endpoint is a control endpoint.
 #define           USB_TRANSFER_TYPE_ISOCHRONOUS 0x01    // Endpoint is an isochronous endpoint.
 #define                  USB_TRANSFER_TYPE_BULK 0x02    // Endpoint is a bulk endpoint.
@@ -137,14 +137,14 @@ e-mail   :  support@circuitsathome.com
 #define                     bmUSB_TRANSFER_TYPE 0x03    // bit mask to separate transfer type from ISO attributes
 #define               USB_TRANSFER_DIRECTION_IN 0x80    // Indicate direction is IN
 
-/* Standard Feature Selectors for CLEAR_FEATURE Requests    */
+// Standard Feature Selectors for CLEAR_FEATURE Requests
 #define              USB_FEATURE_ENDPOINT_STALL 0       // Endpoint recipient
 #define        USB_FEATURE_DEVICE_REMOTE_WAKEUP 1       // Device recipient
 #define                   USB_FEATURE_TEST_MODE 2       // Device recipient
 
-/* descriptor data structures */
+// descriptor data structures
 
-/* Device descriptor structure */
+// Device descriptor structure
 typedef struct {
         uint8_t bLength; // Length of this descriptor.
         uint8_t bDescriptorType; // DEVICE descriptor type (USB_DESCRIPTOR_DEVICE).
@@ -162,7 +162,7 @@ typedef struct {
         uint8_t bNumConfigurations; // Number of possible configurations.
 } __attribute__((packed)) USB_FD_DEVICE_DESCRIPTOR;
 
-/* Configuration descriptor structure */
+// Configuration descriptor structure
 typedef struct {
         uint8_t bLength; // Length of this descriptor.
         uint8_t bDescriptorType; // CONFIGURATION descriptor type (USB_DESCRIPTOR_CONFIGURATION).
@@ -174,7 +174,7 @@ typedef struct {
         uint8_t bMaxPower; // Maximum power consumed by this configuration.
 } __attribute__((packed)) USB_FD_CONFIGURATION_DESCRIPTOR;
 
-/* Interface descriptor structure */
+// Interface descriptor structure
 typedef struct {
         uint8_t bLength; // Length of this descriptor.
         uint8_t bDescriptorType; // INTERFACE descriptor type (USB_DESCRIPTOR_INTERFACE).
@@ -187,7 +187,7 @@ typedef struct {
         uint8_t iInterface; // Index of String Descriptor describing the interface.
 } __attribute__((packed)) USB_FD_INTERFACE_DESCRIPTOR;
 
-/* Endpoint descriptor structure */
+// Endpoint descriptor structure
 typedef struct {
         uint8_t bLength; // Length of this descriptor.
         uint8_t bDescriptorType; // ENDPOINT descriptor type (USB_DESCRIPTOR_ENDPOINT).
@@ -197,7 +197,7 @@ typedef struct {
         uint8_t bInterval; // Polling interval in frames.
 } __attribute__((packed)) USB_FD_ENDPOINT_DESCRIPTOR;
 
-/* HID descriptor */
+// HID descriptor
 /*
 typedef struct {
         uint8_t bLength;

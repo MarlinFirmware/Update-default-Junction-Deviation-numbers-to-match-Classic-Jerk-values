@@ -65,7 +65,7 @@
 #define MASS_CMD_DIR_OUT                0 // (0 << 7)
 #define MASS_CMD_DIR_IN                 0x80 //(1 << 7)
 
-/*
+/**
  * Reference documents from T10 (https://www.t10.org)
  * SCSI Primary Commands - 3 (SPC-3)
  * SCSI Block Commands - 2 (SBC-2)

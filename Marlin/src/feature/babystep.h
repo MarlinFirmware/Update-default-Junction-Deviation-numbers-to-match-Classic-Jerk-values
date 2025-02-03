@@ -21,6 +21,10 @@
  */
 #pragma once
 
+/**
+ * feature/babystep.h
+ */
+
 #include "../inc/MarlinConfigPre.h"
 
 #define BABYSTEPS_PER_SEC 1000UL
@@ -45,14 +49,14 @@
 class Babystep {
 public:
   static volatile int16_t steps[BS_AXIS_IND(Z_AXIS) + 1];
-  static int16_t accum;                                     // Total babysteps in current edit
+  static int16_t accum;                                  // Total babysteps in current edit
 
   #if ALL(EP_BABYSTEPPING, EMERGENCY_PARSER)
     static int16_t ep_babysteps;
   #endif
 
   #if ENABLED(BABYSTEP_DISPLAY_TOTAL)
-    static int16_t axis_total[BS_TOTAL_IND(Z_AXIS) + 1];   // Total babysteps since G28
+    static int16_t axis_total[BS_TOTAL_IND(Z_AXIS) + 1]; // Total babysteps since G28
     static void reset_total(const AxisEnum axis) {
       if (TERN1(BABYSTEP_XY, axis == Z_AXIS))
         axis_total[BS_TOTAL_IND(axis)] = 0;
@@ -86,10 +90,8 @@ public:
     return steps[BS_AXIS_IND(X_AXIS)] || steps[BS_AXIS_IND(Y_AXIS)] || steps[BS_AXIS_IND(Z_AXIS)];
   }
 
-  //
   // Called by the Temperature or Stepper ISR to
   // apply accumulated babysteps to the axes.
-  //
   static void task() {
     for (uint8_t i = 0; i <= BS_AXIS_IND(Z_AXIS); ++i) step_axis(BS_AXIS(i));
   }

@@ -24,7 +24,7 @@
  * feature/pause.cpp - Pause feature support functions
  * This may be combined with related G-codes if features are consolidated.
  *
- * Note: Calls to ui.pause_show_message are passed to either ExtUI or MarlinUI.
+ * NOTE: Calls to ui.pause_show_message are passed to either ExtUI or MarlinUI.
  */
 
 #include "../inc/MarlinConfigPre.h"
@@ -208,7 +208,7 @@ bool load_filament(const_float_t slow_load_length/*=0*/, const_float_t fast_load
     first_impatient_beep(max_beep_count);
 
     KEEPALIVE_STATE(PAUSED_FOR_USER);
-    wait_for_user = true;    // LCD click or M108 will clear this
+    wait_for_user = true; // LCD click or M108 will clear this
 
     TERN_(EXTENSIBLE_UI, ExtUI::onUserConfirmRequired(GET_TEXT_F(MSG_FILAMENTLOAD)));
 
@@ -262,7 +262,7 @@ bool load_filament(const_float_t slow_load_length/*=0*/, const_float_t fast_load
     #endif
   }
 
-  #if ENABLED(DUAL_X_CARRIAGE)      // Tie the two extruders movement back together.
+  #if ENABLED(DUAL_X_CARRIAGE) // Tie the two extruders movement back together
     set_duplication_enabled(saved_ext_dup_mode, saved_ext);
   #endif
 
@@ -325,7 +325,7 @@ bool load_filament(const_float_t slow_load_length/*=0*/, const_float_t fast_load
 /**
  * Disabling E steppers for manual filament change should be fine
  * as long as users don't spin the E motor ridiculously fast and
- * send current back to their board, potentially frying it.
+ * send current back to their board, potentially frying it
  */
 inline void disable_active_extruder() {
   #if HAS_EXTRUDERS
@@ -422,7 +422,7 @@ bool pause_print(const_float_t retract, const xyz_pos_t &park_point, const bool 
   DEBUG_SECTION(pp, "pause_print", true);
   DEBUG_ECHOLNPGM("... park.x:", park_point.x, " y:", park_point.y, " z:", park_point.z, " unloadlen:", unload_length, " showlcd:", show_lcd DXC_SAY);
 
-  if (did_pause_print) return false; // already paused
+  if (did_pause_print) return false; // Already paused
 
   #if ENABLED(HOST_ACTION_COMMANDS)
     #ifdef ACTION_ON_PAUSED
@@ -472,13 +472,13 @@ bool pause_print(const_float_t retract, const xyz_pos_t &park_point, const bool 
     DEBUG_ECHOLNPGM("... retract:", retract);
 
     #if ENABLED(AUTO_BED_LEVELING_UBL)
-      const bool leveling_was_enabled = planner.leveling_active; // save leveling state
-      set_bed_leveling_enabled(false);  // turn off leveling
+      const bool leveling_was_enabled = planner.leveling_active; // Save leveling state
+      set_bed_leveling_enabled(false);  // Turn off leveling
     #endif
 
     unscaled_e_move(retract, PAUSE_PARK_RETRACT_FEEDRATE);
 
-    TERN_(AUTO_BED_LEVELING_UBL, set_bed_leveling_enabled(leveling_was_enabled)); // restore leveling
+    TERN_(AUTO_BED_LEVELING_UBL, set_bed_leveling_enabled(leveling_was_enabled)); // Restore leveling
   }
 
   // If axes don't need to home then the nozzle can park
@@ -555,7 +555,7 @@ void wait_for_confirmation(const bool is_reload/*=false*/, const int8_t max_beep
   KEEPALIVE_STATE(PAUSED_FOR_USER);
   TERN_(HOST_PROMPT_SUPPORT, hostui.continue_prompt(GET_TEXT_F(MSG_NOZZLE_PARKED)));
   TERN_(EXTENSIBLE_UI, ExtUI::onUserConfirmRequired(GET_TEXT_F(MSG_NOZZLE_PARKED)));
-  wait_for_user = true;    // LCD click or M108 will clear this
+  wait_for_user = true; // LCD click or M108 will clear this
   while (wait_for_user) {
     impatient_beep(max_beep_count);
 
@@ -708,14 +708,14 @@ void resume_print(
   }
 
   #if ENABLED(AUTO_BED_LEVELING_UBL)
-    const bool leveling_was_enabled = planner.leveling_active; // save leveling state
-    set_bed_leveling_enabled(false);  // turn off leveling
+    const bool leveling_was_enabled = planner.leveling_active; // Save leveling state
+    set_bed_leveling_enabled(false); // Turn off leveling
   #endif
 
   // Unretract
   unscaled_e_move(PAUSE_PARK_RETRACT_LENGTH, feedRate_t(PAUSE_PARK_RETRACT_FEEDRATE));
 
-  TERN_(AUTO_BED_LEVELING_UBL, set_bed_leveling_enabled(leveling_was_enabled)); // restore leveling
+  TERN_(AUTO_BED_LEVELING_UBL, set_bed_leveling_enabled(leveling_was_enabled)); // Restore leveling
 
   // Intelligent resuming
   #if ENABLED(FWRETRACT)

@@ -30,7 +30,7 @@
 
 #include "joystick.h"
 
-#include "../inc/MarlinConfig.h"  // for pins
+#include "../inc/MarlinConfig.h" // For pins
 #include "../module/planner.h"
 
 Joystick joystick;
@@ -93,7 +93,7 @@ Joystick joystick;
 
     auto _normalize_joy = [](float &axis_jog, const raw_adc_t raw, const raw_adc_t (&joy_limits)[4]) {
       if (WITHIN(raw, joy_limits[0], joy_limits[3])) {
-        // within limits, check deadzone
+        // Within limits, check deadzone
         if (raw > joy_limits[2])
           axis_jog = (raw - joy_limits[2]) / float(joy_limits[3] - joy_limits[2]);
         else if (raw < joy_limits[1])
@@ -156,7 +156,7 @@ Joystick joystick;
     #endif
 
     // Other non-joystick poll-based jogging could be implemented here
-    // with "jogging" encapsulated as a more general class.
+    // with "jogging" encapsulated as a more general class
 
     TERN_(EXTENSIBLE_UI, ExtUI::_joystick_update(norm_jog));
 

@@ -21,7 +21,7 @@
  */
 
 /**
- * endstops.cpp - A singleton object to manage endstops
+ * module/endstops.cpp - A singleton object to manage endstops
  */
 
 #include "endstops.h"

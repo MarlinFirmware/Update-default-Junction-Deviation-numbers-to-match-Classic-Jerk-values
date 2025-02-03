@@ -21,6 +21,10 @@
  */
 #pragma once
 
+/**
+ * feature/filwidth.h
+ */
+
 #include "../inc/MarlinConfig.h"
 #include "../module/planner.h"
 #include "../module/thermistor/thermistors.h"
@@ -28,15 +32,15 @@
 class FilamentWidthSensor {
 public:
   static constexpr int MMD_CM = MAX_MEASUREMENT_DELAY + 1, MMD_MM = MMD_CM * 10;
-  static bool enabled;              // (M405-M406) Filament Width Sensor ON/OFF.
-  static uint32_t accum;            // ADC accumulator
-  static uint16_t raw;              // Measured filament diameter - one extruder only
-  static float nominal_mm,          // (M104) Nominal filament width
-               measured_mm,         // Measured filament diameter
+  static bool enabled;            // (M405-M406) Filament Width Sensor ON/OFF
+  static uint32_t accum;          // ADC accumulator
+  static uint16_t raw;            // Measured filament diameter - one extruder only
+  static float nominal_mm,        // (M104) Nominal filament width
+               measured_mm,       // Measured filament diameter
                e_count, delay_dist;
-  static uint8_t meas_delay_cm;     // Distance delay setting
-  static int8_t ratios[MMD_CM],     // Ring buffer to delay measurement. (Extruder factor minus 100)
-                index_r, index_w;   // Indexes into ring buffer
+  static uint8_t meas_delay_cm;   // Distance delay setting
+  static int8_t ratios[MMD_CM],   // Ring buffer to delay measurement. (Extruder factor minus 100)
+                index_r, index_w; // Indexes into ring buffer
 
   FilamentWidthSensor() { init(); }
   static void init();
@@ -49,11 +53,11 @@ public:
 
   /**
    * Convert Filament Width (mm) to an extrusion ratio
-   * and reduce to an 8 bit value.
+   * and reduce to an 8 bit value
    *
    * A nominal width of 1.75 and measured width of 1.73
    * gives (100 * 1.75 / 1.73) for a ratio of 101 and
-   * a return value of 1.
+   * a return value of 1
    */
   static int8_t sample_to_size_ratio() {
     return ABS(nominal_mm - measured_mm) <= FILWIDTH_ERROR_MARGIN

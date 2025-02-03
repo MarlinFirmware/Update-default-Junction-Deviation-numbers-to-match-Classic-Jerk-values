@@ -1,4 +1,4 @@
-/*
+/**
  * File:   macro_logic.h
  * Author: root
  *
@@ -147,4 +147,4 @@ Make 3 bogus function bodies
 AJK_MAKE_FUNS(unsigned Cfunc,(arg1, arg2),3,BODY)
 #endif
 
-#endif  /* MACRO_LOGIC_H */
+#endif // MACRO_LOGIC_H

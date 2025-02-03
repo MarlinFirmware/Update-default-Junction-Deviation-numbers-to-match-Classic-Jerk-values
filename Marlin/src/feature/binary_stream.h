@@ -21,6 +21,10 @@
  */
 #pragma once
 
+/**
+ * feature/binary_stream.h
+ */
+
 #include "../inc/MarlinConfig.h"
 
 #define BINARY_STREAM_COMPRESSION
@@ -211,12 +215,12 @@ public:
     union Header {
       static constexpr uint16_t HEADER_TOKEN = 0xB5AD;
       struct [[gnu::packed]] {
-        uint16_t token;       // packet start token
-        uint8_t sync;         // stream sync, resend id and packet loss detection
+        uint16_t token;       // Packet start token
+        uint8_t sync;         // Stream sync, resend id and packet loss detection
         uint8_t meta;         // 4 bit protocol,
                               // 4 bit packet type
-        uint16_t size;        // data length
-        uint16_t checksum;    // header checksum
+        uint16_t size;        // Data length
+        uint16_t checksum;    // Header checksum
       };
       uint8_t protocol() { return (meta >> 4) & 0xF; }
       uint8_t type() { return meta & 0xF; }
@@ -226,7 +230,7 @@ public:
 
     union Footer {
       struct [[gnu::packed]] {
-        uint16_t checksum; // full packet checksum
+        uint16_t checksum; // Full packet checksum
       };
       void reset() { checksum = 0; }
       uint8_t data[1];
@@ -256,13 +260,13 @@ public:
     buffer_next_index = 0;
   }
 
-  // fletchers 16 checksum
+  // Fletchers 16 checksum
   uint32_t checksum(uint32_t cs, uint8_t value) {
     uint16_t cs_low = (((cs & 0xFF) + value) % 255);
     return ((((cs >> 8) + cs_low) % 255) << 8)  | cs_low;
   }
 
-  // read the next byte from the data stream keeping track of
+  // Read the next byte from the data stream keeping track of
   // whether the stream times out from data starvation
   // takes the data variable by reference in order to return status
   bool stream_read(uint8_t& data) {
@@ -297,14 +301,14 @@ public:
           packet.reset();
           stream_state = StreamState::PACKET_WAIT;
         case StreamState::PACKET_WAIT:
-          if (!stream_read(data)) { idle(); return; }  // no active packet so don't wait
+          if (!stream_read(data)) { idle(); return; } // No active packet so don't wait
           packet.header.data[1] = data;
           if (packet.header.token == packet.header.HEADER_TOKEN) {
             packet.bytes_received = 2;
             stream_state = StreamState::PACKET_HEADER;
           }
           else {
-            // stream corruption drop data
+            // Stream corruption drop data
             packet.header.data[0] = data;
           }
           break;
@@ -314,7 +318,7 @@ public:
           packet.header.data[packet.bytes_received++] = data;
           packet.checksum = checksum(packet.checksum, data);
 
-          // header checksum calculation can't contain the checksum
+          // Header checksum calculation can't contain the checksum
           if (packet.bytes_received == sizeof(Packet::header) - 2)
             packet.header_checksum = packet.checksum;
 
@@ -331,17 +335,17 @@ public:
                 packet.bytes_received = 0;
                 if (packet.header.size) {
                   stream_state = StreamState::PACKET_DATA;
-                  packet.buffer = static_cast<char *>(&buffer[0]); // multipacket buffering not implemented, always allocate whole buffer to packet
+                  packet.buffer = static_cast<char *>(&buffer[0]); // Multipacket buffering not implemented, always allocate whole buffer to packet
                 }
                 else
                   stream_state = StreamState::PACKET_PROCESS;
               }
-              else if (packet.header.sync == sync - 1) {           // ok response must have been lost
-                SERIAL_ECHOLNPGM("ok", packet.header.sync);  // transmit valid packet received and drop the payload
+              else if (packet.header.sync == sync - 1) {    // OK response must have been lost
+                SERIAL_ECHOLNPGM("ok", packet.header.sync); // Transmit valid packet received and drop the payload
                 stream_state = StreamState::PACKET_RESET;
               }
               else if (packet_retries) {
-                stream_state = StreamState::PACKET_RESET; // could be packets already buffered on flow controlled connections, drop them without ack
+                stream_state = StreamState::PACKET_RESET; // Could be packets already buffered on flow controlled connections, drop them without ack
               }
               else {
                 SERIAL_ECHO_MSG("Datastream packet out of order");
@@ -393,7 +397,7 @@ public:
           packet_retries = 0;
           bytes_received += packet.header.size;
 
-          SERIAL_ECHOLNPGM("ok", packet.header.sync); // transmit valid packet received
+          SERIAL_ECHOLNPGM("ok", packet.header.sync); // Transmit valid packet received
           dispatch();
           stream_state = StreamState::PACKET_RESET;
           break;
@@ -413,7 +417,7 @@ public:
           break;
         case StreamState::PACKET_ERROR:
           SERIAL_ECHOLNPGM("fe", packet.header.sync);
-          reset(); // reset everything, resync required
+          reset(); // Reset everything, resync required
           stream_state = StreamState::PACKET_RESET;
           break;
       }
@@ -426,7 +430,7 @@ public:
     switch (static_cast<Protocol>(packet.header.protocol())) {
       case Protocol::CONTROL:
         switch (static_cast<ProtocolControl>(packet.header.type())) {
-          case ProtocolControl::CLOSE: // revert back to ASCII mode
+          case ProtocolControl::CLOSE: // Revert back to ASCII mode
             card.flag.binary_mode = false;
             break;
           default:
@@ -434,7 +438,7 @@ public:
         }
         break;
       case Protocol::FILE_TRANSFER:
-        SDFileTransferProtocol::process(packet.header.type(), packet.buffer, packet.header.size); // send user data to be processed
+        SDFileTransferProtocol::process(packet.header.type(), packet.buffer, packet.header.size); // Send user data to be processed
       break;
       default:
         SERIAL_ECHO_MSG("Unsupported Binary Protocol");

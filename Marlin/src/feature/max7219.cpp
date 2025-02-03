@@ -21,6 +21,7 @@
  */
 
 /**
+ * feature/max7219.cpp
  * This module is off by default, but can be enabled to facilitate the display of
  * extra debug information during code development.
  *
@@ -95,7 +96,7 @@
 Max7219 max7219;
 
 uint8_t Max7219::led_line[MAX7219_LINES]; // = { 0 };
-uint8_t Max7219::suspended; // = 0;
+uint8_t Max7219::suspended;               // = 0;
 
 #define LINE_REG(Q)     (max7219_reg_digit0 + ((Q) & 0x7))
 
@@ -145,7 +146,7 @@ uint8_t Max7219::suspended; // = 0;
 #define BIT_7219(X,Y) TEST(led_line[LED_IND(X,Y)], LED_BIT(X,Y))
 
 #ifdef CPU_32_BIT
-  #define SIG_DELAY() DELAY_US(1)   // Approximate a 1µs delay on 32-bit ARM
+  #define SIG_DELAY() DELAY_US(1) // Approximate a 1µs delay on 32-bit ARM
   #undef CRITICAL_SECTION_START
   #undef CRITICAL_SECTION_END
   #define CRITICAL_SECTION_START() NOOP
@@ -167,10 +168,10 @@ void Max7219::error(FSTR_P const func, const int32_t v1, const int32_t v2/*=-1*/
 
 /**
  * Flip the lowest n_bytes of the supplied bits:
- *  flipped(x, 1) flips the low 8  bits of x.
- *  flipped(x, 2) flips the low 16 bits of x.
- *  flipped(x, 3) flips the low 24 bits of x.
- *  flipped(x, 4) flips the low 32 bits of x.
+ *  flipped(x, 1) flips the low 8  bits of x
+ *  flipped(x, 2) flips the low 16 bits of x
+ *  flipped(x, 3) flips the low 24 bits of x
+ *  flipped(x, 4) flips the low 32 bits of x
  */
 inline uint32_t flipped(const uint32_t bits, const uint8_t n_bytes) {
   uint32_t mask = 1, outbits = 0;
@@ -201,11 +202,11 @@ void Max7219::putbyte(uint8_t data) {
   CRITICAL_SECTION_START();
   for (uint8_t i = 8; i--;) {
     SIG_DELAY();
-    WRITE(MAX7219_CLK_PIN, LOW);       // tick
+    WRITE(MAX7219_CLK_PIN, LOW);  // Tick
     SIG_DELAY();
-    WRITE(MAX7219_DIN_PIN, (data & 0x80) ? HIGH : LOW);  // send 1 or 0 based on data bit
+    WRITE(MAX7219_DIN_PIN, (data & 0x80) ? HIGH : LOW); // Send 1 or 0 based on data bit
     SIG_DELAY();
-    WRITE(MAX7219_CLK_PIN, HIGH);      // tock
+    WRITE(MAX7219_CLK_PIN, HIGH); // Tock
     SIG_DELAY();
     data <<= 1;
   }
@@ -214,7 +215,7 @@ void Max7219::putbyte(uint8_t data) {
 
 void Max7219::pulse_load() {
   SIG_DELAY();
-  WRITE(MAX7219_LOAD_PIN, LOW);  // tell the chip to load the data
+  WRITE(MAX7219_LOAD_PIN, LOW); // Tell the chip to load the data
   SIG_DELAY();
   WRITE(MAX7219_LOAD_PIN, HIGH);
   SIG_DELAY();
@@ -224,9 +225,9 @@ void Max7219::send(const uint8_t reg, const uint8_t data) {
   SIG_DELAY();
   CRITICAL_SECTION_START();
   SIG_DELAY();
-  putbyte(reg);          // specify register
+  putbyte(reg);  // Specify register
   SIG_DELAY();
-  putbyte(data);         // put data
+  putbyte(data); // Put data
   CRITICAL_SECTION_END();
 }
 
@@ -275,7 +276,7 @@ void Max7219::set(const uint8_t line, const uint8_t bits) {
         max7219_reg_digit0 + start + size,
         minus ? led_minus : blank ? 0x00 : led_numeral[value % 10] | (dec ? led_decimal : 0x00)
       );
-      pulse_load();  // tell the chips to load the clocked out data
+      pulse_load(); // Tell the chips to load the clocked out data
       value /= 10;
       if (!value && !leadzero) blank = true;
       dec = false;
@@ -368,9 +369,9 @@ void Max7219::clear_column(const uint8_t col) {
 }
 
 /**
- * Plot the low order bits of val to the specified row of the matrix.
+ * Plot the low order bits of val to the specified row of the matrix
  * With 4 Max7219 units in the chain, it's possible to set 32 bits at
- * once with a single call to the function (if rotated 90° or 270°).
+ * once with a single call to the function (if rotated 90° or 270°)
  */
 void Max7219::set_row(const uint8_t row, const uint32_t val) {
   if (row >= MAX7219_Y_LEDS) return error(F("set_row"), row);
@@ -383,9 +384,9 @@ void Max7219::set_row(const uint8_t row, const uint32_t val) {
 }
 
 /**
- * Plot the low order bits of val to the specified column of the matrix.
+ * Plot the low order bits of val to the specified column of the matrix
  * With 4 Max7219 units in the chain, it's possible to set 32 bits at
- * once with a single call to the function (if rotated 0° or 180°).
+ * once with a single call to the function (if rotated 0° or 180°)
  */
 void Max7219::set_column(const uint8_t col, const uint32_t val) {
   if (col >= MAX7219_X_LEDS) return error(F("set_column"), col);
@@ -419,7 +420,7 @@ void Max7219::set_rows_32bits(const uint8_t y, uint32_t val) {
     if (y > MAX7219_Y_LEDS - 2) return error(F("set_rows_32bits"), y, val);
     set_row(y + 1, val); val >>= 16;
     set_row(y + 0, val);
-  #else // at least 24 bits on each row.  In the 3 matrix case, just display the low 24 bits
+  #else // At least 24 bits on each row. In the 3 matrix case, just display the low 24 bits
     if (y > MAX7219_Y_LEDS - 1) return error(F("set_rows_32bits"), y, val);
     set_row(y, val);
   #endif
@@ -447,7 +448,7 @@ void Max7219::set_columns_32bits(const uint8_t x, uint32_t val) {
     if (x > MAX7219_X_LEDS - 2) return error(F("set_rows_32bits"), x, val);
     set_column(x + 1, val); val >>= 16;
     set_column(x + 0, val);
-  #else // at least 24 bits on each row.  In the 3 matrix case, just display the low 24 bits
+  #else // At least 24 bits on each row. In the 3 matrix case, just display the low 24 bits
     if (x > MAX7219_X_LEDS - 1) return error(F("set_rows_32bits"), x, val);
     set_column(x, val);
   #endif
@@ -598,18 +599,18 @@ void Max7219::init() {
 /**
  * This code demonstrates some simple debugging using a single 8x8 LED Matrix. If your feature could
  * benefit from matrix display, add its code here. Very little processing is required, so the 7219 is
- * ideal for debugging when realtime feedback is important but serial output can't be used.
+ * ideal for debugging when realtime feedback is important but serial output can't be used
  */
 
 // Apply changes to update a marker
 void Max7219::mark16(const uint8_t pos, const uint8_t v1, const uint8_t v2, uint8_t * const rcm/*=nullptr*/) {
-  #if MAX7219_X_LEDS > 8    // At least 16 LEDs on the X-Axis. Use single line.
+  #if MAX7219_X_LEDS > 8   // At least 16 LEDs on the X-Axis. Use single line
     led_off(v1 & 0xF, pos, rcm);
      led_on(v2 & 0xF, pos, rcm);
-  #elif MAX7219_Y_LEDS > 8  // At least 16 LEDs on the Y-Axis. Use a single column.
+  #elif MAX7219_Y_LEDS > 8 // At least 16 LEDs on the Y-Axis. Use a single column
     led_off(pos, v1 & 0xF, rcm);
      led_on(pos, v2 & 0xF, rcm);
-  #else                     // Single 8x8 LED matrix. Use two lines to get 16 LEDs.
+  #else                    // Single 8x8 LED matrix. Use two lines to get 16 LEDs
     led_off(v1 & 0x7, pos + (v1 >= 8), rcm);
      led_on(v2 & 0x7, pos + (v2 >= 8), rcm);
   #endif
@@ -618,17 +619,17 @@ void Max7219::mark16(const uint8_t pos, const uint8_t v1, const uint8_t v2, uint
 // Apply changes to update a tail-to-head range
 void Max7219::range16(const uint8_t y, const uint8_t ot, const uint8_t nt, const uint8_t oh,
   const uint8_t nh, uint8_t * const rcm/*=nullptr*/) {
-  #if MAX7219_X_LEDS > 8    // At least 16 LEDs on the X-Axis. Use single line.
+  #if MAX7219_X_LEDS > 8   // At least 16 LEDs on the X-Axis. Use single line
     if (ot != nt) for (uint8_t n = ot & 0xF; n != (nt & 0xF) && n != (nh & 0xF); n = (n + 1) & 0xF)
       led_off(n & 0xF, y, rcm);
     if (oh != nh) for (uint8_t n = (oh + 1) & 0xF; n != ((nh + 1) & 0xF); n = (n + 1) & 0xF)
        led_on(n & 0xF, y, rcm);
-  #elif MAX7219_Y_LEDS > 8  // At least 16 LEDs on the Y-Axis. Use a single column.
+  #elif MAX7219_Y_LEDS > 8 // At least 16 LEDs on the Y-Axis. Use a single column
     if (ot != nt) for (uint8_t n = ot & 0xF; n != (nt & 0xF) && n != (nh & 0xF); n = (n + 1) & 0xF)
       led_off(y, n & 0xF, rcm);
     if (oh != nh) for (uint8_t n = (oh + 1) & 0xF; n != ((nh + 1) & 0xF); n = (n + 1) & 0xF)
        led_on(y, n & 0xF, rcm);
-  #else                     // Single 8x8 LED matrix. Use two lines to get 16 LEDs.
+  #else                    // Single 8x8 LED matrix. Use two lines to get 16 LEDs.
     if (ot != nt) for (uint8_t n = ot & 0xF; n != (nt & 0xF) && n != (nh & 0xF); n = (n + 1) & 0xF)
       led_off(n & 0x7, y + (n >= 8), rcm);
     if (oh != nh) for (uint8_t n = (oh + 1) & 0xF; n != ((nh + 1) & 0xF); n = (n + 1) & 0xF)
@@ -641,9 +642,9 @@ void Max7219::quantity(const uint8_t pos, const uint8_t ov, const uint8_t nv, ui
   for (uint8_t i = _MIN(nv, ov); i < _MAX(nv, ov); i++)
     led_set(
       #if MAX7219_X_LEDS >= MAX7219_Y_LEDS
-        i, pos  // Single matrix or multiple matrices in Landscape
+        i, pos // Single matrix or multiple matrices in Landscape
       #else
-        pos, i  // Multiple matrices in Portrait
+        pos, i // Multiple matrices in Portrait
       #endif
       , nv >= ov
       , rcm
@@ -653,11 +654,11 @@ void Max7219::quantity(const uint8_t pos, const uint8_t ov, const uint8_t nv, ui
 void Max7219::quantity16(const uint8_t pos, const uint8_t ov, const uint8_t nv, uint8_t * const rcm/*=nullptr*/) {
   for (uint8_t i = _MIN(nv, ov); i < _MAX(nv, ov); i++)
     led_set(
-      #if MAX7219_X_LEDS > 8    // At least 16 LEDs on the X-Axis. Use single line.
+      #if MAX7219_X_LEDS > 8   // At least 16 LEDs on the X-Axis. Use single line
         i, pos
-      #elif MAX7219_Y_LEDS > 8  // At least 16 LEDs on the Y-Axis. Use a single column.
+      #elif MAX7219_Y_LEDS > 8 // At least 16 LEDs on the Y-Axis. Use a single column
         pos, i
-      #else                     // Single 8x8 LED matrix. Use two lines to get 16 LEDs.
+      #else                    // Single 8x8 LED matrix. Use two lines to get 16 LEDs
         i >> 1, pos + (i & 1)
       #endif
       , nv >= ov
@@ -693,7 +694,7 @@ void Max7219::idle_tasks() {
 
   // Some Max7219 units are vulnerable to electrical noise, especially
   // with long wires next to high current wires. If the display becomes
-  // corrupted, this will fix it within a couple seconds.
+  // corrupted, this will fix it within a couple seconds
   if (do_blink && ++refresh_cnt >= refresh_limit) {
     refresh_cnt = 0;
     register_setup();
@@ -781,7 +782,7 @@ void Max7219::idle_tasks() {
     }
   #endif
 
-  // batch line updates
+  // Batch line updates
   suspended--;
   if (!suspended)
     for (uint8_t i = 0; i < 8; ++i) if (row_change_mask & _BV(i))

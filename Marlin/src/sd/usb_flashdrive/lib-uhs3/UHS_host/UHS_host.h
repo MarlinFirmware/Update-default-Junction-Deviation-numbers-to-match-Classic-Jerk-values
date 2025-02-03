@@ -23,7 +23,8 @@ Circuits At Home, LTD
 Web      :  https://www.circuitsathome.com
 e-mail   :  support@circuitsathome.com
  */
-/* USB functions */
+
+// USB functions
 #ifndef _UHS_host_h_
 #define _UHS_host_h_
 
@@ -52,7 +53,9 @@ e-mail   :  support@circuitsathome.com
 #include "UHS_printhex.h"
 #include "UHS_message.h"
 
-// Load system components as required
+/**
+ * Load system components as required
+ */
 #if defined(LOAD_USB_HOST_SYSTEM) && !defined(USB_HOST_SYSTEM_LOADED)
 #include "UHS_util_INLINE.h"
 #include "UHS_host_INLINE.h"
@@ -70,8 +73,9 @@ e-mail   :  support@circuitsathome.com
 #include "UHS_KINETIS_EHCI/UHS_KINETIS_EHCI.h"
 #endif
 
-// Load USB drivers and multiplexers
-
+/**
+ * Load USB drivers and multiplexers
+ */
 #ifdef LOAD_UHS_HUB
 #include "UHS_HUB/UHS_HUB.h"
 #endif // HUB loaded
@@ -83,6 +87,7 @@ e-mail   :  support@circuitsathome.com
 #ifdef LOAD_GENERIC_STORAGE
 #include "../UHS_FS/UHS_FS.h"
 #endif
+
 // Add BT and optionally HID if directed to do so
 #ifdef LOAD_UHS_BT
 #include "UHS_BT/UHS_BT.h"

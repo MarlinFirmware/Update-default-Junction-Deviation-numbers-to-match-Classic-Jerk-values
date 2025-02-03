@@ -20,6 +20,10 @@
  *
  */
 
+/**
+ * feature/bltouch.cpp
+ */
+
 #include "../inc/MarlinConfig.h"
 
 #if ENABLED(BLTOUCH)
@@ -28,9 +32,9 @@
 
 BLTouch bltouch;
 
-bool BLTouch::od_5v_mode;         // Initialized by settings.load, 0 = Open Drain; 1 = 5V Drain
+bool BLTouch::od_5v_mode;        // Initialized by settings.load, 0 = Open Drain; 1 = 5V Drain
 #if HAS_BLTOUCH_HS_MODE
-  bool BLTouch::high_speed_mode;  // Initialized by settings.load, 0 = Low Speed; 1 = High Speed
+  bool BLTouch::high_speed_mode; // Initialized by settings.load, 0 = Low Speed; 1 = High Speed
 #else
   constexpr bool BLTouch::high_speed_mode;
 #endif
@@ -148,7 +152,7 @@ bool BLTouch::stow_proc() {
                                            // an ALARM condition though.
                                            // But one more STOW will catch that
     // Last attempt to STOW
-    if (_stow_query_alarm()) {             // so if there is now STILL an ALARM condition:
+    if (_stow_query_alarm()) {             // So if there is now STILL an ALARM condition:
       if (DEBUGGING(LEVELING)) DEBUG_ECHOLNPGM("BLTouch Stow Failed");
       probe.probe_error_stop();            // Something is wrong, needs action, but not too bad, allow restart
       return true;                         // Tell our caller we goofed in case he cares to know
@@ -157,7 +161,7 @@ bool BLTouch::stow_proc() {
 
   if (DEBUGGING(LEVELING)) DEBUG_ECHOLNPGM("bltouch.stow_proc() end");
 
-  return false; // report success to caller
+  return false; // Report success to caller
 }
 
 bool BLTouch::status_proc() {

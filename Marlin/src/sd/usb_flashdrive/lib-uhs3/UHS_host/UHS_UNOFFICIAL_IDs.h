@@ -23,6 +23,7 @@ Circuits At Home, LTD
 Web      :  https://www.circuitsathome.com
 e-mail   :  support@circuitsathome.com
  */
+
 #ifndef _UHS_UNOFFICIAL_IDs_h
 #define _UHS_UNOFFICIAL_IDs_h
 
@@ -30,4 +31,4 @@ e-mail   :  support@circuitsathome.com
 
 #define UHS_VID_UNOFFICIAL_JOYTECH 0x162EU  // For unofficial Joytech controllers
 
-#endif
+#endif // _UHS_UNOFFICIAL_IDs_h

@@ -39,25 +39,25 @@
 #endif
 
 SpindleLaser cutter;
-bool SpindleLaser::enable_state;                                      // Virtual enable state, controls enable pin if present and or apply power if > 0
-uint8_t SpindleLaser::power,                                          // Actual power output 0-255 ocr or "0 = off" > 0 = "on"
-        SpindleLaser::last_power_applied; // = 0                      // Basic power state tracking
+bool SpindleLaser::enable_state;                                   // Virtual enable state, controls enable pin if present and or apply power if > 0
+uint8_t SpindleLaser::power,                                       // Actual power output 0-255 ocr or "0 = off" > 0 = "on"
+        SpindleLaser::last_power_applied; // = 0                   // Basic power state tracking
 
 #if ENABLED(LASER_FEATURE)
-  cutter_test_pulse_t SpindleLaser::testPulse = 50;                   // (ms) Test fire pulse default duration
-  uint8_t SpindleLaser::last_block_power; // = 0                      // Track power changes for dynamic inline power
+  cutter_test_pulse_t SpindleLaser::testPulse = 50;                // (ms) Test fire pulse default duration
+  uint8_t SpindleLaser::last_block_power; // = 0                   // Track power changes for dynamic inline power
   feedRate_t SpindleLaser::feedrate_mm_m = 1500,
-             SpindleLaser::last_feedrate_mm_m; // = 0                 // (mm/min) Track feedrate changes for dynamic power
+             SpindleLaser::last_feedrate_mm_m; // = 0              // (mm/min) Track feedrate changes for dynamic power
 #endif
 
-bool SpindleLaser::isReadyForUI = false;                              // Ready to apply power setting from the UI to OCR
-CutterMode SpindleLaser::cutter_mode = CUTTER_MODE_STANDARD;          // Default is standard mode
+bool SpindleLaser::isReadyForUI = false;                           // Ready to apply power setting from the UI to OCR
+CutterMode SpindleLaser::cutter_mode = CUTTER_MODE_STANDARD;       // Default is standard mode
 
 constexpr cutter_cpower_t SpindleLaser::power_floor;
-cutter_power_t SpindleLaser::menuPower = 0,                           // Power value via LCD menu in PWM, PERCENT, or RPM based on configured format set by CUTTER_POWER_UNIT.
-               SpindleLaser::unitPower = 0;                           // Unit power is in PWM, PERCENT, or RPM based on CUTTER_POWER_UNIT.
+cutter_power_t SpindleLaser::menuPower = 0,                        // Power value via LCD menu in PWM, PERCENT, or RPM based on configured format set by CUTTER_POWER_UNIT.
+               SpindleLaser::unitPower = 0;                        // Unit power is in PWM, PERCENT, or RPM based on CUTTER_POWER_UNIT.
 
-cutter_frequency_t SpindleLaser::frequency;                           // PWM frequency setting; range: 2K - 50K
+cutter_frequency_t SpindleLaser::frequency;                        // PWM frequency setting; range: 2K - 50K
 
 #define SPINDLE_LASER_PWM_OFF TERN(SPINDLE_LASER_PWM_INVERT, 255, 0)
 
@@ -68,10 +68,10 @@ void SpindleLaser::init() {
   #if ENABLED(SPINDLE_SERVO)
     servo[SPINDLE_SERVO_NR].move(SPINDLE_SERVO_MIN);
   #elif PIN_EXISTS(SPINDLE_LASER_ENA)
-    OUT_WRITE(SPINDLE_LASER_ENA_PIN, !SPINDLE_LASER_ACTIVE_STATE);    // Init spindle to off
+    OUT_WRITE(SPINDLE_LASER_ENA_PIN, !SPINDLE_LASER_ACTIVE_STATE); // Init spindle to off
   #endif
   #if ENABLED(SPINDLE_CHANGE_DIR)
-    OUT_WRITE(SPINDLE_DIR_PIN, SPINDLE_INVERT_DIR);                   // Init rotation to clockwise (M3)
+    OUT_WRITE(SPINDLE_DIR_PIN, SPINDLE_INVERT_DIR);                // Init rotation to clockwise (M3)
   #endif
   #if ENABLED(HAL_CAN_SET_PWM_FREQ) && SPINDLE_LASER_FREQUENCY
     frequency = SPINDLE_LASER_FREQUENCY;
@@ -82,12 +82,12 @@ void SpindleLaser::init() {
     hal.set_pwm_duty(pin_t(SPINDLE_LASER_PWM_PIN), SPINDLE_LASER_PWM_OFF); // Set to lowest speed
   #endif
   #if ENABLED(AIR_EVACUATION)
-    OUT_WRITE(AIR_EVACUATION_PIN, !AIR_EVACUATION_ACTIVE);            // Init Vacuum/Blower OFF
+    OUT_WRITE(AIR_EVACUATION_PIN, !AIR_EVACUATION_ACTIVE);         // Init Vacuum/Blower OFF
   #endif
   #if ENABLED(AIR_ASSIST)
-    OUT_WRITE(AIR_ASSIST_PIN, !AIR_ASSIST_ACTIVE);                    // Init Air Assist OFF
+    OUT_WRITE(AIR_ASSIST_PIN, !AIR_ASSIST_ACTIVE);                 // Init Air Assist OFF
   #endif
-  TERN_(I2C_AMMETER, ammeter.init());                                 // Init I2C Ammeter
+  TERN_(I2C_AMMETER, ammeter.init());                              // Init I2C Ammeter
 }
 
 #if ENABLED(SPINDLE_LASER_USE_PWM)
@@ -126,7 +126,7 @@ void SpindleLaser::init() {
  * @param opwr Power value. Range 0 to MAX.
  */
 void SpindleLaser::apply_power(const uint8_t opwr) {
-  if (enabled() || opwr == 0) {                                   // 0 check allows us to disable where no ENA pin exists
+  if (enabled() || opwr == 0) {                                  // 0 check allows us to disable where no ENA pin exists
     // Test and set the last power used to improve performance
     if (opwr == last_power_applied) return;
     last_power_applied = opwr;

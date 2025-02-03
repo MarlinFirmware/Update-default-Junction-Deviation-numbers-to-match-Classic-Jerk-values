@@ -20,6 +20,10 @@
  *
  */
 
+/**
+ * feature/filwidth.cpp
+ */
+
 #include "../inc/MarlinConfig.h"
 
 #if ENABLED(FILAMENT_WIDTH_SENSOR)
@@ -28,9 +32,9 @@
 
 FilamentWidthSensor filwidth;
 
-bool FilamentWidthSensor::enabled; // = false                           // (M405-M406) Filament Width Sensor ON/OFF.
+bool FilamentWidthSensor::enabled;   // = false                         // (M405-M406) Filament Width Sensor ON/OFF.
 uint32_t FilamentWidthSensor::accum; // = 0                             // ADC accumulator
-uint16_t FilamentWidthSensor::raw; // = 0                               // Measured filament diameter - one extruder only
+uint16_t FilamentWidthSensor::raw;   // = 0                             // Measured filament diameter - one extruder only
 float FilamentWidthSensor::nominal_mm = DEFAULT_NOMINAL_FILAMENT_DIA,   // (M104) Nominal filament width
       FilamentWidthSensor::measured_mm = DEFAULT_MEASURED_FILAMENT_DIA, // Measured filament diameter
       FilamentWidthSensor::e_count = 0,

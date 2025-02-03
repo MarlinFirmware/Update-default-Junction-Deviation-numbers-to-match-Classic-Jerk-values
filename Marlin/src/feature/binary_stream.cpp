@@ -20,6 +20,10 @@
  *
  */
 
+/**
+ * feature/binary_stream.cpp
+ */
+
 #include "../inc/MarlinConfigPre.h"
 
 #if ENABLED(BINARY_FILE_TRANSFER)

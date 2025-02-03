@@ -20,6 +20,10 @@
  *
  */
 
+/**
+ * feature/mixing.cpp
+ */
+
 #include "../inc/MarlinConfig.h"
 
 #if ENABLED(MIXING_EXTRUDER)

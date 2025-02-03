@@ -21,7 +21,7 @@
  */
 
 /**
- * stepper/trinamic.cpp
+ * module/stepper/trinamic.cpp
  * Stepper driver indirection for Trinamic
  */
 

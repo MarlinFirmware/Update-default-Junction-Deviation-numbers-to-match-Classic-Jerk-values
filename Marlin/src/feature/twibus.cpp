@@ -20,6 +20,10 @@
  *
  */
 
+/**
+ * feature/twibus.cpp
+ */
+
 #include "../inc/MarlinConfig.h"
 
 #if ENABLED(EXPERIMENTAL_I2CBUS)

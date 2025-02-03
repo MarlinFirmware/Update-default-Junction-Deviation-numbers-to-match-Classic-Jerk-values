@@ -20,6 +20,10 @@
  *
  */
 
+/**
+ * feature/cooler.cpp
+ */
+
 #include "../inc/MarlinConfig.h"
 
 #if ANY(HAS_COOLER, LASER_COOLANT_FLOW_METER)

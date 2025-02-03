@@ -22,18 +22,17 @@ e-mail   :  support@circuitsathome.com
 
 #define _max3421e_h_
 
-/* MAX3421E register/bit names and bitmasks */
-
+// MAX3421E register/bit names and bitmasks
 #define SE0     0
 #define SE1     1
 #define FSHOST  2
 #define LSHOST  3
 
-/* MAX3421E command byte format: rrrrr0wa where 'r' is register number  */
+/**
+ * MAX3421E command byte format: rrrrr0wa where 'r' is register number
+ */
 
-//
 // MAX3421E Registers in HOST mode.
-//
 #define        rRCVFIFO 0x08            // Receive FIFO Register
 #define        rSNDFIFO 0x10            // Send FIFO Register
 #define        rSUDFIFO 0x20            // Set Up Data FIFO Register
@@ -144,11 +143,12 @@ e-mail   :  support@circuitsathome.com
 #define      bmGPINPOL6 0x40            //
 #define      bmGPINPOL7 0x80            //
 
-//
-// If any data transfer errors occur, the HXFRDNIRQ asserts, while the RCVDAVIRQ does not.
-//
-// The CPU clears the SNDBAVIRQ by writing the SNDBC register.
-// The CPU should never directly clear the SNDBAVIRQ bit.
+/**
+ * If any data transfer errors occur, the HXFRDNIRQ asserts, while the RCVDAVIRQ does not.
+ *
+ * The CPU clears the SNDBAVIRQ by writing the SNDBC register.
+ * The CPU should never directly clear the SNDBAVIRQ bit.
+ */
 
 // Host Interrupt Request Status (HIRQ)
 #define           rHIRQ 0xC8            // Host Interrupt Request Register
@@ -201,8 +201,9 @@ e-mail   :  support@circuitsathome.com
 
 // Host transfer (HXFR)
 #define           rHXFR 0xF0            //30<<3
-/* Host transfer token values for writing the HXFR register (R30)   */
-/* OR this bit field with the endpoint number in bits 3:0               */
+
+// Host transfer token values for writing the HXFR register (R30)
+// OR this bit field with the endpoint number in bits 3:0
 #define       MAX3421E_tokSETUP 0x10    // HS=0, ISO=0, OUTNIN=0, SETUP=1
 #define          MAX3421E_tokIN 0x00    // HS=0, ISO=0, OUTNIN=0, SETUP=0
 #define         MAX3421E_tokOUT 0x20    // HS=0, ISO=0, OUTNIN=1, SETUP=0
@@ -223,4 +224,4 @@ e-mail   :  support@circuitsathome.com
 #define    MODE_FS_HOST (bmDPPULLDN|bmDMPULLDN|bmHOST|bmSOFKAENAB)
 #define    MODE_LS_HOST (bmDPPULLDN|bmDMPULLDN|bmHOST|bmLOWSPEED|bmSOFKAENAB)
 
-#endif //_max3421e_h_
+#endif // _max3421e_h_

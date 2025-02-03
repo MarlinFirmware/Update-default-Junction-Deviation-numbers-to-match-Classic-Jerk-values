@@ -20,6 +20,10 @@
  *
  */
 
+/**
+ * feature/easythread_ui.cpp
+ */
+
 #include "../inc/MarlinConfigPre.h"
 
 #if ENABLED(EASYTHREED_UI)
@@ -65,7 +69,7 @@ enum LEDInterval : uint16_t {
   LED_BLINK_7 =   50
 };
 
-uint16_t blink_interval_ms = LED_ON;   // Status LED on Start button
+uint16_t blink_interval_ms = LED_ON; // Status LED on Start button
 
 void EasythreedUI::blinkLED() {
   static millis_t prev_blink_interval_ms = 0, blink_start_ms = 0;
@@ -107,37 +111,37 @@ void EasythreedUI::loadButton() {
       break;
 
     case FS_PRESS:
-      if (ELAPSED(millis(), filament_time + BTN_DEBOUNCE_MS)) {     // After a short debounce delay...
-        if (!READ(BTN_RETRACT) || !READ(BTN_FEED)) {                // ...if switch still toggled...
-          thermalManager.setTargetHotend(EXTRUDE_MINTEMP + 10, 0);  // Start heating up
-          blink_interval_ms = LED_BLINK_7;                          // Set the LED to blink fast
+      if (ELAPSED(millis(), filament_time + BTN_DEBOUNCE_MS)) {    // After a short debounce delay...
+        if (!READ(BTN_RETRACT) || !READ(BTN_FEED)) {               // ...if switch still toggled...
+          thermalManager.setTargetHotend(EXTRUDE_MINTEMP + 10, 0); // Start heating up
+          blink_interval_ms = LED_BLINK_7;                         // Set the LED to blink fast
           filament_status++;
         }
         else
-          filament_status = FS_IDLE;                                // Switch not toggled long enough
+          filament_status = FS_IDLE;                               // Switch not toggled long enough
       }
       break;
 
     case FS_CHECK:
-      if (READ(BTN_RETRACT) && READ(BTN_FEED)) {                    // Switch in center position (stop)
-        blink_interval_ms = LED_ON;                                 // LED on steady
+      if (READ(BTN_RETRACT) && READ(BTN_FEED)) {                   // Switch in center position (stop)
+        blink_interval_ms = LED_ON;                                // LED on steady
         filament_status = FS_IDLE;
         thermalManager.disable_all_heaters();
       }
-      else if (thermalManager.hotEnoughToExtrude(0)) {              // Is the hotend hot enough to move material?
-        filament_status++;                                          // Proceed to feed / retract.
-        blink_interval_ms = LED_BLINK_5;                            // Blink ~3 times per second
+      else if (thermalManager.hotEnoughToExtrude(0)) {             // Is the hotend hot enough to move material?
+        filament_status++;                                         // Proceed to feed / retract.
+        blink_interval_ms = LED_BLINK_5;                           // Blink ~3 times per second
       }
       break;
 
     case FS_PROCEED: {
       // Feed or Retract just once. Hard abort all moves and return to idle on swicth release.
       static bool flag = false;
-      if (READ(BTN_RETRACT) && READ(BTN_FEED)) {                    // Switch in center position (stop)
-        flag = false;                                               // Restore flag to false
-        filament_status = FS_IDLE;                                  // Go back to idle state
-        quickstop_stepper();                                        // Hard-stop all the steppers ... now!
-        thermalManager.disable_all_heaters();                       // And disable all the heaters
+      if (READ(BTN_RETRACT) && READ(BTN_FEED)) {                   // Switch in center position (stop)
+        flag = false;                                              // Restore flag to false
+        filament_status = FS_IDLE;                                 // Go back to idle state
+        quickstop_stepper();                                       // Hard-stop all the steppers ... now!
+        thermalManager.disable_all_heaters();                      // And disable all the heaters
         blink_interval_ms = LED_ON;
       }
       else if (!flag) {
@@ -168,64 +172,64 @@ void EasythreedUI::printButton() {
 
   switch (key_status) {
     case KS_IDLE:
-      if (!READ(BTN_PRINT)) {                                       // Print/Pause/Resume button pressed?
-        key_time = ms;                                              // Save start time
-        key_status++;                                               // Go to debounce test
+      if (!READ(BTN_PRINT)) {                                      // Print/Pause/Resume button pressed?
+        key_time = ms;                                             // Save start time
+        key_status++;                                              // Go to debounce test
       }
       break;
 
     case KS_PRESS:
-      if (ELAPSED(ms, key_time + BTN_DEBOUNCE_MS))                  // Wait for debounce interval to expire
-        key_status = READ(BTN_PRINT) ? KS_IDLE : KS_PROCEED;        // Proceed if still pressed
+      if (ELAPSED(ms, key_time + BTN_DEBOUNCE_MS))                 // Wait for debounce interval to expire
+        key_status = READ(BTN_PRINT) ? KS_IDLE : KS_PROCEED;       // Proceed if still pressed
       break;
 
     case KS_PROCEED:
-      if (!READ(BTN_PRINT)) break;                                  // Wait for the button to be released
-      key_status = KS_IDLE;                                         // Ready for the next press
-      if (PENDING(ms, key_time + 1200 - BTN_DEBOUNCE_MS)) {         // Register a press < 1.2 seconds
+      if (!READ(BTN_PRINT)) break;                                 // Wait for the button to be released
+      key_status = KS_IDLE;                                        // Ready for the next press
+      if (PENDING(ms, key_time + 1200 - BTN_DEBOUNCE_MS)) {        // Register a press < 1.2 seconds
         switch (print_key_flag) {
-          case PF_START: {                                          // The "Print" button starts an SD card print
-            if (printingIsActive()) break;                          // Already printing? (find another line that checks for 'is planner doing anything else right now?')
-            blink_interval_ms = LED_BLINK_2;                        // Blink the indicator LED at 1 second intervals
-            print_key_flag = PF_PAUSE;                              // The "Print" button now pauses the print
-            card.mount();                                           // Force SD card to mount - now!
-            if (!card.isMounted()) {                                // Failed to mount?
-              blink_interval_ms = LED_OFF;                          // Turn off LED
+          case PF_START: {                                         // The "Print" button starts an SD card print
+            if (printingIsActive()) break;                         // Already printing? (find another line that checks for 'is planner doing anything else right now?')
+            blink_interval_ms = LED_BLINK_2;                       // Blink the indicator LED at 1 second intervals
+            print_key_flag = PF_PAUSE;                             // The "Print" button now pauses the print
+            card.mount();                                          // Force SD card to mount - now!
+            if (!card.isMounted()) {                               // Failed to mount?
+              blink_interval_ms = LED_OFF;                         // Turn off LED
               print_key_flag = PF_START;
-              return;                                               // Bail out
+              return;                                              // Bail out
             }
-            card.ls();                                              // List all files to serial output
-            const int16_t filecnt = card.get_num_items();           // Count printable files in cwd
-            if (filecnt == 0) return;                               // None are printable?
-            card.selectFileByIndex(filecnt);                        // Select the last file according to current sort options
-            card.openAndPrintFile(card.filename);                   // Start printing it
+            card.ls();                                             // List all files to serial output
+            const int16_t filecnt = card.get_num_items();          // Count printable files in cwd
+            if (filecnt == 0) return;                              // None are printable?
+            card.selectFileByIndex(filecnt);                       // Select the last file according to current sort options
+            card.openAndPrintFile(card.filename);                  // Start printing it
           } break;
-          case PF_PAUSE: {                                          // Pause printing (not currently firing)
+          case PF_PAUSE: {                                         // Pause printing (not currently firing)
             if (!printingIsActive()) break;
-            blink_interval_ms = LED_ON;                             // Set indicator to steady ON
-            queue.inject(F("M25"));                                 // Queue Pause
-            print_key_flag = PF_RESUME;                             // The "Print" button now resumes the print
+            blink_interval_ms = LED_ON;                            // Set indicator to steady ON
+            queue.inject(F("M25"));                                // Queue Pause
+            print_key_flag = PF_RESUME;                            // The "Print" button now resumes the print
           } break;
-          case PF_RESUME: {                                         // Resume printing
+          case PF_RESUME: {                                        // Resume printing
             if (printingIsActive()) break;
-            blink_interval_ms = LED_BLINK_2;                        // Blink the indicator LED at 1 second intervals
-            queue.inject(F("M24"));                                 // Queue resume
-            print_key_flag = PF_PAUSE;                              // The "Print" button now pauses the print
+            blink_interval_ms = LED_BLINK_2;                       // Blink the indicator LED at 1 second intervals
+            queue.inject(F("M24"));                                // Queue resume
+            print_key_flag = PF_PAUSE;                             // The "Print" button now pauses the print
           } break;
         }
       }
-      else {                                                        // Register a longer press
-        if (print_key_flag == PF_START && !printingIsActive())  {   // While not printing, this moves Z up 10mm
+      else {                                                       // Register a longer press
+        if (print_key_flag == PF_START && !printingIsActive())  {  // While not printing, this moves Z up 10mm
           blink_interval_ms = LED_ON;
-          queue.inject(F("G91\nG0 Z10 F600\nG90"));                 // Raise Z soon after returning to main loop
+          queue.inject(F("G91\nG0 Z10 F600\nG90"));                // Raise Z soon after returning to main loop
         }
-        else {                                                      // While printing, cancel print
-          card.abortFilePrintSoon();                                // There is a delay while the current steps play out
-          blink_interval_ms = LED_OFF;                              // Turn off LED
+        else {                                                     // While printing, cancel print
+          card.abortFilePrintSoon();                               // There is a delay while the current steps play out
+          blink_interval_ms = LED_OFF;                             // Turn off LED
         }
-        planner.synchronize();                                      // Wait for commands already in the planner to finish
-        TERN_(HAS_STEPPER_RESET, disableStepperDrivers());          // Disable all steppers - now!
-        print_key_flag = PF_START;                                  // The "Print" button now starts a new print
+        planner.synchronize();                                     // Wait for commands already in the planner to finish
+        TERN_(HAS_STEPPER_RESET, disableStepperDrivers());         // Disable all steppers - now!
+        print_key_flag = PF_START;                                 // The "Print" button now starts a new print
       }
       break;
   }

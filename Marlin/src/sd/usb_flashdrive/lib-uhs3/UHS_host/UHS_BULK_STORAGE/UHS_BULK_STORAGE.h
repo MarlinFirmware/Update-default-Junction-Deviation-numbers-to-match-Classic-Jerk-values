@@ -65,7 +65,7 @@ e-mail   :  support@circuitsathome.com
 #define              UHS_BULK_CMD_DIR_OUT 0x00U
 #define               UHS_BULK_CMD_DIR_IN 0x80U
 
-/* Bulk error codes */
+// Bulk error codes
 #define              UHS_BULK_ERR_SUCCESS UHS_HOST_ERROR_NONE
 #define          UHS_BULK_ERR_PHASE_ERROR 0x22U
 #define       UHS_BULK_ERR_UNIT_NOT_READY 0x23U

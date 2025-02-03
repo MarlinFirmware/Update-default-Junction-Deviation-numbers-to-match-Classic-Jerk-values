@@ -21,6 +21,7 @@
  */
 
 /**
+ * module/polar.cpp - POLAR-specific functions
  * POLAR Kinematics
  *  developed by Kadir ilkimen for PolarBear CNC and babyBear
  *  https://github.com/kadirilkimen/Polar-Bear-Cnc-Machine

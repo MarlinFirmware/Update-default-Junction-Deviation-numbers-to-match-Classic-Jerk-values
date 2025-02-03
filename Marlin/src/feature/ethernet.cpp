@@ -20,6 +20,10 @@
  *
  */
 
+/**
+ * feature/ethernet.cpp
+ */
+
 #include "../inc/MarlinConfigPre.h"
 
 #if HAS_ETHERNET

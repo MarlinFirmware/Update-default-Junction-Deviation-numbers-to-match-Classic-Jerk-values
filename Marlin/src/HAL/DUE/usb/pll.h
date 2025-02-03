@@ -39,8 +39,6 @@
  *
  * \asf_license_stop
  *
- */
-/*
  * Support and FAQ: visit <a href="https://www.atmel.com/design-support/">Atmel Support</a>
  */
 
@@ -267,4 +265,4 @@ static inline int pll_wait_for_lock(unsigned int pll_id) {
 /**INDENT-ON**/
 /// @endcond
 
-#endif /* CHIP_PLL_H_INCLUDED */
+#endif // CHIP_PLL_H_INCLUDED

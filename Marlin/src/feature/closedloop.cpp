@@ -20,6 +20,10 @@
  *
  */
 
+/**
+ * feature/closedloop.cpp
+ */
+
 #include "../inc/MarlinConfig.h"
 
 #if ENABLED(EXTERNAL_CLOSED_LOOP_CONTROLLER)

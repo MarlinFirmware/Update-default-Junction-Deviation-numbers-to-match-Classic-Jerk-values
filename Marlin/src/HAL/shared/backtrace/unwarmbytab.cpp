@@ -1,4 +1,4 @@
-/*
+/**
  * Libbacktrace
  * Copyright 2015 Stephen Street <stephen@redrocketcomputing.com>
  *
@@ -46,7 +46,7 @@ static const UnwTabEntry *UnwTabSearchIndex(const UnwTabEntry *start, const UnwT
   return start;
 }
 
-/*
+/**
  * Get the function name or nullptr if not found
  */
 static const char *UnwTabGetFunctionName(const UnwindCallbacks *cb, uint32_t address) {
@@ -129,7 +129,7 @@ static UnwResult UnwTabStateInit(const UnwindCallbacks *cb, UnwTabState *ucb, ui
   return UNWIND_SUCCESS;
 }
 
-/*
+/**
  * Execute unwinding instructions
  */
 static UnwResult UnwTabExecuteInstructions(const UnwindCallbacks *cb, UnwTabState *ucb) {
@@ -292,7 +292,7 @@ static inline __attribute__((always_inline)) uint32_t read_psp() {
   return psp;
 }
 
-/*
+/**
  * Unwind the specified frame and goto the previous one
  */
 static UnwResult UnwTabUnwindFrame(const UnwindCallbacks *cb, UnwindFrame *frame) {

@@ -21,7 +21,7 @@
  */
 
 /**
- * planner_bezier.cpp
+ * module/planner_bezier.cpp
  *
  * Compute and buffer movement commands for bezier curves
  */

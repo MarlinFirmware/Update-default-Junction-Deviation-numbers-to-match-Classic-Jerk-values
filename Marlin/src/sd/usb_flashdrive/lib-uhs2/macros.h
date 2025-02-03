@@ -77,7 +77,7 @@
 #define BMAKE64(__usc7__,__usc6__,__usc5__,__usc4__,__usc3__,__usc2__,__usc1__,__usc0__) ((uint64_t)((uint64_t)__usc0__ | (uint64_t)BOVER1(__usc1__) | (uint64_t)BOVER2(__usc2__) | (uint64_t)BOVER3(__usc3__) | (uint64_t)BOVER4(__usc4__) | (uint64_t)BOVER5(__usc5__) | (uint64_t)BOVER6(__usc6__) | (uint64_t)BOVER1(__usc7__)))
 #endif
 
-/*
+/**
  * Debug macros: Strings are stored in progmem (flash) instead of RAM.
  */
 #define USBTRACE(s) (Notify(PSTR(s), 0x80))

@@ -1,4 +1,4 @@
-/*
+/**
  * Copyright (C) 2015-2016 Andrew J. Kroll
  * and
  * Copyright (C) 2011 Circuits At Home, LTD. All rights reserved.
@@ -16,7 +16,6 @@
  * Circuits At Home, LTD
  * Web      :  https://www.circuitsathome.com
  * e-mail   :  support@circuitsathome.com
- *
  */
 
 #if defined(USB_HOST_SHIELD_H) && !defined(USB_HOST_SHIELD_LOADED)
@@ -984,7 +983,7 @@ void UHS_NI MAX3421E_HOST::ISRbottom() {
           interrupts();
         #endif
         ISRbottom();
-      #endif /* SWI_IRQ_NUM */
+      #endif // SWI_IRQ_NUM
     }
   }
 }
@@ -995,4 +994,4 @@ void UHS_NI MAX3421E_HOST::ISRbottom() {
 
 #else
   #error "Never include USB_HOST_SHIELD_INLINE.h, include UHS_host.h instead"
-#endif
+#endif // USB_HOST_SHIELD_LOADED

@@ -21,6 +21,7 @@
  */
 
 /**
+ * feature/hotend_idle.cpp
  * Hotend Idle Timeout
  * Prevent filament in the nozzle from charring and causing a critical jam.
  */

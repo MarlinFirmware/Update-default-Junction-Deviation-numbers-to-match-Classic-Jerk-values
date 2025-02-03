@@ -21,6 +21,10 @@
  */
 #pragma once
 
+/**
+ * feature/mixing.h
+ */
+
 #include "../inc/MarlinConfig.h"
 
 //#define MIXER_NORMALIZER_DEBUG
@@ -62,14 +66,14 @@ static_assert(NR_MIXING_VIRTUAL_TOOLS <= MAX_VTOOLS, "MIXING_VIRTUAL_TOOLS must 
 #if ENABLED(GRADIENT_MIX)
 
   typedef struct {
-    bool enabled;                         // This gradient is enabled
-    mixer_comp_t color[MIXING_STEPPERS];  // The current gradient color
-    float start_z, end_z;                 // Region for gradient
-    int8_t start_vtool, end_vtool;        // Start and end virtual tools
-    mixer_perc_t start_mix[MIXING_STEPPERS],  // Start and end mixes from those tools
+    bool enabled;                            // This gradient is enabled
+    mixer_comp_t color[MIXING_STEPPERS];     // The current gradient color
+    float start_z, end_z;                    // Region for gradient
+    int8_t start_vtool, end_vtool;           // Start and end virtual tools
+    mixer_perc_t start_mix[MIXING_STEPPERS], // Start and end mixes from those tools
                  end_mix[MIXING_STEPPERS];
     #if ENABLED(GRADIENT_VTOOL)
-      int8_t vtool_index;                 // Use this virtual tool number as index
+      int8_t vtool_index;                    // Use this virtual tool number as index
     #endif
   } gradient_t;
 
@@ -82,7 +86,7 @@ static_assert(NR_MIXING_VIRTUAL_TOOLS <= MAX_VTOOLS, "MIXING_VIRTUAL_TOOLS must 
 class Mixer {
   public:
 
-  static float collector[MIXING_STEPPERS];    // M163 components, also editable from LCD
+  static float collector[MIXING_STEPPERS]; // M163 components, also editable from LCD
 
   static void init(); // Populate colors at boot time
 
@@ -120,7 +124,7 @@ class Mixer {
 
   #if ANY(HAS_DUAL_MIXING, GRADIENT_MIX)
 
-    static mixer_perc_t mix[MIXING_STEPPERS];  // Scratch array for the Mix in proportion to 100
+    static mixer_perc_t mix[MIXING_STEPPERS]; // Scratch array for the Mix in proportion to 100
 
     static void copy_mix_to_color(mixer_comp_t (&tcolor)[MIXING_STEPPERS]) {
       // Scale each component to the largest one in terms of COLOR_A_MASK

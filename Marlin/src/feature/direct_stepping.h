@@ -21,6 +21,10 @@
  */
 #pragma once
 
+/**
+ * feature/direct_stepping.h
+ */
+
 #include "../inc/MarlinConfig.h"
 
 namespace DirectStepping {
@@ -56,7 +60,7 @@ namespace DirectStepping {
     static bool maybe_store_rxd_char(uint8_t c);
     static void write_responses();
 
-    // common methods for page managers
+    // Common methods for page managers
     static void init();
     static uint8_t *get_page(const page_idx_t page_idx);
     static void free_page(const page_idx_t page_idx);
@@ -108,7 +112,7 @@ namespace DirectStepping {
   template <uint8_t num_pages>
   using SP_4x1_512  = config_t<num_pages, 4, 1, false, 512>;
 
-  // configured types
+  // Configured types
   typedef STEPPER_PAGE_FORMAT<STEPPER_PAGES> Config;
 
   template class PAGE_MANAGER<Config>;
@@ -123,7 +127,7 @@ namespace DirectStepping {
 
 typedef typename DirectStepping::Config::page_idx_t page_idx_t;
 
-// TODO: use config
+// TODO: Use config
 typedef DirectStepping::page_step_state_t page_step_state_t;
 
 extern const uint8_t segment_table[DirectStepping::Config::NUM_SEGMENTS][DirectStepping::Config::SEGMENT_STEPS];

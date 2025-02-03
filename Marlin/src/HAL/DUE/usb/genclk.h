@@ -39,8 +39,6 @@
  *
  * \asf_license_stop
  *
- */
-/*
  * Support and FAQ: visit <a href="https://www.atmel.com/design-support/">Atmel Support</a>
  */
 
@@ -261,4 +259,4 @@ static inline void genclk_enable_source(enum genclk_source e_src) {
 /**INDENT-ON**/
 /// @endcond
 
-#endif /* CHIP_GENCLK_H_INCLUDED */
+#endif // CHIP_GENCLK_H_INCLUDED

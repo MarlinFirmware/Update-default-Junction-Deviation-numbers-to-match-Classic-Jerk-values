@@ -21,6 +21,10 @@
  */
 #pragma once
 
+/**
+ * feature/ethernet.h
+ */
+
 #ifdef __IMXRT1062__
   #include <NativeEthernet.h>
 #endif

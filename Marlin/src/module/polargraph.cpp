@@ -21,7 +21,7 @@
  */
 
 /**
- * polargraph.cpp
+ * module/polargraph.cpp
  */
 
 #include "../inc/MarlinConfig.h"

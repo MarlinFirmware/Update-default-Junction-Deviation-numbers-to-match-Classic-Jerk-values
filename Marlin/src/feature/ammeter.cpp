@@ -20,6 +20,10 @@
  *
  */
 
+/**
+ * feature/ammeter.cpp
+ */
+
 #include "../inc/MarlinConfig.h"
 
 #if ENABLED(I2C_AMMETER)
@@ -27,7 +31,7 @@
 #include "ammeter.h"
 
 #ifndef I2C_AMMETER_IMAX
-  #define I2C_AMMETER_IMAX     0.500  // Calibration range 500 Milliamps
+  #define I2C_AMMETER_IMAX 0.500 // Calibration range 500 Milliamps
 #endif
 
 INA226 ina;
@@ -46,7 +50,7 @@ void Ammeter::init() {
 float Ammeter::read() {
   scale = 1;
   current = ina.readShuntCurrent();
-  if (current <= 0.0001f) current = 0;  // Clean up least-significant-bit amplification errors
+  if (current <= 0.0001f) current = 0; // Clean-up least-significant-bit amplification errors
   if (current < 0.1f) scale = 1000;
   return current * scale;
 }

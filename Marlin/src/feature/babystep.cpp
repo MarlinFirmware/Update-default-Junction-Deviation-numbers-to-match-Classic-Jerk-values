@@ -20,14 +20,18 @@
  *
  */
 
+/**
+ * feature/babystep.cpp
+ */
+
 #include "../inc/MarlinConfig.h"
 
 #if ENABLED(BABYSTEPPING)
 
 #include "babystep.h"
 #include "../MarlinCore.h"
-#include "../module/motion.h"   // for axes_should_home(), BABYSTEP_ALLOWED
-#include "../module/planner.h"  // for axis_steps_per_mm[]
+#include "../module/motion.h"  // For axes_should_home(), BABYSTEP_ALLOWED
+#include "../module/planner.h" // For axis_steps_per_mm[]
 #include "../module/stepper.h"
 
 #if ENABLED(BABYSTEP_ALWAYS_AVAILABLE)
@@ -47,7 +51,7 @@ int16_t Babystep::accum;
 #endif
 
 void Babystep::step_axis(const AxisEnum axis) {
-  const int16_t curTodo = steps[BS_AXIS_IND(axis)]; // get rid of volatile for performance
+  const int16_t curTodo = steps[BS_AXIS_IND(axis)]; // Get rid of volatile for performance
   if (curTodo) {
     stepper.do_babystep((AxisEnum)axis, curTodo > 0);
     if (curTodo > 0) steps[BS_AXIS_IND(axis)]--; else steps[BS_AXIS_IND(axis)]++;

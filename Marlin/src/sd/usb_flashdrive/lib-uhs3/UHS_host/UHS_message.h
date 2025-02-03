@@ -23,6 +23,7 @@ Circuits At Home, LTD
 Web      :  https://www.circuitsathome.com
 e-mail   :  support@circuitsathome.com
  */
+
 #if !defined(_UHS_host_h_) || defined(__MESSAGE_H__)
 #error "Never include UHS_message.h directly; include UHS_Usb.h instead"
 #else

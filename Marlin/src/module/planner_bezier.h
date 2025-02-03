@@ -22,7 +22,7 @@
 #pragma once
 
 /**
- * planner_bezier.h
+ * module/planner_bezier.h
  *
  * Compute and buffer movement commands for Bézier curves
  */

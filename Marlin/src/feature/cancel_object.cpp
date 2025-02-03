@@ -20,6 +20,10 @@
  *
  */
 
+/**
+ * feature/cancel_object.cpp
+ */
+
 #include "../inc/MarlinConfig.h"
 
 #if ENABLED(CANCEL_OBJECTS)

@@ -139,7 +139,7 @@ e-mail   :  support@circuitsathome.com
 //#define UHS_MAX3421E_SPD 100000
 #elif defined(CORE_TEENSY) && (defined(__AVR_AT90USB646__) || defined(__AVR_AT90USB1286__))
 
-// TO-DO!
+// TODO:
 
 #if EXT_RAM
 // Teensy++ 2.0 with XMEM2
@@ -292,11 +292,11 @@ public UHS_USB_HOST_BASE
 , public dyn_SWI
 #endif
 {
-        // TO-DO: move these into the parent class.
+        // TODO: move these into the parent class.
         volatile uint8_t vbusState;
         volatile uint16_t sof_countdown;
 
-        // TO-DO: pack into a struct/union and use one byte
+        // TODO: pack into a struct/union and use one byte
         volatile bool busevent;
         volatile bool sofevent;
         volatile bool counted;
@@ -510,4 +510,4 @@ public:
 #else
 #error "define LOAD_USB_HOST_SHIELD in your sketch, never include USB_HOST_SHIELD.h in a driver."
 #endif
-#endif /* USB_HOST_SHIELD_H */
+#endif // USB_HOST_SHIELD_H

@@ -43,7 +43,7 @@
 #include "../../inc/MarlinConfig.h"
 #include "spi_pins.h"
 
-/** Time in ms for DMA receive timeout */
+// Time in ms for DMA receive timeout
 #define DMA_TIMEOUT 100
 
 #if CYCLES_PER_MICROSECOND != 72
@@ -151,7 +151,7 @@ SPIClass::SPIClass(uint32_t spi_num) {
     _settings[2].spiRxDmaChannel = DMA_CH1;
   #endif
 
-  // added for DMA callbacks.
+  // Added for DMA callbacks.
   _currentSetting->state = SPI_STATE_IDLE;
 }
 
@@ -179,7 +179,7 @@ void SPIClass::begin() {
   spi_init(_currentSetting->spi_d);
   configure_gpios(_currentSetting->spi_d, 1);
   updateSettings();
-  // added for DMA callbacks.
+  // Added for DMA callbacks.
   _currentSetting->state = SPI_STATE_READY;
 }
 
@@ -188,7 +188,7 @@ void SPIClass::beginSlave() {
   configure_gpios(_currentSetting->spi_d, 0);
   uint32_t flags = ((_currentSetting->bitOrder == MSBFIRST ? SPI_FRAME_MSB : SPI_FRAME_LSB) | _currentSetting->dataSize);
   spi_slave_enable(_currentSetting->spi_d, (spi_mode)_currentSetting->dataMode, flags);
-  // added for DMA callbacks.
+  // Added for DMA callbacks.
   _currentSetting->state = SPI_STATE_READY;
 }
 
@@ -204,12 +204,12 @@ void SPIClass::end() {
   waitSpiTxEnd(_currentSetting->spi_d);
 
   spi_peripheral_disable(_currentSetting->spi_d);
-  // added for DMA callbacks.
+  // Added for DMA callbacks.
   // Need to add unsetting the callbacks for the DMA channels.
   _currentSetting->state = SPI_STATE_IDLE;
 }
 
-/* Roger Clark added  3 functions */
+// Roger Clark added 3 functions
 void SPIClass::setClockDivider(uint32_t clockDivider) {
   _currentSetting->clockDivider = clockDivider;
   uint32_t cr1 = _currentSetting->spi_d->regs->CR1 & ~(SPI_CR1_BR);
@@ -237,7 +237,7 @@ void SPIClass::setDataSize(uint32_t datasize) {
 
 void SPIClass::setDataMode(uint8_t dataMode) {
   /**
-   * Notes:
+   * NOTES:
    * As far as we know the AVR numbers for dataMode match the numbers required by the STM32.
    * From the AVR doc https://www.atmel.com/images/doc2585.pdf section 2.4
    *
@@ -297,7 +297,7 @@ void SPIClass::read(uint8_t *buf, uint32_t len) {
   spi_rx_reg(_currentSetting->spi_d);   // clear the RX buffer in case a byte is waiting on it.
   spi_reg_map * regs = _currentSetting->spi_d->regs;
   // start sequence: write byte 0
-  regs->DR = 0x00FF;            // write the first byte
+  regs->DR = 0x00FF; // write the first byte
   // main loop
   while (--len) {
     while (!(regs->SR & SPI_SR_TXE)) { /* nada */ } // wait for TXE flag
@@ -313,7 +313,8 @@ void SPIClass::read(uint8_t *buf, uint32_t len) {
 }
 
 void SPIClass::write(uint16_t data) {
-  /* Added for 16bit data Victor Perez. Roger Clark
+  /**
+   * Added for 16bit data Victor Perez. Roger Clark
    * Improved speed by just directly writing the single byte to the SPI data reg and wait for completion,
    * by taking the Tx code from transfer(byte)
    * This almost doubles the speed of this function.
@@ -713,7 +714,7 @@ static const spi_baud_rate baud_rates[8] __FLASH__ = {
 };
 
 /**
- * Note: This assumes you're on a LeafLabs-style board
+ * NOTE: This assumes you're on a LeafLabs-style board
  * (CYCLES_PER_MICROSECOND == 72, APB2 at 72MHz, APB1 at 36MHz).
  */
 static spi_baud_rate determine_baud_rate(spi_dev *dev, uint32_t freq) {

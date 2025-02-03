@@ -58,7 +58,7 @@ public:
       EP_ctrl,
       EP_K, EP_KI, EP_KIL, EP_KILL,
     #endif
-    EP_IGNORE // to '\n'
+    EP_IGNORE // To '\n'
   };
 
   static bool killed_by_M112;

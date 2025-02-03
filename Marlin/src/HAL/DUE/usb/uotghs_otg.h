@@ -39,8 +39,6 @@
  *
  * \asf_license_stop
  *
- */
-/*
  * Support and FAQ: visit <a href="https://www.atmel.com/design-support/">Atmel Support</a>
  */
 
@@ -235,4 +233,4 @@ void otg_dual_disable(void);
 }
 #endif
 
-#endif /* UOTGHS_OTG_H_INCLUDED */
+#endif // UOTGHS_OTG_H_INCLUDED

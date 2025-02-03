@@ -73,13 +73,13 @@ bool Power::psu_on;
  *
  */
 void Power::init() {
-  psu_on = ENABLED(PSU_DEFAULT_OFF);              // Set opposite state to get full power_off/on
+  psu_on = ENABLED(PSU_DEFAULT_OFF); // Set opposite state to get full power_off/on
   TERN(PSU_DEFAULT_OFF, power_off(), power_on());
 }
 
 /**
- * Power on if the power is currently off.
- * Restores stepper drivers and processes any PSU_POWERUP_GCODE.
+ * Power on if the power is currently off
+ * Restores stepper drivers and processes any PSU_POWERUP_GCODE
  *
  */
 void Power::power_on() {
@@ -115,8 +115,8 @@ void Power::power_on() {
 }
 
 /**
- * Power off if the power is currently on.
- * Processes any PSU_POWEROFF_GCODE and makes a PS_OFF_SOUND if enabled.
+ * Power off if the power is currently on
+ * Processes any PSU_POWEROFF_GCODE and makes a PS_OFF_SOUND if enabled
  */
 void Power::power_off() {
   TERN_(HAS_SUICIDE, suicide());
@@ -199,9 +199,9 @@ void Power::power_off() {
   #endif
 
   /**
-   * Check all conditions that would signal power needing to be on.
+   * Check all conditions that would signal power needing to be on
    *
-   * @return bool  if power is needed
+   * @return bool - If power is needed
    */
   bool Power::is_power_needed() {
 
@@ -242,9 +242,9 @@ void Power::power_off() {
   }
 
   /**
-   * Check if we should power off automatically (POWER_TIMEOUT elapsed, !is_power_needed).
+   * Check if we should power off automatically (POWER_TIMEOUT elapsed, !is_power_needed)
    *
-   * @param pause  pause the 'timer'
+   * @param pause - Pause the 'timer'
    */
   void Power::check(const bool pause) {
     static millis_t nextPowerCheck = 0;
@@ -269,7 +269,7 @@ void Power::power_off() {
   #if POWER_OFF_DELAY > 0
 
     /**
-     * Power off with a delay. Power off is triggered by check() after the delay.
+     * Power off with a delay. Power off is triggered by check() after the delay
      */
     void Power::power_off_soon() {
       lastPowerOn = millis() - SEC_TO_MS(POWER_TIMEOUT) + SEC_TO_MS(POWER_OFF_DELAY);

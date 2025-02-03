@@ -21,7 +21,7 @@
  */
 
 /**
- * fancheck.cpp - fan tachometer check
+ * feature/fancheck.cpp - fan tachometer check
  */
 
 #include "../inc/MarlinConfig.h"

@@ -22,7 +22,7 @@
 #pragma once
 
 /**
- * motion.h
+ * module/motion.h
  *
  * High-level motion commands to feed the planner
  * Some of these methods may migrate to the planner class.

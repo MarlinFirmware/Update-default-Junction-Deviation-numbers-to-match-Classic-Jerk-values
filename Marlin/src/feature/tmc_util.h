@@ -21,6 +21,10 @@
  */
 #pragma once
 
+/**
+ * feature/tmc_util.h
+ */
+
 #include "../inc/MarlinConfig.h"
 #include "../lcd/marlinui.h"
 
