@@ -4489,6 +4489,17 @@ static_assert(_PLUS_TEST(3), "DEFAULT_MAX_ACCELERATION values must be positive."
 // Multi-Stepping Limit
 static_assert(WITHIN(MULTISTEPPING_LIMIT, 1, 128) && IS_POWER_OF_2(MULTISTEPPING_LIMIT), "MULTISTEPPING_LIMIT must be 1, 2, 4, 8, 16, 32, 64, or 128.");
 
+// Abort on Endstop hit to prevent bad things
+#if ENABLED(CNC_ABORT_ON_ENDSTOP_HIT)
+  #if BOTH(IS_KINEMATIC, CNC_HOMED_AFTER_BACKOFF)
+    #error "CNC_HOMED_AFTER_BACKOFF is not supported for kinematic robots."
+  #elif DISABLED(NO_MOTION_BEFORE_HOMING)
+    #error "CNC_ABORT_ON_ENDSTOP_HIT requires NO_MOTION_BEFORE_HOMING."
+  #elif !defined(HOMING_BACKOFF_POST_MM)
+    #error "CNC_ABORT_ON_ENDSTOP_HIT requires HOMING_BACKOFF_POST_MM."
+  #endif
+#endif
+
 // One Click Print
 #if ENABLED(ONE_CLICK_PRINT)
   #if !HAS_MEDIA

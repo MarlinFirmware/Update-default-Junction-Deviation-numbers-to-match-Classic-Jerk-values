@@ -3867,6 +3867,18 @@
  */
 //#define CNC_COORDINATE_SYSTEMS
 
+/**
+ * CNC Endstop Abort
+ * When endstops are enabled in a job, kill the machine on any endstop collision.
+ */
+//#define CNC_ABORT_ON_ENDSTOP_HIT
+
+/**
+ * CNC Homed After Backoff
+ * Instead of setting the Home position on endstop collision, set it after backing off.
+ */
+//#define CNC_HOMED_AFTER_BACKOFF
+
 // @section security
 
 /**
