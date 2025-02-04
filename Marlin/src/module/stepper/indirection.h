@@ -583,6 +583,12 @@ void reset_stepper_drivers();    // Called by settings.load / settings.reset
   #define    FWD_E_DIR(E)   do{ E0_DIR_WRITE(TEST(E, 0) ? HIGH : LOW ); }while(0)
   #define    REV_E_DIR(E)   do{ E0_DIR_WRITE(TEST(E, 0) ? LOW  : HIGH); }while(0)
 
+#elif ENABLED(CHAMELEON)  // One multiplexed stepper driver, reversed on T2/T3, T6/T7, T10/T11, etc.
+
+  #define E_STEP_WRITE(E,V) E0_STEP_WRITE(V)
+  #define   NORM_E_DIR(E)   do{ E0_DIR_WRITE(TEST(E, 1) ? HIGH : LOW ); }while(0)
+  #define    REV_E_DIR(E)   do{ E0_DIR_WRITE(TEST(E, 1) ? LOW  : HIGH); }while(0)
+
 #elif E_STEPPERS > 1
 
   #if E_STEPPERS > 7
