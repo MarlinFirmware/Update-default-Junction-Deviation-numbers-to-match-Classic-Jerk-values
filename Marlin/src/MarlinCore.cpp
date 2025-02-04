@@ -952,8 +952,17 @@ void minkill(const bool steppers_off/*=false*/) {
 
     // Reboot the board
     hal.reboot();
-
   #else
+
+    #if defined(PLR_REBOOT_TIMEOUT)
+      if (PrintJobRecovery::outage_counter > 0) {
+        for (uint16_t i = 0; i < PLR_REBOOT_TIMEOUT; i++) {
+          hal.watchdog_refresh();
+          delay(1000);
+        }
+        hal.reboot();
+      }
+    #endif
 
     for (;;) hal.watchdog_refresh();  // Wait for RESET button or power-cycle
 

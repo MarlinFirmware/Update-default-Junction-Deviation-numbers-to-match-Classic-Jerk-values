@@ -42,6 +42,10 @@ bool PrintJobRecovery::enabled; // Initialized by settings.load
   celsius_t PrintJobRecovery::bed_temp_threshold; // Initialized by settings.load
 #endif
 
+#if PIN_EXISTS(POWER_LOSS)
+  uint8_t PrintJobRecovery::outage_counter; // = 0
+#endif
+
 MediaFile PrintJobRecovery::file;
 job_recovery_info_t PrintJobRecovery::info;
 const char PrintJobRecovery::filename[5] = "/PLR";
