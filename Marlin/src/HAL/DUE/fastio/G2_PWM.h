@@ -62,7 +62,7 @@ extern PWM_map ISR_table[NUM_PWMS];
 extern uint32_t motor_current_setting[3];
 
 #define IR_BIT(p) (WITHIN(p, 0, 3) ? (p) : (p) + 4)
-#define COPY_ACTIVE_TABLE() do{ for (uint8_t i = 0; i < 6; ++i) work_table[i] = active_table[i]; }while(0)
+#define COPY_ACTIVE_TABLE() do{ for (uint_fast8_t i = 0; i < 6; ++i) work_table[i] = active_table[i]; }while(0)
 
 #define PWM_MR0 19999         // base repetition rate minus one count - 20mS
 #define PWM_PR 24             // prescaler value - prescaler divide by 24 + 1  -  1 MHz output

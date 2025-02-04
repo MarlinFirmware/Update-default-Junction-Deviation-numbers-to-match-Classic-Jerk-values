@@ -69,8 +69,8 @@ void MeshViewer::drawMeshGrid(const uint8_t csizex, const uint8_t csizey) {
   max = -100;
   DWINUI::clearMainArea();
   dwinDrawRectangle(0, hmiData.colorSplitLine, px(0), py(0), px(sizex - 1), py(sizey - 1));
-  for (uint8_t x = 1; x < sizex - 1; ++x) dwinDrawVLine(hmiData.colorSplitLine, px(x), py(sizey - 1), width);
-  for (uint8_t y = 1; y < sizey - 1; ++y) dwinDrawHLine(hmiData.colorSplitLine, px(0), py(y), width);
+  for (int_fast8_t x = 1; x < sizex - 1; ++x) dwinDrawVLine(hmiData.colorSplitLine, px(x), py(sizey - 1), width);
+  for (int_fast8_t y = 1; y < sizey - 1; ++y) dwinDrawHLine(hmiData.colorSplitLine, px(0), py(y), width);
 }
 
 void MeshViewer::drawMeshPoint(const uint8_t x, const uint8_t y, const float z) {
@@ -104,9 +104,9 @@ void MeshViewer::drawMeshPoint(const uint8_t x, const uint8_t y, const float z) 
 
 void MeshViewer::drawMesh(const bed_mesh_t zval, const uint8_t csizex, const uint8_t csizey) {
   drawMeshGrid(csizex, csizey);
-  for (uint8_t y = 0; y < csizey; ++y) {
+  for (uint_fast8_t y = 0; y < csizey; ++y) {
     hal.watchdog_refresh();
-    for (uint8_t x = 0; x < csizex; ++x) drawMeshPoint(x, y, zval[x][y]);
+    for (uint_fast8_t x = 0; x < csizex; ++x) drawMeshPoint(x, y, zval[x][y]);
   }
 }
 

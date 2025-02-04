@@ -163,14 +163,14 @@ inline int32_t count_test_bytes(const char * const start_free_memory) {
     while (start_free_memory < end_free_memory) {
       print_hex_address(start_free_memory);             // Print the address
       SERIAL_CHAR(':');
-      for (uint8_t i = 0; i < 16; ++i) {  // and 16 data bytes
+      for (uint_fast8_t i = 0; i < 16; ++i) {  // and 16 data bytes
         if (i == 8) SERIAL_CHAR('-');
         print_hex_byte(start_free_memory[i]);
         SERIAL_CHAR(' ');
       }
       serial_delay(25);
       SERIAL_CHAR('|');                   // Point out non test bytes
-      for (uint8_t i = 0; i < 16; ++i) {
+      for (uint_fast8_t i = 0; i < 16; ++i) {
         char ccc = (char)start_free_memory[i]; // cast to char before automatically casting to char on assignment, in case the compiler is broken
         ccc = (ccc == TEST_BYTE) ? ' ' : '?';
         SERIAL_CHAR(ccc);

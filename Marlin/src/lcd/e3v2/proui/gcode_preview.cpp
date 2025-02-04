@@ -149,9 +149,9 @@ bool Preview::hasPreview() {
 
   // Get the size of the thumbnail
   card.setIndex(fileprop.thumbstart + strlen_P(tbstart));
-  for (uint8_t i = 0; i < 16; i++) {
+  for (uint_fast8_t i = 0; i < 16; i++) {
     const char c = card.get();
-    if (ISEOL(c)) { buf[i] = '\0'; break; }
+    if (ISEOL(c)) { buf[i] = 0; break; }
     buf[i] = c;
   }
   fileprop.thumbsize = atoi(buf);

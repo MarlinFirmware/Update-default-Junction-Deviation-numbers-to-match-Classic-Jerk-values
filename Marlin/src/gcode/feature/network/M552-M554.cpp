@@ -46,7 +46,7 @@ void MAC_report() {
   if (ethernet.hardware_enabled) {
     Ethernet.MACAddress(mac);
     SERIAL_ECHOPGM("  MAC: ");
-    for (uint8_t i = 0; i < 6; ++i) {
+    for (uint_fast8_t i = 0; i < 6; ++i) {
       if (mac[i] < 16) SERIAL_CHAR('0');
       SERIAL_PRINT(mac[i], PrintBase::Hex);
       if (i < 5) SERIAL_CHAR(':');
@@ -59,7 +59,7 @@ void MAC_report() {
 // otherwise show the stored values
 void ip_report(const uint16_t cmd, FSTR_P const post, const IPAddress &ipo) {
   SERIAL_CHAR('M'); SERIAL_ECHO(cmd); SERIAL_CHAR(' ');
-  for (uint8_t i = 0; i < 4; ++i) {
+  for (uint_fast8_t i = 0; i < 4; ++i) {
     SERIAL_ECHO(ipo[i]);
     if (i < 3) SERIAL_CHAR('.');
   }

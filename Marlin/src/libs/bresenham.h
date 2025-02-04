@@ -48,7 +48,7 @@ public:
 
   // Default: Instantiate all items with the identical parameters
   Bresenham(const T &inDivisor=1, const int8_t &inDir=1, const T &inDividend=1, const T &inValue=0) {
-    for (uint8_t i = 0; i < Cfg::SIZE; i++) init(i, inDivisor, inDir, inDividend, inValue);
+    for (uint_fast8_t i = 0; i < Cfg::SIZE; i++) init(i, inDivisor, inDir, inDividend, inValue);
   }
 
   // Instantiate all items with the same divisor
@@ -73,7 +73,7 @@ public:
   // Init all items with the same divisor
   FORCE_INLINE static void init(const T &inDivisor, const int8_t (&inDir)[Cfg::SIZE], const T (&inDividend)[Cfg::SIZE], const T (&inValue)[Cfg::SIZE]={0}) {
     divisor = inDivisor;
-    for (uint8_t i = 0; i < Cfg::SIZE; i++) {
+    for (uint_fast8_t i = 0; i < Cfg::SIZE; i++) {
       dir[i]      = inDir[i];
       dividend[i] = inDividend[i];
       value[i]    = inValue[i];
@@ -84,7 +84,7 @@ public:
   // Init all items with the same divisor and direction
   FORCE_INLINE static void init(const T &inDivisor, const int8_t &inDir, const T (&inDividend)[Cfg::SIZE], const T (&inValue)[Cfg::SIZE]={0}) {
     divisor = inDivisor;
-    for (uint8_t i = 0; i < Cfg::SIZE; i++) {
+    for (uint_fast8_t i = 0; i < Cfg::SIZE; i++) {
       dir[i]      = inDir;
       dividend[i] = inDividend[i];
       value[i]    = inValue[i];
@@ -101,7 +101,7 @@ public:
   }
 
   FORCE_INLINE static void prime(const uint8_t index) { counter[index] = -(divisor / 2); }
-  FORCE_INLINE static void prime() { for (uint8_t i = 0; i < Cfg::SIZE; i++) prime(i); }
+  FORCE_INLINE static void prime() { for (uint_fast8_t i = 0; i < Cfg::SIZE; i++) prime(i); }
 
   FORCE_INLINE static void back(const uint8_t index) { counter[index] -= divisor; }
 
@@ -114,9 +114,9 @@ public:
     if (tick1(index)) { value[index] += dir[index]; back(index); }
   }
 
-  FORCE_INLINE static void tick1() __O3 { for (uint8_t i = 0; i < Cfg::SIZE; i++) (void)tick1(i); }
+  FORCE_INLINE static void tick1() __O3 { for (uint_fast8_t i = 0; i < Cfg::SIZE; i++) (void)tick1(i); }
 
-  FORCE_INLINE static void tick() __O3 { for (uint8_t i = 0; i < Cfg::SIZE; i++) (void)tick(i); }
+  FORCE_INLINE static void tick() __O3 { for (uint_fast8_t i = 0; i < Cfg::SIZE; i++) (void)tick(i); }
 
   static void report(const uint8_t index) {
     if (index < Cfg::SIZE) {
@@ -128,5 +128,5 @@ public:
     }
   }
 
-  static void report() { for (uint8_t i = 0; i < Cfg::SIZE; i++) report(i); }
+  static void report() { for (uint_fast8_t i = 0; i < Cfg::SIZE; i++) report(i); }
 };

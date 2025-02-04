@@ -84,14 +84,14 @@
 
     inline void spin_photo_pin() {
       static constexpr uint32_t sequence[] = PHOTO_PULSES_US;
-      for (uint8_t i = 0; i < COUNT(sequence); ++i)
+      for (uint_fast8_t i = 0; i < COUNT(sequence); ++i)
         pulse_photo_pin(sequence[i], !(i & 1));
     }
 
   #else
 
     constexpr uint8_t NUM_PULSES = 16;
-    inline void spin_photo_pin() { for (uint8_t i = NUM_PULSES; i--;) tweak_photo_pin(); }
+    inline void spin_photo_pin() { for (uint_fast8_t i = NUM_PULSES; i--;) tweak_photo_pin(); }
 
   #endif
 #endif

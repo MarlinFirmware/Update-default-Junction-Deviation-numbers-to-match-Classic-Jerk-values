@@ -54,7 +54,7 @@ void GcodeSuite::M111() {
   SERIAL_ECHOPGM(STR_DEBUG_PREFIX);
   if (marlin_debug_flags) {
     uint8_t comma = 0;
-    for (uint8_t i = 0; i < COUNT(debug_strings); ++i) {
+    for (uint_fast8_t i = 0; i < COUNT(debug_strings); ++i) {
       PGM_P const pstr = (PGM_P)pgm_read_ptr(&debug_strings[i]);
       if (pstr && TEST(marlin_debug_flags, i)) {
         if (comma++) SERIAL_CHAR(',');

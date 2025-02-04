@@ -94,7 +94,7 @@
 
           // Do a small 'jog' motion in the X axis
           xyze_pos_t dest = current_position; dest.x -= 0.1f;
-          for (uint8_t i = 2; --i;) {
+          for (uint_fast8_t i = 2; --i;) {
             planner.buffer_line(dest, feedrate_mm_s, 0);
             dest.x += 0.1f;
           }

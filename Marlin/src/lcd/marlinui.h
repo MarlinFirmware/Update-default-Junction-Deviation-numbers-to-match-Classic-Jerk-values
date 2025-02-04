@@ -833,7 +833,7 @@ public:
        * printer unusable in practice.
        */
       static bool hw_button_pressed() {
-        for (uint8_t s = 0; s < ENCODER_SAMPLES; ++s) {
+        for (uint_fast8_t s = 0; s < ENCODER_SAMPLES; ++s) {
           if (!BUTTON_CLICK()) return false;
           safe_delay(1);
         }

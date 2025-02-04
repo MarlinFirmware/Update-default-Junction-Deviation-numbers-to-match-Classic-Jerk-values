@@ -290,7 +290,7 @@ static bool serial_data_available(serial_index_t index) {
 #if NO_TIMEOUTS > 0
   // Multiserial already handles dispatch to/from multiple ports
   static bool any_serial_data_available() {
-    for (uint8_t p = 0; p < NUM_SERIAL; ++p)
+    for (uint_fast8_t p = 0; p < NUM_SERIAL; ++p)
       if (serial_data_available(p))
         return true;
     return false;
@@ -309,7 +309,7 @@ inline int read_serial(const serial_index_t index) { return SERIAL_IMPL.read(ind
    */
   void GCodeQueue::flush_rx() {
     // Flush receive buffer
-    for (uint8_t p = 0; p < NUM_SERIAL; ++p) {
+    for (uint_fast8_t p = 0; p < NUM_SERIAL; ++p) {
       if (!serial_data_available(p)) continue; // No data for this port? Skip.
       while (SERIAL_IMPL.available(p)) (void)read_serial(p);
     }
@@ -437,7 +437,7 @@ void GCodeQueue::get_serial_commands() {
     // Unless a serial port has data, this will exit on next iteration
     hadData = false;
 
-    for (uint8_t p = 0; p < NUM_SERIAL; ++p) {
+    for (uint_fast8_t p = 0; p < NUM_SERIAL; ++p) {
       // Check if the queue is full and exit if it is.
       if (ring_buffer.full()) return;
 

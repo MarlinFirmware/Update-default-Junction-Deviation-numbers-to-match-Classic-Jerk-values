@@ -76,8 +76,8 @@ void LEDLights::setup() {
         #endif
         delay(200);
 
-        for (uint8_t i = 0; i < led_pin_count; ++i) {
-          for (uint8_t b = 0; b <= 200; ++b) {
+        for (uint_fast8_t i = 0; i < led_pin_count; ++i) {
+          for (uint_fast8_t b = 0; b <= 200; ++b) {
             const uint16_t led_pwm = b <= 100 ? b : 200 - b;
             if (i == 0 && PWM_PIN(RGB_LED_R_PIN)) hal.set_pwm_duty(pin_t(RGB_LED_R_PIN), led_pwm); else WRITE(RGB_LED_R_PIN, b < 100 ? HIGH : LOW);
             if (i == 1 && PWM_PIN(RGB_LED_G_PIN)) hal.set_pwm_duty(pin_t(RGB_LED_G_PIN), led_pwm); else WRITE(RGB_LED_G_PIN, b < 100 ? HIGH : LOW);
@@ -118,7 +118,7 @@ void LEDLights::setup() {
     while (led_pin_counters[0] != 99 || !canEnd) {
       if (led_pin_counters[0] == 99)        // End loop next time pin0 counter is 99
         canEnd = true;
-      for (uint8_t i = 0; i < led_pin_count; ++i) {
+      for (uint_fast8_t i = 0; i < led_pin_count; ++i) {
         if (led_pin_counters[i] > 0) {
           if (++led_pin_counters[i] == 400) // turn off current pin counter in led_pin_counters
             led_pin_counters[i] = 0;
@@ -140,7 +140,7 @@ void LEDLights::setup() {
     }
 
     // Fade to white
-    for (uint8_t led_pwm = 0; led_pwm <= 100; ++led_pwm) {
+    for (uint_fast8_t led_pwm = 0; led_pwm <= 100; ++led_pwm) {
       NOLESS(curColor.r, led_pwm);
       NOLESS(curColor.g, led_pwm);
       NOLESS(curColor.b, led_pwm);

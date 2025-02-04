@@ -44,7 +44,7 @@
 
 void GcodeSuite::M92() {
 
-  const int8_t target_extruder = get_target_extruder_from_command();
+  const int_fast8_t target_extruder = get_target_extruder_from_command();
   if (target_extruder < 0) return;
 
   // No arguments? Show M92 report.
@@ -122,7 +122,7 @@ void GcodeSuite::M92_report(const bool forReplay/*=true*/, const int8_t e/*=-1*/
   if (ENABLED(PRINT_EOL)) SERIAL_EOL();
 
   #if ENABLED(DISTINCT_E_FACTORS)
-    for (uint8_t i = 0; i < E_STEPPERS; ++i) {
+    for (uint_fast8_t i = 0; i < E_STEPPERS; ++i) {
       if (e >= 0 && i != e) continue;
       report_echo_start(forReplay);
       SERIAL_ECHOLNPGM_P(

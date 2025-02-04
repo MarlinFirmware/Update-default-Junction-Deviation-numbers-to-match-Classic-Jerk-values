@@ -245,7 +245,7 @@ bool usb_task_extra_string(void) {
     return false;
   }
 
-  for (uint8_t i = 0; i < str_lgt; i++)
+  for (uint_fast8_t i = 0; i < str_lgt; i++)
     extra_strings_desc.string[i] = cpu_to_le16((le16_t)str[i]);
 
   extra_strings_desc.header.bLength = 2 + str_lgt * 2;

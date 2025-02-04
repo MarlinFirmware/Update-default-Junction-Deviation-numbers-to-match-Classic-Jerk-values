@@ -205,7 +205,7 @@ inline void printPinStateExt(const pin_t pin, const bool ignore, const bool exte
     return true;
   };
 
-  for (uint8_t x = 0; x < COUNT(pin_array); ++x)  {    // scan entire array and report all instances of this pin
+  for (uint_fast8_t x = 0; x < COUNT(pin_array); ++x)  {  // scan entire array and report all instances of this pin
     if (getPinByIndex(x) == pin) {
       if (!found) {    // report digital and analog pin number only on the first time through
         if (start_string) SERIAL_ECHO(start_string);
@@ -213,7 +213,7 @@ inline void printPinStateExt(const pin_t pin, const bool ignore, const bool exte
         printPinNumber(pin);
         printPinPort(pin);
         if (int8_t(digitalPinToAnalogIndex(pin)) >= 0) printPinAnalog(pin); // analog pin number
-        else SERIAL_ECHO_SP(8);                                                 // add padding if not an analog pin
+        else SERIAL_ECHO_SP(8);                                             // add padding if not an analog pin
       }
       else {
         SERIAL_CHAR('.');

@@ -319,9 +319,9 @@ bool wait_for_heatup = false;
 
 bool pin_is_protected(const pin_t pin) {
   #define pgm_read_pin(P) (sizeof(pin_t) == 2 ? (pin_t)pgm_read_word(P) : (pin_t)pgm_read_byte(P))
-  for (uint8_t i = 0; i < COUNT(sensitive_dio); ++i)
+  for (uint_fast8_t i = 0; i < COUNT(sensitive_dio); ++i)
     if (pin == pgm_read_pin(&sensitive_dio[i])) return true;
-  for (uint8_t i = 0; i < COUNT(sensitive_aio); ++i)
+  for (uint_fast8_t i = 0; i < COUNT(sensitive_aio); ++i)
     if (pin == analogInputToDigitalPin(pgm_read_pin(&sensitive_aio[i]))) return true;
   return false;
 }
@@ -808,7 +808,7 @@ void idle(const bool no_stepper_sleep/*=false*/) {
   // Run StallGuard endstop checks
   #if ENABLED(SPI_ENDSTOPS)
     if (endstops.tmc_spi_homing.any && TERN1(IMPROVE_HOMING_RELIABILITY, ELAPSED(millis(), sg_guard_period)))
-      for (uint8_t i = 0; i < 4; ++i) if (endstops.tmc_spi_homing_check()) break; // Read SGT 4 times per idle loop
+      for (uint_fast8_t i = 0; i < 4; ++i) if (endstops.tmc_spi_homing_check()) break; // Read SGT 4 times per idle loop
   #endif
 
   // Handle SD Card insert / remove
@@ -1688,7 +1688,7 @@ void setup() {
   #ifdef STARTUP_TUNE
     // Play a short startup tune before continuing.
     constexpr uint16_t tune[] = STARTUP_TUNE;
-    for (uint8_t i = 0; i < COUNT(tune) - 1; i += 2) BUZZ(tune[i + 1], tune[i]);
+    for (uint_fast8_t i = 0; i < COUNT(tune) - 1; i += 2) BUZZ(tune[i + 1], tune[i]);
   #endif
 
   SETUP_LOG("setup() completed.");

@@ -408,7 +408,7 @@ void DGUSScreenHandler::handleTemperatureChanged(DGUS_VP_Variable &var, void *va
 void DGUSScreenHandler::handleFlowRateChanged(DGUS_VP_Variable &var, void *val_ptr) {
   #if HAS_EXTRUDERS
     const uint16_t newvalue = BE16_P(val_ptr);
-    uint8_t target_extruder;
+    uint_fast8_t target_extruder;
     switch (var.VP) {
       default: return;
       case VP_Flowrate_E0: target_extruder = 0; break;

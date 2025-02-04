@@ -83,13 +83,13 @@ void Mixer::normalize(const uint8_t tool_index) {
 void Mixer::reset_vtools() {
   // Virtual Tools 0, 1, 2, 3 = Filament 1, 2, 3, 4, etc.
   // Every virtual tool gets a pure filament
-  for (uint8_t t = 0; t < _MIN(MIXING_VIRTUAL_TOOLS, MIXING_STEPPERS); ++t)
+  for (uint_fast8_t t = 0; t < _MIN(MIXING_VIRTUAL_TOOLS, MIXING_STEPPERS); ++t)
     MIXER_STEPPER_LOOP(i)
       color[t][i] = (t == i) ? COLOR_A_MASK : 0;
 
   // Remaining virtual tools are 100% filament 1
   #if MIXING_VIRTUAL_TOOLS > MIXING_STEPPERS
-    for (uint8_t t = MIXING_STEPPERS; t < MIXING_VIRTUAL_TOOLS; ++t)
+    for (uint_fast8_t t = MIXING_STEPPERS; t < MIXING_VIRTUAL_TOOLS; ++t)
       MIXER_STEPPER_LOOP(i)
         color[t][i] = (i == 0) ? COLOR_A_MASK : 0;
   #endif

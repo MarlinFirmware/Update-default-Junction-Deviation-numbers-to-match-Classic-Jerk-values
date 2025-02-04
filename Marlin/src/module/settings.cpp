@@ -202,7 +202,7 @@ typedef struct {     bool NUM_AXIS_LIST_(X:1, Y:1, Z:1, I:1, J:1, K:1, U:1, V:1,
 #undef _EN_ITEM
 
 // Limit an index to an array size
-#define ALIM(I,ARR) _MIN(I, (signed)COUNT(ARR) - 1)
+#define ALIM(I,ARR) _MIN(I, COUNT(ARR) - 1)
 
 // Defaults for reset / fill in on load
 static const uint32_t   _DMA[] PROGMEM = DEFAULT_MAX_ACCELERATION;
@@ -714,7 +714,7 @@ void MarlinSettings::postprocess() {
   #if DISABLED(NO_VOLUMETRICS)
     planner.calculate_volumetric_multipliers();
   #elif EXTRUDERS
-    for (uint8_t i = COUNT(planner.e_factor); i--;)
+    for (uint_fast8_t i = COUNT(planner.e_factor); i--;)
       planner.refresh_e_factor(i);
   #endif
 
@@ -883,7 +883,7 @@ void MarlinSettings::postprocess() {
     const uint16_t data_size = datasize();
     EEPROM_WRITE(data_size);
 
-    const uint8_t e_factors = DISTINCT_AXES - (NUM_AXES);
+    const uint_fast8_t e_factors = DISTINCT_AXES - (NUM_AXES);
     _FIELD_TEST(e_factors);
     EEPROM_WRITE(e_factors);
 
@@ -932,7 +932,7 @@ void MarlinSettings::postprocess() {
     {
       #if HAS_HOTEND_OFFSET
         // Skip hotend 0 which must be 0
-        for (uint8_t e = 1; e < HOTENDS; ++e)
+        for (uint_fast8_t e = 1; e < HOTENDS; ++e)
           EEPROM_WRITE(hotend_offset[e]);
       #endif
     }
@@ -1005,7 +1005,7 @@ void MarlinSettings::postprocess() {
       #if ENABLED(MESH_BED_LEVELING)
         EEPROM_WRITE(bedlevel.z_values);
       #else
-        for (uint8_t q = mesh_num_x * mesh_num_y; q--;) EEPROM_WRITE(dummyf);
+        for (uint_fast8_t q = mesh_num_x * mesh_num_y; q--;) EEPROM_WRITE(dummyf);
       #endif
     }
 
@@ -1032,7 +1032,7 @@ void MarlinSettings::postprocess() {
         EEPROM_WRITE(planner.bed_level_matrix);
       #else
         dummyf = 0;
-        for (uint8_t q = 9; q--;) EEPROM_WRITE(dummyf);
+        for (uint_fast8_t q = 9; q--;) EEPROM_WRITE(dummyf);
       #endif
     }
 
@@ -1362,7 +1362,7 @@ void MarlinSettings::postprocess() {
           EEPROM_WRITE(planner.volumetric_extruder_limit);
         #else
           dummyf = 0.0;
-          for (uint8_t q = EXTRUDERS; q--;) EEPROM_WRITE(dummyf);
+          for (uint_fast8_t q = EXTRUDERS; q--;) EEPROM_WRITE(dummyf);
         #endif
 
       #else
@@ -1370,9 +1370,9 @@ void MarlinSettings::postprocess() {
         const bool volumetric_enabled = false;
         EEPROM_WRITE(volumetric_enabled);
         dummyf = DEFAULT_NOMINAL_FILAMENT_DIA;
-        for (uint8_t q = EXTRUDERS; q--;) EEPROM_WRITE(dummyf);
+        for (uint_fast8_t q = EXTRUDERS; q--;) EEPROM_WRITE(dummyf);
         dummyf = 0.0;
-        for (uint8_t q = EXTRUDERS; q--;) EEPROM_WRITE(dummyf);
+        for (uint_fast8_t q = EXTRUDERS; q--;) EEPROM_WRITE(dummyf);
 
       #endif
     }
@@ -1566,7 +1566,7 @@ void MarlinSettings::postprocess() {
         EEPROM_WRITE(planner.extruder_advance_K);
       #else
         dummyf = 0;
-        for (uint8_t q = DISTINCT_E; q--;) EEPROM_WRITE(dummyf);
+        for (uint_fast8_t q = DISTINCT_E; q--;) EEPROM_WRITE(dummyf);
       #endif
     }
 
@@ -1932,7 +1932,7 @@ void MarlinSettings::postprocess() {
       // Number of e_factors may change
       //
       _FIELD_TEST(e_factors);
-      uint8_t e_factors;
+      uint_fast8_t e_factors;
       EEPROM_READ_ALWAYS(e_factors);
 
       //
@@ -1975,7 +1975,7 @@ void MarlinSettings::postprocess() {
             EEPROM_READ(dummyf);
           #endif
         #else
-          for (uint8_t q = LOGICAL_AXES; q--;) EEPROM_READ(dummyf);
+          for (uint_fast8_t q = LOGICAL_AXES; q--;) EEPROM_READ(dummyf);
         #endif
 
         EEPROM_READ(TERN(CLASSIC_JERK, dummyf, planner.junction_deviation_mm));
@@ -2005,7 +2005,7 @@ void MarlinSettings::postprocess() {
       {
         #if HAS_HOTEND_OFFSET
           // Skip hotend 0 which must be 0
-          for (uint8_t e = 1; e < HOTENDS; ++e)
+          for (uint_fast8_t e = 1; e < HOTENDS; ++e)
             EEPROM_READ(hotend_offset[e]);
         #endif
       }
@@ -2104,7 +2104,7 @@ void MarlinSettings::postprocess() {
         #if ABL_PLANAR
           EEPROM_READ(planner.bed_level_matrix);
         #else
-          for (uint8_t q = 9; q--;) EEPROM_READ(dummyf);
+          for (uint_fast8_t q = 9; q--;) EEPROM_READ(dummyf);
         #endif
       }
 
@@ -3541,7 +3541,7 @@ void MarlinSettings::reset() {
     #if HAS_FAN
       constexpr uint8_t fpre[] = { REPEAT2_S(1, INCREMENT(PREHEAT_COUNT), _PITEM, FAN_SPEED) };
     #endif
-    for (uint8_t i = 0; i < PREHEAT_COUNT; ++i) {
+    for (uint_fast8_t i = 0; i < PREHEAT_COUNT; ++i) {
       TERN_(HAS_HOTEND,     ui.material_preset[i].hotend_temp = hpre[i]);
       TERN_(HAS_HEATED_BED, ui.material_preset[i].bed_temp = bpre[i]);
       TERN_(HAS_FAN,        ui.material_preset[i].fan_speed = fpre[i]);
@@ -3689,10 +3689,10 @@ void MarlinSettings::reset() {
   //
   #if DISABLED(NO_VOLUMETRICS)
     parser.volumetric_enabled = ENABLED(VOLUMETRIC_DEFAULT_ON);
-    for (uint8_t q = 0; q < COUNT(planner.filament_size); ++q)
+    for (uint_fast8_t q = 0; q < COUNT(planner.filament_size); ++q)
       planner.filament_size[q] = DEFAULT_NOMINAL_FILAMENT_DIA;
     #if ENABLED(VOLUMETRIC_EXTRUDER_LIMIT)
-      for (uint8_t q = 0; q < COUNT(planner.volumetric_extruder_limit); ++q)
+      for (uint_fast8_t q = 0; q < COUNT(planner.volumetric_extruder_limit); ++q)
         planner.volumetric_extruder_limit[q] = DEFAULT_VOLUMETRIC_EXTRUDER_LIMIT;
     #endif
   #endif
@@ -3723,7 +3723,7 @@ void MarlinSettings::reset() {
 
   #if HAS_MOTOR_CURRENT_PWM
     constexpr uint32_t tmp_motor_current_setting[MOTOR_CURRENT_COUNT] = PWM_MOTOR_CURRENT;
-    for (uint8_t q = 0; q < MOTOR_CURRENT_COUNT; ++q)
+    for (uint_fast8_t q = 0; q < MOTOR_CURRENT_COUNT; ++q)
       stepper.set_digipot_current(q, (stepper.motor_current_setting[q] = tmp_motor_current_setting[q]));
   #endif
 
@@ -3733,7 +3733,7 @@ void MarlinSettings::reset() {
   #if HAS_MOTOR_CURRENT_SPI
     static constexpr uint32_t tmp_motor_current_setting[] = DIGIPOT_MOTOR_CURRENT;
     DEBUG_ECHOLNPGM("Writing Digipot");
-    for (uint8_t q = 0; q < COUNT(tmp_motor_current_setting); ++q)
+    for (uint_fast8_t q = 0; q < COUNT(tmp_motor_current_setting); ++q)
       stepper.set_digipot_current(q, tmp_motor_current_setting[q]);
     DEBUG_ECHOLNPGM("Digipot Written");
   #endif
@@ -3969,8 +3969,8 @@ void MarlinSettings::reset() {
       #if ENABLED(MESH_BED_LEVELING)
 
         if (leveling_is_valid()) {
-          for (uint8_t py = 0; py < GRID_MAX_POINTS_Y; ++py) {
-            for (uint8_t px = 0; px < GRID_MAX_POINTS_X; ++px) {
+          for (uint_fast8_t py = 0; py < GRID_MAX_POINTS_Y; ++py) {
+            for (uint_fast8_t px = 0; px < GRID_MAX_POINTS_X; ++px) {
               CONFIG_ECHO_START();
               SERIAL_ECHOLN(F("  G29 S3 I"), px, F(" J"), py, FPSTR(SP_Z_STR), p_float_t(LINEAR_UNIT(bedlevel.z_values[px][py]), 5));
             }
@@ -3994,8 +3994,8 @@ void MarlinSettings::reset() {
       #elif ENABLED(AUTO_BED_LEVELING_BILINEAR)
 
         if (leveling_is_valid()) {
-          for (uint8_t py = 0; py < GRID_MAX_POINTS_Y; ++py) {
-            for (uint8_t px = 0; px < GRID_MAX_POINTS_X; ++px) {
+          for (uint_fast8_t py = 0; py < GRID_MAX_POINTS_Y; ++py) {
+            for (uint_fast8_t px = 0; px < GRID_MAX_POINTS_X; ++px) {
               CONFIG_ECHO_START();
               SERIAL_ECHOLN(F("  G29 W I"), px, F(" J"), py, FPSTR(SP_Z_STR), p_float_t(LINEAR_UNIT(bedlevel.z_values[px][py]), 5));
             }
@@ -4046,7 +4046,7 @@ void MarlinSettings::reset() {
     TERN_(PIDTEMPCHAMBER, gcode.M309_report(forReplay));
 
     #if HAS_USER_THERMISTORS
-      for (uint8_t i = 0; i < USER_THERMISTORS; ++i)
+      for (uint_fast8_t i = 0; i < USER_THERMISTORS; ++i)
         thermalManager.M305_report(i, forReplay);
     #endif
 

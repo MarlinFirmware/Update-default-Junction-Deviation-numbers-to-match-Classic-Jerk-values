@@ -43,7 +43,7 @@ void GcodeSuite::M218() {
 
   if (!parser.seen_any()) return M218_report();
 
-  const int8_t target_extruder = get_target_extruder_from_command();
+  const int_fast8_t target_extruder = get_target_extruder_from_command();
   if (target_extruder < 0) return;
 
   #if HAS_X_AXIS
@@ -66,7 +66,7 @@ void GcodeSuite::M218_report(const bool forReplay/*=true*/) {
   TERN_(MARLIN_SMALL_BUILD, return);
 
   report_heading_etc(forReplay, F(STR_HOTEND_OFFSETS));
-  for (uint8_t e = 1; e < HOTENDS; ++e) {
+  for (uint_fast8_t e = 1; e < HOTENDS; ++e) {
     report_echo_start(forReplay);
     SERIAL_ECHOLNPGM_P(
       PSTR("  M218 T"), e,

@@ -126,11 +126,11 @@ Planner planner;
  * A ring buffer of moves described in steps
  */
 block_t Planner::block_buffer[BLOCK_BUFFER_SIZE];
-volatile uint8_t Planner::block_buffer_head,    // Index of the next block to be pushed
-                 Planner::block_buffer_nonbusy, // Index of the first non-busy block
-                 Planner::block_buffer_tail;    // Index of the busy block, if any
-uint16_t Planner::cleaning_buffer_counter;      // A counter to disable queuing of blocks
-uint8_t Planner::delay_before_delivering;       // Delay block delivery so initial blocks in an empty queue may merge
+volatile uint_fast8_t Planner::block_buffer_head,     // Index of the next block to be pushed
+                      Planner::block_buffer_nonbusy,  // Index of the first non-busy block
+                      Planner::block_buffer_tail;     // Index of the busy block, if any
+uint_fast16_t Planner::cleaning_buffer_counter;       // A counter to disable queuing of blocks
+uint_fast8_t Planner::delay_before_delivering;        // Delay block delivery so initial blocks in an empty queue may merge
 
 #if ENABLED(EDITABLE_STEPS_PER_UNIT)
   float Planner::mm_per_step[DISTINCT_AXES];    // (mm) Millimeters per step
@@ -165,7 +165,7 @@ uint32_t Planner::max_acceleration_steps_per_s2[DISTINCT_AXES]; // (steps/s^2) D
 #endif
 
 #if ENABLED(DISTINCT_E_FACTORS)
-  uint8_t Planner::last_extruder = 0;     // Respond to extruder change
+  uint_fast8_t Planner::last_extruder = 0;      // Respond to extruder change
 #endif
 
 #if ENABLED(DIRECT_STEPPING)
@@ -739,7 +739,7 @@ void Planner::init() {
  */
 block_t* Planner::get_current_block() {
   // Get the number of moves in the planner queue so far
-  const uint8_t nr_moves = movesplanned();
+  const uint_fast8_t nr_moves = movesplanned();
 
   // If there are any moves queued ...
   if (nr_moves) {
@@ -1030,10 +1030,10 @@ bool Planner::reverse_pass_kernel(block_t * const current, const block_t * const
 void Planner::reverse_pass(const_float_t safe_exit_speed_sqr) {
   // Initialize block index to the last block in the planner buffer.
   // This last block will have flag.recalculate set.
-  uint8_t block_index = prev_block_index(block_buffer_head);
+  uint_fast8_t block_index = prev_block_index(block_buffer_head);
 
   // The ISR may change block_buffer_nonbusy so get a stable local copy.
-  uint8_t nonbusy_block_index = block_buffer_nonbusy;
+  uint_fast8_t nonbusy_block_index = block_buffer_nonbusy;
 
   const block_t *next = nullptr;
   // Don't try to change the entry speed of the first non-busy block.
@@ -1091,8 +1091,8 @@ void Planner::forward_pass_kernel(const block_t * const previous, block_t * cons
  */
 void Planner::recalculate_trapezoids(const_float_t safe_exit_speed_sqr) {
   // Start with the block that's about to execute or is executing.
-  uint8_t block_index = block_buffer_tail,
-          head_block_index = block_buffer_head;
+  uint_fast8_t block_index = block_buffer_tail,
+               head_block_index = block_buffer_head;
 
   block_t *block = nullptr, *next = nullptr;
   float next_entry_speed = 0.0f;
@@ -1175,7 +1175,7 @@ void Planner::recalculate(const_float_t safe_exit_speed_sqr) {
  */
 #if HAS_FAN
 
-  void Planner::sync_fan_speeds(uint8_t (&fan_speed)[FAN_COUNT]) {
+  void Planner::sync_fan_speeds(uint_fast8_t (&fan_speed)[FAN_COUNT]) {
 
     #if ENABLED(FAN_SOFT_PWM)
       #define _FAN_SET(F) thermalManager.soft_pwm_amount_fan[F] = CALC_FAN_SPEED(fan_speed[F]);
@@ -1193,7 +1193,7 @@ void Planner::recalculate(const_float_t safe_exit_speed_sqr) {
 
   #if FAN_KICKSTART_TIME
 
-    void Planner::kickstart_fan(uint8_t (&fan_speed)[FAN_COUNT], const millis_t &ms, const uint8_t f) {
+    void Planner::kickstart_fan(uint_fast8_t (&fan_speed)[FAN_COUNT], const millis_t &ms, const uint_fast8_t f) {
       static millis_t fan_kick_end[FAN_COUNT] = { 0 };
       #if ENABLED(FAN_KICKSTART_LINEAR)
         static uint8_t set_fan_speed[FAN_COUNT] = { 0 };
@@ -1226,7 +1226,7 @@ void Planner::check_axes_activity() {
 
   #if HAS_FAN && DISABLED(LASER_SYNCHRONOUS_M106_M107)
     #define HAS_TAIL_FAN_SPEED 1
-    static uint8_t tail_fan_speed[FAN_COUNT] = ARRAY_N_1(FAN_COUNT, 13);
+    static uint_fast8_t tail_fan_speed[FAN_COUNT] = ARRAY_N_1(FAN_COUNT, 13);
     bool fans_need_update = false;
   #endif
 
@@ -1247,7 +1247,7 @@ void Planner::check_axes_activity() {
 
     #if HAS_TAIL_FAN_SPEED
       FANS_LOOP(i) {
-        const uint8_t spd = thermalManager.scaledFanSpeed(i, block->fan_speed[i]);
+        const uint_fast8_t spd = thermalManager.scaledFanSpeed(i, block->fan_speed[i]);
         if (tail_fan_speed[i] != spd) {
           fans_need_update = true;
           tail_fan_speed[i] = spd;
@@ -1261,7 +1261,7 @@ void Planner::check_axes_activity() {
     #endif
 
     #if HAS_DISABLE_AXES
-      for (uint8_t b = block_buffer_tail; b != block_buffer_head; b = next_block_index(b)) {
+      for (uint_fast8_t b = block_buffer_tail; b != block_buffer_head; b = next_block_index(b)) {
         block_t * const bnext = &block_buffer[b];
         LOGICAL_AXIS_CODE(
           if (TERN0(DISABLE_E, bnext->steps.e)) axis_active.e = true,
@@ -1284,7 +1284,7 @@ void Planner::check_axes_activity() {
 
     #if HAS_TAIL_FAN_SPEED
       FANS_LOOP(i) {
-        const uint8_t spd = thermalManager.scaledFanSpeed(i);
+        const uint_fast8_t spd = thermalManager.scaledFanSpeed(i);
         if (tail_fan_speed[i] != spd) {
           fans_need_update = true;
           tail_fan_speed[i] = spd;
@@ -1379,7 +1379,7 @@ void Planner::check_axes_activity() {
     if (thermalManager.degTargetHotend(active_extruder) < autotemp.min - 2) return; // Below the min?
 
     float high = 0.0f;
-    for (uint8_t b = block_buffer_tail; b != block_buffer_head; b = next_block_index(b)) {
+    for (uint_fast8_t b = block_buffer_tail; b != block_buffer_head; b = next_block_index(b)) {
       const block_t * const block = &block_buffer[b];
       if (NUM_AXIS_GANG(block->steps.x, || block->steps.y, || block->steps.z, || block->steps.i, || block->steps.j, || block->steps.k, || block->steps.u, || block->steps.v, || block->steps.w)) {
         const float se = float(block->steps.e) / block->step_event_count * block->nominal_speed; // mm/sec
@@ -1412,7 +1412,7 @@ void Planner::check_axes_activity() {
    * The multiplier converts a given E value into a length.
    */
   void Planner::calculate_volumetric_multipliers() {
-    for (uint8_t i = 0; i < COUNT(filament_size); ++i) {
+    for (uint_fast8_t i = 0; i < COUNT(filament_size); ++i) {
       volumetric_multiplier[i] = calculate_volumetric_multiplier(filament_size[i]);
       refresh_e_factor(i);
     }
@@ -1428,7 +1428,7 @@ void Planner::check_axes_activity() {
   /**
    * Convert volumetric based limits into pre calculated extruder feedrate limits.
    */
-  void Planner::calculate_volumetric_extruder_limit(const uint8_t e) {
+  void Planner::calculate_volumetric_extruder_limit(const uint_fast8_t e) {
     const float &lim = volumetric_extruder_limit[e], &siz = filament_size[e];
     volumetric_extruder_feedrate_limit[e] = (lim && siz) ? lim / CIRCLE_AREA(siz * 0.5f) : 0;
   }
@@ -1715,11 +1715,11 @@ void Planner::synchronize() { while (busy()) idle(); }
 bool Planner::_buffer_steps(const xyze_long_t &target
   OPTARG(HAS_POSITION_FLOAT, const xyze_pos_t &target_float)
   OPTARG(HAS_DIST_MM_ARG, const xyze_float_t &cart_dist_mm)
-  , feedRate_t fr_mm_s, const uint8_t extruder, const PlannerHints &hints
+  , feedRate_t fr_mm_s, const uint_fast8_t extruder, const PlannerHints &hints
 ) {
 
   // Wait for the next available block
-  uint8_t next_buffer_head;
+  uint_fast8_t next_buffer_head;
   block_t * const block = get_next_free_block(next_buffer_head);
 
   // If we are cleaning, do not accept queuing of movements
@@ -1788,7 +1788,7 @@ bool Planner::_populate_block(
   const abce_long_t &target
   OPTARG(HAS_POSITION_FLOAT, const xyze_pos_t &target_float)
   OPTARG(HAS_DIST_MM_ARG, const xyze_float_t &cart_dist_mm)
-  , feedRate_t fr_mm_s, const uint8_t extruder, const PlannerHints &hints
+  , feedRate_t fr_mm_s, const uint_fast8_t extruder, const PlannerHints &hints
   , float &minimum_planner_speed_sqr
 ) {
   xyze_long_t dist = target - position;
@@ -2163,7 +2163,7 @@ bool Planner::_populate_block(
       #if ENABLED(DISABLE_OTHER_EXTRUDERS) // Enable only the selected extruder
 
         // Count down all steppers that were recently moved
-        for (uint8_t i = 0; i < E_STEPPERS; ++i)
+        for (uint_fast8_t i = 0; i < E_STEPPERS; ++i)
           if (extruder_last_move[i]) extruder_last_move[i]--;
 
         // Switching Extruder uses one E stepper motor per two nozzles
@@ -2779,7 +2779,7 @@ bool Planner::_populate_block(
 void Planner::buffer_sync_block(const BlockFlagBit sync_flag/*=BLOCK_BIT_SYNC_POSITION*/) {
 
   // Wait for the next available block
-  uint8_t next_buffer_head;
+  uint_fast8_t next_buffer_head;
   block_t * const block = get_next_free_block(next_buffer_head);
 
   // Clear block
@@ -2833,7 +2833,7 @@ void Planner::buffer_sync_block(const BlockFlagBit sync_flag/*=BLOCK_BIT_SYNC_PO
 bool Planner::buffer_segment(const abce_pos_t &abce
   OPTARG(HAS_DIST_MM_ARG, const xyze_float_t &cart_dist_mm)
   , const_feedRate_t fr_mm_s
-  , const uint8_t extruder/*=active_extruder*/
+  , const uint_fast8_t extruder/*=active_extruder*/
   , const PlannerHints &hints/*=PlannerHints()*/
 ) {
 
@@ -2958,7 +2958,7 @@ bool Planner::buffer_segment(const abce_pos_t &abce
  * @param hints     Optional parameters to aid planner calculations
  */
 bool Planner::buffer_line(const xyze_pos_t &cart, const_feedRate_t fr_mm_s
-  , const uint8_t extruder/*=active_extruder*/
+  , const uint_fast8_t extruder/*=active_extruder*/
   , const PlannerHints &hints/*=PlannerHints()*/
 ) {
   xyze_pos_t machine = cart;
@@ -3067,7 +3067,7 @@ bool Planner::buffer_line(const xyze_pos_t &cart, const_feedRate_t fr_mm_s
       return;
     }
 
-    uint8_t next_buffer_head;
+    uint_fast8_t next_buffer_head;
     block_t * const block = get_next_free_block(next_buffer_head);
 
     block->flag.reset(BLOCK_BIT_PAGE);
@@ -3184,7 +3184,7 @@ void Planner::set_position_mm(const xyze_pos_t &xyze) {
    * Special setter for planner E position (also setting E stepper position).
    */
   void Planner::set_e_position_mm(const_float_t e) {
-    const uint8_t axis_index = E_AXIS_N(active_extruder);
+    const uint_fast8_t axis_index = E_AXIS_N(active_extruder);
     TERN_(DISTINCT_E_FACTORS, last_extruder = active_extruder);
 
     // Unapply the current retraction before (immediately) setting the planner position
@@ -3311,7 +3311,7 @@ void Planner::set_max_feedrate(const AxisEnum axis, float inMaxFeedrateMMS) {
 
 #if HAS_WIRED_LCD
 
-  uint16_t Planner::block_buffer_runtime() {
+  uint_fast16_t Planner::block_buffer_runtime() {
     #ifdef __AVR__
       // Protect the access to the variable. Only required for AVR, as
       // any 32bit CPU offers atomic access to 32bit variables

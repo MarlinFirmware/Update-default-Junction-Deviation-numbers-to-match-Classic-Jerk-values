@@ -92,7 +92,7 @@ void GcodeSuite::G35() {
   bool err_break = false;
 
   // Probe all positions
-  for (uint8_t i = 0; i < G35_PROBE_COUNT; ++i) {
+  for (uint_fast8_t i = 0; i < G35_PROBE_COUNT; ++i) {
     const float z_probed_height = probe.probe_at_point(tramming_points[i], PROBE_PT_RAISE);
     if (isnan(z_probed_height)) {
       SERIAL_ECHOLN(
@@ -120,7 +120,7 @@ void GcodeSuite::G35() {
     const float threads_factor[] = { 0.5, 0.7, 0.8 };
 
     // Calculate adjusts
-    for (uint8_t i = 1; i < G35_PROBE_COUNT; ++i) {
+    for (uint_fast8_t i = 1; i < G35_PROBE_COUNT; ++i) {
       const float diff = z_measured[0] - z_measured[i],
                   adjust = ABS(diff) < 0.001f ? 0 : diff / threads_factor[(screw_thread - 30) / 10];
 

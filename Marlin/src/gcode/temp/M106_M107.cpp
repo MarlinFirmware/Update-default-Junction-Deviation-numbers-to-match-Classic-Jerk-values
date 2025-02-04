@@ -40,7 +40,7 @@
   #define _ALT_P active_extruder
   #define _CNT_P EXTRUDERS
 #else
-  #define _ALT_P _MIN(active_extruder, FAN_COUNT - 1)
+  #define _ALT_P _MIN(active_extruder, unsigned(FAN_COUNT - 1))
   #define _CNT_P FAN_COUNT
 #endif
 
@@ -59,23 +59,23 @@
  *           3-255 = Set the speed for use with T2
  */
 void GcodeSuite::M106() {
-  const uint8_t pfan = parser.byteval('P', _ALT_P);
+  const uint_fast8_t pfan = parser.byteval('P', _ALT_P);
   if (pfan >= _CNT_P) return;
   if (FAN_IS_REDUNDANT(pfan)) return;
 
   #if ENABLED(EXTRA_FAN_SPEED)
-    const uint16_t t = parser.intval('T');
+    const uint_fast16_t t = parser.intval('T');
     if (t > 0) return thermalManager.set_temp_fan_speed(pfan, t);
   #endif
 
-  const uint16_t dspeed = parser.seen_test('A') ? thermalManager.fan_speed[active_extruder] : 255;
+  const uint_fast16_t dspeed = parser.seen_test('A') ? thermalManager.fan_speed[active_extruder] : 255;
 
-  uint16_t speed = dspeed;
+  uint_fast16_t speed = dspeed;
 
   // Accept 'I' if temperature presets are defined
   #if HAS_PREHEAT
     const bool got_preset = parser.seenval('I');
-    if (got_preset) speed = ui.material_preset[_MIN(parser.value_byte(), PREHEAT_COUNT - 1)].fan_speed;
+    if (got_preset) speed = ui.material_preset[_MIN(parser.value_byte(), unsigned(PREHEAT_COUNT - 1))].fan_speed;
   #else
     constexpr bool got_preset = false;
   #endif
@@ -98,7 +98,7 @@ void GcodeSuite::M106() {
  * M107: Fan Off
  */
 void GcodeSuite::M107() {
-  const uint8_t pfan = parser.byteval('P', _ALT_P);
+  const uint_fast8_t pfan = parser.byteval('P', _ALT_P);
   if (pfan >= _CNT_P) return;
   if (FAN_IS_REDUNDANT(pfan)) return;
 
