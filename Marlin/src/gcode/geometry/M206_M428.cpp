@@ -80,24 +80,36 @@ void GcodeSuite::M206_report(const bool forReplay/*=true*/) {
  *       M428 can't be used more than 2cm away from 0 or an endstop.
  *
  *       Use M206 to set these values directly.
+ *
+ * Parameters:
+ *   X, Y, Z, ...  - Flags to set the home offset for only the specified axes
+ *               P - Flag to add the distance to the existing home offset
  */
 void GcodeSuite::M428() {
   if (homing_needed_error()) return;
 
+  const bool no_axes = !parser.seen(STR_AXES_LOGICAL);
   xyz_float_t diff;
   LOOP_NUM_AXES(i) {
-    diff[i] = base_home_pos((AxisEnum)i) - current_position[i];
-    if (!WITHIN(diff[i], -20, 20) && home_dir((AxisEnum)i) > 0)
-      diff[i] = -current_position[i];
-    if (!WITHIN(diff[i], -20, 20)) {
-      SERIAL_ERROR_MSG(STR_ERR_M428_TOO_FAR);
-      LCD_ALERTMESSAGE(MSG_ERR_M428_TOO_FAR);
-      ERR_BUZZ();
-      return;
+    if (no_axes || parser.seen_test(AXIS_CHAR(i))) {
+      diff[i] = base_home_pos((AxisEnum)i) - current_position[i];
+      // If the current position is too far, for min homing just set to the negative current position
+      if (!WITHIN(diff[i], -20, 20) && home_dir((AxisEnum)i) > 0) diff[i] = -current_position[i];
+      // If still too far report an error
+      if (!WITHIN(diff[i], -20, 20)) {
+        SERIAL_ERROR_MSG(STR_ERR_M428_TOO_FAR);
+        LCD_ALERTMESSAGE(MSG_ERR_M428_TOO_FAR);
+        ERR_BUZZ();
+        return;
+      }
     }
+    else
+      diff[i] = 0;
   }
 
-  LOOP_NUM_AXES(i) set_home_offset((AxisEnum)i, diff[i]);
+  const bool adding = parser.seen_test('P');
+  LOOP_NUM_AXES(i) set_home_offset((AxisEnum)i, diff[i] + (adding ? home_offset[i] : 0));
+
   report_current_position();
   LCD_MESSAGE(MSG_HOME_OFFSETS_APPLIED);
   OKAY_BUZZ();
