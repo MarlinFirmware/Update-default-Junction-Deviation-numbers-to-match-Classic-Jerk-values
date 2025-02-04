@@ -93,7 +93,7 @@
 #define HEATER_BED_PIN                         4
 
 #ifndef FAN0_PIN
-  #define FAN0_PIN                             7  //默认不使用PWM_FAN冷却喷嘴，如果需要，则取消注释
+  #define FAN0_PIN                             7  // PWM_FAN
 #endif
 
 //
@@ -104,7 +104,7 @@
 //#define LED_PIN                              8
 
 #ifndef CASE_LIGHT_PIN
-  #define CASE_LIGHT_PIN                       8  // 8 默认挤出机风扇作为Case LED，如果需要PWM FAN,则需要将FAN_PIN置为7，LED_PIN置为8
+  #define CASE_LIGHT_PIN                       8  // 8 Case LED，PWM FAN, FAN_PIN，LED_PIN 8
 #endif
 
 //#define SAFETY_TRIGGERED_PIN                28  // PIN to detect the safety circuit has triggered

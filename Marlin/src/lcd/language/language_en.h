@@ -197,6 +197,7 @@ namespace LanguageNarrow_en {
   LSTR MSG_MESH_VIEWER                    = _UxGT("Mesh Viewer");
   LSTR MSG_EDIT_MESH                      = _UxGT("Edit Mesh");
   LSTR MSG_MESH_VIEW                      = _UxGT("View Mesh");
+  LSTR MSG_CHANGE_MESH                    = _UxGT("Normal Mesh Viewer");
   LSTR MSG_EDITING_STOPPED                = _UxGT("Mesh Editing Stopped");
   LSTR MSG_NO_VALID_MESH                  = _UxGT("No valid mesh");
   LSTR MSG_ACTIVATE_MESH                  = _UxGT("Activate Leveling");
