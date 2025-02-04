@@ -730,5 +730,5 @@
 #endif // HAS_WIRED_LCD
 
 #ifndef KILL_PIN
-  #define KILL_PIN                   EXP2_08_PIN
+  #define KILL_PIN                            11
 #endif
