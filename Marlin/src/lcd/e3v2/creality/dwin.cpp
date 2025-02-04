@@ -1114,9 +1114,9 @@ void popupWindowResume() {
     dwinIconShow(ICON, ICON_Continue_C, 146, 307);
   }
   else {
-    dwinDrawString(true, font8x16, COLOR_POPUP_TEXT, COLOR_BG_WINDOW, (272 - 8 * 14) / 2, 115, F("Continue Print"));
-    dwinDrawString(true, font8x16, COLOR_POPUP_TEXT, COLOR_BG_WINDOW, (272 - 8 * 22) / 2, 192, F("It looks like the last"));
-    dwinDrawString(true, font8x16, COLOR_POPUP_TEXT, COLOR_BG_WINDOW, (272 - 8 * 21) / 2, 212, F("file was interrupted."));
+    dwinDrawString(true, font8x16, COLOR_POPUP_TEXT, COLOR_BG_WINDOW, (272 - 8 * 14) / 2, 115, GET_TEXT_F(MSG_OUTAGE_RECOVERY));
+    dwinDrawString(true, font8x16, COLOR_POPUP_TEXT, COLOR_BG_WINDOW, (272 - 8 * 22) / 2, 192, GET_TEXT_F(MSG_OUTAGE_RECOVERY2));
+    dwinDrawString(true, font8x16, COLOR_POPUP_TEXT, COLOR_BG_WINDOW, (272 - 8 * 21) / 2, 212, GET_TEXT_F(MSG_OUTAGE_RECOVERY3));
     dwinIconShow(ICON, ICON_Cancel_E,    26, 307);
     dwinIconShow(ICON, ICON_Continue_E, 146, 307);
   }

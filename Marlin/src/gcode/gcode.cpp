@@ -309,7 +309,7 @@ void GcodeSuite::dwell(millis_t time) {
       #endif
     }
 
-    TERN_(HAS_DWIN_E3V2_BASIC, dwinLevelingDone());
+    TERN_(DWIN_CREALITY_LCD, dwinLevelingDone());
     TERN_(EXTENSIBLE_UI, ExtUI::onLevelingDone());
   }
 

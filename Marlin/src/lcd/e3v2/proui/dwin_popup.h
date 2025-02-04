@@ -29,7 +29,6 @@
  * Date: 2022/02/28
  */
 
-#include "dwinui.h"
 #include "dwin.h"
 
 typedef void (*popupDrawFunc_t)();
@@ -39,10 +38,13 @@ extern popupDrawFunc_t popupDraw;
 
 void drawSelectHighlight(const bool sel, const uint16_t ypos);
 inline void drawSelectHighlight(const bool sel) { drawSelectHighlight(sel, 280); };
-void dwinPopupContinue(const uint8_t icon, FSTR_P const fmsg1, FSTR_P const fmsg2);
 void dwinPopupConfirmCancel(const uint8_t icon, FSTR_P const fmsg2);
 void gotoPopup(const popupDrawFunc_t fnDraw, const popupClickFunc_t fnClick=nullptr, const popupChangeFunc_t fnChange=nullptr);
 void hmiPopup();
+#if ENABLED(ADVANCED_PAUSE_FEATURE)
+  void dwinPopupPause(FSTR_P const fmsg, uint8_t button=0);
+  void drawPopupFilamentPurge();
+#endif
 
 inline void drawPopupBkgd() {
   dwinDrawRectangle(1, hmiData.colorPopupBg, 14, 60, 258, 330);
@@ -74,6 +76,13 @@ void dwinShowPopup(const uint8_t icon, T amsg1=nullptr, U amsg2=nullptr, uint8_t
 template<typename T, typename U>
 void dwinPopupConfirm(const uint8_t icon, T amsg1, U amsg2) {
   hmiSaveProcessID(ID_WaitResponse);
-  dwinDrawPopup(icon, amsg1, amsg2, BTN_Confirm);  // Button Confirm
+  dwinDrawPopup(icon, amsg1, amsg2, BTN_Confirm); // Button Confirm
+  dwinUpdateLCD();
+}
+
+template<typename T, typename U>
+void dwinPopupContinue(const uint8_t icon, T amsg1, U amsg2) {
+  hmiSaveProcessID(ID_WaitResponse);
+  dwinDrawPopup(icon, amsg1, amsg2, BTN_Continue); // Button Continue
   dwinUpdateLCD();
 }

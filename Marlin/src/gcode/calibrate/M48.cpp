@@ -58,7 +58,11 @@
 
 void GcodeSuite::M48() {
 
-  if (homing_needed_error()) return;
+  #if ENABLED(DWIN_LCD_PROUI)
+    TERN_(ADVANCED_PAUSE_FEATURE, dwinPopupPause(GET_TEXT_F(MSG_M48_TEST));)
+  #endif
+
+  if (homing_needed_error()) TERN(DWIN_LCD_PROUI, return hmiReturnScreen(), return);
 
   const int8_t verbose_level = parser.byteval('V', 1);
   if (!WITHIN(verbose_level, 0, 4)) {
@@ -274,6 +278,7 @@ void GcodeSuite::M48() {
   TERN_(HAS_PTC, ptc.set_enabled(true));
 
   report_current_position();
+  TERN_(DWIN_LCD_PROUI, hmiReturnScreen();)
 }
 
 #endif // Z_MIN_PROBE_REPEATABILITY_TEST

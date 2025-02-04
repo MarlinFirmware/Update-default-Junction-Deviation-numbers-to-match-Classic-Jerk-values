@@ -468,6 +468,7 @@ namespace LanguageNarrow_it {
   LSTR MSG_SCREEN_TIMEOUT                 = _UxGT("Timeout LCD (m)");
   LSTR MSG_HOTEND_TEMP_GRAPH              = _UxGT("Grafico temp.ugello");
   LSTR MSG_BED_TEMP_GRAPH                 = _UxGT("Grafico temp.piatto");
+  LSTR MSG_CHAMBER_TEMP_GRAPH             = _UxGT("Grafico temp.camera");
   LSTR MSG_BRIGHTNESS_OFF                 = _UxGT("Spegni retroillum.");
   LSTR MSG_STORE_EEPROM                   = _UxGT("Salva impostazioni");
   LSTR MSG_LOAD_EEPROM                    = _UxGT("Carica impostazioni");

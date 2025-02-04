@@ -63,14 +63,14 @@ void GcodeSuite::M0_M1() {
       #endif
     }
 
-  #elif ENABLED(DWIN_LCD_PROUI) // ExtUI with icon, string, button title
+  #elif ENABLED(DWIN_LCD_PROUI) // ProUI with icon, string, button title
 
     if (parser.string_arg)
       ExtUI::onUserConfirmRequired(ICON_Continue_1, parser.string_arg, GET_TEXT_F(MSG_USERWAIT));
     else
       ExtUI::onUserConfirmRequired(ICON_Stop_1, GET_TEXT_F(MSG_STOPPED), GET_TEXT_F(MSG_USERWAIT));
 
-  #elif ENABLED(EXTENSIBLE_UI)
+  #elif ENABLED(EXTENSIBLE_UI) // ExtUI with icon, string, button title
 
     if (parser.string_arg)
       ExtUI::onUserConfirmRequired(parser.string_arg); // String in an SRAM buffer

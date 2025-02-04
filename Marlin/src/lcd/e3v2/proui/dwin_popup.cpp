@@ -55,12 +55,6 @@ void drawSelectHighlight(const bool sel, const uint16_t ypos) {
   dwinDrawRectangle(0, c2, 144, ypos - 2, 247, ypos + 39);
 }
 
-void dwinPopupContinue(const uint8_t icon, FSTR_P const fmsg1, FSTR_P const fmsg2) {
-  hmiSaveProcessID(ID_WaitResponse);
-  dwinDrawPopup(icon, fmsg1, fmsg2, BTN_Continue);  // Button Continue
-  dwinUpdateLCD();
-}
-
 void dwinPopupConfirmCancel(const uint8_t icon, FSTR_P const fmsg2) {
   dwinDrawPopup(ICON_BLTouch, F("Please confirm"), fmsg2);
   DWINUI::drawButton(BTN_Confirm, 26, 280);
@@ -92,5 +86,19 @@ void hmiPopup() {
     }
   }
 }
+
+#if ENABLED(ADVANCED_PAUSE_FEATURE)
+  void dwinPopupPause(FSTR_P const fmsg, uint8_t button/*=0*/) {
+    hmiSaveProcessID(button ? ID_WaitResponse : ID_NothingToDo);
+    dwinShowPopup(ICON_Pause_1, GET_TEXT_F(MSG_ADVANCED_PAUSE), fmsg, button);
+  }
+
+  void drawPopupFilamentPurge() {
+    dwinDrawPopup(ICON_AutoLeveling, GET_TEXT_F(MSG_ADVANCED_PAUSE), GET_TEXT_F(MSG_FILAMENT_CHANGE_PURGE_CONTINUE));
+    DWINUI::drawButton(BTN_Purge, 26, 280);
+    DWINUI::drawButton(BTN_Continue, 146, 280);
+    drawSelectHighlight(true);
+  }
+#endif // ADVANCED_PAUSE_FEATURE
 
 #endif // DWIN_LCD_PROUI
