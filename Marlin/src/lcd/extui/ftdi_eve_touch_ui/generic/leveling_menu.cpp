@@ -70,6 +70,10 @@ using namespace Theme;
   #define BACK_POS           BTN_POS(1,6), BTN_SIZE(3,1)
 #endif
 
+#ifndef LEVELING_COMMANDS
+  #define LEVELING_COMMANDS "G34"
+#endif
+
 void LevelingMenu::onRedraw(draw_mode_t what) {
   if (what & BACKGROUND) {
     CommandProcessor cmd;
