@@ -2443,8 +2443,30 @@ void prepare_line_to_destination() {
     const bool is_home_dir = (axis_home_dir > 0) == (distance > 0);
 
     #if ENABLED(SENSORLESS_HOMING)
+
       sensorless_t stealth_states;
-    #endif
+
+      #if ENABLED(SENSORLESS_HOMING_VALIDATION)
+
+        static float expected_distance = 0; // Known coordinates after homing routine sets to 0
+
+        if (is_home_dir) {
+          // Sensorless homing moves by a backoff. This accounts for that distance.
+          expected_distance += -axis_home_dir * planner.get_axis_position_mm(axis);
+        }
+        else {
+          // In Stallguard context, a backoff distance is done first,
+          // so this is where the expected printer position is captured.
+          const float axis_pos = planner.get_axis_position_mm(axis),
+          expected_distance = axis_home_dir > 0 ? (base_max_pos(axis) - axis_pos) : (base_min_pos(axis) + axis_pos);
+        }
+
+        const millis_t time_to_stop = static_cast<millis_t>((expected_distance / home_fr_mm_s) * 1000.0f),
+                 expected_stop_time = millis() + time_to_stop + SHV_STARTUP_COMPENSATION;
+
+      #endif
+
+    #endif // SENSORLESS_HOMING
 
     if (is_home_dir) {
 
@@ -2496,6 +2518,15 @@ void prepare_line_to_destination() {
     planner.synchronize();
 
     if (is_home_dir) {
+
+      #if ENABLED(SENSORLESS_HOMING_VALIDATION)
+        const int32_t time_delta = static_cast<int32_t>(millis() - expected_stop_time);
+        const bool bad_home = !WITHIN(time_delta, -SHV_ERROR_MARGIN, SHV_ERROR_MARGIN);
+        if (DEBUGGING(INFO))
+          SERIAL_ECHOLNPGM("Axis:", C(AXIS_CHAR(axis)), " Distance:", expected_distance, " Feedrate:", home_fr_mm_s, " Expected stop time:", time_to_stop, " Difference:", time_delta);
+        if (DEBUGGING(ERRORS) && bad_home)
+          SERIAL_ECHOLNPGM("Homing fault! Time difference: ", time_delta, ", Axis: ", C(AXIS_CHAR(axis)));
+      #endif
 
       #if HOMING_Z_WITH_PROBE && HAS_QUIET_PROBING
         if (axis == Z_AXIS && final_approach) probe.set_probing_paused(false);
