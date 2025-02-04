@@ -30,16 +30,18 @@
  */
 
 #include "../../../inc/MarlinConfigPre.h"
+#include <stddef.h>
+#include "../../../core/types.h"
 
-//#define TJC_DISPLAY           // Enable for TJC display
-//#define DACAI_DISPLAY         // Enable for DACAI display
-//#define TITLE_CENTERED        // Center Menu Title Text
+//#define TJC_DISPLAY         // Enable for TJC display
+//#define DACAI_DISPLAY       // Enable for DACAI display
+//#define TITLE_CENTERED      // Center Menu Title Text
 
 #if HAS_MESH
-  #define PROUI_MESH_EDIT       // Add a menu to edit mesh points
+  #define PROUI_MESH_EDIT     // Add a menu to edit mesh inset
   #if ENABLED(PROUI_MESH_EDIT)
-    #define Z_OFFSET_MIN  -3.0  // (mm)
-    #define Z_OFFSET_MAX   3.0  // (mm)
+    #define Z_OFFSET_MIN -3.0 // (mm)
+    #define Z_OFFSET_MAX  3.0 // (mm)
   #endif
 #endif
 
@@ -111,6 +113,16 @@
 /**
  * ProUI internal feature flags
  */
+#if HAS_MESH
+  #define PROUI_MESH_EDIT     // Add a menu to edit mesh inset + points
+  #if ENABLED(PROUI_MESH_EDIT)
+    #define Z_OFFSET_MIN  -3.0  // (mm)
+    #define Z_OFFSET_MAX   3.0  // (mm)
+  #endif
+#endif
+#if HAS_BED_PROBE
+  #define PROUI_ITEM_ZFRS     // Add a menu item to change Z_PROBE_FEEDRATE_SLOW - probe speed
+#endif
 #if ALL(SDCARD_SORT_ALPHA, SDSORT_GCODE)
   #define PROUI_MEDIASORT     // Enable option to sort G-code files
 #endif
@@ -123,7 +135,7 @@
 #if ENABLED(LIN_ADVANCE)
   #define PROUI_ITEM_ADVK     // Tune > Linear Advance
 #endif
-#if ANY(HAS_PID_HEATING, MPC_AUTOTUNE) && DISABLED(DISABLE_TUNING_GRAPH)
+#if DISABLED(DISABLE_TUNING_GRAPH)
   #define PROUI_TUNING_GRAPH 1
 #endif
 #if PROUI_TUNING_GRAPH
@@ -134,3 +146,140 @@
 #define HAS_ESDIAG 1          // View End-stop/Runout switch continuity
 #define HAS_LOCKSCREEN 1      // Simple lockscreen
 #define HAS_SD_EXTENDER 1     // Enable to support SD card extender cables
+
+#if ENABLED(PROUI_MESH_EDIT)
+  #ifndef   MESH_INSET
+    #define MESH_INSET 10
+  #endif
+  #ifndef   MESH_MIN_X
+    #define MESH_MIN_X MESH_INSET
+  #endif
+  #ifndef   MESH_MIN_Y
+    #define MESH_MIN_Y MESH_INSET
+  #endif
+  #ifndef   MESH_MAX_X
+    #define MESH_MAX_X  X_BED_SIZE - (MESH_INSET)
+  #endif
+  #ifndef   MESH_MAX_Y
+    #define MESH_MAX_Y  Y_BED_SIZE - (MESH_INSET)
+  #endif
+  constexpr uint16_t DEF_MESH_MIN_X = MESH_MIN_X;
+  constexpr uint16_t DEF_MESH_MAX_X = MESH_MAX_X;
+  constexpr uint16_t DEF_MESH_MIN_Y = MESH_MIN_Y;
+  constexpr uint16_t DEF_MESH_MAX_Y = MESH_MAX_Y;
+  #define MIN_MESH_INSET 0
+  #define MAX_MESH_INSET X_BED_SIZE
+#endif
+
+#ifndef MULTIPLE_PROBING
+  #define MULTIPLE_PROBING 0
+#endif
+
+#if HAS_BED_PROBE
+  constexpr uint16_t DEF_Z_PROBE_FEEDRATE_SLOW = Z_PROBE_FEEDRATE_SLOW;
+#endif
+
+#if HAS_EXTRUDERS
+  constexpr bool DEF_INVERT_E0_DIR = INVERT_E0_DIR;
+#endif
+
+typedef struct {
+  // Color settings
+  uint16_t colorBackground;
+  uint16_t colorCursor;
+  uint16_t colorTitleBg;
+  uint16_t colorTitleTxt;
+  uint16_t colorText;
+  uint16_t colorSelected;
+  uint16_t colorSplitLine;
+  uint16_t colorHighlight;
+  uint16_t colorStatusBg;
+  uint16_t colorStatusTxt;
+  uint16_t colorPopupBg;
+  uint16_t colorPopupTxt;
+  uint16_t colorAlertBg;
+  uint16_t colorAlertTxt;
+  uint16_t colorPercentTxt;
+  uint16_t colorBarfill;
+  uint16_t colorIndicator;
+  uint16_t colorCoordinate;
+
+  // Temperatures
+  int16_t pidCycles = DEF_PIDCYCLES;
+  #if ENABLED(PIDTEMP)
+    celsius_t hotendPIDT = DEF_HOTENDPIDT;
+  #endif
+  #if ENABLED(PIDTEMPBED)
+    celsius_t bedPIDT = DEF_BEDPIDT;
+  #endif
+  #if ENABLED(PIDTEMPCHAMBER)
+    celsius_t chamberPIDT = DEF_CHAMBERPIDT;
+  #endif
+  #if ENABLED(PREVENT_COLD_EXTRUSION)
+    int16_t extMinT = EXTRUDE_MINTEMP;
+  #endif
+  #if ENABLED(PREHEAT_BEFORE_LEVELING)
+    int16_t bedLevT = LEVELING_BED_TEMP;
+  #endif
+
+  // Various Options
+  #if ENABLED(BAUD_RATE_GCODE)
+    bool baud115K = false;
+  #endif
+  #if ALL(LCD_BED_TRAMMING, HAS_BED_PROBE)
+    bool fullManualTramming = false;
+  #endif
+  #if ENABLED(PROUI_MEDIASORT)
+    bool mediaSort = true;
+  #endif
+  bool mediaAutoMount = ENABLED(HAS_SD_EXTENDER);
+  #if ALL(INDIVIDUAL_AXIS_HOMING_SUBMENU, MESH_BED_LEVELING)
+    uint8_t zAfterHoming = DEF_Z_AFTER_HOMING;
+    #define Z_POST_CLEARANCE hmiData.zAfterHoming
+  #endif
+  #if ALL(LED_CONTROL_MENU, HAS_COLOR_LEDS)
+    LEDColor ledColor = defColorLeds;
+  #endif
+  #if HAS_GCODE_PREVIEW
+    bool enablePreview = true;
+  #endif
+  #if ENABLED(PROUI_MESH_EDIT)
+    float mesh_min_x = DEF_MESH_MIN_X;
+    float mesh_max_x = DEF_MESH_MAX_X;
+    float mesh_min_y = DEF_MESH_MIN_Y;
+    float mesh_max_y = DEF_MESH_MAX_Y;
+  #endif
+  #if HAS_BED_PROBE
+    IF_DISABLED(BD_SENSOR, uint8_t multiple_probing = MULTIPLE_PROBING);
+    uint16_t zprobeFeed = DEF_Z_PROBE_FEEDRATE_SLOW;
+  #endif
+  #if HAS_EXTRUDERS
+    bool Invert_E0 = DEF_INVERT_E0_DIR;
+  #endif
+} hmi_data_t;
+
+extern hmi_data_t hmiData;
+
+#define EXTUI_EEPROM_DATA_SIZE sizeof(hmi_data_t)
+
+// ProUI extra feature redefines
+#if ENABLED(PROUI_MESH_EDIT)
+  #undef  MESH_MIN_X
+  #undef  MESH_MAX_X
+  #undef  MESH_MIN_Y
+  #undef  MESH_MAX_Y
+  #define MESH_MIN_X hmiData.mesh_min_x
+  #define MESH_MAX_X hmiData.mesh_max_x
+  #define MESH_MIN_Y hmiData.mesh_min_y
+  #define MESH_MAX_Y hmiData.mesh_max_y
+#endif
+
+#if HAS_BED_PROBE
+  #undef Z_PROBE_FEEDRATE_SLOW
+  #define Z_PROBE_FEEDRATE_SLOW hmiData.zprobeFeed
+#endif
+
+#if HAS_EXTRUDERS
+  #undef INVERT_E0_DIR
+  #define INVERT_E0_DIR hmiData.Invert_E0
+#endif

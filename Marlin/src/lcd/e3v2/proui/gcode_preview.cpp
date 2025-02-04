@@ -39,51 +39,41 @@
 
 #include "../../marlinui.h"
 #include "../../../sd/cardreader.h"
-#include "../../../MarlinCore.h" // for wait_for_user
-#include "dwin.h"
 #include "dwin_popup.h"
 #include "base64.h"
 
-#define THUMBWIDTH 230
-#define THUMBHEIGHT 180
+#if ENABLED(TJC_DISPLAY)
+  #define THUMBWIDTH  180
+  #define THUMBHEIGHT 180
+#else
+  #define THUMBWIDTH  200
+  #define THUMBHEIGHT 200
+#endif
 
 Preview preview;
-
-typedef struct {
-  char name[13] = "";   // 8.3 + null
-  uint32_t thumbstart = 0;
-  int thumbsize = 0;
-  int thumbheight = 0, thumbwidth = 0;
-  float time = 0;
-  float filament = 0;
-  float layer = 0;
-  float width = 0, height = 0, length = 0;
-
-  void setname(const char * const fn) {
-    const uint8_t len = _MIN(sizeof(name) - 1, strlen(fn));
-    memcpy(name, fn, len);
-    name[len] = '\0';
-  }
-
-  void clear() {
-    name[0] = '\0';
-    thumbstart = 0;
-    thumbsize = 0;
-    thumbheight = thumbwidth = 0;
-    time = 0;
-    filament = 0;
-    layer = 0;
-    height = width = length = 0;
-  }
-
-} fileprop_t;
-
 fileprop_t fileprop;
+
+void fileprop_t::setname(const char * const fn) {
+  const uint8_t len = _MIN(sizeof(name) - 1, strlen(fn));
+  memcpy(name, fn, len);
+  name[len] = '\0';
+}
+
+void fileprop_t::clear() {
+  name[0] = '\0';
+  thumbstart = 0;
+  thumbsize = 0;
+  thumbheight = thumbwidth = 0;
+  time = 0;
+  filament = 0;
+  layer = 0;
+  height = width = length = 0;
+}
 
 void getValue(const char * const buf, PGM_P const key, float &value) {
   if (value != 0.0f) return;
 
-  char *posptr = strstr_P(buf, key);
+  const char *posptr = strstr_P(buf, key);
   if (posptr == nullptr) return;
 
   char num[10] = "";
@@ -101,7 +91,7 @@ void getValue(const char * const buf, PGM_P const key, float &value) {
 
 bool Preview::hasPreview() {
   const char * const tbstart = PSTR("; thumbnail begin " STRINGIFY(THUMBWIDTH) "x" STRINGIFY(THUMBHEIGHT));
-  char *posptr = nullptr;
+  const char *posptr = nullptr;
   uint32_t indx = 0;
   float tmp = 0;
 
@@ -184,11 +174,7 @@ bool Preview::hasPreview() {
 }
 
 void Preview::drawFromSD() {
-  if (!hasPreview()) {
-    hmiFlag.select_flag = 1;
-    wait_for_user = false;
-    return;
-  }
+  hasPreview();
 
   MString<45> buf;
   dwinDrawRectangle(1, hmiData.colorBackground, 0, 0, DWIN_WIDTH, STATUS_Y - 1);
@@ -208,10 +194,18 @@ void Preview::drawFromSD() {
     buf.set(F("Volume: "), p_float_t(fileprop.width, 1), 'x', p_float_t(fileprop.length, 1), 'x', p_float_t(fileprop.height, 1), F(" mm"));
     DWINUI::drawString(20, 70, &buf);
   }
+
+  if (!fileprop.thumbsize) {
+    const uint8_t xpos = ((DWIN_WIDTH)  / 2) - 55,  // 55 = iconW/2
+                  ypos = ((DWIN_HEIGHT)  / 2) - 125;
+    DWINUI::drawIcon(ICON_Info_0, xpos, ypos);
+    buf.set(PSTR("No " STRINGIFY(THUMBWIDTH) "x" STRINGIFY(THUMBHEIGHT) " Thumbnail"));
+    DWINUI::drawCenteredString(false, (DWINUI::fontID * 3), DWINUI::textColor, DWINUI::backColor, 0, DWIN_WIDTH, (DWIN_HEIGHT / 2), &buf);
+  }
   DWINUI::drawButton(BTN_Print, 26, 290);
   DWINUI::drawButton(BTN_Cancel, 146, 290);
-  show();
-  drawSelectHighlight(true, 290);
+  if (fileprop.thumbsize) show();
+  drawSelectHighlight(false, 290);
   dwinUpdateLCD();
 }
 

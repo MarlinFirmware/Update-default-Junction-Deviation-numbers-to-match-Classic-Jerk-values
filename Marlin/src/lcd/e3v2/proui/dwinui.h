@@ -57,7 +57,6 @@
 #define ICON_HSMode           ICON_MaxAccZ
 #define ICON_InputShaping     ICON_MaxAccelerated
 #define ICON_JDmm             ICON_MaxJerk
-#define ICON_Level            ICON_Mesh
 #define ICON_Lock             ICON_Checkbox
 #define ICON_ManualMesh       ICON_Mesh
 #define ICON_MaxPosX          ICON_MoveX

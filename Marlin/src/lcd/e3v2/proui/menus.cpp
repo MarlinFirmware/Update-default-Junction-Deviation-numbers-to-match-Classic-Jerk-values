@@ -157,7 +157,7 @@ void onDrawChkbMenu(MenuItem* menuitem, int8_t line) {
   onDrawChkbMenu(menuitem, line, val);
 }
 
-void DrawItemEdit(const bool selected) {
+void drawItemEdit(const bool selected) {
   const uint16_t bcolor = selected ? hmiData.colorSelected : hmiData.colorBackground;
   const uint8_t iNum = 4 - ((menuData.dp > 0) ? (menuData.dp - 1) : 0);
   switch (checkkey) {
@@ -202,7 +202,7 @@ void setOnClick(uint8_t process, const int32_t lo, const int32_t hi, uint8_t dp,
 //  apply: update function when the encoder is pressed
 void setValueOnClick(uint8_t process, const int32_t lo, const int32_t hi, const int32_t val, void (*apply)()/*=nullptr*/, void (*liveUpdate)()/*=nullptr*/) {
   setOnClick(process, lo, hi, 0, val, apply, liveUpdate);
-  DrawItemEdit(true);
+  drawItemEdit(true);
 }
 
 // Generic onclick event for float values
@@ -215,7 +215,7 @@ void setValueOnClick(uint8_t process, const int32_t lo, const int32_t hi, const 
 void setValueOnClick(uint8_t process, const float lo, const float hi, uint8_t dp, const float val, void (*apply)()/*=nullptr*/, void (*liveUpdate)()/*=nullptr*/) {
   const int32_t value =  round(val * POW(10, dp));
   setOnClick(process, lo * POW(10, dp), hi * POW(10, dp), dp, value, apply, liveUpdate);
-  DrawItemEdit(true);
+  drawItemEdit(true);
 }
 
 // Generic onclick event for integer values
@@ -285,14 +285,14 @@ int8_t hmiGet(bool draw) {
   if (encoder_diffState != ENCODER_DIFF_NO) {
     if (applyEncoder(encoder_diffState, menuData.value)) {
       encoderRate.enabled = false;
-      if (draw) DrawItemEdit(false);
+      if (draw) drawItemEdit(false);
       checkkey = ID_Menu;
       return 2;
     }
     LIMIT(menuData.value, lo, hi);
   }
   const bool change = cval != menuData.value;
-  if (change) DrawItemEdit(true);
+  if (change) drawItemEdit(true);
   return int8_t(change);
 }
 
@@ -547,13 +547,13 @@ void updateMenu(Menu* &menu) {
   menu->draw();
 }
 
-void ReDrawMenu(bool force/*=false*/) {
+void redrawMenu(bool force/*=false*/) {
   if (currentMenu && (force || checkkey == ID_Menu)) currentMenu->draw();
-  if (force) DrawItemEdit(true);
+  if (force) drawItemEdit(true);
 }
 
-void ReDrawItem() {
-  static_cast<MenuItem*>(currentMenu->selectedItem())->redraw(false);
+void redrawItem() {
+  static_cast<MenuItemPtr*>(currentMenu->selectedItem())->value;
 }
 
 #endif // DWIN_LCD_PROUI

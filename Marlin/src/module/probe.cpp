@@ -352,7 +352,7 @@ FORCE_INLINE void probe_specific_action(const bool deploy) {
   #if ENABLED(PAUSE_BEFORE_DEPLOY_STOW)
 
     // Start preheating before waiting for user confirmation that the probe is ready.
-    TERN_(PREHEAT_BEFORE_PROBING, if (deploy) probe.preheat_for_probing(0, PROBING_BED_TEMP, true));
+    TERN_(PREHEAT_BEFORE_PROBING, if (deploy) probe.preheat_for_probing(PROBING_NOZZLE_TEMP, PROBING_BED_TEMP, true));
 
     FSTR_P const ds_fstr = deploy ? GET_TEXT_F(MSG_MANUAL_DEPLOY) : GET_TEXT_F(MSG_MANUAL_STOW);
     ui.return_to_status();       // To display the new status message
@@ -748,43 +748,200 @@ bool Probe::probe_down_to_z(const_float_t z, const_feedRate_t fr_mm_s) {
  *
  * @return The Z position of the bed at the current XY or NAN on error.
  */
-float Probe::run_z_probe(const bool sanity_check/*=true*/, const_float_t z_min_point/*=Z_PROBE_LOW_POINT*/, const_float_t z_clearance/*=Z_TWEEN_SAFE_CLEARANCE*/) {
-  DEBUG_SECTION(log_probe, "Probe::run_z_probe", DEBUGGING(LEVELING));
+#if DISABLED(DWIN_LCD_PROUI)
 
-  const float zoffs = SUM_TERN(HAS_HOTEND_OFFSET, -offset.z, hotend_offset[active_extruder].z);
+  float Probe::run_z_probe(const bool sanity_check/*=true*/, const_float_t z_min_point/*=Z_PROBE_LOW_POINT*/, const_float_t z_clearance/*=Z_TWEEN_SAFE_CLEARANCE*/) {
+    DEBUG_SECTION(log_probe, "Probe::run_z_probe", DEBUGGING(LEVELING));
 
-  auto try_to_probe = [&](PGM_P const plbl, const_float_t z_probe_low_point, const feedRate_t fr_mm_s, const bool scheck) -> bool {
-    constexpr float error_tolerance = Z_PROBE_ERROR_TOLERANCE;
-    if (DEBUGGING(LEVELING)) {
-      DEBUG_ECHOPGM_P(plbl);
-      DEBUG_ECHOLNPGM("> try_to_probe(..., ", z_probe_low_point, ", ", fr_mm_s, ", ...)");
-    }
+    const float zoffs = SUM_TERN(HAS_HOTEND_OFFSET, -offset.z, hotend_offset[active_extruder].z);
 
-    // Tare the probe, if supported
-    if (TERN0(PROBE_TARE, tare())) return true;
-
-    // Do a first probe at the fast speed
-    const bool probe_fail = probe_down_to_z(z_probe_low_point, fr_mm_s),              // No probe trigger?
-               early_fail = (scheck && current_position.z > zoffs + error_tolerance); // Probe triggered too high?
-    #if ENABLED(DEBUG_LEVELING_FEATURE)
-      if (DEBUGGING(LEVELING) && (probe_fail || early_fail)) {
-        DEBUG_ECHOPGM(" Probe fail! - ");
-        if (probe_fail) DEBUG_ECHOLNPGM("No trigger.");
-        if (early_fail) DEBUG_ECHOLNPGM("Triggered early (above ", zoffs + error_tolerance, "mm)");
+    auto try_to_probe = [&](PGM_P const plbl, const_float_t z_probe_low_point, const feedRate_t fr_mm_s, const bool scheck) -> bool {
+      constexpr float error_tolerance = Z_PROBE_ERROR_TOLERANCE;
+      if (DEBUGGING(LEVELING)) {
+        DEBUG_ECHOPGM_P(plbl);
+        DEBUG_ECHOLNPGM("> try_to_probe(..., ", z_probe_low_point, ", ", fr_mm_s, ", ...)");
       }
-    #else
-      UNUSED(plbl);
+
+      // Tare the probe, if supported
+      if (TERN0(PROBE_TARE, tare())) return true;
+
+      // Do a first probe at the fast speed
+      const bool probe_fail = probe_down_to_z(z_probe_low_point, fr_mm_s),              // No probe trigger?
+                 early_fail = (scheck && current_position.z > zoffs + error_tolerance); // Probe triggered too high?
+      #if ENABLED(DEBUG_LEVELING_FEATURE)
+        if (DEBUGGING(LEVELING) && (probe_fail || early_fail)) {
+          DEBUG_ECHOPGM(" Probe fail! - ");
+          if (probe_fail) DEBUG_ECHOLNPGM("No trigger.");
+          if (early_fail) DEBUG_ECHOLNPGM("Triggered early (above ", zoffs + error_tolerance, "mm)");
+        }
+      #else
+        UNUSED(plbl);
+      #endif
+      return probe_fail || early_fail;
+    };
+
+    // Stop the probe before it goes too low to prevent damage.
+    // For known Z probe below the expected trigger point, otherwise -10mm lower.
+    const float z_probe_low_point = zoffs + z_min_point -float((!axis_is_trusted(Z_AXIS)) * 10);
+    if (DEBUGGING(LEVELING)) DEBUG_ECHOLNPGM("Probe Low Point: ", z_probe_low_point);
+
+    // Double-probing does a fast probe followed by a slow probe
+    #if TOTAL_PROBING == 2
+
+      // Attempt to tare the probe
+      if (TERN0(PROBE_TARE, tare())) return NAN;
+
+      // Do a first probe at the fast speed
+      if (try_to_probe(PSTR("FAST"), z_probe_low_point, z_probe_fast_mm_s, sanity_check)) return NAN;
+
+      const float z1 = DIFF_TERN(HAS_DELTA_SENSORLESS_PROBING, current_position.z, largest_sensorless_adj);
+      if (DEBUGGING(LEVELING)) DEBUG_ECHOLNPGM("1st Probe Z:", z1);
+
+      // Raise to give the probe clearance
+      do_z_clearance(z1 + (Z_CLEARANCE_MULTI_PROBE), false);
+
+    #elif Z_PROBE_FEEDRATE_FAST != Z_PROBE_FEEDRATE_SLOW
+
+      // If the nozzle is well over the travel height then
+      // move down quickly before doing the slow probe
+      const float z = (Z_CLEARANCE_DEPLOY_PROBE) + 5.0f + _MAX(zoffs, 0.0f);
+      if (current_position.z > z) {
+        // Probe down fast. If the probe never triggered, raise for probe clearance
+        if (!probe_down_to_z(z, z_probe_fast_mm_s))
+          do_z_clearance(z_clearance);
+      }
     #endif
-    return probe_fail || early_fail;
-  };
 
-  // Stop the probe before it goes too low to prevent damage.
-  // For known Z probe below the expected trigger point, otherwise -10mm lower.
-  const float z_probe_low_point = zoffs + z_min_point -float((!axis_is_trusted(Z_AXIS)) * 10);
-  if (DEBUGGING(LEVELING)) DEBUG_ECHOLNPGM("Probe Low Point: ", z_probe_low_point);
+    #if EXTRA_PROBING > 0
+      float probes[TOTAL_PROBING];
+    #endif
 
-  // Double-probing does a fast probe followed by a slow probe
-  #if TOTAL_PROBING == 2
+    #if TOTAL_PROBING > 2
+      float probes_z_sum = 0;
+      for (
+        #if EXTRA_PROBING > 0
+          uint8_t p = 0; p < TOTAL_PROBING; p++
+        #else
+          uint8_t p = TOTAL_PROBING; p--;
+        #endif
+      )
+    #endif
+      {
+        // If the probe won't tare, return
+        if (TERN0(PROBE_TARE, tare())) return true;
+
+        // Probe downward slowly to find the bed
+        if (DEBUGGING(LEVELING)) DEBUG_ECHOLNPGM("Slow Probe:");
+        if (try_to_probe(PSTR("SLOW"), z_probe_low_point, MMM_TO_MMS(Z_PROBE_FEEDRATE_SLOW), sanity_check)) return NAN;
+
+        TERN_(MEASURE_BACKLASH_WHEN_PROBING, backlash.measure_with_probe());
+
+        const float z = DIFF_TERN(HAS_DELTA_SENSORLESS_PROBING, current_position.z, largest_sensorless_adj);
+
+        #if EXTRA_PROBING > 0
+          // Insert Z measurement into probes[]. Keep it sorted ascending.
+          for (uint8_t i = 0; i <= p; ++i) {                            // Iterate the saved Zs to insert the new Z
+            if (i == p || probes[i] > z) {                              // Last index or new Z is smaller than this Z
+              for (int8_t m = p; --m >= i;) probes[m + 1] = probes[m];  // Shift items down after the insertion point
+              probes[i] = z;                                            // Insert the new Z measurement
+              break;                                                    // Only one to insert. Done!
+            }
+          }
+        #elif TOTAL_PROBING > 2
+          probes_z_sum += z;
+        #else
+          UNUSED(z);
+        #endif
+
+        #if TOTAL_PROBING > 2
+          // Small Z raise after all but the last probe
+          if (p
+            #if EXTRA_PROBING > 0
+              < TOTAL_PROBING - 1
+            #endif
+          ) do_z_clearance(z + (Z_CLEARANCE_MULTI_PROBE), false);
+        #endif
+      }
+
+    #if TOTAL_PROBING > 2
+
+      #if EXTRA_PROBING > 0
+        // Take the center value (or average the two middle values) as the median
+        static constexpr int PHALF = (TOTAL_PROBING - 1) / 2;
+        const float middle = probes[PHALF],
+                    median = ((TOTAL_PROBING) & 1) ? middle : (middle + probes[PHALF + 1]) * 0.5f;
+
+        // Remove values farthest from the median
+        uint8_t min_avg_idx = 0, max_avg_idx = TOTAL_PROBING - 1;
+        for (uint8_t i = EXTRA_PROBING; i--;)
+          if (ABS(probes[max_avg_idx] - median) > ABS(probes[min_avg_idx] - median))
+            max_avg_idx--; else min_avg_idx++;
+
+        // Return the average value of all remaining probes.
+        for (uint8_t i = min_avg_idx; i <= max_avg_idx; ++i)
+          probes_z_sum += probes[i];
+
+      #endif
+
+      const float measured_z = probes_z_sum * RECIPROCAL(MULTIPLE_PROBING);
+
+    #elif TOTAL_PROBING == 2
+
+      const float z2 = DIFF_TERN(HAS_DELTA_SENSORLESS_PROBING, current_position.z, largest_sensorless_adj);
+
+      if (DEBUGGING(LEVELING)) DEBUG_ECHOLNPGM("2nd Probe Z:", z2, " Discrepancy:", z1 - z2);
+
+      // Return a weighted average of the fast and slow probes
+      const float measured_z = (z2 * 3.0f + z1 * 2.0f) * 0.2f;
+
+    #else
+
+      // Return the single probe result
+      const float measured_z = current_position.z;
+
+    #endif
+
+    return DIFF_TERN(HAS_HOTEND_OFFSET, measured_z, hotend_offset[active_extruder].z);
+  }
+
+#else // if DWIN_LCD_PROUI
+
+  float Probe::run_z_probe(const bool sanity_check/*=true*/, const_float_t z_min_point/*=Z_PROBE_LOW_POINT*/, const_float_t z_clearance/*=Z_TWEEN_SAFE_CLEARANCE*/) {
+    DEBUG_SECTION(log_probe, "Probe::run_z_probe", DEBUGGING(LEVELING));
+
+    const float zoffs = SUM_TERN(HAS_HOTEND_OFFSET, -offset.z, hotend_offset[active_extruder].z);
+
+    auto try_to_probe = [&](PGM_P const plbl, const_float_t z_probe_low_point, const feedRate_t fr_mm_s, const bool scheck) -> bool {
+      constexpr float error_tolerance = Z_PROBE_ERROR_TOLERANCE;
+      if (DEBUGGING(LEVELING)) {
+        DEBUG_ECHOPGM_P(plbl);
+        DEBUG_ECHOLNPGM("> try_to_probe(..., ", z_probe_low_point, ", ", fr_mm_s, ", ...)");
+      }
+
+      // Tare the probe, if supported
+      if (TERN0(PROBE_TARE, tare())) return true;
+
+      // Do a first probe at the fast speed
+      const bool probe_fail = probe_down_to_z(z_probe_low_point, fr_mm_s),              // No probe trigger?
+                 early_fail = (scheck && current_position.z > zoffs + error_tolerance); // Probe triggered too high?
+      #if ENABLED(DEBUG_LEVELING_FEATURE)
+        if (DEBUGGING(LEVELING) && (probe_fail || early_fail)) {
+          DEBUG_ECHOPGM(" Probe fail! - ");
+          if (probe_fail) DEBUG_ECHOLNPGM("No trigger.");
+          if (early_fail) DEBUG_ECHOLNPGM("Triggered early (above ", zoffs + error_tolerance, "mm)");
+        }
+      #else
+        UNUSED(plbl);
+      #endif
+      return probe_fail || early_fail;
+    };
+
+    // Stop the probe before it goes too low to prevent damage.
+    // For known Z probe below the expected trigger point, otherwise -10mm lower.
+    const float z_probe_low_point = zoffs + z_min_point - float((!axis_is_trusted(Z_AXIS)) * 10);
+    if (DEBUGGING(LEVELING)) DEBUG_ECHOLNPGM("Probe Low Point: ", z_probe_low_point);
+
+    // Double-probing does a fast probe followed by a slow probe
 
     // Attempt to tare the probe
     if (TERN0(PROBE_TARE, tare())) return NAN;
@@ -798,33 +955,8 @@ float Probe::run_z_probe(const bool sanity_check/*=true*/, const_float_t z_min_p
     // Raise to give the probe clearance
     do_z_clearance(z1 + (Z_CLEARANCE_MULTI_PROBE), false);
 
-  #elif Z_PROBE_FEEDRATE_FAST != Z_PROBE_FEEDRATE_SLOW
-
-    // If the nozzle is well over the travel height then
-    // move down quickly before doing the slow probe
-    const float z = (Z_CLEARANCE_DEPLOY_PROBE) + 5.0f + _MAX(zoffs, 0.0f);
-    if (current_position.z > z) {
-      // Probe down fast. If the probe never triggered, raise for probe clearance
-      if (!probe_down_to_z(z, z_probe_fast_mm_s))
-        do_z_clearance(z_clearance);
-    }
-  #endif
-
-  #if EXTRA_PROBING > 0
-    float probes[TOTAL_PROBING];
-  #endif
-
-  #if TOTAL_PROBING > 2
     float probes_z_sum = 0;
-    for (
-      #if EXTRA_PROBING > 0
-        uint8_t p = 0; p < TOTAL_PROBING; p++
-      #else
-        uint8_t p = TOTAL_PROBING; p--;
-      #endif
-    )
-  #endif
-    {
+    for (uint8_t p = 0; p < hmiData.multiple_probing - 1; p++) {
       // If the probe won't tare, return
       if (TERN0(PROBE_TARE, tare())) return true;
 
@@ -835,72 +967,19 @@ float Probe::run_z_probe(const bool sanity_check/*=true*/, const_float_t z_min_p
       TERN_(MEASURE_BACKLASH_WHEN_PROBING, backlash.measure_with_probe());
 
       const float z = DIFF_TERN(HAS_DELTA_SENSORLESS_PROBING, current_position.z, largest_sensorless_adj);
-
-      #if EXTRA_PROBING > 0
-        // Insert Z measurement into probes[]. Keep it sorted ascending.
-        for (uint8_t i = 0; i <= p; ++i) {                            // Iterate the saved Zs to insert the new Z
-          if (i == p || probes[i] > z) {                              // Last index or new Z is smaller than this Z
-            for (int8_t m = p; --m >= i;) probes[m + 1] = probes[m];  // Shift items down after the insertion point
-            probes[i] = z;                                            // Insert the new Z measurement
-            break;                                                    // Only one to insert. Done!
-          }
-        }
-      #elif TOTAL_PROBING > 2
-        probes_z_sum += z;
-      #else
-        UNUSED(z);
-      #endif
-
-      #if TOTAL_PROBING > 2
-        // Small Z raise after all but the last probe
-        if (p
-          #if EXTRA_PROBING > 0
-            < TOTAL_PROBING - 1
-          #endif
-        ) do_z_clearance(z + (Z_CLEARANCE_MULTI_PROBE), false);
-      #endif
+      probes_z_sum += z;
+      // Small Z raise after probe
+      do_z_clearance(z + (Z_CLEARANCE_MULTI_PROBE), false);
     }
 
-  #if TOTAL_PROBING > 2
-
-    #if EXTRA_PROBING > 0
-      // Take the center value (or average the two middle values) as the median
-      static constexpr int PHALF = (TOTAL_PROBING - 1) / 2;
-      const float middle = probes[PHALF],
-                  median = ((TOTAL_PROBING) & 1) ? middle : (middle + probes[PHALF + 1]) * 0.5f;
-
-      // Remove values farthest from the median
-      uint8_t min_avg_idx = 0, max_avg_idx = TOTAL_PROBING - 1;
-      for (uint8_t i = EXTRA_PROBING; i--;)
-        if (ABS(probes[max_avg_idx] - median) > ABS(probes[min_avg_idx] - median))
-          max_avg_idx--; else min_avg_idx++;
-
-      // Return the average value of all remaining probes.
-      for (uint8_t i = min_avg_idx; i <= max_avg_idx; ++i)
-        probes_z_sum += probes[i];
-
-    #endif
-
-    const float measured_z = probes_z_sum * RECIPROCAL(MULTIPLE_PROBING);
-
-  #elif TOTAL_PROBING == 2
-
-    const float z2 = DIFF_TERN(HAS_DELTA_SENSORLESS_PROBING, current_position.z, largest_sensorless_adj);
-
-    if (DEBUGGING(LEVELING)) DEBUG_ECHOLNPGM("2nd Probe Z:", z2, " Discrepancy:", z1 - z2);
-
     // Return a weighted average of the fast and slow probes
-    const float measured_z = (z2 * 3.0f + z1 * 2.0f) * 0.2f;
+    const float measured_z = (hmiData.multiple_probing > 1) ?
+    (probes_z_sum * 3.0f + z1 * 2.0f) * 0.2f : z1;
 
-  #else
+    return DIFF_TERN(HAS_HOTEND_OFFSET, measured_z, hotend_offset[active_extruder].z);
+  }
 
-    // Return the single probe result
-    const float measured_z = current_position.z;
-
-  #endif
-
-  return DIFF_TERN(HAS_HOTEND_OFFSET, measured_z, hotend_offset[active_extruder].z);
-}
+#endif // !DWIN_LCD_PROUI
 
 #if DO_TOOLCHANGE_FOR_PROBING
 

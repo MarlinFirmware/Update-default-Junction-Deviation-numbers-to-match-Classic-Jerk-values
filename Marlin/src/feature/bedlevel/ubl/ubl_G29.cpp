@@ -44,6 +44,10 @@
   #include "../../../lcd/extui/ui_api.h"
 #endif
 
+#if ENABLED(DWIN_LCD_PROUI)
+  #include "../../../lcd/e3v2/proui/meshviewer.h"
+#endif
+
 #if ENABLED(UBL_HILBERT_CURVE)
   #include "../hilbert_curve.h"
 #endif
@@ -320,7 +324,7 @@ void unified_bed_leveling::G29() {
   // Check for commands that require the printer to be homed
   if (may_move) {
     planner.synchronize();
-    #if ALL(DWIN_LCD_PROUI, ZHOME_BEFORE_LEVELING)
+    #if ENABLED(DWIN_LCD_PROUI)
       save_ubl_active_state_and_disable();
       gcode.process_subcommands_now(F("G28Z"));
       restore_ubl_active_state(false); // ...without telling ExtUI "done"
@@ -784,6 +788,7 @@ void unified_bed_leveling::shift_mesh_height() {
       SERIAL_ECHOLNPGM("Probing mesh point ", point_num, "/", GRID_MAX_POINTS, ".");
       TERN_(HAS_STATUS_MESSAGE, ui.status_printf(0, F(S_FMT " %i/%i"), GET_TEXT_F(MSG_PROBING_POINT), point_num, int(GRID_MAX_POINTS)));
       TERN_(HAS_BACKLIGHT_TIMEOUT, ui.refresh_backlight_timeout());
+      TERN_(DWIN_LCD_PROUI, if (!hmiFlag.cancel_lev) { dwinRedrawScreen(); } else { break; })
 
       #if HAS_MARLINUI_MENU
         if (ui.button_pressed()) {
@@ -813,10 +818,13 @@ void unified_bed_leveling::shift_mesh_height() {
           ExtUI::onMeshUpdate(best.pos, ExtUI::G29_POINT_FINISH);
           ExtUI::onMeshUpdate(best.pos, measured_z);
         #endif
+        TERN_(DWIN_LCD_PROUI, meshViewer.drawMeshPoint(best.pos.x, best.pos.y, measured_z));
       }
       SERIAL_FLUSH(); // Prevent host M105 buffer overrun.
 
     } while (best.pos.x >= 0 && --count);
+
+    TERN_(DWIN_LCD_PROUI, if (hmiFlag.cancel_lev) { goto EXIT_PROBE_MESH; })
 
     GRID_LOOP(x, y) if (z_values[x][y] == HUGE_VALF) z_values[x][y] = NAN; // Restore NAN for HUGE_VALF marks
 
@@ -827,13 +835,18 @@ void unified_bed_leveling::shift_mesh_height() {
     probe.stow();
     TERN_(HAS_MARLINUI_MENU, ui.capture());
 
-    probe.move_z_after_probing();
+    TERN_(Z_AFTER_PROBING, probe.move_z_after_probing());
 
-    do_blocking_move_to_xy(
-      constrain(nearby.x - probe.offset_xy.x, MESH_MIN_X, MESH_MAX_X),
-      constrain(nearby.y - probe.offset_xy.y, MESH_MIN_Y, MESH_MAX_Y)
-    );
+    #if ENABLED(DWIN_LCD_PROUI)
+      bedlevel.smart_fill_mesh();
+    #else
+      do_blocking_move_to_xy(
+        constrain(nearby.x - probe.offset_xy.x, MESH_MIN_X, MESH_MAX_X),
+        constrain(nearby.y - probe.offset_xy.y, MESH_MIN_Y, MESH_MAX_Y)
+      );
+    #endif
 
+    TERN_(DWIN_LCD_PROUI, EXIT_PROBE_MESH:);
     restore_ubl_active_state();
   }
 
@@ -1193,9 +1206,9 @@ bool unified_bed_leveling::G29_parse_parameters() {
   }
 
   param.XY_seen.x = parser.seenval('X');
-  float sx = param.XY_seen.x ? parser.value_float() : current_position.x;
+  float sx = param.XY_seen.x ? parser.value_float() : current_position.x - TERN0(HAS_BED_PROBE, probe.offset.x);
   param.XY_seen.y = parser.seenval('Y');
-  float sy = param.XY_seen.y ? parser.value_float() : current_position.y;
+  float sy = param.XY_seen.y ? parser.value_float() : current_position.y - TERN0(HAS_BED_PROBE, probe.offset.y);
 
   if (param.XY_seen.x != param.XY_seen.y) {
     SERIAL_ECHOLNPGM("Both X & Y locations must be specified.\n");
@@ -1204,8 +1217,8 @@ bool unified_bed_leveling::G29_parse_parameters() {
 
   // If X or Y are not valid, use center of the bed values
   // (for UBL_HILBERT_CURVE default to lower-left corner instead)
-  if (!COORDINATE_OKAY(sx, X_MIN_BED, X_MAX_BED)) sx = TERN(UBL_HILBERT_CURVE, 0, X_CENTER);
-  if (!COORDINATE_OKAY(sy, Y_MIN_BED, Y_MAX_BED)) sy = TERN(UBL_HILBERT_CURVE, 0, Y_CENTER);
+  if (!COORDINATE_OKAY(sx, X_MIN_BED, X_MAX_BED)) sx = TERN(UBL_HILBERT_CURVE, 0, X_CENTER - TERN0(HAS_BED_PROBE, probe.offset.x));
+  if (!COORDINATE_OKAY(sy, Y_MIN_BED, Y_MAX_BED)) sy = TERN(UBL_HILBERT_CURVE, 0, Y_CENTER - TERN0(HAS_BED_PROBE, probe.offset.y));
 
   if (err_flag) return UBL_ERR;
 
@@ -1525,7 +1538,7 @@ void unified_bed_leveling::smart_fill_mesh() {
       }
 
       probe.stow();
-      probe.move_z_after_probing();
+      TERN_(Z_AFTER_PROBING, probe.move_z_after_probing());
 
       if (abort_flag) {
         SERIAL_ECHOLNPGM("?Error probing point. Aborting operation.");
@@ -1611,7 +1624,7 @@ void unified_bed_leveling::smart_fill_mesh() {
       }
     }
     probe.stow();
-    probe.move_z_after_probing();
+    TERN_(Z_AFTER_PROBING, probe.move_z_after_probing());
 
     if (abort_flag || finish_incremental_LSF(&lsf_results)) {
       SERIAL_ECHOLNPGM("Could not complete LSF!");
@@ -1779,8 +1792,8 @@ void unified_bed_leveling::smart_fill_mesh() {
     SERIAL_EOL();
 
     SERIAL_ECHOPGM("Y-Axis Mesh Points at: ");
-    for (uint8_t i = 0; i < GRID_MAX_POINTS_Y; ++i) {
-      SERIAL_ECHO(p_float_t(LOGICAL_Y_POSITION(get_mesh_y(i)), 3), F("  "));
+    for (uint8_t j = 0; j < GRID_MAX_POINTS_Y; ++j) {
+      SERIAL_ECHO(p_float_t(LOGICAL_Y_POSITION(get_mesh_y(j)), 3), F("  "));
       serial_delay(25);
     }
     SERIAL_EOL();

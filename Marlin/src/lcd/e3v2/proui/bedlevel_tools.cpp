@@ -74,14 +74,6 @@ bool drawing_mesh = false;
 
 #if ENABLED(AUTO_BED_LEVELING_UBL)
 
-  void BedLevelTools::manualValueUpdate(const uint8_t mesh_x, const uint8_t mesh_y, bool undefined/*=false*/) {
-    MString<MAX_CMD_SIZE> cmd;
-    cmd.set(F("M421 I"), mesh_x, 'J', mesh_y, 'Z', p_float_t(current_position.z, 3));
-    if (undefined) cmd += F(" N");
-    gcode.process_subcommands_now(cmd);
-    planner.synchronize();
-  }
-
   bool BedLevelTools::createPlaneFromMesh() {
     struct linear_fit_data lsf_results;
     incremental_LSF_reset(&lsf_results);
@@ -121,16 +113,15 @@ bool drawing_mesh = false;
     return false;
   }
 
-#else
-
-  void BedLevelTools::manualValueUpdate(const uint8_t mesh_x, const uint8_t mesh_y) {
-    gcode.process_subcommands_now(
-      TS(F("G29 I"), mesh_x, 'J', mesh_y, 'Z', p_float_t(current_position.z, 3))
-    );
-    planner.synchronize();
-  }
-
 #endif
+
+void BedLevelTools::manualValueUpdate(const uint8_t mesh_x, const uint8_t mesh_y, bool reset/*=false*/) {
+  float zval;
+  if (reset) { zval = 0; }
+  else { zval = current_position.z; }
+  gcode.process_subcommands_now(TS(F("M421I"), mesh_x, F("J"), mesh_y, F("Z"), p_float_t(zval, 3)));
+  planner.synchronize();
+}
 
 void BedLevelTools::manualMove(const uint8_t mesh_x, const uint8_t mesh_y, bool zmove/*=false*/) {
   gcode.process_subcommands_now(F("G28O"));
@@ -190,6 +181,7 @@ float BedLevelTools::getMinValue() {
 
 // Return 'true' if mesh is good and within LCD limits
 bool BedLevelTools::meshValidate() {
+  TERN_(PROUI_MESH_EDIT, if ((MESH_MAX_X <= MESH_MIN_X) || (MESH_MAX_Y <= MESH_MIN_Y)) return false);
   GRID_LOOP(x, y) {
     const float z = bedlevel.z_values[x][y];
     if (isnan(z) || !WITHIN(z, Z_OFFSET_MIN, Z_OFFSET_MAX)) return false;
@@ -246,7 +238,7 @@ bool BedLevelTools::meshValidate() {
       }
       else {          // has value
         MString<12> msg;
-        constexpr bool is_wide = (GRID_MAX_POINTS_X) >= TERN(TJC_DISPLAY, 8, 10);
+        const bool is_wide = (GRID_MAX_POINTS_X) >= TERN(TJC_DISPLAY, 8, 10);
         if (is_wide)
           msg.setf(F("%02i"), uint16_t(z * 100) % 100);
         else

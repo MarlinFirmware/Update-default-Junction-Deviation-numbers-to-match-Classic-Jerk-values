@@ -187,10 +187,10 @@ void invalidateMenu();
 void updateMenu(Menu* &menu);
 
 // Redraw the current Menu if it is valid
-void ReDrawMenu(bool force=false);
+void redrawMenu(bool force=false);
 
 // Redraw selected menu item
-void ReDrawItem();
+void redrawItem();
 
 // Clear menuItems array and free menuItems elements
 void menuItemsClear();

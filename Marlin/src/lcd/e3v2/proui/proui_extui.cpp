@@ -156,7 +156,11 @@ namespace ExtUI {
 
   #if HAS_LEVELING
     void onLevelingStart() { dwinLevelingStart(); }
-    void onLevelingDone() { dwinLevelingDone(); }
+    void onLevelingDone() {
+      #if ALL(HAS_MESH, HAS_BED_PROBE)
+        dwinLevelingDone();
+      #endif
+    }
     #if ENABLED(PREHEAT_BEFORE_LEVELING)
       celsius_t getLevelingBedTemp() { return hmiData.bedLevT; }
     #endif

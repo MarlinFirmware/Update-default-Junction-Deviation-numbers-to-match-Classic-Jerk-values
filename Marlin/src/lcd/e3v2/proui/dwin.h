@@ -106,72 +106,6 @@ enum processID : uint8_t {
 #define DWIN_ENGLISH 0
 
 typedef struct {
-  // Color settings
-  uint16_t colorBackground;
-  uint16_t colorCursor;
-  uint16_t colorTitleBg;
-  uint16_t colorTitleTxt;
-  uint16_t colorText;
-  uint16_t colorSelected;
-  uint16_t colorSplitLine;
-  uint16_t colorHighlight;
-  uint16_t colorStatusBg;
-  uint16_t colorStatusTxt;
-  uint16_t colorPopupBg;
-  uint16_t colorPopupTxt;
-  uint16_t colorAlertBg;
-  uint16_t colorAlertTxt;
-  uint16_t colorPercentTxt;
-  uint16_t colorBarfill;
-  uint16_t colorIndicator;
-  uint16_t colorCoordinate;
-
-  // Temperatures
-  #if HAS_PID_HEATING
-    int16_t pidCycles = DEF_PIDCYCLES;
-    #if ENABLED(PIDTEMP)
-      celsius_t hotendPIDT = DEF_HOTENDPIDT;
-    #endif
-    #if ENABLED(PIDTEMPBED)
-      celsius_t bedPIDT = DEF_BEDPIDT;
-    #endif
-    #if ENABLED(PIDTEMPCHAMBER)
-      celsius_t chamberPIDT = DEF_CHAMBERPIDT;
-    #endif
-  #endif
-  #if ENABLED(PREVENT_COLD_EXTRUSION)
-    celsius_t extMinT = EXTRUDE_MINTEMP;
-  #endif
-  #if ENABLED(PREHEAT_BEFORE_LEVELING)
-    celsius_t bedLevT = LEVELING_BED_TEMP;
-  #endif
-  #if ENABLED(BAUD_RATE_GCODE)
-    bool baud115K = false;
-  #endif
-  #if ALL(LCD_BED_TRAMMING, HAS_BED_PROBE)
-    bool fullManualTramming = false;
-  #endif
-  #if ENABLED(PROUI_MEDIASORT)
-    bool mediaSort = true;
-  #endif
-  bool mediaAutoMount = ENABLED(HAS_SD_EXTENDER);
-  #if ALL(INDIVIDUAL_AXIS_HOMING_SUBMENU, MESH_BED_LEVELING)
-    uint8_t zAfterHoming = DEF_Z_AFTER_HOMING;
-    #define Z_POST_CLEARANCE hmiData.zAfterHoming
-  #endif
-  #if ALL(LED_CONTROL_MENU, HAS_COLOR_LEDS)
-    LEDColor ledColor = defColorLeds;
-  #endif
-  #if HAS_GCODE_PREVIEW
-    bool enablePreview = true;
-  #endif
-} hmi_data_t;
-
-extern hmi_data_t hmiData;
-
-#define EXTUI_EEPROM_DATA_SIZE sizeof(hmi_data_t)
-
-typedef struct {
   int8_t r, g, b;
   void set(int8_t _r, int8_t _g, int8_t _b) { r = _r; g = _g; b = _b; }
   int8_t& operator[](const int i) {
@@ -202,6 +136,7 @@ typedef struct {
   bool pause_flag:1;    // printing is paused
   bool select_flag:1;   // Popup button selected
   bool home_flag:1;     // homing in course
+  bool cancel_lev:1;    // cancel abl
 } hmi_flag_t;
 
 extern hmi_flag_t hmiFlag;
@@ -225,11 +160,16 @@ uint32_t getHash(char * str);
     void saveMesh();
   #endif
 #endif
+#if HAS_BED_PROBE
+  void autoLevel();
+#else
+  void homeZAndDisable();
+#endif
 void rebootPrinter();
 void disableMotors();
-void autoLevel();
 void autoHome();
 #if HAS_PREHEAT
+  void drawPreheatHotendMenu();
   #define _DOPREHEAT(N) void DoPreheat##N();
   REPEAT_1(PREHEAT_COUNT, _DOPREHEAT)
 #endif
@@ -259,9 +199,6 @@ void doCoolDown();
   void ublMeshSave();
   void ublMeshLoad();
 #endif
-#if DISABLED(HAS_BED_PROBE)
-  void homeZAndDisable();
-#endif
 
 // Other
 void gotoPrintProcess();
@@ -290,8 +227,10 @@ void dwinHomingDone();
 #if HAS_MESH
   void dwinMeshUpdate(const int8_t cpos, const int8_t tpos, const_float_t zval);
 #endif
-void dwinLevelingStart();
-void dwinLevelingDone();
+#if HAS_LEVELING
+  void dwinLevelingStart();
+  void dwinLevelingDone();
+#endif
 void dwinPrintStarted();
 void dwinPrintPause();
 void dwinPrintResume();
@@ -336,6 +275,7 @@ void drawPrintFileMenu();
 void drawControlMenu();
 void drawAdvancedSettingsMenu();
 void drawPrepareMenu();
+void drawLevelMenu();
 void drawMoveMenu();
 void drawTrammingMenu();
 #if HAS_HOME_OFFSET
@@ -381,6 +321,7 @@ void drawMaxAccelMenu();
 #if HAS_MESH
   void drawMeshSetMenu();
   #if ENABLED(PROUI_MESH_EDIT)
+    void drawMeshInsetMenu();
     void drawEditMeshMenu();
   #endif
 #endif
