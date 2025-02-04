@@ -1,0 +1,18 @@
+#!/usr/bin/env bash
+#
+# Build tests for Linux x86_64 with SDL-based LVGL
+#
+
+# exit on first failure
+set -e
+
+#
+# Build with the default configurations
+#
+restore_configs
+opt_set MOTHERBOARD BOARD_SIMULATED TEMP_SENSOR_BED 1
+opt_enable PIDTEMPBED EEPROM_SETTINGS BAUD_RATE_GCODE SDL_CONTROLLER
+exec_test $1 $2 "Linux with EEPROM, SDL-based LVGL display" "$3"
+
+# cleanup
+restore_configs

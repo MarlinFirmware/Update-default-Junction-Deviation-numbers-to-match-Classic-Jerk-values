@@ -3313,6 +3313,9 @@
   //#define EXTUI_LOCAL_BEEPER // Enables use of local Beeper pin with external display
 #endif
 
+// Test LVGL UI
+//#define EXTUI_LVGL_TEST
+
 //=============================================================================
 //=============================== Graphical TFTs ==============================
 //=============================================================================
@@ -3529,6 +3532,21 @@
 // EasyThreeD ET-4000+ with button input and status LED
 //
 //#define EASYTHREED_UI
+
+//
+// Simple DirectMedia Layer (SDL) Controller (Native / Simulator with LVGL UI only)
+//
+//#define SDL_CONTROLLER
+#if ENABLED(SDL_CONTROLLER)
+  // SDL Display Resolution
+  #define TFT_WIDTH  480
+  #define TFT_HEIGHT 320
+
+  // SDL Input Devices
+  #define SDL_MOUSE_INPUT
+  #define SDL_MOUSEWHEEL_ENCODER
+  #define SDL_KEYBOARD_INPUT
+#endif
 
 //=============================================================================
 //=============================== Extra Features ==============================
