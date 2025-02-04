@@ -178,7 +178,7 @@ CardReader::CardReader() {
   IF_DISABLED(NO_SD_AUTOSTART, autofile_cancel());
 
   workDirDepth = 0;
-  ZERO(workDirParents);
+  //LOOP_L_N(i, MAX_DIR_DEPTH) workDirParents[i] = SdFile();
 
   #if ALL(HAS_MEDIA, HAS_SD_DETECT)
     SET_INPUT_PULLUP(SD_DETECT_PIN);
@@ -365,6 +365,54 @@ void CardReader::ls(const uint8_t lsflags/*=0*/) {
     printListing(root, nullptr, lsflags);
   }
 }
+
+#if ENABLED(PANELDUE)
+
+  //
+  // Recursive method to list files in JSON format
+  // The PanelDue will call this with no depth to get
+  // just the contents of the current folder. However,
+  // it's possible to set up code that will get the
+  // full card listing in a format much more compact
+  // than the current M20 output for many folders.
+  //
+  void CardReader::printListingJSON(const uint8_t depth, SdFile parent) {
+    dir_t p;
+    while (parent.readDir(&p, longFilename) > 0) {
+      if (depth && DIR_IS_SUBDIR(&p)) {
+        // Get the short name for the item, which we know is a folder
+        char dosFilename[FILENAME_LENGTH];
+        createFilename(dosFilename, p);
+
+        // Put this folder on the stack and recurse into it.
+        SdFile child; // child.close() in destructor
+        if (!child.open(&parent, dosFilename, O_READ)) return;
+
+        // Make the folder an object with an array inside
+        SERIAL_ECHOPGM("{\"", dosFilename, "\":[");
+        printListingJSON(depth - 1, child);
+        SERIAL_ECHOPGM("]},");
+      }
+      else if (is_visible_entity(p)) {
+        SERIAL_CHAR('"');
+        if (flag.filenameIsDir) SERIAL_CHAR('*');
+        SERIAL_ECHO(createFilename(filename, p));
+        SERIAL_ECHOPGM("\",");
+      }
+    }
+  }
+
+  //
+  // List all files on the SD card
+  //
+  void CardReader::lsJSON(const uint8_t depth, SdFile parent) {
+    SERIAL_ECHOPGM("\"files\":[");
+    parent.rewind();
+    printListingJSON(depth, parent);
+    SERIAL_ECHOPGM("]");
+  }
+
+#endif // PANELDUE
 
 #if ENABLED(LONG_FILENAME_HOST_SUPPORT)
 
