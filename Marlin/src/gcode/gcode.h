@@ -330,6 +330,15 @@
  * M363 - SCARA calibration: Move to cal-position PsiB (90 deg calibration - steps per degree)
  * M364 - SCARA calibration: Move to cal-position PSIC (90 deg to Theta calibration position)
  *
+ *** Accelerometer (Requires ACCELEROMETER_ADXL345) ***
+ * M955 - Accelerometer: Configure Accelerometer - <RepRapFirmware>
+ * M956 - Accelerometer: Collect and Save Accelerometer Data - <RepRapFirmware>
+ * M958 - Accelerometer: Collect and Save Accelerometer Data
+ * M974 - Accelerometer: Measure Print Head Resonance - Report Raw Samples - <Prusa Firmware>
+ * M975 - Accelerometer: Measure Accelerometer Sampling Frequency - <Prusa Firmware>
+ * M976 - Accelerometer: Measure Print Head Resonance - Frequency Response - <Prusa Firmware>
+ * M977 - Accelerometer: Calibrate Stepper Motor Frequency Compensation (Input Shaping) - <Prusa Firmware>
+ *
  *** Custom codes (can be changed to suit future G-code standards) ***
  * G425 - Calibrate using a conductive object. (Requires CALIBRATION_GCODE)
  * M928 - Start SD logging: "M928 filename.gco". Stop with M29. (Requires SDSUPPORT)
@@ -1279,6 +1288,17 @@ private:
 
   #if ENABLED(MAGNETIC_PARKING_EXTRUDER)
     static void M951();
+  #endif
+
+  #if ENABLED(ACCELEROMETER_ADXL345)
+    static void M955();
+    static void M955_report(const bool forReplay=true);
+    static void M956();
+    static void M958();
+    static void M974();
+    static void M975();
+    static void M976();
+    static void M977();
   #endif
 
   #if ENABLED(TOUCH_SCREEN_CALIBRATION)

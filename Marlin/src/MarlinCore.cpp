@@ -34,6 +34,10 @@
 #include "HAL/shared/esp_wifi.h"
 #include "HAL/shared/cpu_exception/exception_hook.h"
 
+#if ENABLED(ACCELEROMETER_ADXL345)
+  #include "feature/accelerometer/acc_adxl345.h"
+#endif
+
 #if ENABLED(WIFISUPPORT)
   #include "HAL/shared/esp_wifi.h"
 #endif
@@ -1235,6 +1239,11 @@ void setup() {
   TERN_(DYNAMIC_VECTORTABLE, hook_cpu_exceptions()); // If supported, install Marlin exception handlers at runtime
 
   SETUP_RUN(hal.init());
+
+  // Accelerometer quick initialization
+  #if ENABLED(ACCELEROMETER_ADXL345)
+    SETUP_RUN(adxl345.begin());
+  #endif
 
   // Init and disable SPI thermocouples; this is still needed
   #if TEMP_SENSOR_IS_MAX_TC(0) || (TEMP_SENSOR_IS_MAX_TC(REDUNDANT) && REDUNDANT_TEMP_MATCH(SOURCE, E0))
