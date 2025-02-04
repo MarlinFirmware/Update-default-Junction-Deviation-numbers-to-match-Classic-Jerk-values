@@ -602,6 +602,13 @@ typedef struct SettingsDataStruct {
   #endif
 
   //
+  // Encoder Reverse
+  //
+  #if ENABLED(REVERSIBLE_ENCODER)
+    bool reverse_encoder;                               // ProUI
+  #endif
+
+  //
   // Fan tachometer check
   //
   #if HAS_FANCHECK
@@ -1728,6 +1735,13 @@ void MarlinSettings::postprocess() {
     #endif
 
     //
+    // Encoder Reverse
+    //
+    #if ENABLED(REVERSIBLE_ENCODER)
+      EEPROM_WRITE(ui.reverse_encoder);
+    #endif
+
+    //
     // Fan tachometer check
     //
     #if HAS_FANCHECK
@@ -2849,6 +2863,14 @@ void MarlinSettings::postprocess() {
       #endif
 
       //
+      // Encoder Reverse
+      //
+      #if ENABLED(REVERSIBLE_ENCODER)
+        _FIELD_TEST(reverse_encoder);
+        EEPROM_READ(ui.reverse_encoder);
+      #endif
+
+      //
       // Fan tachometer check
       //
       #if HAS_FANCHECK
@@ -3409,6 +3431,13 @@ void MarlinSettings::reset() {
   //
   #if ENABLED(SOUND_MENU_ITEM)
     ui.sound_on = ENABLED(SOUND_ON_DEFAULT);
+  #endif
+
+  //
+  // Encoder Reverse
+  //
+  #if ENABLED(REVERSIBLE_ENCODER)
+    ui.reverse_encoder = false;
   #endif
 
   //

@@ -222,6 +222,9 @@ namespace ExtUI {
         case MPC_STARTED:
           StatusScreen::setStatusMessage(GET_TEXT_F(MSG_MPC_AUTOTUNE));
           break;
+        case MPC_TEMP_ERROR:  break;
+        case MPC_INTERRUPTED: break;
+        case MPC_DONE:        break;
       }
       GOTO_SCREEN(StatusScreen);
     }
