@@ -239,7 +239,7 @@ void disp_bed_temp() {
 }
 
 void disp_fan_speed() {
-  sprintf_P(public_buf_l, PSTR("%d%%"), (int)thermalManager.fanSpeedPercent(0));
+  sprintf_P(public_buf_l, PSTR("%d%%"), (int)fans[0].speed_pct());
   lv_label_set_text(labelFan, public_buf_l);
 }
 

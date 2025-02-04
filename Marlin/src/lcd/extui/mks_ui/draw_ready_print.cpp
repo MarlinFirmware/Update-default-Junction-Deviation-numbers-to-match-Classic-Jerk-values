@@ -233,7 +233,7 @@ void lv_temp_refr() {
     lv_obj_align(labelBed, buttonBedstate, LV_ALIGN_OUT_RIGHT_MID, 0, 0);
   #endif
   #if HAS_FAN
-    sprintf_P(public_buf_l, PSTR("%d%%"), (int)thermalManager.fanSpeedPercent(0));
+    sprintf_P(public_buf_l, PSTR("%d%%"), (int)fans[0].speed_pct());
     lv_label_set_text(labelFan, public_buf_l);
     lv_obj_align(labelFan, buttonFanstate, LV_ALIGN_OUT_RIGHT_MID, 0, 0);
   #endif

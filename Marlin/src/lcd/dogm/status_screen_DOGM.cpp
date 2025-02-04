@@ -672,7 +672,7 @@ void MarlinUI::draw_status_screen() {
       static uint8_t fan_frame;
       if (old_blink != blink) {
         old_blink = blink;
-        if (!thermalManager.fan_speed[0] || ++fan_frame >= STATUS_FAN_FRAMES) fan_frame = 0;
+        if (!fans[0].speed || ++fan_frame >= STATUS_FAN_FRAMES) fan_frame = 0;
       }
     #endif
     if (PAGE_CONTAINS(STATUS_FAN_Y, STATUS_FAN_Y + STATUS_FAN_HEIGHT - 1))
@@ -684,7 +684,7 @@ void MarlinUI::draw_status_screen() {
             fan_frame == 3 ? status_fan3_bmp :
           #endif
         #elif STATUS_FAN_FRAMES > 1
-          blink && thermalManager.fan_speed[0] ? status_fan1_bmp :
+          blink && fans[0].speed ? status_fan1_bmp :
         #endif
         status_fan0_bmp
       );
@@ -756,15 +756,15 @@ void MarlinUI::draw_status_screen() {
     #if DO_DRAW_FAN
       if (PAGE_CONTAINS(STATUS_FAN_TEXT_Y - INFO_FONT_ASCENT, STATUS_FAN_TEXT_Y - 1)) {
         char c = '%';
-        uint16_t spd = thermalManager.fan_speed[0];
+        uint16_t spd = fans[0].speed;
         if (spd) {
           #if ENABLED(ADAPTIVE_FAN_SLOWING)
-            if (!blink && thermalManager.fan_speed_scaler[0] < 128) {
-              spd = thermalManager.scaledFanSpeed(0, spd);
+            if (!blink && fans[0].speed_scaler < 128) {
+              spd = fans[0].scaled_speed(spd);
               c = '*';
             }
           #endif
-          lcd_put_u8str(STATUS_FAN_TEXT_X, STATUS_FAN_TEXT_Y, i16tostr3rj(thermalManager.pwmToPercent(spd)));
+          lcd_put_u8str(STATUS_FAN_TEXT_X, STATUS_FAN_TEXT_Y, i16tostr3rj(Fan::pwmToPercent(spd)));
           lcd_put_lchar(c);
         }
       }

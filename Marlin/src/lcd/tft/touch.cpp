@@ -216,8 +216,11 @@ void Touch::touch(touch_control_t *control) {
       ui.clear_for_drawing();
       static uint8_t fan, fan_speed;
       fan = 0;
-      fan_speed = thermalManager.fan_speed[fan];
-      MenuItem_percent::action(GET_TEXT_F(MSG_FIRST_FAN_SPEED), &fan_speed, 0, 255, []{ thermalManager.set_fan_speed(fan, fan_speed); TERN_(LASER_SYNCHRONOUS_M106_M107, planner.buffer_sync_block(BLOCK_BIT_SYNC_FANS));});
+      fan_speed = fans[fan].speed;
+      MenuItem_percent::action(GET_TEXT_F(MSG_FIRST_FAN_SPEED), &fan_speed, 0, 255, []{
+        thermalManager.set_fan_speed(fan, fan_speed);
+        TERN_(LASER_SYNCHRONOUS_M106_M107, planner.buffer_sync_block(BLOCK_BIT_SYNC_FANS));
+      });
       break;
     case FEEDRATE:
       ui.clear_for_drawing();
