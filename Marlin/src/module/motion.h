@@ -75,6 +75,10 @@ extern xyz_pos_t cartes;
   constexpr feedRate_t z_probe_fast_mm_s = MMM_TO_MMS(Z_PROBE_FEEDRATE_FAST);
 #endif
 
+#if ENABLED(Z_SAFE_HOMING)
+  constexpr xy_float_t safe_homing_xy = { Z_SAFE_HOMING_X_POINT, Z_SAFE_HOMING_Y_POINT };
+#endif
+
 /**
  * Feed rates are often configured with mm/m
  * but the planner and stepper like mm/s units.
@@ -456,6 +460,13 @@ void set_axis_is_at_home(const AxisEnum axis);
    */
   extern main_axes_bits_t axes_homed, axes_trusted;
   void homeaxis(const AxisEnum axis);
+  #if ENABLED(CREALITY_RTS)
+    #if ENABLED(BLTOUCH_AND_Z_LIMIT)
+      float homeaxis_bl(const AxisEnum axis, const feedRate_t fr_mm_fast=Z_PROBE_FEEDRATE_FAST, const feedRate_t fr_mm_slow=Z_PROBE_FEEDRATE_SLOW);
+    #else
+      void homeaxis_bl(const AxisEnum axis);
+    #endif
+  #endif
   void set_axis_never_homed(const AxisEnum axis);
   main_axes_bits_t axes_should_home(main_axes_bits_t axes_mask=main_axes_mask);
   bool homing_needed_error(main_axes_bits_t axes_mask=main_axes_mask);

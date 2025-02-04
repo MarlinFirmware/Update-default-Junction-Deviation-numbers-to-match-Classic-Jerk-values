@@ -1,6 +1,6 @@
 /**
  * Marlin 3D Printer Firmware
- * Copyright (c) 2020 MarlinFirmware [https://github.com/MarlinFirmware/Marlin]
+ * Copyright (c) 2024 MarlinFirmware [https://github.com/MarlinFirmware/Marlin]
  *
  * Based on Sprinter and grbl.
  * Copyright (c) 2011 Camiel Gubbels / Erik van der Zalm
@@ -20,29 +20,27 @@
  *
  */
 
-#include "../../inc/MarlinConfig.h"
+#include "../../inc/MarlinConfigPre.h"
 
-#if HAS_MEDIA
+#if ENABLED(MENU_RESET_WIFI)
 
 #include "../gcode.h"
-#include "../../sd/cardreader.h"
-#include "../../lcd/marlinui.h"
+#include "../../MarlinCore.h"
+
 #if ENABLED(CREALITY_RTS)
-  #include "../../lcd/rts/lcd_rts.h"
+  #include "../../../src/lcd/rts/lcd_rts.h"
 #endif
 
 /**
- * M23: Open a file
- *
- * The path is relative to the root directory
+ * M194: Reset WiFi Module
  */
-void GcodeSuite::M23() {
-  // Simplify3D includes the size, so zero out all spaces (#7227)
-  for (char *fn = parser.string_arg; *fn; ++fn) if (*fn == ' ') *fn = '\0';
-  card.openFileRead(parser.string_arg);
+void GcodeSuite::M194() {
+  TERN_(CREALITY_RTS, if (parser.seen('S')) wifi_enable_flag = parser.boolval('S'));
 
-  TERN_(SET_PROGRESS_PERCENT, ui.set_progress(0));
-  TERN_(CREALITY_RTS, RTS_OpenFileCloud());
+  // record pressed state and output low level
+  rts_wifi_state = PRESSED;
+  OUT_WRITE(RESET_WIFI_PIN, LOW);
+  SERIAL_ECHOLNPGM(STR_OK " wifi is resetting");
 }
 
-#endif // HAS_MEDIA
+#endif // MENU_RESET_WIFI

@@ -556,6 +556,13 @@ void GcodeSuite::process_parsed_command(const bool no_ok/*=false*/) {
         case 48: M48(); break;                                    // M48: Z probe repeatability test
       #endif
 
+      #if ENABLED(CREALITY_RTS)
+        #if HAS_MEDIA
+          case 72: M72(); break;                                  // M72: Cloud print filename
+        #endif
+        case 79: M79(); break;                                    // M79: Cloud print statistics
+      #endif
+
       #if ENABLED(SET_PROGRESS_MANUALLY)
         case 73: M73(); break;                                    // M73: Set progress percentage
       #endif
@@ -763,6 +770,11 @@ void GcodeSuite::process_parsed_command(const bool no_ok/*=false*/) {
 
       #if HAS_EXTRUDERS
         case 221: M221(); break;                                  // M221: Set Flow Percentage
+      #endif
+
+      #if ENABLED(CREALITY_RTS)
+        case 224: M224(); break;                                  // M224: LED On
+        case 225: M225(); break;                                  // M225: LED Off
       #endif
 
       #if ENABLED(DIRECT_PIN_CONTROL)
@@ -1114,6 +1126,11 @@ void GcodeSuite::process_parsed_command(const bool no_ok/*=false*/) {
         case 997: M997(); break;                                  // M997: Perform in-application firmware update
       #endif
 
+      #if ENABLED(CREALITY_WIFI)
+        case 930: M930(); break;                                  // M930: Support Creality WIFI Box
+        case 194: M194(); break;
+      #endif
+
       case 999: M999(); break;                                    // M999: Restart after being Stopped
 
       #if ENABLED(POWER_LOSS_RECOVERY)
@@ -1135,6 +1152,10 @@ void GcodeSuite::process_parsed_command(const bool no_ok/*=false*/) {
 
       #if ENABLED(UBL_MESH_WIZARD)
         case 1004: M1004(); break;                                // M1004: UBL Mesh Wizard
+      #endif
+
+      #if ENABLED(CREALITY_RTS)
+        case 2900: M2900(); break;                                // M2900: Report Bed Leveling Grid and test result
       #endif
 
       #if ENABLED(MAX7219_GCODE)
@@ -1241,6 +1262,10 @@ void GcodeSuite::process_subcommands_now(char * gcode) {
 
 #if ENABLED(HOST_KEEPALIVE_FEATURE)
 
+  #if ENABLED(CREALITY_RTS)
+    extern int change_page_font;
+  #endif
+
   /**
    * Output a "busy" message at regular intervals
    * while the machine is not accepting commands.
@@ -1258,7 +1283,7 @@ void GcodeSuite::process_subcommands_now(char * gcode) {
           TERN_(FULL_REPORT_TO_HOST_FEATURE, report_current_position_moving());
           break;
         case PAUSED_FOR_USER:
-          SERIAL_ECHO_MSG(STR_BUSY_PAUSED_FOR_USER);
+          if (TERN1(CREALITY_RTS, change_page_font == 7)) SERIAL_ECHO_MSG(STR_BUSY_PAUSED_FOR_USER);
           TERN_(FULL_REPORT_TO_HOST_FEATURE, set_and_report_grblstate(M_HOLD));
           break;
         case PAUSED_FOR_INPUT:

@@ -1,6 +1,6 @@
 /**
  * Marlin 3D Printer Firmware
- * Copyright (c) 2020 MarlinFirmware [https://github.com/MarlinFirmware/Marlin]
+ * Copyright (c) 2024 MarlinFirmware [https://github.com/MarlinFirmware/Marlin]
  *
  * Based on Sprinter and grbl.
  * Copyright (c) 2011 Camiel Gubbels / Erik van der Zalm
@@ -20,29 +20,21 @@
  *
  */
 
-#include "../../inc/MarlinConfig.h"
+#include "../../../inc/MarlinConfig.h"
 
-#if HAS_MEDIA
-
-#include "../gcode.h"
-#include "../../sd/cardreader.h"
-#include "../../lcd/marlinui.h"
 #if ENABLED(CREALITY_RTS)
-  #include "../../lcd/rts/lcd_rts.h"
-#endif
+
+#include "../../gcode.h"
+#include "../../../lcd/rts/lcd_rts.h"
 
 /**
- * M23: Open a file
- *
- * The path is relative to the root directory
+ * M224: LED On
  */
-void GcodeSuite::M23() {
-  // Simplify3D includes the size, so zero out all spaces (#7227)
-  for (char *fn = parser.string_arg; *fn; ++fn) if (*fn == ' ') *fn = '\0';
-  card.openFileRead(parser.string_arg);
+void GcodeSuite::M224() { RTS_SetLED(true); }
 
-  TERN_(SET_PROGRESS_PERCENT, ui.set_progress(0));
-  TERN_(CREALITY_RTS, RTS_OpenFileCloud());
-}
+/**
+ * M225: LED Off
+ */
+void GcodeSuite::M225() { RTS_SetLED(false); }
 
-#endif // HAS_MEDIA
+#endif // CREALITY_RTS

@@ -30,6 +30,10 @@
 
 #include "runout.h"
 
+#if ENABLED(CREALITY_RTS)
+  #include "../lcd/rts/lcd_rts.h"
+#endif
+
 FilamentMonitor runout;
 
 bool FilamentMonitorBase::enabled = true,
@@ -71,6 +75,7 @@ bool FilamentMonitorBase::enabled = true,
 #endif
 
 void event_filament_runout(const uint8_t extruder) {
+  if (TERN0(CREALITY_RTS, G29_flag || home_flag)) return;
 
   if (did_pause_print) return;  // Action already in progress. Purge triggered repeated runout.
 
@@ -97,6 +102,8 @@ void event_filament_runout(const uint8_t extruder) {
   #endif
 
   const bool run_runout_script = !runout.host_handling;
+
+  TERN_(CREALITY_RTS, RTS_FilamentRanOut());
 
   #if ENABLED(HOST_ACTION_COMMANDS)
 

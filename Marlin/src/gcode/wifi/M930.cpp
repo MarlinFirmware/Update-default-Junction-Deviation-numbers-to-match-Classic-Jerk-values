@@ -1,6 +1,6 @@
 /**
  * Marlin 3D Printer Firmware
- * Copyright (c) 2020 MarlinFirmware [https://github.com/MarlinFirmware/Marlin]
+ * Copyright (c) 2024 MarlinFirmware [https://github.com/MarlinFirmware/Marlin]
  *
  * Based on Sprinter and grbl.
  * Copyright (c) 2011 Camiel Gubbels / Erik van der Zalm
@@ -22,27 +22,37 @@
 
 #include "../../inc/MarlinConfig.h"
 
-#if HAS_MEDIA
+#if ENABLED(CREALITY_WIFI)
 
 #include "../gcode.h"
-#include "../../sd/cardreader.h"
-#include "../../lcd/marlinui.h"
-#if ENABLED(CREALITY_RTS)
-  #include "../../lcd/rts/lcd_rts.h"
-#endif
+#include "../../lcd/rts/lcd_rts.h"
 
 /**
- * M23: Open a file
- *
- * The path is relative to the root directory
+ * M930: WIFI Box Function
  */
-void GcodeSuite::M23() {
-  // Simplify3D includes the size, so zero out all spaces (#7227)
-  for (char *fn = parser.string_arg; *fn; ++fn) if (*fn == ' ') *fn = '\0';
-  card.openFileRead(parser.string_arg);
+void GcodeSuite::M930() {
+  if (parser.boolval('F')) {
+    switch (parser.intval('S')) {
+      case 1:
+        if (flag_counter_wifi_reset) {
+          flag_counter_wifi_reset = false;
+          rts.sendData(ExchangePageBase + 33, ExchangepageAddr);
+          change_page_font = 33;
+        }
+        rts.sendData(1, WIFI_CONNECTED_DISPLAY_ICON_VP);
+        break;
 
-  TERN_(SET_PROGRESS_PERCENT, ui.set_progress(0));
-  TERN_(CREALITY_RTS, RTS_OpenFileCloud());
+      case 2:
+        rts.sendData(0, ADV_SETTING_WIFI_ICON_VP);
+        rts.sendData(1, WIFI_CONNECTED_DISPLAY_ICON_VP);
+        break;
+
+      case 3:
+        rts.sendData(1, ADV_SETTING_WIFI_ICON_VP);
+        rts.sendData(0, WIFI_CONNECTED_DISPLAY_ICON_VP);
+        break;
+    }
+  }
 }
 
-#endif // HAS_MEDIA
+#endif // CREALITY_WIFI
