@@ -76,6 +76,27 @@ void DGUSDisplay::initDisplay() {
   requestScreen(TERN(SHOW_BOOTSCREEN, DGUS_SCREEN_BOOT, DGUS_SCREEN_MAIN));
 }
 
+#if DGUS_LCD_UI_CREALITY_TOUCH
+
+  DGUS_ScreenID DGUSDisplay::displayRequest = DGUS_SCREEN_BOOT;
+
+  void DGUSDisplay::readCurrentScreen() { readVariable(0x14 /*PIC_NOW*/); }
+
+  void DGUSDisplay::resetDisplay() {
+    DEBUG_ECHOLNPGM("resetDisplay");
+    const unsigned char resetCommand[] = { 0x55, 0xAA, 0x5A, 0xA5 };
+    writeVariable(0x04, resetCommand, sizeof(resetCommand));
+  }
+
+  void DGUSDisplay::readVariable(uint16_t adr) {
+    writeHeader(adr, DGUS_CMD_READVAR, sizeof(uint8_t));
+
+    // Specify to read one byte
+    LCD_SERIAL.write(static_cast<uint8_t>(1));
+  }
+
+#endif // DWIN_CREALITY_TOUCHLCD
+
 void DGUSDisplay::writeVariable(uint16_t adr, const void *values, uint8_t valueslen, bool isstr) {
   const char* myvalues = static_cast<const char*>(values);
   bool strend = !myvalues;
@@ -204,11 +225,48 @@ void DGUSDisplay::processRx() {
         |           Command          DataLen (in Words) */
         if (command == DGUS_CMD_READVAR) {
           const uint16_t vp = tmp[0] << 8 | tmp[1];
-          DGUS_VP_Variable ramcopy;
-          if (populate_VPVar(vp, &ramcopy)) {
-            if (ramcopy.set_by_display_handler)
-              ramcopy.set_by_display_handler(ramcopy, &tmp[3]);
-          }
+
+          #if DGUS_LCD_UI_CREALITY_TOUCH
+
+            if (vp == 0x14 /*PIC_Now*/) {
+              const uint16_t screen_id = tmp[3] << 8 | tmp[4];
+              // In the code below DGUS_SCREEN_BOOT acts as a sentinel
+              if (screen_id == 255) {
+                // DGUS OS sometimes randomly sends 255 back as an answer. Possible buffer overrun?
+                readCurrentScreen(); // Request again
+              }
+              else if (displayRequest != DGUS_SCREEN_BOOT && screen_id != displayRequest) {
+                // A display was requested. If the screen didn't yet switch to that display, we won't give that value back, otherwise the code gets confused.
+                // The DWIN display mostly honours the PIC_SET requests from the firmware, so after a while we may want to nudge it to the correct screen
+                DEBUG_ECHOPGM(" Got a response on the current screen: ", screen_id);
+                DEBUG_ECHOLNPGM(" - however, we've requested screen ", displayRequest);
+              }
+              else {
+                displayRequest = DGUS_SCREEN_BOOT;
+                if (current_screen_update_callback)
+                  current_screen_update_callback(static_cast<DGUS_ScreenID>(screen_id));
+              }
+            }
+            else {
+              DGUS_VP_Variable ramcopy;
+              if (populate_VPVar(vp, &ramcopy)) {
+                if (ramcopy.set_by_display_handler)
+                  ramcopy.set_by_display_handler(ramcopy, &tmp[3]);
+              }
+
+              // Always ask for a screen update so we can send a screen update earlier, this prevents a flash of unstyled screen
+              readCurrentScreen();
+            }
+
+          #else // !DWIN_CREALITY_TOUCHLCD
+
+            DGUS_VP_Variable ramcopy;
+            if (populate_VPVar(vp, &ramcopy)) {
+              if (ramcopy.set_by_display_handler)
+                ramcopy.set_by_display_handler(ramcopy, &tmp[3]);
+            }
+
+          #endif
 
           rx_datagram_state = DGUS_IDLE;
           break;
