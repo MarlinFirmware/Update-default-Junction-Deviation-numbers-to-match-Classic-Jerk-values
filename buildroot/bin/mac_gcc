@@ -7,6 +7,18 @@
 # Usage: mac_gcc apple|macports|homebrew
 #
 
+# Detect architecture
+ARCH=$(uname -m)
+
+if [[ $ARCH == "arm64" ]]; then
+  HOMEBREW_PATH="/opt/homebrew/bin"
+elif [[ $ARCH == "x86_64" ]]; then
+  HOMEBREW_PATH="/usr/local/bin"
+else
+  echo "Unsupported architecture: $ARCH"
+  exit 1
+fi
+
 which port >/dev/null && HAS_MACPORTS=1
 which brew >/dev/null && HAS_HOMEBREW=1
 
@@ -19,7 +31,7 @@ if [[ $1 == "apple" || $1 == "darwin" || $1 == "system" ]]; then
   fi
 
   if ((HAS_HOMEBREW)); then
-    cd /opt/homebrew/bin
+    cd $HOMEBREW_PATH
     sudo rm -f gcc g++ cc
     cd -
   fi
@@ -48,12 +60,12 @@ elif [[ $1 =~ ".*brew" ]]; then
 
   ((HAS_HOMEBREW)) || { echo "Homebrew is not installed"; exit 1; }
 
-  GCCV=$( find /opt/homebrew/bin -name "gcc-*" | sort -r | head -1 | sed 's/.*gcc-//' )
+  GCCV=$( find $HOMEBREW_PATH -name "gcc-*" | sort -r | head -1 | sed 's/.*gcc-//' )
   [[ $GCCV -ge 11 ]] || { brew install gcc@14 ; GCCV=14 }
 
   brew install glm mesa sdl2 sdl2_net
 
-  cd /opt/homebrew/bin
+  cd $HOMEBREW_PATH
   sudo rm -f gcc g++ cc
   sudo ln -s "gcc-$GCCV" gcc
   sudo ln -s "g++-$GCCV" g++
