@@ -30,6 +30,10 @@
   #error "SPINDLE_LASER_PWM_PIN must use SERVO0, SERVO1 or SERVO3 connector"
 #endif
 
+#if ENABLED(LASER_USE_PWM) && !(LASER_PWM_PIN == 4 || LASER_PWM_PIN == 6 || LASER_PWM_PIN == 11)
+  #error "LASER_PWM_PIN must use SERVO0, SERVO1 or SERVO3 connector"
+#endif
+
 #if ENABLED(FAST_PWM_FAN) || SPINDLE_LASER_FREQUENCY
   #error "Features requiring Hardware PWM (FAST_PWM_FAN, SPINDLE_LASER_FREQUENCY) are not yet supported for HAL/LINUX."
 #endif

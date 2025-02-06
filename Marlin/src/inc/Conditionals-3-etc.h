@@ -153,7 +153,7 @@
 #endif
 
 // Probing tool change
-#if !HAS_MULTI_EXTRUDER
+#if !HAS_MULTI_TOOLS
   #undef PROBING_TOOL
 #endif
 #if HAS_BED_PROBE && defined(PROBING_TOOL)

@@ -32,7 +32,7 @@
   #include "../../module/motion.h" // for set/restore_homing_current
 #endif
 
-#if HAS_MULTI_HOTEND
+#if HAS_TOOLCHANGE
   #include "../../module/tool_change.h"
 #endif
 
@@ -298,7 +298,7 @@ void GcodeSuite::G28() {
     #endif
 
     // Always home with tool 0 active
-    #if HAS_MULTI_HOTEND
+    #if HAS_TOOLCHANGE
       #if DISABLED(DELTA) || ENABLED(DELTA_HOME_TO_SAFE_ZONE)
         const uint8_t old_tool_index = active_extruder;
       #endif
@@ -561,7 +561,7 @@ void GcodeSuite::G28() {
     TERN_(CAN_SET_LEVELING_AFTER_G28, if (leveling_restore_state) set_bed_leveling_enabled());
 
     // Restore the active tool after homing
-    #if HAS_MULTI_HOTEND && (DISABLED(DELTA) || ENABLED(DELTA_HOME_TO_SAFE_ZONE))
+    #if HAS_TOOLCHANGE && (DISABLED(DELTA) || ENABLED(DELTA_HOME_TO_SAFE_ZONE))
       tool_change(old_tool_index, TERN(PARKING_EXTRUDER, !pe_final_change_must_unpark, DISABLED(DUAL_X_CARRIAGE)));   // Do move if one of these
     #endif
 

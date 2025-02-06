@@ -36,8 +36,8 @@
 //#define DEBUG_TOOL_CHANGE
 //#define DEBUG_TOOLCHANGE_FILAMENT_SWAP
 
-#if HAS_MULTI_EXTRUDER
-  toolchange_settings_t toolchange_settings;  // Initialized by settings.load
+#if HAS_MULTI_TOOLS
+  toolchange_settings_t toolchange_settings;  // Initialized by settings.load()
 #endif
 
 #if ENABLED(TOOLCHANGE_MIGRATION_FEATURE)
@@ -94,6 +94,10 @@
 
 #if HAS_BED_PROBE
   #include "probe.h"
+#endif
+
+#if HAS_CUTTER
+  #include "../feature/spindle_laser.h"
 #endif
 
 #if ENABLED(TOOLCHANGE_FILAMENT_SWAP)
@@ -822,7 +826,7 @@ void fast_line_to_current(const AxisEnum fr_axis) { _line_to_current(fr_axis, 0.
 
 #endif // ELECTROMAGNETIC_SWITCHING_TOOLHEAD
 
-#if HAS_EXTRUDERS
+#if HAS_MULTI_TOOLS || HAS_EXTRUDERS
   inline void invalid_extruder_error(const uint8_t e) {
     SERIAL_ECHO_START();
     SERIAL_CHAR('T'); SERIAL_ECHO(e);
@@ -1136,19 +1140,19 @@ void tool_change(const uint8_t new_tool, bool no_move/*=false*/) {
 
     mmu2.tool_change(new_tool);
 
-  #elif EXTRUDERS == 0
+  #elif !TOOLS
 
     // Nothing to do
     UNUSED(new_tool); UNUSED(no_move);
 
-  #elif EXTRUDERS < 2
+  #elif TOOLS < 2
 
     UNUSED(no_move);
 
     if (new_tool) invalid_extruder_error(new_tool);
     return;
 
-  #elif HAS_MULTI_EXTRUDER
+  #elif HAS_MULTI_TOOLS
 
     planner.synchronize();
 
@@ -1157,7 +1161,7 @@ void tool_change(const uint8_t new_tool, bool no_move/*=false*/) {
          return invalid_extruder_error(new_tool);
     #endif
 
-    if (new_tool >= EXTRUDERS)
+    if (new_tool >= TOOLS)
       return invalid_extruder_error(new_tool);
 
     if (!no_move && homing_needed()) {
@@ -1247,6 +1251,28 @@ void tool_change(const uint8_t new_tool, bool no_move/*=false*/) {
           TERN_(HAS_SOFTWARE_ENDSTOPS, NOMORE(current_position.z, soft_endstop.max.z));
           fast_line_to_current(Z_AXIS);
         }
+      #endif
+
+      #if HAS_CUTTER
+        // Store cutter state and stop cutter
+        bool old_cutter_state = cutter.enable_state;
+        uint8_t old_cutter_power = cutter.power;
+        uint8_t old_tool_type = cutter.active_tool_type;
+        cutter.power = 0;
+        cutter.apply_power(0);
+        #if ENABLED(LASER_FEATURE)
+          cutter.inline_power(cutter.power);
+        #endif
+        cutter.set_enabled(false);
+      #endif
+
+      #if ENABLED(COOLANT_MIST)
+        bool old_mist_coolant_state = TERN(COOLANT_MIST_INVERT, !READ(COOLANT_MIST_PIN), READ(COOLANT_MIST_PIN));
+        WRITE(COOLANT_MIST_PIN, COOLANT_MIST_INVERT);     // Turn off Mist coolant
+      #endif
+      #if ENABLED(COOLANT_FLOOD)
+        bool old_flood_coolant_state = TERN(COOLANT_FLOOD_INVERT, !READ(COOLANT_FLOOD_PIN), READ(COOLANT_FLOOD_PIN));
+        WRITE(COOLANT_FLOOD_PIN, COOLANT_FLOOD_INVERT);   // Turn off Flood coolant
       #endif
 
       // Toolchange park
@@ -1408,6 +1434,60 @@ void tool_change(const uint8_t new_tool, bool no_move/*=false*/) {
         TERN_(DUAL_X_CARRIAGE, idex_set_parked(false));
       } // should_move
 
+      #if HAS_CUTTER
+
+        #if ALL(SPINDLE_FEATURE, LASER_FEATURE)
+          if (new_tool == LASER_TOOL) {
+            cutter.active_tool_type = TYPE_LASER;
+          }
+          else if (new_tool < LASER_TOOL) {
+            cutter.active_tool_type = TYPE_EXTRUDER;
+          }
+          else {
+            cutter.active_tool_type = TYPE_SPINDLE;
+          }
+          // Restore cutter state
+          if (old_cutter_state && (old_tool == TYPE_SPINDLE) && new_tool > LASER_TOOL) {
+        #elif ENABLED(SPINDLE_FEATURE)
+          if (new_tool < EXTRUDERS) {
+            cutter.active_tool_type = TYPE_EXTRUDER;
+          }
+          else {
+            cutter.active_tool_type = TYPE_SPINDLE;
+          }
+          if (old_cutter_state && cutter.active_tool_type != TYPE_EXTRUDER) {
+        #elif ENABLED(LASER_FEATURE)
+          if (new_tool < LASER_TOOL) {
+            cutter.active_tool_type = TYPE_EXTRUDER;
+          }
+          else {
+            cutter.active_tool_type = TYPE_LASER;
+          }
+          if (old_cutter_state && cutter.active_tool_type != TYPE_EXTRUDER) { 
+        #endif
+            cutter.power = old_cutter_power;
+            cutter.apply_power(cutter.power);
+            #if ENABLED(LASER_FEATURE)
+              if ((cutter.active_tool_type == TYPE_LASER ) && (cutter.cutter_mode != CUTTER_MODE_STANDARD)) {
+                cutter.inline_power(cutter.power);
+              }
+            #endif
+            cutter.set_enabled(true);
+          }
+      #endif
+
+
+      #if ENABLED(COOLANT_MIST)
+        if old_mist_coolant_state {
+          WRITE(COOLANT_MIST_PIN, !COOLANT_MIST_INVERT);     // Turn on Mist coolant
+        }
+      #endif
+      #if ENABLED(COOLANT_FLOOD)
+        if old_flood_coolant_state {
+          WRITE(COOLANT_FLOOD_PIN, !COOLANT_FLOOD_INVERT);   // Turn on Flood coolant
+        }
+      #endif
+
       #if HAS_SWITCHING_NOZZLE
         // Move back down. (Including when the new tool is higher.)
         if (!should_move)
@@ -1514,7 +1594,7 @@ void tool_change(const uint8_t new_tool, bool no_move/*=false*/) {
 
     SERIAL_ECHOLNPGM(STR_ACTIVE_EXTRUDER, active_extruder);
 
-  #endif // HAS_MULTI_EXTRUDER
+  #endif // HAS_MULTI_TOOLS
 }
 
 #if ENABLED(TOOLCHANGE_MIGRATION_FEATURE)

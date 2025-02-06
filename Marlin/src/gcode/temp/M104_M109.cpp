@@ -74,10 +74,10 @@ void GcodeSuite::M104_M109(const bool isM109) {
   if (DEBUGGING(DRYRUN)) return;
 
   #if ENABLED(MIXING_EXTRUDER) && MIXING_VIRTUAL_TOOLS > 1
-    constexpr int8_t target_extruder = 0;
+    constexpr int8_t target_hotend = 0;
   #else
-    const int8_t target_extruder = get_target_extruder_from_command();
-    if (target_extruder < 0) return;
+    const int8_t target_hotend = get_target_hotend_from_command();
+    if (target_hotend < 0) return;
   #endif
 
   bool got_temp = false;
@@ -102,13 +102,13 @@ void GcodeSuite::M104_M109(const bool isM109) {
 
   if (got_temp) {
     #if ENABLED(SINGLENOZZLE_STANDBY_TEMP)
-      thermalManager.singlenozzle_temp[target_extruder] = temp;
-      if (target_extruder != active_extruder) return;
+      thermalManager.singlenozzle_temp[target_hotend] = temp;
+      if (target_hotend != active_extruder) return;
     #endif
-    thermalManager.setTargetHotend(temp, target_extruder);
+    thermalManager.setTargetHotend(temp, target_hotend);
 
     #if ENABLED(DUAL_X_CARRIAGE)
-      if (idex_is_duplicating() && target_extruder == 0)
+      if (idex_is_duplicating() && target_hotend == 0)
         thermalManager.setTargetHotend(temp ? temp + duplicate_extruder_temp_offset : 0, 1);
     #endif
 
@@ -121,14 +121,14 @@ void GcodeSuite::M104_M109(const bool isM109) {
       thermalManager.auto_job_check_timer(isM109, true);
     #endif
 
-    if (thermalManager.isHeatingHotend(target_extruder) || !no_wait_for_cooling)
-      thermalManager.set_heating_message(target_extruder, !isM109 && got_temp);
+    if (thermalManager.isHeatingHotend(target_hotend) || !no_wait_for_cooling)
+      thermalManager.set_heating_message(target_hotend, !isM109 && got_temp);
   }
 
   TERN_(AUTOTEMP, planner.autotemp_M104_M109());
 
   if (isM109 && got_temp)
-    (void)thermalManager.wait_for_hotend(target_extruder, no_wait_for_cooling);
+    (void)thermalManager.wait_for_hotend(target_hotend, no_wait_for_cooling);
 }
 
 #endif // HAS_HOTEND

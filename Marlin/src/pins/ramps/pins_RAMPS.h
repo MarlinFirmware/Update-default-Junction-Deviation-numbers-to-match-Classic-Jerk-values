@@ -318,11 +318,26 @@
     #ifndef SPINDLE_LASER_PWM_PIN
       #define SPINDLE_LASER_PWM_PIN            6  // Hardware PWM
     #endif
+    #if ENABLED(LASER_FEATURE)
+      #ifndef LASER_PWM_PIN
+        #define LASER_PWM_PIN                  6  // Hardware PWM
+      #endif
+    #endif
     #define SPINDLE_LASER_ENA_PIN              4  // Pullup or pulldown!
     #define SPINDLE_DIR_PIN                    5
   #elif HAS_FREE_AUX2_PINS
     #define SPINDLE_LASER_PWM_PIN        AUX2_07  // Hardware PWM
+    #if ENABLED(LASER_FEATURE)
+      #ifndef LASER_PWM_PIN
+        #define LASER_PWM_PIN            AUX2_07  // Hardware PWM
+      #endif
+    #endif
     #define SPINDLE_LASER_ENA_PIN        AUX2_06  // Pullup or pulldown!
+    #if ENABLED(LASER_FEATURE)
+      #ifndef LASER_ENA_PIN
+        #define LASER_ENA_PIN            AUX2_06  // Pullup or pulldown!
+      #endif
+    #endif
     #define SPINDLE_DIR_PIN              AUX2_10
   #else
     #error "No auto-assignable Spindle/Laser pins available."
