@@ -593,6 +593,9 @@ namespace LanguageNarrow_en {
   LSTR MSG_SINGLENOZZLE_UNRETRACT_SPEED   = _UxGT("Recover Speed");
   LSTR MSG_SINGLENOZZLE_FAN_SPEED         = _UxGT("Fan Speed");
   LSTR MSG_SINGLENOZZLE_FAN_TIME          = _UxGT("Fan Time");
+  LSTR MSG_LOCK_FAN                       = _UxGT("Lock Fan");
+  LSTR MSG_UNLOCK_FAN                     = _UxGT("Unlock Fan");
+  LSTR MSG_FAN_MULTIPLIER                 = _UxGT("Fan Multiplier");
   LSTR MSG_TOOL_MIGRATION_ON              = _UxGT("Auto ON");
   LSTR MSG_TOOL_MIGRATION_OFF             = _UxGT("Auto OFF");
   LSTR MSG_TOOL_MIGRATION                 = _UxGT("Tool Migration");

@@ -3925,6 +3925,16 @@
 //#define REPORT_FAN_CHANGE   // Report the new fan speed when changed by M106 (and others)
 
 /**
+ * Adds UI and G-code (M106) options to control fan speed while printing.
+ *
+ * - Lock Fan Speed: To prevent G-code commands (i.e., M106) from altering the current fan speed.
+ * - Fan Speed Multiplier: Multiplies the fan speed set by G-code commands by a specified factor for fine-tuning.
+ *
+ * Note: Settings are not saved in EEPROM and will reset after a power cycle.
+ */
+//#define FAN_MULTIPLIER
+
+/**
  * Auto-report temperatures with M155 S<seconds>
  */
 #define AUTO_REPORT_TEMPERATURES

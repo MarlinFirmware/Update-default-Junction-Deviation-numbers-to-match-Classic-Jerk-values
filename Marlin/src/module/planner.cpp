@@ -1177,10 +1177,16 @@ void Planner::recalculate(const_float_t safe_exit_speed_sqr) {
 
   void Planner::sync_fan_speeds(uint8_t (&fan_speed)[FAN_COUNT]) {
 
-    #if ENABLED(FAN_SOFT_PWM)
-      #define _FAN_SET(F) thermalManager.soft_pwm_amount_fan[F] = CALC_FAN_SPEED(fan_speed[F]);
+    #if defined(FAN_MULTIPLIER)
+      #define _CALC_FAN_SPEED(f) CALC_FAN_SPEED(thermalManager.compute_multiplied_fan(f))
     #else
-      #define _FAN_SET(F) hal.set_pwm_duty(pin_t(FAN##F##_PIN), CALC_FAN_SPEED(fan_speed[F]));
+      #define _CALC_FAN_SPEED(f) CALC_FAN_SPEED(f)
+    #endif
+    
+    #if ENABLED(FAN_SOFT_PWM)
+      #define _FAN_SET(F) thermalManager.soft_pwm_amount_fan[F] = _CALC_FAN_SPEED(fan_speed[F]);
+    #else
+      #define _FAN_SET(F) hal.set_pwm_duty(pin_t(FAN##F##_PIN), _CALC_FAN_SPEED(fan_speed[F]));
     #endif
     #define FAN_SET(F) do{ kickstart_fan(fan_speed, ms, F); _FAN_SET(F); }while(0)
 

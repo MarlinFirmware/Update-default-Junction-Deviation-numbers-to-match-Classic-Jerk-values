@@ -219,6 +219,15 @@ void menu_temperature() {
 
     #if FAN_IS_M106ABLE(0)
       _FAN_EDIT_ITEMS(0, FIRST_FAN_SPEED);
+      #if ENABLED(FAN_MULTIPLIER)
+        if (thermalManager.lock_fan) {
+          ACTION_ITEM(MSG_UNLOCK_FAN, []{ thermalManager.lock_fan = false; ui.refresh(); });
+        } else {
+          ACTION_ITEM(MSG_LOCK_FAN, []{ thermalManager.lock_fan = true; ui.refresh(); });
+        }
+        editable.decimal = thermalManager.get_fan_multiplier();
+        EDIT_ITEM_FAST(float31, MSG_FAN_MULTIPLIER, &editable.decimal, 0.0f, 9.9f, []{ thermalManager.set_fan_multiplier(editable.decimal); }, true);
+      #endif
     #endif
     #if FAN_IS_M106ABLE(1)
       FAN_EDIT_ITEMS(1);
