@@ -245,6 +245,12 @@ void GcodeSuite::M115() {
     // CONFIG_EXPORT
     cap_line(F("CONFIG_EXPORT"), ENABLED(CONFIGURATION_EMBEDDING));
 
+    // SINGLE_NOZZLE
+    cap_line(F("SINGLE_NOZZLE"), ENABLED(SINGLENOZZLE));
+
+    // HEATED_BED
+    cap_line(F("HEATED_BED"), ENABLED(HAS_HEATED_BED));
+
     // Machine Geometry
     #if ENABLED(M115_GEOMETRY_REPORT)
       constexpr xyz_pos_t bmin{0},
@@ -292,6 +298,51 @@ void GcodeSuite::M115() {
             "}" // max
           "}" // work
         "}" // area
+      );
+    #endif
+
+    // Temperatures
+    #if ENABLED(M115_TEMPERATURE_REPORT)
+      SERIAL_ECHOLNPGM(
+        "temperatures:{"
+          "t0:{min:", HEATER_0_MINTEMP, ",max:", HEATER_0_MAXTEMP, "}"
+          #if TEMP_SENSOR_1
+            ",t1:{min:", HEATER_1_MINTEMP, ",max:", HEATER_1_MAXTEMP, "}"
+          #endif
+          #if TEMP_SENSOR_2
+            ",t2:{min:", HEATER_2_MINTEMP, ",max:", HEATER_2_MAXTEMP, "}"
+          #endif
+          #if TEMP_SENSOR_3
+            ",t3:{min:", HEATER_3_MINTEMP, ",max:", HEATER_3_MAXTEMP, "}"
+          #endif
+          #if TEMP_SENSOR_4
+            ",t4:{min:", HEATER_4_MINTEMP, ",max:", HEATER_4_MAXTEMP, "}"
+          #endif
+          #if TEMP_SENSOR_5
+            ",t5:{min:", HEATER_5_MINTEMP, ",max:", HEATER_5_MAXTEMP, "}"
+          #endif
+          #if TEMP_SENSOR_6
+            ",t6:{min:", HEATER_6_MINTEMP, ",max:", HEATER_6_MAXTEMP, "}"
+          #endif
+          #if TEMP_SENSOR_7
+            ",t7:{min:", HEATER_7_MINTEMP, ",max:", HEATER_7_MAXTEMP, "}"
+          #endif
+          #if TEMP_SENSOR_BED
+            ",bed:{min:", BED_MINTEMP, ",max:", BED_MAXTEMP, "}"
+          #endif
+          #if TEMP_SENSOR_CHAMBER
+            ",chamber:{min:", CHAMBER_MINTEMP, ",max:", CHAMBER_MAXTEMP, "}"
+          #endif
+          #if TEMP_SENSOR_COOLER
+            ",cooler:{min:", COOLER_MINTEMP, ",max:", COOLER_MAXTEMP, "}"
+          #endif
+          #if TEMP_SENSOR_BOARD
+            ",board:{min:", BOARD_MINTEMP, ",max:", BOARD_MAXTEMP, "}"
+          #endif
+          #if TEMP_SENSOR_SOC
+            ",soc:{max:", SOC_MAXTEMP, "}"
+          #endif
+        "}"
       );
     #endif
 
