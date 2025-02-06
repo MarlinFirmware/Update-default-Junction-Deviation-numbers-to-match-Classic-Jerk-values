@@ -581,19 +581,43 @@ class MenuItem_bool : public MenuEditItemBase {
     #define EDIT_EXTRA_FAN_SPEED(...)
   #endif
 
-  #if FAN_COUNT == 1
-    #define MSG_FIRST_FAN_SPEED       MSG_FAN_SPEED
-    #define MSG_EXTRA_FIRST_FAN_SPEED MSG_EXTRA_FAN_SPEED
+  #if ENABLED(FAN_SPEED_OFFSET)
+    #define EDIT_OFFSET_FAN_SPEED(V...)     EDIT_ITEM_FAST_N(V)
+    #define EDIT_OFFSET_MIN_FAN_SPEED(V...) EDIT_ITEM_FAST_N(V)
+    #define EDIT_OFFSET_MAX_FAN_SPEED(V...) EDIT_ITEM_FAST_N(V)
   #else
-    #define MSG_FIRST_FAN_SPEED       MSG_FAN_SPEED_N
-    #define MSG_EXTRA_FIRST_FAN_SPEED MSG_EXTRA_FAN_SPEED_N
+    #define EDIT_OFFSET_FAN_SPEED(...)
+    #define EDIT_OFFSET_MIN_FAN_SPEED(...)
+    #define EDIT_OFFSET_MAX_FAN_SPEED(...)
+  #endif
+
+  #if FAN_COUNT == 1
+    #define MSG_FIRST_FAN_SPEED             MSG_FAN_SPEED
+    #define MSG_EXTRA_FIRST_FAN_SPEED       MSG_EXTRA_FAN_SPEED
+    #define MSG_OFFSET_FIRST_FAN_SPEED      MSG_OFFSET_FAN_SPEED
+    #define MSG_OFFSET_MIN_FIRST_FAN_SPEED  MSG_OFFSET_MIN_FAN_SPEED
+    #define MSG_OFFSET_MAX_FIRST_FAN_SPEED  MSG_OFFSET_MAX_FAN_SPEED
+  #else
+    #define MSG_FIRST_FAN_SPEED             MSG_FAN_SPEED_N
+    #define MSG_EXTRA_FIRST_FAN_SPEED       MSG_EXTRA_FAN_SPEED_N
+    #define MSG_OFFSET_FIRST_FAN_SPEED      MSG_OFFSET_FAN_SPEED_N
+    #define MSG_OFFSET_MIN_FIRST_FAN_SPEED  MSG_OFFSET_MIN_FAN_SPEED_N
+    #define MSG_OFFSET_MAX_FIRST_FAN_SPEED  MSG_OFFSET_MAX_FAN_SPEED_N
   #endif
 
   #define _FAN_EDIT_ITEMS(F,L) do{ \
     editable.uint8 = thermalManager.fan_speed[F]; \
     EDIT_ITEM_FAST_N(percent, F, MSG_##L, &editable.uint8, 0, 255, on_fan_update); \
     EDIT_EXTRA_FAN_SPEED(percent, F, MSG_EXTRA_##L, &thermalManager.extra_fan_speed[F].speed, 3, 255); \
+    EDIT_OFFSET_FAN_SPEED(int3, F, MSG_OFFSET_##L, &thermalManager.fan_speed_offset[F], -100, 100); \
+    EDIT_OFFSET_MIN_FAN_SPEED(percent, F, MSG_OFFSET_MIN_##L, &thermalManager.fan_speed_offset_thr_min[F], 0, 255); \
+    EDIT_OFFSET_MAX_FAN_SPEED(percent, F, MSG_OFFSET_MAX_##L, &thermalManager.fan_speed_offset_thr_max[F], 0, 255); \
   }while(0)
+
+  /*EDIT_TUNE_FAN_SPEED(percent, F, MSG_MODIFIER_##L, &thermalManager.fan_speed_offset[F], -255, 255); \
+  EDIT_MIN_TUNE_FAN_SPEED(percent, F, MSG_MODIFIER_MIN_##L, &thermalManager.fan_speed_offset_thr_min[F], 1, 255); \
+  EDIT_MAX_TUNE_FAN_SPEED(percent, F, MSG_MODIFIER_MAX_##L, &thermalManager.fan_speed_offset_thr_max[F], 1, 255); \
+*/
 
   #if FAN_COUNT > 1
     #define FAN_EDIT_ITEMS(F) _FAN_EDIT_ITEMS(F, FAN_SPEED_N)

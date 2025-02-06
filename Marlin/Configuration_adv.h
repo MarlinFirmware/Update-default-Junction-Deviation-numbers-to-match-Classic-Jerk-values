@@ -2747,6 +2747,21 @@
  */
 //#define EXTRA_FAN_SPEED
 
+/**
+ * Fan speed offset
+ * Adds a constant value to fan_speed, to increase/decrease  for the totality of your print.
+ * Can modify the fan speed permanently and proportionnaly , whatever the many fan speed changes
+ * Threshold must be used to target the normal fan speed with no effect, when full power or very low value.
+ *   'M106 C <%> : (-100/100) Set the additional speed
+ *   'M106 B <%> : (0/100) Min threshold of fan speed to be affected by(Any speed below this will not be modified)
+ *   'M106 D <%> : (0/100) Max threshold of fan speed addition  (If set on 70%, all higher fan speeds called will not be modified, like full power, will remains full power)
+ */
+//#define FAN_SPEED_OFFSET
+#if ENABLED(FAN_SPEED_OFFSET)
+  #define FAN_SPEED_OFFSET_THR_MIN   20 // '%'
+  #define FAN_SPEED_OFFSET_THR_MAX   70 // '%'
+#endif
+
 // @section gcode
 
 /**

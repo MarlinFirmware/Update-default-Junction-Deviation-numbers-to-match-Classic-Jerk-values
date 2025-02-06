@@ -47,6 +47,9 @@
 /**
  * M106: Set Fan Speed
  *
+ *  B<int>   Min threshold of constant addition
+ *  D<int>   Max threshold of constant addition
+ *  C<int>   Constant value for permanent modification during printing
  *  I<index> Material Preset index (if material presets are defined)
  *  S<int>   Speed between 0-255
  *  P<index> Fan index, if more than one fan
@@ -62,6 +65,12 @@ void GcodeSuite::M106() {
   const uint8_t pfan = parser.byteval('P', _ALT_P);
   if (pfan >= _CNT_P) return;
   if (FAN_IS_REDUNDANT(pfan)) return;
+
+  #if ENABLED(FAN_SPEED_OFFSET)
+    if (parser.seen_test('B')) thermalManager.fan_speed_offset_thr_min[pfan] = parser.intval('B') * (255/100);
+    if (parser.seen_test('C')) thermalManager.fan_speed_offset[pfan] = parser.intval('C');
+    if (parser.seen_test('D')) thermalManager.fan_speed_offset_thr_max[pfan] = parser.intval('D') * (255/100);
+  #endif
 
   #if ENABLED(EXTRA_FAN_SPEED)
     const uint16_t t = parser.intval('T');
@@ -84,6 +93,14 @@ void GcodeSuite::M106() {
     speed = parser.value_ushort();
 
   TERN_(FOAMCUTTER_XYUV, speed *= 2.55f); // Get command in % of max heat
+
+  #if ENABLED(FAN_SPEED_OFFSET)
+    if ((speed > thermalManager.fan_speed_offset_thr_min[pfan])
+      && (speed < thermalManager.fan_speed_offset_thr_max[pfan])
+      && (thermalManager.fan_speed_offset_thr_min[pfan] < thermalManager.fan_speed_offset_thr_max[pfan])
+    )
+      speed += (thermalManager.fan_speed_offset[pfan] * 255/100);
+  #endif
 
   // Set speed, with constraint
   thermalManager.set_fan_speed(pfan, speed);

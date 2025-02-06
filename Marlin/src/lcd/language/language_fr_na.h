@@ -245,6 +245,12 @@ namespace LanguageNarrow_fr_na {
   LSTR MSG_EXTRA_FAN_SPEED                = _UxGT("Extra ventil.  ");
   LSTR MSG_EXTRA_FAN_SPEED_N              = _UxGT("Extra ventil. ~");
 
+  LSTR MSG_OFFSET_FAN_SPEED               = _UxGT("Ventil. sup ~");
+  LSTR MSG_OFFSET_MIN_FAN_SPEED           = _UxGT("Seuil min ~");
+  LSTR MSG_OFFSET_MAX_FAN_SPEED           = _UxGT("Seuil max ~");
+  LSTR MSG_OFFSET_FAN_SPEED_N             = _UxGT("Ventil. sup ~");
+  LSTR MSG_OFFSET_MIN_FAN_SPEED_N         = _UxGT("Seuil min ~");
+  LSTR MSG_OFFSET_MAX_FAN_SPEED_N         = _UxGT("Seuil max ~");
   LSTR MSG_FLOW                           = _UxGT("Flux");
   LSTR MSG_FLOW_N                         = _UxGT("Flux ~");
   LSTR MSG_CONTROL                        = _UxGT("Controler");
