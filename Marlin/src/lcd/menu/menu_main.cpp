@@ -66,6 +66,10 @@
   #include "../../feature/repeat.h"
 #endif
 
+#if ENABLED(MOTION_STEPS_COUNTER)
+  #include "../../feature/runout.h"
+#endif
+
 void menu_tune();
 void menu_cancelobject();
 void menu_motion();
@@ -244,6 +248,16 @@ void menu_configuration();
   #endif
 #endif
 
+#if ENABLED(MOTION_STEPS_COUNTER)
+  void encoder_info_menu() {
+    START_MENU();
+    BACK_ITEM(MSG_MAIN_MENU);
+    EDIT_ITEM(uint16_5, MSG_ENCODER_STEPS,   &FilamentSensorEncoder::encoder_steps, 0, 1);
+    EDIT_ITEM(bool, MSG_ENCODER_CALIBRATION, &FilamentSensorEncoder::calibration);
+    END_MENU();
+  }
+#endif
+
 void menu_main() {
   const bool busy = printingIsActive();
   #if HAS_MEDIA
@@ -368,6 +382,10 @@ void menu_main() {
     // the print, so MMU menus are required for MMU3.
     if (TERN1(HAS_PRUSA_MMU2, !busy)) SUBMENU(MSG_MMU2_MENU, menu_mmu2);
   #endif
+
+  #if ENABLED(MOTION_STEPS_COUNTER)
+    SUBMENU(MSG_ENCODER_INFO,encoder_info_menu);
+  #endif  
 
   SUBMENU(MSG_CONFIGURATION, menu_configuration);
 

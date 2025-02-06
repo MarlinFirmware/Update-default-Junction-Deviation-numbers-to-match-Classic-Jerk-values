@@ -2059,6 +2059,8 @@
         //#define FIL_MOTION8_PULLUP
         //#define FIL_MOTION8_PULLDOWN
       #endif
+
+      //#define MOTION_STEPS_COUNTER //Adds menu that displays/resets number of pulses from filament motion encoder. Use calibration mode to count without motion.
     #endif // FILAMENT_MOTION_SENSOR
   #endif // FILAMENT_RUNOUT_DISTANCE_MM
 #endif // FILAMENT_RUNOUT_SENSOR
