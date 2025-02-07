@@ -67,8 +67,21 @@ constexpr bool serial_handles_emergency(int port) {
 
 #define DEFINE_SERIAL_MARLIN(name, n) TERN(SERIAL_DMA, DEFINE_DMA_SERIAL_MARLIN(name, n), DEFINE_IRQ_SERIAL_MARLIN(name, n))
 
-DEFINE_SERIAL_MARLIN(MSerial1, 1);
-DEFINE_SERIAL_MARLIN(MSerial2, 2);
+#if defined(BOARD_USART1_RX_PIN) && defined(BOARD_USART1_TX_PIN)
+  DEFINE_SERIAL_MARLIN(MSerial1, 1);
+#endif
+
+#if defined(BOARD_USART2_RX_PIN) && defined(BOARD_USART2_TX_PIN)
+  DEFINE_SERIAL_MARLIN(MSerial2, 2);
+#endif
+
+#if defined(BOARD_USART3_RX_PIN) && defined(BOARD_USART3_TX_PIN)
+  DEFINE_SERIAL_MARLIN(MSerial3, 3);
+#endif
+
+#if defined(BOARD_USART4_RX_PIN) && defined(BOARD_USART4_TX_PIN)
+  DEFINE_SERIAL_MARLIN(MSerial4, 4);
+#endif
 
 // TODO: remove this warning when SERIAL_DMA has been tested some more
 #if ENABLED(SERIAL_DMA)

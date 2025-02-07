@@ -33,7 +33,7 @@
 // Shared by both panic and PostMortem debugging
 //
 static void minserial_begin() {
-  #if !WITHIN(SERIAL_PORT, 1, 3)
+  #if !WITHIN(SERIAL_PORT, 1, 4)
     #warning "MinSerial requires a physical UART port for output."
     #warning "Disabling MinSerial because the used serial port is not a HW port."
   #else
