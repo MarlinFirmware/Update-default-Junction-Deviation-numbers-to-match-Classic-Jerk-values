@@ -132,11 +132,11 @@
 #endif
 
 #ifndef G26_XY_FEEDRATE
-  #define G26_XY_FEEDRATE (PLANNER_XY_FEEDRATE_MM_S / 3.0)
+  #define G26_XY_FEEDRATE (XY_PROBE_FEEDRATE_MM_S / 3.0)
 #endif
 
 #ifndef G26_XY_FEEDRATE_TRAVEL
-  #define G26_XY_FEEDRATE_TRAVEL (PLANNER_XY_FEEDRATE_MM_S / 1.5)
+  #define G26_XY_FEEDRATE_TRAVEL (XY_PROBE_FEEDRATE_MM_S / 1.5)
 #endif
 
 #if CROSSHAIRS_SIZE >= INTERSECTION_CIRCLE_RADIUS
@@ -783,7 +783,7 @@ void GcodeSuite::G26() {
 
         g26.recover_filament(destination);
 
-        { REMEMBER(fr, feedrate_mm_s, PLANNER_XY_FEEDRATE_MM_S * 0.1f);
+        { REMEMBER(fr, feedrate_mm_s, XY_PROBE_FEEDRATE_MM_S * 0.1f);
           plan_arc(endpoint, arc_offset, false, 0);  // Draw a counter-clockwise arc
           destination = current_position;
         }
