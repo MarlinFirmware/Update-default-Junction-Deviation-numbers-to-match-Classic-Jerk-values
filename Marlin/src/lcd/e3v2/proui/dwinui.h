@@ -117,6 +117,7 @@
 #define ICON_SetPreheat10     ICON_SetCustomPreheat
 #define ICON_ShapingX         ICON_MoveX
 #define ICON_ShapingY         ICON_MoveY
+#define ICON_ShapingZ         ICON_MoveZ
 #define ICON_Sound            ICON_Cool
 #define ICON_TMCSet           ICON_PrintSize
 #define ICON_TMCXSet          ICON_MoveX
