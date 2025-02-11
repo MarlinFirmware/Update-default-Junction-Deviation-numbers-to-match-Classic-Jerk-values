@@ -365,11 +365,12 @@ namespace LanguageNarrow_en {
   LSTR MSG_STORED_FAN_N                   = _UxGT("Stored Fan ~");
   LSTR MSG_EXTRA_FAN_SPEED                = _UxGT("Extra Fan Speed");
   LSTR MSG_EXTRA_FAN_SPEED_N              = _UxGT("Extra Fan Speed ~");
-  LSTR MSG_CONTROLLER_FAN                 = _UxGT("Controller Fan");
+  LSTR MSG_FANS                           = _UxGT("Fans");
   LSTR MSG_CONTROLLER_FAN_IDLE_SPEED      = _UxGT("Idle Speed");
   LSTR MSG_CONTROLLER_FAN_AUTO_ON         = _UxGT("Auto Mode");
   LSTR MSG_CONTROLLER_FAN_SPEED           = _UxGT("Active Speed");
   LSTR MSG_CONTROLLER_FAN_DURATION        = _UxGT("Idle Period");
+  LSTR MSG_EXTRUDER_AUTO_FAN_SPEED        = _UxGT("Extruder fan speed");
   LSTR MSG_FLOW_PERCENTAGE                = _UxGT("Set Flowrate Percentage");
   LSTR MSG_FLOW                           = _UxGT("Flow");
   LSTR MSG_FLOW_N                         = _UxGT("Flow ~");

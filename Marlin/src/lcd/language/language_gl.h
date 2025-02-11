@@ -241,7 +241,7 @@ namespace LanguageNarrow_gl {
   LSTR MSG_STORED_FAN_N                   = _UxGT("Ventilador Mem. ~");
   LSTR MSG_EXTRA_FAN_SPEED                = _UxGT("Vel. Vent. Extra");
   LSTR MSG_EXTRA_FAN_SPEED_N              = _UxGT("Vel. Vent. Extra ~");
-  LSTR MSG_CONTROLLER_FAN                 = _UxGT("Controlador Vent.");
+  LSTR MSG_FANS                           = _UxGT("Controlador Vent.");
   LSTR MSG_CONTROLLER_FAN_IDLE_SPEED      = _UxGT("Velocidade Repouso");
   LSTR MSG_CONTROLLER_FAN_AUTO_ON         = _UxGT("Modo Auto");
   LSTR MSG_CONTROLLER_FAN_SPEED           = _UxGT("Velocidade Activa");

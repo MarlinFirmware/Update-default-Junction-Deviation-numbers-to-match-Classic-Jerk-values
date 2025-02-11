@@ -244,7 +244,7 @@ namespace LanguageNarrow_es {
   LSTR MSG_STORED_FAN_N                   = _UxGT("Vent. almacenado ~");
   LSTR MSG_EXTRA_FAN_SPEED                = _UxGT("Vel. Ext. ventil.");
   LSTR MSG_EXTRA_FAN_SPEED_N              = _UxGT("Vel. Ext. ventil. ~");
-  LSTR MSG_CONTROLLER_FAN                 = _UxGT("Controlador Vent.");
+  LSTR MSG_FANS                           = _UxGT("Controlador Vent.");
   LSTR MSG_CONTROLLER_FAN_IDLE_SPEED      = _UxGT("Velocidad en reposo");
   LSTR MSG_CONTROLLER_FAN_AUTO_ON         = _UxGT("Modo Auto");
   LSTR MSG_CONTROLLER_FAN_SPEED           = _UxGT("Velocidad Activa");

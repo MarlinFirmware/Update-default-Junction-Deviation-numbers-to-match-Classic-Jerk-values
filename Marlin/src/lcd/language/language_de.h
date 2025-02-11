@@ -305,7 +305,7 @@ namespace LanguageNarrow_de {
   LSTR MSG_STORED_FAN_N                   = _UxGT("Gespeich. Lüfter ~");
   LSTR MSG_EXTRA_FAN_SPEED                = _UxGT("Geschw. Extralüfter");
   LSTR MSG_EXTRA_FAN_SPEED_N              = _UxGT("Geschw. Extralüfter ~");
-  LSTR MSG_CONTROLLER_FAN                 = _UxGT("Lüfter Kontroller");
+  LSTR MSG_FANS                           = _UxGT("Lüfter Kontroller");
   LSTR MSG_CONTROLLER_FAN_IDLE_SPEED      = _UxGT("Lüfter Leerlauf");
   LSTR MSG_CONTROLLER_FAN_AUTO_ON         = _UxGT("Motorlast Modus");
   LSTR MSG_CONTROLLER_FAN_SPEED           = _UxGT("Lüfter Motorlast");

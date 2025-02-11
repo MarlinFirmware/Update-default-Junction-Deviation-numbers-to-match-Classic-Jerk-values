@@ -248,7 +248,7 @@ namespace LanguageNarrow_zh_CN {
   LSTR MSG_STORED_FAN_N                   = _UxGT("存储的风扇 ~");
   LSTR MSG_EXTRA_FAN_SPEED                = _UxGT("额外风扇速率"); // "Extra fan speed"
   LSTR MSG_EXTRA_FAN_SPEED_N              = _UxGT("额外风扇速率 ~"); // "Extra fan speed"
-  LSTR MSG_CONTROLLER_FAN                 = _UxGT("控制器风扇");
+  LSTR MSG_FANS                           = _UxGT("控制器风扇");
   LSTR MSG_CONTROLLER_FAN_IDLE_SPEED      = _UxGT("空闲速度");
   LSTR MSG_CONTROLLER_FAN_AUTO_ON         = _UxGT("自动模式");
   LSTR MSG_CONTROLLER_FAN_SPEED           = _UxGT("工作速度");

@@ -634,6 +634,11 @@ class Temperature {
     #if ANY(AUTO_POWER_E_FANS, HAS_FANCHECK)
       static uint8_t autofan_speed[HOTENDS];
     #endif
+
+    #if HAS_E_AUTO_FAN
+      static uint8_t extruder_fan_speed;
+    #endif
+
     #if ENABLED(AUTO_POWER_CHAMBER_FAN)
       static uint8_t chamberfan_speed;
     #endif

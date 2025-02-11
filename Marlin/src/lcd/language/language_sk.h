@@ -324,7 +324,7 @@ namespace LanguageNarrow_sk {
   LSTR MSG_STORED_FAN_N                   = _UxGT("Ulož. vent. ~");
   LSTR MSG_EXTRA_FAN_SPEED                = _UxGT("Rýchlosť ex. vent.");
   LSTR MSG_EXTRA_FAN_SPEED_N              = _UxGT("Rýchlosť ex. vent. ~");
-  LSTR MSG_CONTROLLER_FAN                 = _UxGT("Vent. riad. jedn.");
+  LSTR MSG_FANS                           = _UxGT("Vent. riad. jedn.");
   LSTR MSG_CONTROLLER_FAN_IDLE_SPEED      = _UxGT("Voľno. rýchl.");
   LSTR MSG_CONTROLLER_FAN_AUTO_ON         = _UxGT("Auto-režim");
   LSTR MSG_CONTROLLER_FAN_SPEED           = _UxGT("Aktív. rýchl.");

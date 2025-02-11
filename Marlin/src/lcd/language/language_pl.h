@@ -252,7 +252,7 @@ namespace LanguageNarrow_pl {
   LSTR MSG_FAN_SPEED_N                    = _UxGT("Obroty wentylatora ~");
   LSTR MSG_EXTRA_FAN_SPEED                = _UxGT("Obroty dodatkowego wentylatora");
   LSTR MSG_EXTRA_FAN_SPEED_N              = _UxGT("Obroty dodatkowego wentylatora ~");
-  LSTR MSG_CONTROLLER_FAN                 = _UxGT("Wentylator kontrolera");
+  LSTR MSG_FANS                           = _UxGT("Wentylator kontrolera");
   LSTR MSG_FLOW                           = _UxGT("Przepływ");
   LSTR MSG_FLOW_N                         = _UxGT("Przepływ ~");
   LSTR MSG_CONTROL                        = _UxGT("Ustawienia");

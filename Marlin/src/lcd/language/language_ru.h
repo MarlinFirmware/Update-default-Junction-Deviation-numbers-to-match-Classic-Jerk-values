@@ -277,7 +277,7 @@ namespace LanguageNarrow_ru {
   LSTR MSG_STORED_FAN_N                     = _UxGT("Сохранённый кулер ~");
   LSTR MSG_EXTRA_FAN_SPEED                  = _UxGT("Дополн. кулер");
   LSTR MSG_EXTRA_FAN_SPEED_N                = _UxGT("Дополн. кулер ~");
-  LSTR MSG_CONTROLLER_FAN                   = _UxGT("Кулер контроллера");
+  LSTR MSG_FANS                             = _UxGT("Кулер контроллера");
   LSTR MSG_CONTROLLER_FAN_IDLE_SPEED        = _UxGT("Холостые обороты");
   LSTR MSG_CONTROLLER_FAN_AUTO_ON           = _UxGT("Автовключение");
   LSTR MSG_CONTROLLER_FAN_SPEED             = _UxGT("Рабочие обороты");

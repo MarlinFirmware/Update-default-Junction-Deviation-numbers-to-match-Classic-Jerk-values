@@ -264,7 +264,7 @@ namespace LanguageNarrow_sv {
   LSTR MSG_STORED_FAN_N                   = _UxGT("Lagrad Fläkt ~");
   LSTR MSG_EXTRA_FAN_SPEED                = _UxGT("Extra Fläkt Hastighet");
   LSTR MSG_EXTRA_FAN_SPEED_N              = _UxGT("Extra Fläkt Hastighet ~");
-  LSTR MSG_CONTROLLER_FAN                 = _UxGT("Kontroller Fläkt");
+  LSTR MSG_FANS                           = _UxGT("Kontroller Fläkt");
   LSTR MSG_CONTROLLER_FAN_IDLE_SPEED      = _UxGT("Overksam Hastighet");
   LSTR MSG_CONTROLLER_FAN_AUTO_ON         = _UxGT("Auto läga");
   LSTR MSG_CONTROLLER_FAN_SPEED           = _UxGT("Aktive Hastighet");

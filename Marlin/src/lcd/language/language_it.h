@@ -341,7 +341,7 @@ namespace LanguageNarrow_it {
   LSTR MSG_STORED_FAN_N                   = _UxGT("Ventola mem. ~"); // Max 15 characters
   LSTR MSG_EXTRA_FAN_SPEED                = _UxGT("Extra vel.vent."); // Max 15 characters
   LSTR MSG_EXTRA_FAN_SPEED_N              = _UxGT("Extra v.vent. ~"); // Max 15 characters
-  LSTR MSG_CONTROLLER_FAN                 = _UxGT("Controller vent.");
+  LSTR MSG_FANS                           = _UxGT("Controller vent.");
   LSTR MSG_CONTROLLER_FAN_IDLE_SPEED      = _UxGT("Vel. inattivo");
   LSTR MSG_CONTROLLER_FAN_AUTO_ON         = _UxGT("Modo autom.");
   LSTR MSG_CONTROLLER_FAN_SPEED           = _UxGT("Vel. attivo");

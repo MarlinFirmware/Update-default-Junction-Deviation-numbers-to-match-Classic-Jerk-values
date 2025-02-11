@@ -277,7 +277,7 @@ namespace LanguageNarrow_hu {
   LSTR MSG_STORED_FAN_N                   = _UxGT("Tárolt hütés {");
   LSTR MSG_EXTRA_FAN_SPEED                = _UxGT("Extra hütés sebesség");
   LSTR MSG_EXTRA_FAN_SPEED_N              = _UxGT("Extra hütés sebesség {");
-  LSTR MSG_CONTROLLER_FAN                 = _UxGT("Hütésvezérlés");
+  LSTR MSG_FANS                           = _UxGT("Hütésvezérlés");
   LSTR MSG_CONTROLLER_FAN_IDLE_SPEED      = _UxGT("Alapjárat");
   LSTR MSG_CONTROLLER_FAN_AUTO_ON         = _UxGT("Automatikus mód");
   LSTR MSG_CONTROLLER_FAN_SPEED           = _UxGT("Aktív sebesség");

@@ -327,7 +327,7 @@ namespace LanguageNarrow_tr {
   LSTR MSG_STORED_FAN_N                   = _UxGT("Depolanan Fan ~");
   LSTR MSG_EXTRA_FAN_SPEED                = _UxGT("Ekstra Fan Hızı");
   LSTR MSG_EXTRA_FAN_SPEED_N              = _UxGT("Ekstra Fan Hızı ~");
-  LSTR MSG_CONTROLLER_FAN                 = _UxGT("Sistem Fan Kontrol");
+  LSTR MSG_FANS                           = _UxGT("Sistem Fan Kontrol");
   LSTR MSG_CONTROLLER_FAN_IDLE_SPEED      = _UxGT("Rölanti Hızı");
   LSTR MSG_CONTROLLER_FAN_AUTO_ON         = _UxGT("Otomatik Mod");
   LSTR MSG_CONTROLLER_FAN_SPEED           = _UxGT("Aktif Hız");

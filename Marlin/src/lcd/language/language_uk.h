@@ -276,7 +276,7 @@ namespace LanguageNarrow_uk {
   LSTR MSG_STORED_FAN_N                     = _UxGT("Збереж. вент. ~");
   LSTR MSG_EXTRA_FAN_SPEED_N                = _UxGT("Додат.вент. ~");
   LSTR MSG_EXTRA_FAN_SPEED                  = _UxGT("Дод. швидк. вент.");
-  LSTR MSG_CONTROLLER_FAN                   = _UxGT("Вент. контролера");
+  LSTR MSG_FANS                             = _UxGT("Вент. контролера");
   LSTR MSG_CONTROLLER_FAN_IDLE_SPEED        = _UxGT("Холості оберти");
   LSTR MSG_CONTROLLER_FAN_AUTO_ON           = _UxGT("Авто-режим");
   LSTR MSG_CONTROLLER_FAN_SPEED             = _UxGT("Робочі оберти");

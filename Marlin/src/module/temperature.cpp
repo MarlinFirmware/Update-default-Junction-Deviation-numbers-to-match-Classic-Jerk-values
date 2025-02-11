@@ -398,6 +398,10 @@ PGMSTR(str_t_heating_failed, STR_T_HEATING_FAILED);
   uint8_t Temperature::autofan_speed[HOTENDS] = ARRAY_N_1(HOTENDS, FAN_OFF_PWM);
 #endif
 
+#if ENABLED(HAS_E_AUTO_FAN)
+  uint8_t Temperature::extruder_fan_speed = EXTRUDER_AUTO_FAN_SPEED;
+#endif
+
 #if ENABLED(AUTO_POWER_CHAMBER_FAN)
   uint8_t Temperature::chamberfan_speed = FAN_OFF_PWM;
 #endif
@@ -1442,7 +1446,7 @@ int16_t Temperature::getHeaterPower(const heater_id_t heater_id) {
     #endif
 
     #define _UPDATE_AUTO_FAN(P,D,A) do{                   \
-      if (PWM_PIN(P##_AUTO_FAN_PIN) && A < 255)           \
+      if (PWM_PIN(P##_AUTO_FAN_PIN))                      \
         hal.set_pwm_duty(pin_t(P##_AUTO_FAN_PIN), D ? A : 0); \
       else                                                \
         WRITE(P##_AUTO_FAN_PIN, D);                       \
@@ -1466,15 +1470,15 @@ int16_t Temperature::getHeaterPower(const heater_id_t heater_id) {
         #endif
         default:
           #if ANY(AUTO_POWER_E_FANS, HAS_FANCHECK)
-            autofan_speed[realFan] = fan_on ? EXTRUDER_AUTO_FAN_SPEED : 0;
+            autofan_speed[realFan] = fan_on ? extruder_fan_speed : 0;
           #endif
           break;
       }
 
       #if ALL(HAS_FANCHECK, HAS_PWMFANCHECK)
-        #define _AUTOFAN_SPEED() fan_check.is_measuring() ? 255 : EXTRUDER_AUTO_FAN_SPEED
+        #define _AUTOFAN_SPEED() fan_check.is_measuring() ? 255 : extruder_fan_speed
       #else
-        #define _AUTOFAN_SPEED() EXTRUDER_AUTO_FAN_SPEED
+        #define _AUTOFAN_SPEED() extruder_fan_speed
       #endif
       #define _AUTOFAN_CASE(N) case N: _UPDATE_AUTO_FAN(E##N, fan_on, _AUTOFAN_SPEED()); break;
       #define _AUTOFAN_NOT(N)

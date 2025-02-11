@@ -350,19 +350,24 @@ void menu_advanced_settings();
 
 #endif
 
-#if ENABLED(CONTROLLER_FAN_MENU)
+#if ANY(CONTROLLER_FAN_MENU, HAS_E_AUTO_FAN)
 
   #include "../../feature/controllerfan.h"
 
-  void menu_controller_fan() {
+  void menu_fans() {
     START_MENU();
     BACK_ITEM(MSG_CONFIGURATION);
-    EDIT_ITEM_FAST(percent, MSG_CONTROLLER_FAN_IDLE_SPEED, &controllerFan.settings.idle_speed, CONTROLLERFAN_SPEED_MIN, 255);
-    EDIT_ITEM(bool, MSG_CONTROLLER_FAN_AUTO_ON, &controllerFan.settings.auto_mode);
-    if (controllerFan.settings.auto_mode) {
-      EDIT_ITEM_FAST(percent, MSG_CONTROLLER_FAN_SPEED, &controllerFan.settings.active_speed, CONTROLLERFAN_SPEED_MIN, 255);
-      EDIT_ITEM(uint16_4, MSG_CONTROLLER_FAN_DURATION, &controllerFan.settings.duration, 0, 4800);
-    }
+    #if ENABLED(CONTROLLER_FAN_MENU)
+      EDIT_ITEM_FAST(percent, MSG_CONTROLLER_FAN_IDLE_SPEED, &controllerFan.settings.idle_speed, CONTROLLERFAN_SPEED_MIN, 255);
+      EDIT_ITEM(bool, MSG_CONTROLLER_FAN_AUTO_ON, &controllerFan.settings.auto_mode);
+      if (controllerFan.settings.auto_mode) {
+        EDIT_ITEM_FAST(percent, MSG_CONTROLLER_FAN_SPEED, &controllerFan.settings.active_speed, CONTROLLERFAN_SPEED_MIN, 255);
+        EDIT_ITEM(uint16_4, MSG_CONTROLLER_FAN_DURATION, &controllerFan.settings.duration, 0, 4800);
+      }
+    #endif
+    #if ENABLED(HAS_E_AUTO_FAN)
+      EDIT_ITEM_FAST(percent, MSG_EXTRUDER_AUTO_FAN_SPEED, &Temperature::extruder_fan_speed, 0, 255);
+    #endif
     END_MENU();
   }
 
@@ -598,8 +603,8 @@ void menu_configuration() {
   //
   // Set Fan Controller speed
   //
-  #if ENABLED(CONTROLLER_FAN_MENU)
-    SUBMENU(MSG_CONTROLLER_FAN, menu_controller_fan);
+  #if ANY(CONTROLLER_FAN_MENU, EXTRUDER_AUTO_FAN_SPEED_MENU)
+    SUBMENU(MSG_FANS, menu_fans);
   #endif
 
   if (!busy) {
