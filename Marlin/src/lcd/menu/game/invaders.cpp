@@ -262,7 +262,7 @@ void InvadersGame::game_screen() {
 
       const bool did_blink = (++idat.blink_count > idat.count >> 1);
       if (did_blink) {
-        idat.game_blink = !idat.game_blink;
+        FLIP(idat.game_blink);
         idat.blink_count = 0;
       }
 

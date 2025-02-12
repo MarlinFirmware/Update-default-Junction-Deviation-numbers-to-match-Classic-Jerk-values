@@ -11,7 +11,7 @@
 				".vscode"
 			],
 			"binary_file_patterns":
-			[ "*.psd", "*.png", "*.jpg", "*.jpeg", "*.bdf", "*.patch", "avrdude_5.*", "*.svg", "*.bin", "*.woff", "*.otf" ],
+			[ "*.psd", "*.png", "*.jpg", "*.jpeg", "*.bmp", "*.bdf", "*.patch", "avrdude_5.*", "*.svg", "*.bin", "*.woff", "*.otf", "*.pbm" ],
 			"file_exclude_patterns":
 			[
 				"Marlin/platformio.ini",

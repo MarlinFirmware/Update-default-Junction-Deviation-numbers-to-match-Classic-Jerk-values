@@ -108,7 +108,7 @@ bool NudgeNozzleScreen::onTouchHeld(uint8_t tag) {
     #if HAS_MULTI_EXTRUDER
       case 8: mydata.link_nozzles = !link; break;
     #endif
-    case 9: mydata.show_offsets = !mydata.show_offsets; break;
+    case 9: FLIP(mydata.show_offsets); break;
     case 10: GOTO_SCREEN(SaveSettingsDialogBox); break;
     default: return false;
   }

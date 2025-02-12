@@ -48,7 +48,7 @@ static void event_handler(lv_obj_t *obj, lv_event_t event) {
       draw_return_ui();
       break;
     case ID_ENCODER_STATE:
-      gCfgItems.encoder_enable ^= true;
+      FLIP(gCfgItems.encoder_enable);
       lv_screen_menu_item_onoff_update(buttonEncoderState, gCfgItems.encoder_enable);
       update_spi_flash();
       break;

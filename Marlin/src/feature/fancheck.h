@@ -67,7 +67,7 @@ class FanCheck {
     static void compute_speed(uint16_t elapsedTime);
     static void print_fan_states();
     #if HAS_PWMFANCHECK
-      static void toggle_measuring() { measuring = !measuring; }
+      static void toggle_measuring() { FLIP(measuring); }
       static bool is_measuring() { return measuring; }
     #endif
 

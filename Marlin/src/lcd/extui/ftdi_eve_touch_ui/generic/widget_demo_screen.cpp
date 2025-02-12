@@ -124,7 +124,7 @@ bool WidgetsScreen::onTouchStart(uint8_t tag) {
     case 5: cmd.track_linear   (BTN_POS(3,4), BTN_SIZE(2,1), 5).execute(); break;
     case 6: cmd.track_linear   (BTN_POS(3,5), BTN_SIZE(2,1), 6).execute(); break;
   #endif
-    case 7: show_grid = !show_grid; break;
+    case 7: FLIP(show_grid); break;
     default:
       return false;
   }

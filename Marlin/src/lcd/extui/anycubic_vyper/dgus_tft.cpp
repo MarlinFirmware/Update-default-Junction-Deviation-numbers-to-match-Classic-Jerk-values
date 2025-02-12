@@ -1134,7 +1134,7 @@ namespace Anycubic {
   }
 
   void DgusTFT::toggle_audio() {
-    lcd_info.audio_on = !lcd_info.audio_on;
+    FLIP(lcd_info.audio_on);
     goto_system_page();
     lcdAudioSet(lcd_info.audio_on);
   }

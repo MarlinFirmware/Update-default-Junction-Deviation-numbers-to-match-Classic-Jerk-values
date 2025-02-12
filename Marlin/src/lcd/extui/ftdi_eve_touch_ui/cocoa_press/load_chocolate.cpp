@@ -123,7 +123,7 @@ bool LoadChocolateScreen::onTouchEnd(uint8_t tag) {
   switch (tag) {
     case 2: mydata.repeat_tag = 5; break;
     case 3: mydata.repeat_tag = 6; break;
-    case 4: mydata.repeating = !mydata.repeating; break;
+    case 4: FLIP(mydata.repeating); break;
     case 1: GOTO_PREVIOUS(); break;
   }
   return true;

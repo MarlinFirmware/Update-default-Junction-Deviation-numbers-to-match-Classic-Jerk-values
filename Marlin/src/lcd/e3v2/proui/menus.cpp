@@ -95,7 +95,7 @@ void showCheckboxLine(const bool checked) {
 }
 
 void toggleCheckboxLine(bool &checked) {
-  checked = !checked;
+  FLIP(checked);
   showCheckboxLine(checked);
 }
 

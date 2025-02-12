@@ -526,7 +526,7 @@ void Max7219::register_setup() {
         }
         else
           sweepx -= MAX7219_X_LEDS * sweep_dir;
-        patt_on ^= true;
+        FLIP(patt_on);
         next_patt_ms += 100;
         if (++test_mode > 4) test_mode = 0;
       }

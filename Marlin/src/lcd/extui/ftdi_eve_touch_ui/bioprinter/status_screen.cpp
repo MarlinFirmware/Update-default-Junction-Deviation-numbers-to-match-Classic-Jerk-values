@@ -318,7 +318,7 @@ bool StatusScreen::onTouchEnd(uint8_t tag) {
     case 13: GOTO_SCREEN(BioConfirmHomeE); break;
     case 14: SpinnerDialogBox::enqueueAndWait(F("G28Z")); break;
     case 15: GOTO_SCREEN(TemperatureScreen);  break;
-    case 16: fine_motion = !fine_motion; break;
+    case 16: FLIP(fine_motion); break;
     default: return false;
   }
   // If a passcode is enabled, the LockScreen will prevent the

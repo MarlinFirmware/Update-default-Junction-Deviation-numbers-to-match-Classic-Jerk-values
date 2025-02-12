@@ -1297,7 +1297,7 @@ void eachMomentUpdate() {
 
   if (ELAPSED(ms, next_var_update_ms)) {
     next_var_update_ms = ms + DWIN_VAR_UPDATE_INTERVAL;
-    blink = !blink;
+    FLIP(blink);
     updateVariable();
     #if HAS_ESDIAG
       if (checkkey == ID_ESDiagProcess) esDiag.update();
@@ -2232,7 +2232,7 @@ void setMoveZ() { hmiValue.axis = Z_AXIS; setPFloatOnClick(Z_MIN_POS, Z_MAX_POS,
 #if ENABLED(BAUD_RATE_GCODE)
   void hmiSetBaudRate() { hmiData.baud115K ? setBaud115K() : setBaud250K(); }
   void setBaudRate() {
-    hmiData.baud115K ^= true;
+    FLIP(hmiData.baud115K);
     hmiSetBaudRate();
     drawCheckboxLine(currentMenu->line(), hmiData.baud115K);
     dwinUpdateLCD();

@@ -700,7 +700,7 @@ G29_TYPE GcodeSuite::G29() {
           inInc = -1;                   // Zag left
         }
 
-        zig ^= true; // zag
+        FLIP(zig); // zag
 
         // An index to print current state
         grid_count_t pt_index = (PR_OUTER_VAR) * (PR_INNER_SIZE) + 1;

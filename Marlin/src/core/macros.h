@@ -80,6 +80,7 @@
 #define CBI32(n,b) (n &= ~_BV32(b))
 #define TBI32(N,B) (N ^= _BV32(B))
 
+// Macros for common maths operations
 #define cu(x)      ({__typeof__(x) _x = (x); (_x)*(_x)*(_x);})
 #define RADIANS(d) ((d)*float(M_PI)/180.0f)
 #define DEGREES(r) ((r)*180.0f/float(M_PI))
@@ -92,6 +93,8 @@
 
 #define SIGN(a) ({__typeof__(a) _a = (a); (_a>0)-(_a<0);})
 #define IS_POWER_OF_2(x) ((x) && !((x) & ((x) - 1)))
+
+#define FLIP(X) (X = !(X))
 
 // Macros to constrain values
 #ifdef __cplusplus

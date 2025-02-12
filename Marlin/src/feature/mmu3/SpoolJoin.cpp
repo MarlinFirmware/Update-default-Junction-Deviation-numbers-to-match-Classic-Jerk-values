@@ -47,7 +47,7 @@ void SpoolJoin::initStatus() {
 
 void SpoolJoin::toggle() {
   // Toggle enabled value.
-  enabled = !enabled;
+  FLIP(enabled);
 
   // Following Prusa's implementation let's save the value to the EEPROM
   // TODO: Move to settings.cpp

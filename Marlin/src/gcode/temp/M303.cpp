@@ -49,7 +49,7 @@ void GcodeSuite::M303() {
 
   #if HAS_PID_DEBUG
     if (parser.seen_test('D')) {
-      thermalManager.pid_debug_flag ^= true;
+      FLIP(thermalManager.pid_debug_flag);
       SERIAL_ECHO_START();
       SERIAL_ECHOPGM("PID Debug ");
       serialprintln_onoff(thermalManager.pid_debug_flag);
