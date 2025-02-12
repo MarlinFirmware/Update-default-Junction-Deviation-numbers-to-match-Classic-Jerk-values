@@ -898,7 +898,7 @@ class Planner {
      * @param extruder      Optional target extruder (otherwise active_extruder)
      * @param hints         Optional parameters to aid planner calculations
      *
-     * @return  false if no segment was queued due to cleaning, cold extrusion, full queue, etc...
+     * @return  false if no segment was queued due to cleaning, cold extrusion, full queue, etc.
      */
     static bool buffer_segment(const abce_pos_t &abce
       OPTARG(HAS_DIST_MM_ARG, const xyze_float_t &cart_dist_mm)
@@ -919,7 +919,7 @@ class Planner {
      * @param extruder  Optional target extruder (otherwise active_extruder)
      * @param hints     Optional parameters to aid planner calculations
      *
-     * @return  false if no segment was queued due to cleaning, cold extrusion, full queue, etc...
+     * @return  false if no segment was queued due to cleaning, cold extrusion, full queue, etc.
      */
     static bool buffer_line(const xyze_pos_t &cart, const_feedRate_t fr_mm_s
       , const uint8_t extruder=active_extruder

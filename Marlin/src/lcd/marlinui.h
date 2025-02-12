@@ -205,12 +205,13 @@ public:
 
   static void init();
 
-  static void reinit_lcd() { TERN_(REINIT_NOISY_LCD, init_lcd()); }
-
-  #if HAS_WIRED_LCD
-    static bool detected();
+  #if HAS_DISPLAY || HAS_DWIN_E3V2
+    static void init_lcd();
+    // Erase the LCD contents. Do the lowest-level thing required to clear the LCD.
+    static void clear_lcd();
   #else
-    static bool detected() { return true; }
+    static void init_lcd() {}
+    static void clear_lcd() {}
   #endif
 
   #if HAS_MULTI_LANGUAGE
@@ -490,8 +491,8 @@ public:
    * @param cstr    A C-string to set as the status.
    */
   static void set_status_no_expire_P(PGM_P const pstr)      { set_status_P(pstr, true); }
-  static void set_status_no_expire(const char * const cstr) { set_status(cstr, true); }
-  static void set_status_no_expire(FSTR_P const fstr)       { set_status(fstr, true); }
+  static void set_status_no_expire(const char * const cstr) { set_status(cstr, true);   }
+  static void set_status_no_expire(FSTR_P const fstr)       { set_status(fstr, true);   }
 
   /**
    * @brief Set a status with a format string and parameters.
@@ -637,6 +638,9 @@ public:
     static void kill_screen(FSTR_P const, FSTR_P const) {}
 
   #endif
+
+  static bool detected() IF_DISABLED(HAS_WIRED_LCD, { return true; });
+  static void reinit_lcd() { TERN_(REINIT_NOISY_LCD, init_lcd()); }
 
   #if !HAS_WIRED_LCD
     static void quick_feedback(const bool=true) {}

@@ -242,15 +242,15 @@ uint32_t Stepper::advance_divisor = 0,
 #endif
 
 #if ENABLED(S_CURVE_ACCELERATION)
-  int32_t __attribute__((used)) Stepper::bezier_A __asm__("bezier_A");    // A coefficient in Bézier speed curve with alias for assembler
-  int32_t __attribute__((used)) Stepper::bezier_B __asm__("bezier_B");    // B coefficient in Bézier speed curve with alias for assembler
-  int32_t __attribute__((used)) Stepper::bezier_C __asm__("bezier_C");    // C coefficient in Bézier speed curve with alias for assembler
-  uint32_t __attribute__((used)) Stepper::bezier_F __asm__("bezier_F");   // F coefficient in Bézier speed curve with alias for assembler
+  int32_t  __attribute__((used)) Stepper::bezier_A  __asm__("bezier_A");  // A  coefficient in Bézier speed curve with alias for assembler
+  int32_t  __attribute__((used)) Stepper::bezier_B  __asm__("bezier_B");  // B  coefficient in Bézier speed curve with alias for assembler
+  int32_t  __attribute__((used)) Stepper::bezier_C  __asm__("bezier_C");  // C  coefficient in Bézier speed curve with alias for assembler
+  uint32_t __attribute__((used)) Stepper::bezier_F  __asm__("bezier_F");  // F  coefficient in Bézier speed curve with alias for assembler
   uint32_t __attribute__((used)) Stepper::bezier_AV __asm__("bezier_AV"); // AV coefficient in Bézier speed curve with alias for assembler
   #ifdef __AVR__
     bool __attribute__((used)) Stepper::A_negative __asm__("A_negative"); // If A coefficient was negative
   #endif
-  bool Stepper::bezier_2nd_half;    // =false If Bézier curve has been initialized or not
+  bool Stepper::bezier_2nd_half; // = false if Bézier curve has been initialized or not
 #endif
 
 #if ENABLED(LIN_ADVANCE)
