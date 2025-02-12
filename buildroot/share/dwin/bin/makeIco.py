@@ -23,7 +23,7 @@ import os.path, argparse, DWIN_ICO
 version = '2.0.7'
 
 #----------------
-if __name__ == '__main__':
+if __name__ == "__main__":
     try:
         parser = argparse.ArgumentParser(description='Make .ico from JPEG files')
         parser.add_argument('iconDir', type=str, nargs=1,

@@ -23,7 +23,7 @@ import os.path, argparse, DWIN_ICO
 version = '2.0.7'
 
 #----------------
-if __name__ == '__main__':
+if __name__ == "__main__":
     try:
         parser = argparse.ArgumentParser(description='Split .ico into JPEG files')
         parser.add_argument('filename', type=str, nargs=1,

@@ -20,7 +20,7 @@ if pioutil.is_pio_build():
     # For build.offset define LD_FLASH_OFFSET, used by ldscript.ld
     #
     if 'offset' in board_keys:
-        LD_FLASH_OFFSET = board.get("build.offset")
+        LD_FLASH_OFFSET = board.get('build.offset')
         marlin.relocate_vtab(LD_FLASH_OFFSET)
 
         # Flash size
@@ -55,8 +55,10 @@ if pioutil.is_pio_build():
 
         # If FIRMWARE_BIN is defined by config, override all
         mf = env["MARLIN_FEATURES"]
-        if "FIRMWARE_BIN" in mf: new_name = mf["FIRMWARE_BIN"]
-        else: new_name = board.get("build.rename")
+        if "FIRMWARE_BIN" in mf:
+            new_name = mf["FIRMWARE_BIN"]
+        else:
+            new_name = board.get("build.rename")
 
         def rename_target(source, target, env):
             from pathlib import Path

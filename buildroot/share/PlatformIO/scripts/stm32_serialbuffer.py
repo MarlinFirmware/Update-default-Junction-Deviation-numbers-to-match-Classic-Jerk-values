@@ -15,9 +15,11 @@ if pioutil.is_pio_build():
 
     # Get an overriding buffer size for RX or TX from the build flags
     def getInternalSize(side):
-        return  getBuildFlagValue(f"MF_{side}_BUFFER_SIZE") or \
-                getBuildFlagValue(f"SERIAL_{side}_BUFFER_SIZE") or \
-                getBuildFlagValue(f"USART_{side}_BUF_SIZE")
+        return (
+            getBuildFlagValue(f"MF_{side}_BUFFER_SIZE")
+            or getBuildFlagValue(f"SERIAL_{side}_BUFFER_SIZE")
+            or getBuildFlagValue(f"USART_{side}_BUF_SIZE")
+        )
 
     # Get the largest defined buffer size for RX or TX
     def getBufferSize(side, default):
@@ -47,7 +49,7 @@ if pioutil.is_pio_build():
     #
     # If MF_*_BUFFER_SIZE, SERIAL_*_BUFFER_SIZE, USART_*_BUF_SIZE, are
     # defined, the first of these values will be used as the minimum.
-    build_flags = env.ParseFlags(env.get('BUILD_FLAGS'))["CPPDEFINES"]
+    build_flags = env.ParseFlags(env.get("BUILD_FLAGS"))["CPPDEFINES"]
     mf = env["MARLIN_FEATURES"]
 
     # Get the largest defined buffer sizes for RX or TX, using defaults for undefined

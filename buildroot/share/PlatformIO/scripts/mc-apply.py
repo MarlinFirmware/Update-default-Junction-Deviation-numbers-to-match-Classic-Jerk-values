@@ -27,7 +27,8 @@ def report_version(conf):
 def write_opt_file(conf, outpath='Marlin/apply_config.sh'):
     with open(outpath, 'w') as outfile:
         for key, val in conf.items():
-            if key in ('__INITIAL_HASH', 'VERSION'): continue
+            if key in ('__INITIAL_HASH', 'VERSION'):
+                continue
 
             # Other keys are assumed to be configs
             if not type(val) is dict:
@@ -38,9 +39,9 @@ def write_opt_file(conf, outpath='Marlin/apply_config.sh'):
             for k, v in sorted(val.items()):
                 if v != '':
                     v.replace('"', '\\"').replace("'", "\\'").replace(' ', '\\ ')
-                    lines += [f'opt_set {k} {v}']
+                    lines += [f"opt_set {k} {v}"]
                 else:
-                    lines += [f'opt_enable {k}']
+                    lines += [f"opt_enable {k}"]
 
             outfile.write('\n'.join(lines))
 
@@ -54,7 +55,7 @@ def back_up_config(name):
         parts = conf_path.split('.')
         nr = ''
         while True:
-            bak_path = '.'.join(parts[:-1]) + f'.bak{nr}.' + parts[-1]
+            bak_path = '.'.join(parts[:-1]) + f".bak{nr}." + parts[-1]
             if os.path.exists(bak_path):
                 nr = 1 if nr == '' else nr + 1
                 continue
@@ -65,7 +66,8 @@ def back_up_config(name):
 
 def apply_config(conf):
     for key in conf:
-        if key in ('__INITIAL_HASH', 'VERSION'): continue
+        if key in ('__INITIAL_HASH', 'VERSION'):
+            continue
 
         back_up_config(key)
 
@@ -85,7 +87,7 @@ def main():
     try:
         infile = open(args.config_file, 'r')
     except:
-        print(f'No {args.config_file} found.')
+        print(f"No {args.config_file} found.")
         sys.exit(1)
 
     conf = json.load(infile)
@@ -96,5 +98,5 @@ def main():
     else:
         apply_config(conf)
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()

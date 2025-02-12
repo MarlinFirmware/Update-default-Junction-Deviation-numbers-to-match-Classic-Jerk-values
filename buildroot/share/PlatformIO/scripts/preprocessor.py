@@ -29,7 +29,7 @@ def run_preprocessor(env, fn=None):
     cmd = ['"' + cxx + '"']
 
     # Build flags from board.json
-    #if 'BOARD' in env:
+    # if 'BOARD' in env:
     #   cmd += [env.BoardConfig().get("build.extra_flags")]
     for s in build_flags['CPPDEFINES']:
         if isinstance(s, tuple):
@@ -38,7 +38,7 @@ def run_preprocessor(env, fn=None):
             cmd += ['-D' + s]
 
     cmd += ['-D__MARLIN_DEPS__ -w -dM -E -x c++']
-    depcmd = cmd + [ filename ]
+    depcmd = cmd + [filename]
     cmd = ' '.join(depcmd)
     blab(cmd)
     try:

@@ -276,5 +276,5 @@ def process_text(txt):
     return re.sub('\n\n$', '\n', re.sub(r'\n\n+', '\n\n', out))
 
 # Python standard startup for command line with arguments
-if __name__ == '__main__':
+if __name__ == "__main__":
     format_pins(sys.argv[1:])

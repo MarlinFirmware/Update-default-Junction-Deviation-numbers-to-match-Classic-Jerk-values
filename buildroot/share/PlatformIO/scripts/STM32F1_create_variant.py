@@ -38,6 +38,6 @@ if pioutil.is_pio_build():
     else:
 
         # The following almost works, but __start__ (from wirish/start.S) is not seen by common.inc
-        board.update("build.variants_dir", source_root_str);
+        board.update("build.variants_dir", source_root_str)
         src = str(source_dir)
         env.Append(BUILD_FLAGS=[f"-I{src}", f"-L{src}/ld"])  # Add include path for variant
