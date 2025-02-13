@@ -2713,12 +2713,11 @@ void prepare_line_to_destination() {
           // Stow and return early if there is a deploy alarm.
           if (bltouch.deploy()) { bltouch.stow(); return; }
         #endif
-
-        // Tare the probe. Stow and return early if it fails
-        if (TERN0(PROBE_TARE, probe.tare())) { probe.stow(); return; }
-
-        // Tell the Bed Distance Sensor we're Z homing
-        TERN_(BD_SENSOR, bdl.config_state = BDS_HOMING_Z);
+        if (TERN0(PROBE_TARE, probe.tare())) {
+          probe.stow();
+          return;
+        }
+        TERN_(BD_SENSOR, bdl.prepare_homing());
       }
     #endif
 
@@ -2986,11 +2985,7 @@ void prepare_line_to_destination() {
 
     #endif
 
-    #if ALL(BD_SENSOR, HOMING_Z_WITH_PROBE)
-      if (axis == Z_AXIS) bdl.config_state = BDS_IDLE;
-    #endif
-
-    // Put away the Z probe. Return early if it fails.
+    // Put away the Z probe
     if (TERN0(HOMING_Z_WITH_PROBE, axis == Z_AXIS && probe.stow())) return;
 
     #if DISABLED(DELTA) && defined(HOMING_BACKOFF_POST_MM)
@@ -3072,8 +3067,7 @@ void set_axis_is_at_home(const AxisEnum axis) {
     if (axis == Z_AXIS) {
       #if HOMING_Z_WITH_PROBE
         #if ENABLED(BD_SENSOR)
-          safe_delay(100);
-          current_position.z = bdl.read();
+          bdl.end_homing();  
         #else
           current_position.z -= probe.offset.z;
         #endif
