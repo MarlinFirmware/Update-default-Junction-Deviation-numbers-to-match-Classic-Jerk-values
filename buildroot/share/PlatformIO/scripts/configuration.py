@@ -9,8 +9,7 @@ from pathlib import Path
 verbose = 0
 
 def blab(str, level=1):
-    if verbose >= level:
-        print(f"[config] {str}")
+    if verbose >= level: print(f"[config] {str}")
 
 def config_path(cpath):
     return Path("Marlin", cpath)
@@ -18,8 +17,7 @@ def config_path(cpath):
 # Apply a single name = on/off ; name = value ; etc.
 # TODO: Limit to the given (optional) configuration
 def apply_opt(name, val, conf=None):
-    if name == "lcd":
-        name, val = val, "on"
+    if name == "lcd": name, val = val, "on"
 
     # Create a regex to match the option and capture parts of the line
     # 1: Indentation
@@ -55,15 +53,7 @@ def apply_opt(name, val, conf=None):
                 else:
                     # For options with values, enable and set the value
                     addsp = '' if match[5] else ' '
-                    newline = (
-                          match[1]
-                        + match[3]
-                        + match[4]
-                        + match[5]
-                        + addsp
-                        + val
-                        + match[6]
-                    )
+                    newline = match[1] + match[3] + match[4] + match[5] + addsp + val + match[6]
                     if match[9]:
                         sp = match[8] if match[8] else ' '
                         newline += sp + match[9]
@@ -117,21 +107,15 @@ def disable_all_options():
     # Disable all enabled options in both Config files
     for file in ("Configuration.h", "Configuration_adv.h"):
         fullpath = config_path(file)
-        lines = fullpath.read_text(encoding="utf-8").split("\n")
+        lines = fullpath.read_text(encoding="utf-8").split('\n')
         found = False
         for i in range(len(lines)):
             line = lines[i]
             match = regex.match(line)
             if match:
                 name = match[3].upper()
-                if name in (
-                    'CONFIGURATION_H_VERSION',
-                    'CONFIGURATION_ADV_H_VERSION',
-                    'CONFIG_EXAMPLES_DIR'
-                ):
-                    continue
-                if name.startswith('_'):
-                    continue
+                if name in ('CONFIGURATION_H_VERSION', 'CONFIGURATION_ADV_H_VERSION', 'CONFIG_EXAMPLES_DIR'): continue
+                if name.startswith('_'): continue
                 found = True
                 # Comment out the define
                 # TODO: Comment more lines in a multi-line define with \ continuation
@@ -169,18 +153,12 @@ def fetch_example(url):
 
     # Try to fetch the remote files
     gotfile = False
-    for fn in (
-        "Configuration.h",
-        "Configuration_adv.h",
-        "_Bootscreen.h",
-        "_Statusscreen.h"
-    ):
+    for fn in ("Configuration.h", "Configuration_adv.h", "_Bootscreen.h", "_Statusscreen.h"):
         if os.system(f"{fetch} wgot {url}/{fn} >/dev/null 2>&1") == 0:
             shutil.move('wgot', config_path(fn))
             gotfile = True
 
-    if Path('wgot').exists():
-        shutil.rmtree('wgot')
+    if Path('wgot').exists(): shutil.rmtree('wgot')
 
     return gotfile
 
@@ -247,8 +225,7 @@ def apply_config_ini(cp):
         # For a key ending in .ini load and parse another .ini file
         if ckey.endswith('.ini'):
             sect = 'base'
-            if '@' in ckey:
-                sect, ckey = map(str.strip, ckey.split('@'))
+            if '@' in ckey: sect, ckey = map(str.strip, ckey.split('@'))
             cp2 = configparser.ConfigParser()
             cp2.read(config_path(ckey), encoding="utf-8")
             apply_sections(cp2, sect)

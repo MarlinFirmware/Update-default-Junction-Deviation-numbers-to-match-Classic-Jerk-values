@@ -27,8 +27,7 @@ def report_version(conf):
 def write_opt_file(conf, outpath='Marlin/apply_config.sh'):
     with open(outpath, 'w') as outfile:
         for key, val in conf.items():
-            if key in ('__INITIAL_HASH', 'VERSION'):
-                continue
+            if key in ('__INITIAL_HASH', 'VERSION'): continue
 
             # Other keys are assumed to be configs
             if not type(val) is dict:
@@ -66,8 +65,7 @@ def back_up_config(name):
 
 def apply_config(conf):
     for key in conf:
-        if key in ('__INITIAL_HASH', 'VERSION'):
-            continue
+        if key in ('__INITIAL_HASH', 'VERSION'): continue
 
         back_up_config(key)
 

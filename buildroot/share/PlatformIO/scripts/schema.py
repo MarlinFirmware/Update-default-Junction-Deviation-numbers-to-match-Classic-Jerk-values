@@ -44,8 +44,7 @@ def find_grouping(gdict, filekey, sectkey, optkey, pindex):
                 optparts[pindex] = '*'
                 wildkey = '_'.join(optparts)
                 kkey = f"{filekey}|{sectkey}|{wildkey}"
-                if kkey not in gdict:
-                    gdict[kkey] = []
+                if kkey not in gdict: gdict[kkey] = []
                 gdict[kkey].append((subkey, modkey))
 
 # Build a list of potential groups. Only those with multiple items will be grouped.
@@ -77,8 +76,7 @@ def load_boards():
             for line in bfile:
                 if line.startswith("#define BOARD_"):
                     bname = line.split()[1]
-                    if bname != "BOARD_UNKNOWN":
-                        boards.append(bname)
+                    if bname != "BOARD_UNKNOWN": boards.append(bname)
             return "['" + "','".join(boards) + "']"
     return ''
 
@@ -196,15 +194,10 @@ def extract_files(filekey):
                     if sc.startswith(':'):  # If the comment starts with : then it has magic JSON
                         d = sc[1:].strip()  # Strip the leading : and spaces
                         # Look for a JSON container
-                        cbr = (
-                            sc.rindex('}')
-                            if d.startswith('{')
-                            else sc.rindex(']') if d.startswith('[') else 0
-                        )
+                        cbr = sc.rindex('}') if d.startswith('{') else sc.rindex(']') if d.startswith('[') else 0
                         if cbr:
                             opt, cmt = sc[1 : cbr + 1].strip(), sc[cbr + 1 :].strip()
-                            if cmt != '':
-                                bufref.append(cmt)
+                            if cmt != '': bufref.append(cmt)
                         else:
                             opt = sc[1:].strip()  # Some literal value not in a JSON container?
                     else:
@@ -305,11 +298,9 @@ def extract_files(filekey):
 
                     # Parenthesize the given expression if needed
                     def atomize(s):
-                        if (
-                            s == ''
-                            or re.match(r'^[A-Za-z0-9_]*(\([^)]+\))?$', s)
-                            or re.match(r'^[A-Za-z0-9_]+ == \d+?$', s)
-                        ):
+                        if s == '' \
+                        or re.match(r'^[A-Za-z0-9_]*(\([^)]+\))?$', s) \
+                        or re.match(r'^[A-Za-z0-9_]+ == \d+?$', s):
                             return s
                         return f"({s})"
 
@@ -333,8 +324,7 @@ def extract_files(filekey):
 
                         if iselif or iselse:
                             prev[-1] = '!' + prev[-1]  # Invert the last condition
-                            if iselif:
-                                prev.append(atomize(line[5:].strip()))
+                            if iselif: prev.append(atomize(line[5:].strip()))
                             conditions.append(prev)
 
                     elif cparts[0] == '#if':
@@ -348,11 +338,7 @@ def extract_files(filekey):
                     elif defmatch is not None:
 
                         # Get the match groups into vars
-                        enabled, define_name, val = (
-                            defmatch[1] is None,
-                            defmatch[3],
-                            defmatch[4]
-                        )
+                        enabled, define_name, val = defmatch[1] is None, defmatch[3], defmatch[4]
 
                         # Increment the serial ID
                         sid += 1
@@ -367,98 +353,33 @@ def extract_files(filekey):
                         }
 
                         # Type is based on the value
-                        value_type = (
-                            'switch'
-                            if val == ''
-                            else (
-                                'int'
-                                if re.match(r'^[-+]?\s*\d+$', val)
-                                else (
-                                    'ints'
-                                    if re.match(
-                                        r'^([-+]?\s*\d+)(\s*,\s*[-+]?\s*\d+)+$', val
-                                    )
-                                    else (
-                                        'floats'
-                                        if re.match(rf"({flt}(\s*,\s*{flt})+)", val)
-                                        else (
-                                            'float'
-                                            if re.match(f"^({flt})$", val)
-                                            else (
-                                                'string'
-                                                if val[0] == '"'
-                                                else (
-                                                    'char'
-                                                    if val[0] == "'"
-                                                    else (
-                                                        'bool'
-                                                        if val in ('true', 'false')
-                                                        else (
-                                                            'state'
-                                                            if val in ('HIGH', 'LOW')
-                                                            else (
-                                                                'enum'
-                                                                if re.match(
-                                                                    r'^[A-Za-z0-9_]{3,}$',
-                                                                    val,
-                                                                )
-                                                                else (
-                                                                    'int[]'
-                                                                    if re.match(
-                                                                        r'^{\s*[-+]?\s*\d+(\s*,\s*[-+]?\s*\d+)*\s*}$',
-                                                                        val,
-                                                                    )
-                                                                    else (
-                                                                        'float[]'
-                                                                        if re.match(
-                                                                            r'^{{\s*{flt}(\s*,\s*{flt})*\s*}}$',
-                                                                            val,
-                                                                        )
-                                                                        else (
-                                                                            'array'
-                                                                            if val[0]
-                                                                            == '{'
-                                                                            else ''
-                                                                        )
-                                                                    )
-                                                                )
-                                                            )
-                                                        )
-                                                    )
-                                                )
-                                            )
-                                        )
-                                    )
-                                )
-                            )
-                        )
+                        value_type = \
+                             'switch'  if val == '' \
+                        else 'int'     if re.match(r'^[-+]?\s*\d+$', val) \
+                        else 'ints'    if re.match(r'^([-+]?\s*\d+)(\s*,\s*[-+]?\s*\d+)+$', val) \
+                        else 'floats'  if re.match(rf'({flt}(\s*,\s*{flt})+)', val) \
+                        else 'float'   if re.match(f'^({flt})$', val) \
+                        else 'string'  if val[0] == '"' \
+                        else 'char'    if val[0] == "'" \
+                        else 'bool'    if val in ('true', 'false') \
+                        else 'state'   if val in ('HIGH', 'LOW') \
+                        else 'enum'    if re.match(r'^[A-Za-z0-9_]{3,}$', val) \
+                        else 'int[]'   if re.match(r'^{\s*[-+]?\s*\d+(\s*,\s*[-+]?\s*\d+)*\s*}$', val) \
+                        else 'float[]' if re.match(r'^{{\s*{flt}(\s*,\s*{flt})*\s*}}$', val) \
+                        else 'array'   if val[0] == '{' \
+                        else ''
 
-                        val = (
-                            (val == 'true')
-                            if value_type == 'bool'
-                            else (
-                                int(val)
-                                if value_type == 'int'
-                                else (
-                                    val.replace('f', '')
-                                    if value_type == 'floats'
-                                    else (
-                                        float(val.replace('f', ''))
-                                        if value_type == 'float'
-                                        else val
-                                    )
-                                )
-                            )
-                        )
+                        val = (val == 'true')           if value_type == 'bool' \
+                        else int(val)                   if value_type == 'int' \
+                        else val.replace('f','')        if value_type == 'floats' \
+                        else float(val.replace('f','')) if value_type == 'float' \
+                        else val
 
-                        if val != '':
-                            define_info['value'] = val
-                        if value_type != '':
-                            define_info['type'] = value_type
+                        if val != '': define_info['value'] = val
+                        if value_type != '': define_info['type'] = value_type
 
                         # Join up accumulated conditions with &&
-                        if conditions:
-                            define_info['requires'] = ('(' + ') && ('.join(sum(conditions, [])) + ')')
+                        if conditions: define_info['requires'] = ('(' + ') && ('.join(sum(conditions, [])) + ')')
 
                         # If the comment_buff is not empty, add the comment to the info
                         if comment_buff:
@@ -476,8 +397,7 @@ def extract_files(filekey):
                             units = re.match(r'^\(([^)]+)\)', full_comment)
                             if units:
                                 units = units[1]
-                                if units in ('s', 'sec'):
-                                    units = 'seconds'
+                                if units in ('s', 'sec'): units = 'seconds'
                                 define_info['units'] = units
 
                         if 'comment' not in define_info or define_info['comment'] == '':
@@ -493,19 +413,16 @@ def extract_files(filekey):
                             define_info['options'] = boards
                         elif options_json != '':
                             define_info['options'] = options_json
-                            if eol_options:
-                                options_json = ''
+                            if eol_options: options_json = ''
 
                         # Create section dict if it doesn't exist yet
-                        if section not in sch_out[fk]:
-                            sch_out[fk][section] = {}
+                        if section not in sch_out[fk]: sch_out[fk][section] = {}
 
                         # If define has already been seen...
                         if define_name in sch_out[fk][section]:
                             info = sch_out[fk][section][define_name]
-                            if isinstance(info, dict):
-                                info = [info]         # Convert a single dict into a list
-                            info.append(define_info)  # Add to the list
+                            if isinstance(info, dict): info = [info]  # Convert a single dict into a list
+                            info.append(define_info)                  # Add to the list
                         else:
                             # Add the define dict with name as key
                             sch_out[fk][section][define_name] = define_info
@@ -533,8 +450,7 @@ def dump_yaml(schema: dict, ypath: Path):
     def str_literal_representer(dumper, data):
         if '\n' in data:  # Check for multi-line strings
             # Add a newline to trigger '|+'
-            if not data.endswith('\n'):
-                data += '\n'
+            if not data.endswith('\n'): data += '\n'
             return dumper.represent_scalar('tag:yaml.org,2002:str', data, style='|')
         return dumper.represent_scalar('tag:yaml.org,2002:str', data)
 
@@ -555,12 +471,10 @@ def main():
         # Get the command line arguments after the script name
         import sys
         args = sys.argv[1:]
-        if len(args) == 0:
-            args = ['some']
+        if len(args) == 0: args = ['some']
 
         # Does the given array intersect at all with args?
-        def inargs(c):
-            return len(set(args) & set(c)) > 0
+        def inargs(c): return len(set(args) & set(c)) > 0
 
         # Help / Unknown option
         unk = not inargs(['some', 'json', 'jsons', 'group', 'yml', 'yaml'])
