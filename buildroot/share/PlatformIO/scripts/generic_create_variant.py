@@ -47,8 +47,8 @@ if pioutil.is_pio_build():
     #
     board = env.BoardConfig()
     variant = board.get("build.variant")
-    #mcu_type = board.get("build.mcu")[:-2]
-    #series = mcu_type[:7].upper() + "xx"
+    # mcu_type = board.get("build.mcu")[:-2]
+    # series = mcu_type[:7].upper() + "xx"
 
     # Make sure the local variant sub-folder exists
     if marlin_variant_pattern.match(str(variant).lower()):

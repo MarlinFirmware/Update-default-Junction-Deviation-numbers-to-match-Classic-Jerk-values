@@ -34,7 +34,7 @@ def enabled_defines(filepath):
     '''
     outdict = {}
     section = "user"
-    spatt = re.compile(r".*@section +([-a-zA-Z0-9_\s]+)$") # @section ...
+    spatt = re.compile(r'.*@section +([-a-zA-Z0-9_\s]+)$')  # @section ...
 
     f = open(filepath, encoding="utf8").read().split("\n")
 
@@ -42,8 +42,10 @@ def enabled_defines(filepath):
     for line in f:
         sline = line.strip()
 
-        m = re.match(spatt, sline) # @section ...
-        if m: section = m.group(1).strip() ; continue
+        m = re.match(spatt, sline)  # @section ...
+        if m:
+            section = m.group(1).strip()
+            continue
 
         if incomment:
             if '*/' in sline:
@@ -58,15 +60,15 @@ def enabled_defines(filepath):
         if sline[:7] == "#define":
             # Extract the key here (we don't care about the value)
             kv = sline[8:].strip().split()
-            outdict[kv[0]] = { 'name':kv[0], 'section': section }
+            outdict[kv[0]] = {'name': kv[0], 'section': section}
     return outdict
 
 # Compute the SHA256 hash of a file
 def get_file_sha256sum(filepath):
     sha256_hash = hashlib.sha256()
-    with open(filepath,"rb") as f:
+    with open(filepath, "rb") as f:
         # Read and update hash string value in blocks of 4K
-        for byte_block in iter(lambda: f.read(4096),b""):
+        for byte_block in iter(lambda: f.read(4096), b""):
             sha256_hash.update(byte_block)
     return sha256_hash.hexdigest()
 
@@ -173,7 +175,7 @@ def compute_build_signature(env):
         # Remove all keys ending by "_T_DECLARED" as it's a copy of extraneous system stuff
         if key.endswith("_T_DECLARED"): continue
         # Remove keys that are not in the #define list in the Configuration list
-        if key not in conf_names + [ 'DETAILED_BUILD_VERSION', 'STRING_DISTRIBUTION_DATE' ]: continue
+        if key not in conf_names + ['DETAILED_BUILD_VERSION', 'STRING_DISTRIBUTION_DATE']: continue
         # Add to a new dictionary for simplicity
         cleaned_build_defines[key] = build_defines[key]
 
@@ -187,7 +189,7 @@ def compute_build_signature(env):
             if key in conf_defines[header]:
                 if key[0:2] == '__': continue
                 val = cleaned_build_defines[key]
-                real_config[header][key] = { 'file':header, 'name': key, 'value': val, 'section': conf_defines[header][key]['section']}
+                real_config[header][key] = {'file': header, 'name': key, 'value': val, 'section': conf_defines[header][key]['section']}
 
     def tryint(key):
         try: return int(build_defines[key])
@@ -222,15 +224,15 @@ def compute_build_signature(env):
         # Start with a preferred @section ordering
         preorder = ('test','custom','info','machine','eeprom','stepper drivers','multi stepper','idex','extruder','geometry','homing','kinematics','motion','motion control','endstops','filament runout sensors','probe type','probes','bltouch','leveling','temperature','hotend temp','mpctemp','pid temp','mpc temp','bed temp','chamber temp','fans','tool change','advanced pause','calibrate','calibration','media','lcd','lights','caselight','interface','custom main menu','custom config menu','custom buttons','develop','debug matrix','delta','scara','tpara','polar','polargraph','cnc','nozzle park','nozzle clean','gcode','serial','host','filament width','i2c encoders','i2cbus','joystick','multi-material','nanodlp','network','photo','power','psu control','reporting','safety','security','servos','stats','tmc/config','tmc/hybrid','tmc/serial','tmc/smart','tmc/spi','tmc/stallguard','tmc/status','tmc/stealthchop','tmc/tmc26x','units','volumetrics','extras')
 
-        sections = { key:{} for key in preorder }
+        sections = {key: {} for key in preorder}
 
         # Group options by schema @section
         for header in real_config:
             for name in real_config[header]:
-                #print(f"  name: {name}")
+                # print(f"  name: {name}")
                 if name in ignore: continue
                 ddict = real_config[header][name]
-                #print(f"   real_config[{header}][{name}]:", ddict)
+                # print(f"   real_config[{header}][{name}]:", ddict)
                 sect = ddict['section']
                 if sect not in sections: sections[sect] = {}
                 sections[sect][name] = ddict
@@ -254,16 +256,16 @@ def compute_build_signature(env):
             sections = {}
             for header in real_config:
                 for name in real_config[header]:
-                    #print(f"  name: {name}")
+                    # print(f"  name: {name}")
                     if name not in ignore:
                         ddict = real_config[header][name]
-                        #print(f"   real_config[{header}][{name}]:", ddict)
+                        # print(f"   real_config[{header}][{name}]:", ddict)
                         sect = ddict['section']
                         if sect not in sections: sections[sect] = {}
                         sections[sect][name] = ddict
 
             # Get all sections as a list of strings, with spaces and dashes replaced by underscores
-            long_list = [ re.sub(r'[- ]+', '_', x).lower() for x in sections.keys() ]
+            long_list = [re.sub(r'[- ]+', '_', x).lower() for x in sections.keys()]
             # Make comma-separated lists of sections with 64 characters or less
             sec_lines = []
             while len(long_list):
@@ -271,7 +273,7 @@ def compute_build_signature(env):
                 while len(long_list) and len(line) + len(long_list[0]) < 64 - 1:
                     line += long_list.pop(0) + ', '
                 sec_lines.append(line.strip())
-            sec_lines[-1] = sec_lines[-1][:-1] # Remove the last comma
+            sec_lines[-1] = sec_lines[-1][:-1]  # Remove the last comma
 
         else:
             sec_lines = ['all']
@@ -282,7 +284,7 @@ def compute_build_signature(env):
 
         config_ini = build_path / 'config.ini'
         with config_ini.open('w') as outfile:
-            filegrp = { 'Configuration.h':'config:basic', 'Configuration_adv.h':'config:advanced' }
+            filegrp = {'Configuration.h': 'config:basic', 'Configuration_adv.h': 'config:advanced'}
             vers = build_defines["CONFIGURATION_H_VERSION"]
             dt_string = datetime.now().strftime("%Y-%m-%d at %H:%M:%S")
 
@@ -340,7 +342,7 @@ f'''#
 
                 # Loop through the sections
                 for skey in sorted(sections):
-                    #print(f"  skey: {skey}")
+                    # print(f"  skey: {skey}")
                     sani = re.sub(r'[- ]+', '_', skey).lower()
                     outfile.write(f"\n[config:{sani}]\n")
                     opts = sections[skey]
@@ -349,14 +351,14 @@ f'''#
                         if name in ignore: continue
                         val = opts[name]['value']
                         if val == '': val = 'on'
-                        #print(f"  {name} = {val}")
+                        # print(f"  {name} = {val}")
                         outfile.write(ini_fmt.format(name.lower(), val) + '\n')
 
             else:
 
                 # Standard export just dumps config:basic and config:advanced sections
                 for header in real_config:
-                    outfile.write(f'\n[{filegrp[header]}]\n')
+                    outfile.write(f"\n[{filegrp[header]}]\n")
                     opts = real_config[header]
                     opts_keys = sorted(opts.keys(), key=lambda x: optsort(x, optorder))
                     for name in opts_keys:
@@ -373,7 +375,7 @@ f'''#
 
         config_h = Path('Marlin', 'Config-export.h')
         with config_h.open('w') as outfile:
-            filegrp = { 'Configuration.h':'config:basic', 'Configuration_adv.h':'config:advanced' }
+            filegrp = {'Configuration.h': 'config:basic', 'Configuration_adv.h': 'config:advanced'}
             vers = build_defines["CONFIGURATION_H_VERSION"]
             dt_string = datetime.utcnow().strftime("%Y-%m-%d at %H:%M:%S")
 
@@ -385,12 +387,12 @@ f'''#
  */
 '''
 
-            subs = (('Bltouch','BLTouch'),('hchop','hChop'),('Eeprom','EEPROM'),('Gcode','G-code'),('lguard','lGuard'),('Idex','IDEX'),('Lcd','LCD'),('Mpc','MPC'),('Pid','PID'),('Psu','PSU'),('Scara','SCARA'),('Spi','SPI'),('Tmc','TMC'),('Tpara','TPARA'))
+            subs = (('Bltouch', 'BLTouch'), ('hchop', 'hChop'), ('Eeprom', 'EEPROM'), ('Gcode', 'G-code'), ('lguard', 'lGuard'), ('Idex', 'IDEX'), ('Lcd', 'LCD'), ('Mpc', 'MPC'), ('Pid', 'PID'), ('Psu', 'PSU'), ('Scara', 'SCARA'), ('Spi', 'SPI'), ('Tmc', 'TMC'), ('Tpara', 'TPARA'))
             define_fmt = '#define {0:40} {1}'
             if extended_dump:
                 # Loop through the sections
                 for skey in sections:
-                    #print(f"  skey: {skey}")
+                    # print(f"  skey: {skey}")
                     opts = sections[skey]
                     headed = False
                     opts_keys = sorted(opts.keys(), key=lambda x: optsort(x, optorder))
@@ -406,7 +408,7 @@ f'''#
             else:
                 # Dump config options in just two sections, by file
                 for header in real_config:
-                    out_text += f'\n/**\n * Overrides for {header}\n */\n'
+                    out_text += f"\n/**\n * Overrides for {header}\n */\n"
                     opts = real_config[header]
                     opts_keys = sorted(opts.keys(), key=lambda x: optsort(x, optorder))
                     for name in opts_keys:
@@ -442,7 +444,7 @@ f'''#
                 except ImportError:
                     env.Execute(env.VerboseAction(
                         '$PYTHONEXE -m pip install "pyyaml"',
-                        "Installing YAML for schema.yml export",
+                        "Installing YAML for schema.yml export"
                     ))
                     import yaml
                 schema.dump_yaml(conf_schema, build_path / 'schema.yml')
@@ -470,7 +472,7 @@ f'''#
                 for header in real_config:
                     json_data[header] = {}
                     conf = real_config[header]
-                    #print(f"real_config[{header}]", conf)
+                    # print(f"real_config[{header}]", conf)
                     for name in conf:
                         if name in ignore: continue
                         json_data[header][name] = conf[name]['value']
@@ -502,7 +504,7 @@ f'''#
         compress_file(marlin_json, json_name, marlin_zip)
 
     # Generate a C source file containing the entire ZIP file as an array
-    with open('Marlin/src/mczip.h','wb') as result_file:
+    with open('Marlin/src/mczip.h', 'wb') as result_file:
         result_file.write(
               b'#ifndef NO_CONFIGURATION_EMBEDDING_WARNING\n'
             + b'  #warning "Generated file \'mc.zip\' is embedded (Define NO_CONFIGURATION_EMBEDDING_WARNING to suppress this warning.)"\n'

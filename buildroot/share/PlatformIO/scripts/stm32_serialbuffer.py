@@ -47,7 +47,7 @@ if pioutil.is_pio_build():
     #
     # If MF_*_BUFFER_SIZE, SERIAL_*_BUFFER_SIZE, USART_*_BUF_SIZE, are
     # defined, the first of these values will be used as the minimum.
-    build_flags = env.ParseFlags(env.get('BUILD_FLAGS'))["CPPDEFINES"]
+    build_flags = env.ParseFlags(env.get("BUILD_FLAGS"))["CPPDEFINES"]
     mf = env["MARLIN_FEATURES"]
 
     # Get the largest defined buffer sizes for RX or TX, using defaults for undefined

@@ -121,7 +121,7 @@ def boards_checks(argv):
 
     return ERRS
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     ERR_COUNT = boards_checks(sys.argv[1:])
     if ERR_COUNT:
         print(f'\nFound {ERR_COUNT} errors')

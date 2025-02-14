@@ -20,7 +20,7 @@ if pioutil.is_pio_build():
     # For build.offset define LD_FLASH_OFFSET, used by ldscript.ld
     #
     if 'offset' in board_keys:
-        LD_FLASH_OFFSET = board.get("build.offset")
+        LD_FLASH_OFFSET = board.get('build.offset')
         marlin.relocate_vtab(LD_FLASH_OFFSET)
 
         # Flash size
