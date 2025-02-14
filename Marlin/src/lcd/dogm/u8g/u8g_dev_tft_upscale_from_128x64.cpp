@@ -542,6 +542,7 @@ U8G_PB_DEV(u8g_dev_tft_320x240_upscale_from_128x64, WIDTH, HEIGHT, PAGE_HEIGHT, 
     tftio.set_window(TFT_PIXEL_OFFSET_X, TFT_PIXEL_OFFSET_Y, X_HI, Y_HI);
     do {
       set_font(FONT_MENU);
+      lcd_put_u8str(0, 7, GET_TEXT_F(MSG_TOUCH_CALIBRATION));
       lcd_put_u8str(0, LCD_PIXEL_HEIGHT / 2, str);
     } while (u8g.nextPage());
     drawing_screen = false;
