@@ -435,6 +435,7 @@ namespace LanguageNarrow_en {
   LSTR MSG_VMAX_B                         = _UxGT("Max ") STR_B _UxGT(" Speed");
   LSTR MSG_VMAX_C                         = _UxGT("Max ") STR_C _UxGT(" Speed");
   LSTR MSG_VMAX_N                         = _UxGT("Max @ Speed");
+  LSTR MSG_MAX_PRINTING_SPEED             = _UxGT("Max Printing Speed (mm/s)");
   LSTR MSG_VMAX_E                         = _UxGT("Max E Speed");
   LSTR MSG_VMAX_EN                        = _UxGT("Max * Speed");
   LSTR MSG_VMIN                           = _UxGT("Min Velocity");
