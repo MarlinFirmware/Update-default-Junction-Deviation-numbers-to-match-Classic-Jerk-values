@@ -43,7 +43,8 @@ def enabled_defines(filepath):
         sline = line.strip()
 
         m = re.match(spatt, sline)  # @section ...
-        if m: section = m.group(1).strip()
+        if m:
+            section = m.group(1).strip()
             continue
 
         if incomment:
