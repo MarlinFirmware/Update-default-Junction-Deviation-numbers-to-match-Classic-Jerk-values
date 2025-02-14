@@ -72,6 +72,9 @@ void GcodeSuite::M1000() {
     const bool force_resume = TERN0(HAS_PLR_BED_THRESHOLD, recovery.bed_temp_threshold && (thermalManager.degBed() >= recovery.bed_temp_threshold));
 
     if (!force_resume && parser.seen_test('S')) {
+
+      TERN_(PLR_HEAT_BED_ON_REBOOT, recovery.set_bed_temp(true));
+
       #if HAS_MARLINUI_MENU
         ui.goto_screen(menu_job_recovery);
       #elif ENABLED(EXTENSIBLE_UI)
