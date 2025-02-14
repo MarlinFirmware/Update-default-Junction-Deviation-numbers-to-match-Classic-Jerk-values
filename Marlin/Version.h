@@ -56,6 +56,14 @@
 //#define MACHINE_NAME "3D Printer"
 
 /**
+ * Defines additional information to be displayed immediately after the machine name
+ * in the About Printer information page.
+ */
+//#define MACHINE_ABOUT_LINE1 "Sub-model"
+//#define MACHINE_ABOUT_LINE2 "Features"
+//#define MACHINE_ABOUT_LINE3 "Features"
+
+/**
  * The SOURCE_CODE_URL is the location where users will find the Marlin Source
  * Code which is installed on the device. In most cases —unless the manufacturer
  * has a distinct Github fork— the Source Code URL should just be the main

@@ -533,12 +533,9 @@ void MarlinUI::clear_for_drawing() { clear_lcd(); }
     }
 
     //
-    // Show the Marlin logo with splash line 1
+    // Show the Marlin logo
     //
     if (LCD_EXTRA_SPACE >= utf8_strlen(SHORT_BUILD_VERSION) + 1) {
-      //
-      // Show the Marlin logo, splash line1, and splash line 2
-      //
       logo_lines(F(" " SHORT_BUILD_VERSION));
       CENTER_OR_SCROLL(MARLIN_WEBSITE_URL, 2000);
     }
@@ -550,9 +547,6 @@ void MarlinUI::clear_for_drawing() { clear_lcd(); }
       logo_lines(FPSTR(NUL_STR));
       CENTER_OR_SCROLL(SHORT_BUILD_VERSION, 1500);
       CENTER_OR_SCROLL(MARLIN_WEBSITE_URL, 1500);
-      #ifdef STRING_SPLASH_LINE3
-        CENTER_OR_SCROLL(STRING_SPLASH_LINE3, 1500);
-      #endif
     }
   }
 

@@ -397,7 +397,7 @@ static void center_text(FSTR_P const fstart, const uint8_t y) {
   void MarlinUI::show_bootscreen() {
     if (!PanelDetected) return;
     //
-    // Show the Marlin logo, splash line1, and splash line 2
+    // Show the Marlin logo
     //
     uint8_t indent = (LCD_WIDTH - 8) / 2;
     // symbols 217 (bottom right corner) and 218 (top left corner) are using for letters in some languages
