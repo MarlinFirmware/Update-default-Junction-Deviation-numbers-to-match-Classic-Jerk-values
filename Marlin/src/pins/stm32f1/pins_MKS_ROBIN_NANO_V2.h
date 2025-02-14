@@ -210,17 +210,17 @@
 //
 // Misc. Functions
 //
-#if HAS_TFT_LVGL_UI
-  #ifndef FIL_RUNOUT_PIN
-    #define FIL_RUNOUT_PIN                  PA4   // MT_DET_1
-  #endif
-  #ifndef FIL_RUNOUT2_PIN
-    #define FIL_RUNOUT2_PIN                 PE6   // MT_DET_2
-  #endif
-  #ifndef FIL_RUNOUT_STATE
-    #define FIL_RUNOUT_STATE                LOW
-  #endif
+#ifndef FIL_RUNOUT_PIN
+  #define FIL_RUNOUT_PIN                    PA4   // MT_DET_1
+#endif
+#ifndef FIL_RUNOUT2_PIN
+  #define FIL_RUNOUT2_PIN                   PE6   // MT_DET_2
+#endif
+#ifndef FIL_RUNOUT_STATE
+  #define FIL_RUNOUT_STATE                LOW
+#endif
 
+#if HAS_TFT_LVGL_UI
   #define WIFI_IO0_PIN                      PC13
   #define WIFI_IO1_PIN                      PC7
   #define WIFI_RESET_PIN                    PE9
@@ -236,8 +236,6 @@
 #else
   //#define POWER_LOSS_PIN                  PA2   // PW_DET
   //#define PS_ON_PIN                       PB2   // PW_OFF
-  #define FIL_RUNOUT_PIN                    PA4
-  #define FIL_RUNOUT2_PIN                   PE6
 #endif
 
 //#define LED_PIN                           PB2

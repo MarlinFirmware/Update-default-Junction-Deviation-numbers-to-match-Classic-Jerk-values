@@ -220,16 +220,14 @@
   //#define PS_ON_PIN                       PA3   // PW_CN /PW_OFF
 #endif
 
-#if HAS_TFT_LVGL_UI
-  #ifndef FIL_RUNOUT_PIN
-    #define FIL_RUNOUT_PIN                  PA4   // MT_DET_1
-  #endif
-  #ifndef FIL_RUNOUT2_PIN
-    #define FIL_RUNOUT2_PIN                 PE6   // MT_DET_2
-  #endif
-  #ifndef FIL_RUNOUT_STATE
-    #define FIL_RUNOUT_STATE                LOW
-  #endif
+#ifndef FIL_RUNOUT_PIN
+  #define FIL_RUNOUT_PIN                    PA4   // MT_DET_1
+#endif
+#ifndef FIL_RUNOUT2_PIN
+  #define FIL_RUNOUT2_PIN                   PE6   // MT_DET_2
+#endif
+#ifndef FIL_RUNOUT_STATE
+  #define FIL_RUNOUT_STATE                LOW
 #endif
 
 //
