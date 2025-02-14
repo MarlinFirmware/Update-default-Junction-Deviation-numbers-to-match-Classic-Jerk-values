@@ -93,7 +93,7 @@ void GcodeSuite::M140_M190(const bool isM190) {
 
   #if ENABLED(BED_ANNEALING_GCODE)
     const bool anneal = isM190 && !no_wait_for_cooling && parser.seenval('T');
-    const millis_t anneal_ms = anneal ? millis() + parser.value_millis_from_seconds() : 0UL;
+    const millis_t anneal_ms = anneal ? parser.value_millis_from_seconds() : 0UL;
   #else
     constexpr bool anneal = false;
   #endif
@@ -110,15 +110,11 @@ void GcodeSuite::M140_M190(const bool isM190) {
     #if ENABLED(BED_ANNEALING_GCODE)
       if (anneal) {
         LCD_MESSAGE(MSG_BED_ANNEALING);
+        const millis_t wait_ms = anneal_ms / (thermalManager.degBed() - temp) ;
         // Loop from current temp down to the target
-        for (celsius_t cool_temp = thermalManager.degBed(); --cool_temp >= temp; ) {
-          thermalManager.setTargetBed(cool_temp);           // Cool by one degree
-          thermalManager.wait_for_bed(false);               // Could this wait forever?
-          const millis_t ms = millis();
-          if (PENDING(ms, anneal_ms) && cool_temp > temp) { // Still warmer and waiting?
-            const millis_t remain = anneal_ms - ms;
-            dwell(remain / (cool_temp - temp));             // Wait for a fraction of remaining time
-          }
+        for (celsius_t cool_temp = thermalManager.degBed() - 1; cool_temp >= temp; --cool_temp) {
+          thermalManager.setTargetBed(cool_temp); // Cool by one degree
+          dwell(wait_ms); //Wait for going to the next degree
         }
         return;
       }
