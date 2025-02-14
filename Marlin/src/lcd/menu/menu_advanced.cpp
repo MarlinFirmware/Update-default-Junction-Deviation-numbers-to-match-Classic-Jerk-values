@@ -136,6 +136,10 @@ void menu_backlash();
       }
     #endif
 
+    #if ENABLED(FEEDRATE_PRINTING_LIMIT)
+      EDIT_ITEM_FAST(float5, MSG_MAX_PRINTING_SPEED, &planner.max_printing_feedrate_mm_s, 0, MAX(planner.settings.max_feedrate_mm_s[0]*1.414, planner.settings.max_feedrate_mm_s[1]*1.414));
+    #endif
+
     #if ENABLED(CONFIGURE_FILAMENT_CHANGE)
       constexpr float extrude_maxlength = TERN(PREVENT_LENGTHY_EXTRUDE, EXTRUDE_MAXLENGTH, 999);
 

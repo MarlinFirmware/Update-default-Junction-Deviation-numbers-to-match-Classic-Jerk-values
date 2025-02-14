@@ -189,6 +189,10 @@ uint32_t Planner::max_acceleration_steps_per_s2[DISTINCT_AXES]; // (steps/s^2) D
         Planner::volumetric_extruder_feedrate_limit[EXTRUDERS]; // pre calculated extruder feedrate limit based on volumetric_extruder_limit; pre-calculated to reduce computation in the planner
 #endif
 
+#if ENABLED(FEEDRATE_PRINTING_LIMIT)
+  feedRate_t Planner::max_printing_feedrate_mm_s;   // (mm/s)
+#endif
+
 #ifdef MAX7219_DEBUG_SLOWDOWN
   uint8_t Planner::slowdown_count = 0;
 #endif
@@ -2309,6 +2313,15 @@ bool Planner::_populate_block(
         }
       }
     #endif
+
+    #if ENABLED(FEEDRATE_PRINTING_LIMIT)
+      if (max_printing_feedrate_mm_s > 0 && current_speed.e > 0) {
+        feedRate_t ps2 = (current_speed[0] * current_speed[0]) + (current_speed[1] * current_speed[1]);
+        if (ps2 > max_printing_feedrate_mm_s * max_printing_feedrate_mm_s)
+          NOMORE(speed_factor, max_printing_feedrate_mm_s / SQRT(ps2));
+      }
+    #endif
+
   }
   #endif // HAS_EXTRUDERS
 
