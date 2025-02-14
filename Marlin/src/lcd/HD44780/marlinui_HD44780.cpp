@@ -684,12 +684,12 @@ FORCE_INLINE void _draw_heater_status(const heater_id_t heater_id, const char pr
   FORCE_INLINE void _draw_ammeter_status() {
     lcd_put_u8str(F(" "));
     ammeter.read();
-    if (ammeter.current <= 0.999f) {
-      lcd_put_u8str(ui16tostr3rj(uint16_t(ammeter.current * 1000 + 0.5f)));
+    if (ammeter.current < 1000) {
+      lcd_put_u8str(ftostr31rj((ammeter.current)));
       lcd_put_u8str(F("mA"));
     }
     else {
-      lcd_put_u8str(ftostr12ns(ammeter.current));
+      lcd_put_u8str(ftostr12ns(ammeter.current / 1000));
       lcd_put_u8str(F("A"));
     }
   }

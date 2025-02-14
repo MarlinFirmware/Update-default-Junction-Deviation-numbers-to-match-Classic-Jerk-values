@@ -3736,10 +3736,22 @@
     //
     // Laser I2C Ammeter (High precision INA226 low/high side module)
     //
-    //#define I2C_AMMETER
+    #define I2C_AMMETER
     #if ENABLED(I2C_AMMETER)
-      #define I2C_AMMETER_IMAX            0.1    // (Amps) Calibration value for the expected current range
-      #define I2C_AMMETER_SHUNT_RESISTOR  0.1    // (Ohms) Calibration shunt resistor value
+      
+      #define I2C_AMMETER_SDA_PIN 66 // D66 (AUX2.9)
+      #define I2C_AMMETER_SCL_PIN 65 // D65 (AUX2.10)
+      
+      #define I2C_AMMETER_ADDRESS 0x41
+
+      #define I2C_AMMETER_MONITOR_CHANNEL 3
+      #define I2C_AMMETER_WARN_CURRENT_MA 14    //Hardware Warn Level (INA3221 Only)
+      #define I2C_AMMETER_ALARM_CURRENT_MA 25   //Hardware Alarm Level 
+    
+      #define I2C_AMMETER_IMAX 0.5           // (Amps) Calibration value for the expected current range
+      #define I2C_AMMETER_SHUNT_RESISTOR 0.1 // (Ohms) Calibration shunt resistor value
+
+      //#define I2C_AMMETER_DEBUGGING 
     #endif
 
     //
