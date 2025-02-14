@@ -451,6 +451,9 @@ void menu_advanced_settings();
     #if HAS_HEATED_BED
       EDIT_ITEM(int3, MSG_BED, &ui.material_preset[m].bed_temp, BED_MINTEMP, BED_MAX_TARGET);
     #endif
+    #if HAS_HEATED_CHAMBER
+      EDIT_ITEM(int3, MSG_CHAMBER, &ui.material_preset[m].chamber_temp, CHAMBER_MINTEMP, CHAMBER_MAX_TARGET);
+    #endif
     #if ENABLED(EEPROM_SETTINGS)
       ACTION_ITEM(MSG_STORE_EEPROM, ui.store_settings);
     #endif

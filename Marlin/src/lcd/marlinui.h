@@ -118,6 +118,9 @@ typedef bool (*statusResetFunc_t)();
     #if HAS_HEATED_BED
       celsius_t bed_temp;
     #endif
+    #if HAS_HEATED_CHAMBER
+      celsius_t chamber_temp;
+    #endif
     #if HAS_FAN
       uint16_t fan_speed;
     #endif

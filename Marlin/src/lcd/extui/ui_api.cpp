@@ -811,6 +811,9 @@ namespace ExtUI {
     #if HAS_HEATED_BED
       uint16_t getMaterial_preset_B(const uint16_t index) { return ui.material_preset[index].bed_temp; }
     #endif
+    #if HAS_HEATED_CHAMBER
+      uint16_t getMaterial_preset_C(const uint16_t index) { return ui.material_preset[index].chamber_temp; }
+    #endif
   #endif
 
   feedRate_t getFeedrate_mm_s()                       { return feedrate_mm_s; }

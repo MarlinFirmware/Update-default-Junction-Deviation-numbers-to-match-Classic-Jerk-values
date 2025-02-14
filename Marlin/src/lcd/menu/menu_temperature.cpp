@@ -54,6 +54,10 @@
     #if HAS_HEATED_BED
       if (indb >= 0 && ui.material_preset[indb].bed_temp > 0) setTargetBed(ui.material_preset[indb].bed_temp);
     #endif
+    #if HAS_HEATED_CHAMBER
+      if ((indb >= 0 && ui.material_preset[indb].chamber_temp > 0) &&  (indh >= 0 && ui.material_preset[indh].hotend_temp > 0)) // Preheat all selected
+        setTargetChamber(ui.material_preset[indb].chamber_temp);
+    #endif
     #if HAS_FAN
       if (indh >= 0) {
         const uint8_t fan_index = active_extruder < (FAN_COUNT) ? active_extruder : 0;
@@ -73,6 +77,9 @@
   #endif
   #if HAS_HEATED_BED
     inline void _preheat_bed(const uint8_t m) { thermalManager.lcd_preheat(0, -1, m); }
+  #endif
+  #if HAS_HEATED_CHAMBER
+    inline void _preheat_chamber(const uint8_t m) { thermalManager.setTargetChamber(ui.material_preset[m].chamber_temp); }
   #endif
   #if HAS_COOLER
     inline void _precool_laser(const uint8_t m, const uint8_t e) { thermalManager.lcd_preheat(e, m, -1); }
@@ -107,7 +114,7 @@
 
       #if HOTENDS == 1
 
-        #if HAS_HEATED_BED
+        #if HAS_HEATED_BED || HAS_HEATED_CHAMBER
           ACTION_ITEM_f(ui.get_preheat_label(m), MSG_PREHEAT_M, []{ _preheat_both(editable.int8, 0); });
           ACTION_ITEM_f(ui.get_preheat_label(m), MSG_PREHEAT_M_END, do_preheat_end_m);
         #else
@@ -127,6 +134,10 @@
 
       #if HAS_HEATED_BED
         ACTION_ITEM_f(ui.get_preheat_label(m), MSG_PREHEAT_M_BEDONLY, []{ _preheat_bed(editable.int8); });
+      #endif
+
+      #if HAS_HEATED_CHAMBER
+        ACTION_ITEM_f(ui.get_preheat_label(m), MSG_PREHEAT_M_CHAMBER, []{ _preheat_chamber(editable.int8); });
       #endif
 
       END_MENU();
