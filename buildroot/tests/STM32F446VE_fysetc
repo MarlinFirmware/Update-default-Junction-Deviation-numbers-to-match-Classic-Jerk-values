@@ -1,16 +1,16 @@
 #!/usr/bin/env bash
 #
-# Build tests for FYSETC_S6
+# Build tests for STM32F446VE_fysetc
 #
 
 # exit on first failure
 set -e
 
-# Build examples
+# Build basic FYSETC S6 configuration
 restore_configs
-use_example_configs FYSETC/S6
-opt_enable MEATPACK_ON_SERIAL_PORT_1
-opt_set Y_DRIVER_TYPE TMC2209 Z_DRIVER_TYPE TMC2130
+opt_set MOTHERBOARD BOARD_FYSETC_S6_V2_0 SERIAL_PORT -1 BAUDRATE 115200 TEMP_SENSOR_BED 0 \
+        DEFAULT_AXIS_STEPS_PER_UNIT '{ 80, 80, 400, 400 }' Y_DRIVER_TYPE TMC2209 Z_DRIVER_TYPE TMC2130
+opt_enable MEATPACK_ON_SERIAL_PORT_1 EEPROM_SETTINGS SDSUPPORT
 exec_test $1 $2 "FYSETC S6 Example" "$3"
 
 #
